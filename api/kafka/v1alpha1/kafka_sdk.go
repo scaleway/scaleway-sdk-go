@@ -56,6 +56,7 @@ const (
 	ClusterStatusError         = ClusterStatus("error")
 	ClusterStatusLocked        = ClusterStatus("locked")
 	ClusterStatusStopped       = ClusterStatus("stopped")
+	ClusterStatusUpgrading     = ClusterStatus("upgrading")
 )
 
 func (enum ClusterStatus) String() string {
@@ -76,6 +77,7 @@ func (enum ClusterStatus) Values() []ClusterStatus {
 		"error",
 		"locked",
 		"stopped",
+		"upgrading",
 	}
 }
 
@@ -308,6 +310,15 @@ type EndpointSpecPrivateNetworkDetails struct {
 // EndpointSpecPublicDetails: endpoint spec public details.
 type EndpointSpecPublicDetails struct{}
 
+// ClusterMonoAZDetails: MonoAZ details.
+type ClusterMonoAZDetails struct {
+	// Zone: zone is the zone on which the cluster nodes are deployed.
+	Zone *scw.Zone `json:"zone"`
+}
+
+// ClusterMultiAZDetails: MultiAZ details.
+type ClusterMultiAZDetails struct{}
+
 // ClusterSetting: cluster setting.
 type ClusterSetting struct {
 	// Name: name of the setting.
@@ -473,6 +484,14 @@ type Cluster struct {
 
 	// Region: region the Kafka cluster is in.
 	Region scw.Region `json:"region"`
+
+	// MultiAz: multiAZ tell the cluster is deployed on multiple availability zones in the region.
+	// Precisely one of MultiAz, MonoAz must be set.
+	MultiAz *ClusterMultiAZDetails `json:"multi_az,omitempty"`
+
+	// MonoAz: monoAZ details.
+	// Precisely one of MultiAz, MonoAz must be set.
+	MonoAz *ClusterMonoAZDetails `json:"mono_az,omitempty"`
 }
 
 // NodeType: node type.
@@ -557,6 +576,14 @@ type CreateClusterRequest struct {
 
 	// Password: password for the kafka user.
 	Password *string `json:"password,omitempty"`
+
+	// MultiAz: multiAZ tell the cluster is deployed on multiple availability zones in the region.
+	// Precisely one of MultiAz, MonoAz must be set.
+	MultiAz *ClusterMultiAZDetails `json:"multi_az,omitempty"`
+
+	// MonoAz: monoAZ details.
+	// Precisely one of MultiAz, MonoAz must be set.
+	MonoAz *ClusterMonoAZDetails `json:"mono_az,omitempty"`
 }
 
 // CreateEndpointRequest: create endpoint request.
@@ -810,6 +837,9 @@ type UpdateClusterRequest struct {
 
 	// Tags: tags of a Kafka Cluster.
 	Tags *[]string `json:"tags,omitempty"`
+
+	// Version: version of Kafka.
+	Version *string `json:"version,omitempty"`
 }
 
 // UpdateUserRequest: Update a user of a Kafka cluster.
@@ -827,7 +857,7 @@ type UpdateUserRequest struct {
 	Password *string `json:"password,omitempty"`
 }
 
-// This API allows you to manage your Clusters for Apache Kafka®. This product is currently in Public Beta.
+// This API allows you to manage your Clusters for Apache Kafka®.
 type API struct {
 	client *scw.Client
 }
@@ -1015,6 +1045,7 @@ func (s *API) WaitForCluster(req *WaitForClusterRequest, opts ...scw.RequestOpti
 		ClusterStatusCreating:    {},
 		ClusterStatusConfiguring: {},
 		ClusterStatusDeleting:    {},
+		ClusterStatusUpgrading:   {},
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{

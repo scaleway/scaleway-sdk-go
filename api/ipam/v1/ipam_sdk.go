@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"text/template"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
@@ -124,6 +125,9 @@ const (
 	ResourceTypeDtwhDeployment         = ResourceType("dtwh_deployment")
 	ResourceTypeSedbCluster            = ResourceType("sedb_cluster")
 	ResourceTypeMsgqCluster            = ResourceType("msgq_cluster")
+	ResourceTypeEdgeVpcEndpoint        = ResourceType("edge_vpc_endpoint")
+	ResourceTypeDvizCluster            = ResourceType("dviz_cluster")
+	ResourceTypeNatsCluster            = ResourceType("nats_cluster")
 )
 
 func (enum ResourceType) String() string {
@@ -165,6 +169,9 @@ func (enum ResourceType) Values() []ResourceType {
 		"dtwh_deployment",
 		"sedb_cluster",
 		"msgq_cluster",
+		"edge_vpc_endpoint",
+		"dviz_cluster",
+		"nats_cluster",
 	}
 }
 
@@ -211,19 +218,23 @@ type Reverse struct {
 // Source: source.
 type Source struct {
 	// Zonal: this source is global.
-	// Precisely one of Zonal, PrivateNetworkID, SubnetID, VpcID must be set.
+	// Precisely one of Zonal, PrivateNetworkID, SubnetID, VpcID, Regional must be set.
 	Zonal *string `json:"zonal,omitempty"`
 
 	// PrivateNetworkID: this source is specific.
-	// Precisely one of Zonal, PrivateNetworkID, SubnetID, VpcID must be set.
+	// Precisely one of Zonal, PrivateNetworkID, SubnetID, VpcID, Regional must be set.
 	PrivateNetworkID *string `json:"private_network_id,omitempty"`
 
 	// SubnetID: this source is specific.
-	// Precisely one of Zonal, PrivateNetworkID, SubnetID, VpcID must be set.
+	// Precisely one of Zonal, PrivateNetworkID, SubnetID, VpcID, Regional must be set.
 	SubnetID *string `json:"subnet_id,omitempty"`
 
-	// Precisely one of Zonal, PrivateNetworkID, SubnetID, VpcID must be set.
+	// Precisely one of Zonal, PrivateNetworkID, SubnetID, VpcID, Regional must be set.
 	VpcID *string `json:"vpc_id,omitempty"`
+
+	// Regional: this source is global.
+	// Precisely one of Zonal, PrivateNetworkID, SubnetID, VpcID, Regional must be set.
+	Regional *bool `json:"regional,omitempty"`
 }
 
 // CustomResource: custom resource.
@@ -272,6 +283,51 @@ type IP struct {
 
 	// Zone: zone of the IP, if zonal.
 	Zone *scw.Zone `json:"zone"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *IP) getSRNTemplates() []string {
+	return []string{
+		"srn://ipam.{{ notempty .Platform }}/zones/{{ notempty .Zone }}/ips/{{ notempty .ID }}",
+		"srn://ipam.{{ notempty .Platform }}/regions/{{ notempty .Region }}/ips/{{ notempty .ID }}",
+	}
+}
+
+func (m *IP) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		IP
+		Platform string
+	}{
+		IP:       *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	for _, templ := range m.getSRNTemplates() {
+		t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+		if err != nil {
+			continue
+		}
+		var out bytes.Buffer
+		if err := t.Execute(&out, data); err != nil {
+			continue
+		}
+		m.Srn = out.String()
+		// first pattern wins
+		break
+	}
 }
 
 // AttachIPRequest: attach ip request.
@@ -350,15 +406,19 @@ type ListIPsRequest struct {
 	ProjectID *string `json:"-"`
 
 	// Zonal: zone to filter for. Only IPs that are zonal, and in this zone, will be returned.
-	// Precisely one of Zonal, PrivateNetworkID, SubnetID, SourceVpcID must be set.
+	// Precisely one of Zonal, Regional, PrivateNetworkID, SubnetID, SourceVpcID must be set.
 	Zonal *string `json:"zonal,omitempty"`
 
+	// Regional: filter on regional IPs only.
+	// Precisely one of Zonal, Regional, PrivateNetworkID, SubnetID, SourceVpcID must be set.
+	Regional *bool `json:"regional,omitempty"`
+
 	// PrivateNetworkID: only IPs that are private, and in this Private Network, will be returned.
-	// Precisely one of Zonal, PrivateNetworkID, SubnetID, SourceVpcID must be set.
+	// Precisely one of Zonal, Regional, PrivateNetworkID, SubnetID, SourceVpcID must be set.
 	PrivateNetworkID *string `json:"private_network_id,omitempty"`
 
 	// SubnetID: only IPs inside this exact subnet will be returned.
-	// Precisely one of Zonal, PrivateNetworkID, SubnetID, SourceVpcID must be set.
+	// Precisely one of Zonal, Regional, PrivateNetworkID, SubnetID, SourceVpcID must be set.
 	SubnetID *string `json:"subnet_id,omitempty"`
 
 	// VpcID: only IPs owned by resources in this VPC will be returned.
@@ -398,7 +458,7 @@ type ListIPsRequest struct {
 	// IPIDs: IP IDs to filter for. Only IPs with these UUIDs will be returned.
 	IPIDs []string `json:"-"`
 
-	// Precisely one of Zonal, PrivateNetworkID, SubnetID, SourceVpcID must be set.
+	// Precisely one of Zonal, Regional, PrivateNetworkID, SubnetID, SourceVpcID must be set.
 	SourceVpcID *string `json:"source_vpc_id,omitempty"`
 }
 
@@ -488,7 +548,7 @@ func NewAPI(client *scw.Client) *API {
 }
 
 func (s *API) Regions() []scw.Region {
-	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
+	return []scw.Region{scw.RegionFrPar, scw.RegionItMil, scw.RegionNlAms, scw.RegionPlWaw}
 }
 
 // BookIP: Reserve a new IP from the specified source. Currently IPs can only be reserved from a Private Network.
@@ -524,6 +584,10 @@ func (s *API) BookIP(req *BookIPRequest, opts ...scw.RequestOption) (*IP, error)
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -620,6 +684,10 @@ func (s *API) GetIP(req *GetIPRequest, opts ...scw.RequestOption) (*IP, error) {
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -656,6 +724,10 @@ func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*IP, er
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -691,6 +763,7 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsR
 	parameter.AddToQuery(query, "is_ipv6", req.IsIPv6)
 	parameter.AddToQuery(query, "ip_ids", req.IPIDs)
 	parameter.AddToQuery(query, "zonal", req.Zonal)
+	parameter.AddToQuery(query, "regional", req.Regional)
 	parameter.AddToQuery(query, "private_network_id", req.PrivateNetworkID)
 	parameter.AddToQuery(query, "subnet_id", req.SubnetID)
 	parameter.AddToQuery(query, "source_vpc_id", req.SourceVpcID)
@@ -711,10 +784,16 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsR
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.IPs {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
-// AttachIP: Attach an existing reserved IP from a Private Network subnet to a custom, named resource via its MAC address. An example of a custom resource is a virtual machine hosted on an Elastic Metal server. Do not use this method for attaching IP addresses to standard Scaleway resources as it will fail - see the relevant product API for an equivalent method.
+// AttachIP: Attach an existing reserved private IP from a Private Network subnet to a custom, named resource via its MAC address. An example of a custom resource is a virtual machine hosted on an Elastic Metal server. Do not use this method for attaching IP addresses to standard Scaleway resources as it will fail - see the relevant product API for an equivalent method.
 func (s *API) AttachIP(req *AttachIPRequest, opts ...scw.RequestOption) (*IP, error) {
 	var err error
 
@@ -746,6 +825,10 @@ func (s *API) AttachIP(req *AttachIPRequest, opts ...scw.RequestOption) (*IP, er
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -783,6 +866,10 @@ func (s *API) DetachIP(req *DetachIPRequest, opts ...scw.RequestOption) (*IP, er
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -818,6 +905,10 @@ func (s *API) MoveIP(req *MoveIPRequest, opts ...scw.RequestOption) (*IP, error)
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }

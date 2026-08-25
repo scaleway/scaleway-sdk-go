@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"text/template"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
@@ -141,6 +142,12 @@ const (
 	KeyAlgorithmAsymmetricSigningRsaPkcs1_3072Sha256 = KeyAlgorithmAsymmetricSigning("rsa_pkcs1_3072_sha256")
 	// RSA-PKCS1 (Public Key Cryptography Standards) with a 4096-bit key and SHA-256 hash function.
 	KeyAlgorithmAsymmetricSigningRsaPkcs1_4096Sha256 = KeyAlgorithmAsymmetricSigning("rsa_pkcs1_4096_sha256")
+	// ML-DSA (Module-Lattice Digital Signature Algorithm) FIPS 204 post-quantum signature scheme with security category 2.
+	KeyAlgorithmAsymmetricSigningMlDsa44 = KeyAlgorithmAsymmetricSigning("ml_dsa_44")
+	// ML-DSA (Module-Lattice Digital Signature Algorithm) FIPS 204 post-quantum signature scheme with security category 3.
+	KeyAlgorithmAsymmetricSigningMlDsa65 = KeyAlgorithmAsymmetricSigning("ml_dsa_65")
+	// ML-DSA (Module-Lattice Digital Signature Algorithm) FIPS 204 post-quantum signature scheme with security category 5.
+	KeyAlgorithmAsymmetricSigningMlDsa87 = KeyAlgorithmAsymmetricSigning("ml_dsa_87")
 )
 
 func (enum KeyAlgorithmAsymmetricSigning) String() string {
@@ -162,6 +169,9 @@ func (enum KeyAlgorithmAsymmetricSigning) Values() []KeyAlgorithmAsymmetricSigni
 		"rsa_pkcs1_2048_sha256",
 		"rsa_pkcs1_3072_sha256",
 		"rsa_pkcs1_4096_sha256",
+		"ml_dsa_44",
+		"ml_dsa_65",
+		"ml_dsa_87",
 	}
 }
 
@@ -522,6 +532,41 @@ type Key struct {
 
 	// Region: region where the key is stored.
 	Region scw.Region `json:"region"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *Key) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		Key
+		Platform string
+	}{
+		Key:      *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://key-manager.{{ notempty .Platform }}/regions/{{ notempty .Region }}/keys/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // CreateKeyRequest: create key request.
@@ -704,7 +749,7 @@ type ImportKeyMaterialRequest struct {
 	// KeyID: the key's origin must be `external`.
 	KeyID string `json:"-"`
 
-	// KeyMaterial: the key material The key material is a random sequence of bytes used to derive a cryptographic key.
+	// KeyMaterial: the key material is a random sequence of bytes used to derive a cryptographic key.
 	KeyMaterial []byte `json:"key_material"`
 
 	// Salt: a salt is random data added to key material to ensure unique derived keys, even if the input is similar. It helps strengthen security when the key material has low randomness (low entropy).
@@ -942,6 +987,10 @@ func (s *API) CreateKey(req *CreateKeyRequest, opts ...scw.RequestOption) (*Key,
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -972,6 +1021,10 @@ func (s *API) GetKey(req *GetKeyRequest, opts ...scw.RequestOption) (*Key, error
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1040,6 +1093,10 @@ func (s *API) UpdateKey(req *UpdateKeyRequest, opts ...scw.RequestOption) (*Key,
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1105,6 +1162,10 @@ func (s *API) RotateKey(req *RotateKeyRequest, opts ...scw.RequestOption) (*Key,
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1140,6 +1201,10 @@ func (s *API) ProtectKey(req *ProtectKeyRequest, opts ...scw.RequestOption) (*Ke
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1177,6 +1242,10 @@ func (s *API) UnprotectKey(req *UnprotectKeyRequest, opts ...scw.RequestOption) 
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1212,6 +1281,10 @@ func (s *API) EnableKey(req *EnableKeyRequest, opts ...scw.RequestOption) (*Key,
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1249,10 +1322,17 @@ func (s *API) DisableKey(req *DisableKeyRequest, opts ...scw.RequestOption) (*Ke
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
-// ListKeys: Retrieve a list of keys across all Projects in an Organization or within a specific Project. You must specify the `region`, and either the `organization_id` or the `project_id`.
+// ListKeys: Retrieve a list of keys across all Projects in an Organization or within a specific Project.
+// If the user has permissions for all current and future projects: Either organization_id or project_id is required.
+// If the user has permissions for all current projects or only specific projects: The project_id is required.
+// The `region` parameter in path is needed in both case.
 func (s *API) ListKeys(req *ListKeysRequest, opts ...scw.RequestOption) (*ListKeysResponse, error) {
 	var err error
 
@@ -1292,6 +1372,12 @@ func (s *API) ListKeys(req *ListKeysRequest, opts ...scw.RequestOption) (*ListKe
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Keys {
+			el.setSRN(apiMetadata.Domain)
+		}
 	}
 	return &resp, nil
 }
@@ -1511,6 +1597,10 @@ func (s *API) ImportKeyMaterial(req *ImportKeyMaterialRequest, opts ...scw.Reque
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1580,6 +1670,10 @@ func (s *API) RestoreKey(req *RestoreKeyRequest, opts ...scw.RequestOption) (*Ke
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }

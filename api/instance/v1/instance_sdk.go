@@ -1450,6 +1450,9 @@ type PrivateNIC struct {
 
 	// Zone: the zone in which the Private NIC is located.
 	Zone scw.Zone `json:"zone"`
+
+	// IpamIPIDs: the list of IPAM IPs associated with this private NIC.
+	IpamIPIDs []string `json:"ipam_ip_ids"`
 }
 
 // SecurityGroupSummary: security group summary.
@@ -1851,7 +1854,8 @@ type SecurityGroup struct {
 	// Stateful: defines whether the security group is stateful.
 	Stateful bool `json:"stateful"`
 
-	// State: security group state.
+	// State: are applied) when the security group is updated (e.g., rules added, modified, or deleted)
+	// or when it is attached to or detached from a server's public network interface.
 	// Default value: available
 	State SecurityGroupState `json:"state"`
 
@@ -1960,30 +1964,31 @@ type Snapshot struct {
 
 // Task: task.
 type Task struct {
-	// ID: unique ID of the task.
+	// Deprecated: ID: unique ID of the task.
 	ID string `json:"id"`
 
-	// Description: description of the task.
+	// Deprecated: Description: description of the task.
 	Description string `json:"description"`
 
-	// Progress: progress of the task in percent.
+	// Deprecated: Progress: progress of the task in percent.
 	Progress int32 `json:"progress"`
 
-	// StartedAt: task start date.
+	// Deprecated: StartedAt: task start date.
 	StartedAt *time.Time `json:"started_at"`
 
-	// TerminatedAt: task end date.
+	// Deprecated: TerminatedAt: task end date.
 	TerminatedAt *time.Time `json:"terminated_at"`
 
-	// Status: task status.
+	// Deprecated: Status: task status.
 	// Default value: pending
 	Status TaskStatus `json:"status"`
 
 	HrefFrom string `json:"href_from"`
 
+	// HrefResult: location of the resulting resource.
 	HrefResult string `json:"href_result"`
 
-	// Zone: zone in which the task is executed.
+	// Deprecated: Zone: zone in which the task is executed.
 	Zone scw.Zone `json:"zone"`
 }
 
@@ -2009,19 +2014,19 @@ type Dashboard struct {
 
 	VolumesLSSDCount uint32 `json:"volumes_l_ssd_count"`
 
-	// Deprecated
-	VolumesBSSDCount *uint32 `json:"volumes_b_ssd_count"`
-
 	VolumesLSSDTotalSize scw.Size `json:"volumes_l_ssd_total_size"`
-
-	// Deprecated
-	VolumesBSSDTotalSize *scw.Size `json:"volumes_b_ssd_total_size"`
 
 	PrivateNicsCount uint32 `json:"private_nics_count"`
 
 	PlacementGroupsCount uint32 `json:"placement_groups_count"`
 
 	VolumesScratchCount uint32 `json:"volumes_scratch_count"`
+
+	// Deprecated
+	VolumesBSSDCount *uint32 `json:"volumes_b_ssd_count"`
+
+	// Deprecated
+	VolumesBSSDTotalSize *scw.Size `json:"volumes_b_ssd_total_size"`
 }
 
 // PlacementGroupServer: placement group server.
@@ -4659,7 +4664,7 @@ func (s *API) ListServerActions(req *ListServerActionsRequest, opts ...scw.Reque
 // * `poweroff`: Fully stop the Instance and release the hypervisor slot.
 // * `stop_in_place`: Stop the Instance, but keep the slot on the hypervisor.
 // * `reboot`: Stop the instance and restart it.
-// * `backup`:  Create an image with all the volumes of an Instance.
+// * `backup`: Create an image with all the volumes of an Instance.
 // * `terminate`: Delete the Instance along with its attached local volumes.
 // * `enable_routed_ip`: Migrate the Instance to the new network stack.
 //

@@ -285,6 +285,47 @@ func (enum *EngineSettingPropertyType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type HighAvailabilityMode string
+
+const (
+	HighAvailabilityModeUnknownHighAvailabilityMode = HighAvailabilityMode("unknown_high_availability_mode")
+	HighAvailabilityModeDisabled                    = HighAvailabilityMode("disabled")
+	HighAvailabilityModeSingleZone                  = HighAvailabilityMode("single_zone")
+	HighAvailabilityModeMultipleZone                = HighAvailabilityMode("multiple_zone")
+)
+
+func (enum HighAvailabilityMode) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(HighAvailabilityModeUnknownHighAvailabilityMode)
+	}
+	return string(enum)
+}
+
+func (enum HighAvailabilityMode) Values() []HighAvailabilityMode {
+	return []HighAvailabilityMode{
+		"unknown_high_availability_mode",
+		"disabled",
+		"single_zone",
+		"multiple_zone",
+	}
+}
+
+func (enum HighAvailabilityMode) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *HighAvailabilityMode) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = HighAvailabilityMode(HighAvailabilityMode(tmp).String())
+	return nil
+}
+
 type InstanceLogStatus string
 
 const (
@@ -731,6 +772,7 @@ const (
 	NodeTypeGenerationUnknownGeneration = NodeTypeGeneration("unknown_generation")
 	NodeTypeGenerationGenerationV1      = NodeTypeGeneration("generation_v1")
 	NodeTypeGenerationGenerationV2      = NodeTypeGeneration("generation_v2")
+	NodeTypeGenerationGenerationV3      = NodeTypeGeneration("generation_v3")
 )
 
 func (enum NodeTypeGeneration) String() string {
@@ -746,6 +788,7 @@ func (enum NodeTypeGeneration) Values() []NodeTypeGeneration {
 		"unknown_generation",
 		"generation_v1",
 		"generation_v2",
+		"generation_v3",
 	}
 }
 
@@ -1181,6 +1224,9 @@ type EngineVersion struct {
 
 	// AvailableInitSettings: engine settings available to be set at database initialization.
 	AvailableInitSettings []*EngineSetting `json:"available_init_settings"`
+
+	// ReleaseDate: version release date.
+	ReleaseDate *time.Time `json:"release_date"`
 }
 
 // BackupSchedule: backup schedule.
@@ -1340,9 +1386,6 @@ type ACLRuleRequest struct {
 type ACLRule struct {
 	IP scw.IPNet `json:"ip"`
 
-	// Deprecated
-	Port *uint32 `json:"port,omitempty"`
-
 	// Protocol: default value: tcp
 	Protocol ACLRuleProtocol `json:"protocol"`
 
@@ -1353,6 +1396,9 @@ type ACLRule struct {
 	Action ACLRuleAction `json:"action"`
 
 	Description string `json:"description"`
+
+	// Deprecated
+	Port *uint32 `json:"port,omitempty"`
 }
 
 // EndpointSpec: endpoint spec.
@@ -1532,6 +1578,10 @@ type Instance struct {
 
 	// IsHaCluster: defines whether or not High-Availability is enabled.
 	IsHaCluster bool `json:"is_ha_cluster"`
+
+	// HighAvailabilityMode: defines the High-Availability mode of the instance.
+	// Default value: unknown_high_availability_mode
+	HighAvailabilityMode HighAvailabilityMode `json:"high_availability_mode"`
 
 	// ReadReplicas: read Replicas of the Database Instance.
 	ReadReplicas []*ReadReplica `json:"read_replicas"`
@@ -1789,8 +1839,12 @@ type CreateInstanceFromSnapshotRequest struct {
 	// InstanceName: name of the Database Instance created with the snapshot.
 	InstanceName string `json:"instance_name"`
 
-	// IsHaCluster: defines whether or not High-Availability is enabled on the new Database Instance.
+	// Deprecated: IsHaCluster: defines whether or not High-Availability is enabled on the new Database Instance.
 	IsHaCluster *bool `json:"is_ha_cluster,omitempty"`
+
+	// HighAvailabilityMode: defines the High-Availability mode of the instance.
+	// Default value: unknown_high_availability_mode
+	HighAvailabilityMode HighAvailabilityMode `json:"high_availability_mode"`
 
 	// NodeType: the node type used to restore the snapshot.
 	NodeType *string `json:"node_type,omitempty"`
@@ -1824,8 +1878,12 @@ type CreateInstanceRequest struct {
 	// NodeType: type of node to use for the Database Instance.
 	NodeType string `json:"node_type"`
 
-	// IsHaCluster: defines whether or not High-Availability is enabled.
+	// Deprecated: IsHaCluster: defines whether or not High-Availability is enabled.
 	IsHaCluster bool `json:"is_ha_cluster"`
+
+	// HighAvailabilityMode: defines the High-Availability mode of the instance.
+	// Default value: unknown_high_availability_mode
+	HighAvailabilityMode HighAvailabilityMode `json:"high_availability_mode"`
 
 	// DisableBackup: defines whether or not backups are disabled.
 	DisableBackup bool `json:"disable_backup"`
@@ -2836,32 +2894,37 @@ type UpgradeInstanceRequest struct {
 	InstanceID string `json:"-"`
 
 	// NodeType: node type of the Database Instance you want to upgrade to.
-	// Precisely one of NodeType, EnableHa, VolumeSize, VolumeType, UpgradableVersionID, MajorUpgradeWorkflow, EnableEncryption must be set.
+	// Precisely one of NodeType, EnableHa, HighAvailabilityMode, VolumeSize, VolumeType, UpgradableVersionID, MajorUpgradeWorkflow, EnableEncryption must be set.
 	NodeType *string `json:"node_type,omitempty"`
 
-	// EnableHa: defines whether or not high availability should be enabled on the Database Instance.
-	// Precisely one of NodeType, EnableHa, VolumeSize, VolumeType, UpgradableVersionID, MajorUpgradeWorkflow, EnableEncryption must be set.
+	// Deprecated: EnableHa: defines whether or not high availability should be enabled on the Database Instance.
+	// Precisely one of NodeType, EnableHa, HighAvailabilityMode, VolumeSize, VolumeType, UpgradableVersionID, MajorUpgradeWorkflow, EnableEncryption must be set.
 	EnableHa *bool `json:"enable_ha,omitempty"`
 
+	// HighAvailabilityMode: defines the High-Availability mode of the instance.
+	// Default value: unknown_high_availability_mode
+	// Precisely one of NodeType, EnableHa, HighAvailabilityMode, VolumeSize, VolumeType, UpgradableVersionID, MajorUpgradeWorkflow, EnableEncryption must be set.
+	HighAvailabilityMode *HighAvailabilityMode `json:"high_availability_mode,omitempty"`
+
 	// VolumeSize: increase your block storage volume size.
-	// Precisely one of NodeType, EnableHa, VolumeSize, VolumeType, UpgradableVersionID, MajorUpgradeWorkflow, EnableEncryption must be set.
+	// Precisely one of NodeType, EnableHa, HighAvailabilityMode, VolumeSize, VolumeType, UpgradableVersionID, MajorUpgradeWorkflow, EnableEncryption must be set.
 	VolumeSize *uint64 `json:"volume_size,omitempty"`
 
 	// VolumeType: change your Database Instance storage type.
 	// Default value: lssd
-	// Precisely one of NodeType, EnableHa, VolumeSize, VolumeType, UpgradableVersionID, MajorUpgradeWorkflow, EnableEncryption must be set.
+	// Precisely one of NodeType, EnableHa, HighAvailabilityMode, VolumeSize, VolumeType, UpgradableVersionID, MajorUpgradeWorkflow, EnableEncryption must be set.
 	VolumeType *VolumeType `json:"volume_type,omitempty"`
 
 	// UpgradableVersionID: this will create a new Database Instance with same specifications as the current one and perform a Database Engine upgrade.
-	// Precisely one of NodeType, EnableHa, VolumeSize, VolumeType, UpgradableVersionID, MajorUpgradeWorkflow, EnableEncryption must be set.
+	// Precisely one of NodeType, EnableHa, HighAvailabilityMode, VolumeSize, VolumeType, UpgradableVersionID, MajorUpgradeWorkflow, EnableEncryption must be set.
 	UpgradableVersionID *string `json:"upgradable_version_id,omitempty"`
 
 	// MajorUpgradeWorkflow: upgrade your database engine to a new major version including instance endpoints.
-	// Precisely one of NodeType, EnableHa, VolumeSize, VolumeType, UpgradableVersionID, MajorUpgradeWorkflow, EnableEncryption must be set.
+	// Precisely one of NodeType, EnableHa, HighAvailabilityMode, VolumeSize, VolumeType, UpgradableVersionID, MajorUpgradeWorkflow, EnableEncryption must be set.
 	MajorUpgradeWorkflow *UpgradeInstanceRequestMajorUpgradeWorkflow `json:"major_upgrade_workflow,omitempty"`
 
 	// EnableEncryption: defines whether or not encryption should be enabled on the Database Instance.
-	// Precisely one of NodeType, EnableHa, VolumeSize, VolumeType, UpgradableVersionID, MajorUpgradeWorkflow, EnableEncryption must be set.
+	// Precisely one of NodeType, EnableHa, HighAvailabilityMode, VolumeSize, VolumeType, UpgradableVersionID, MajorUpgradeWorkflow, EnableEncryption must be set.
 	EnableEncryption *bool `json:"enable_encryption,omitempty"`
 }
 
@@ -3739,7 +3802,7 @@ func (s *API) CreateReadReplica(req *CreateReadReplicaRequest, opts ...scw.Reque
 	return &resp, nil
 }
 
-// GetReadReplica: Retrieve information about a Database Instance Read Replica. Full details about the Read Replica, like `endpoints`, `status`  and `region` are returned in the response.
+// GetReadReplica: Retrieve information about a Database Instance Read Replica. Full details about the Read Replica, like `endpoints`, `status` and `region` are returned in the response.
 func (s *API) GetReadReplica(req *GetReadReplicaRequest, opts ...scw.RequestOption) (*ReadReplica, error) {
 	var err error
 
@@ -4551,7 +4614,7 @@ func (s *API) UpdateUser(req *UpdateUserRequest, opts ...scw.RequestOption) (*Us
 	return &resp, nil
 }
 
-// DeleteUser: Delete a given user on a Database Instance. You must specify, in the endpoint,  the `region`, `instance_id` and `name` parameters of the user you want to delete.
+// DeleteUser: Delete a given user on a Database Instance. You must specify, in the endpoint, the `region`, `instance_id` and `name` parameters of the user you want to delete.
 func (s *API) DeleteUser(req *DeleteUserRequest, opts ...scw.RequestOption) error {
 	var err error
 
@@ -4977,7 +5040,7 @@ func (s *API) UpdateSnapshot(req *UpdateSnapshotRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
-// DeleteSnapshot: Delete a given snapshot of a Database Instance. You must specify, in the endpoint,  the `region` and `snapshot_id` parameters of the snapshot you want to delete.
+// DeleteSnapshot: Delete a given snapshot of a Database Instance. You must specify, in the endpoint, the `region` and `snapshot_id` parameters of the snapshot you want to delete.
 func (s *API) DeleteSnapshot(req *DeleteSnapshotRequest, opts ...scw.RequestOption) (*Snapshot, error) {
 	var err error
 

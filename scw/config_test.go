@@ -1,6 +1,9 @@
 package scw
 
 import (
+	"bytes"
+	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -17,16 +20,21 @@ var (
 	v2ValidAccessKey2             = "SCW234567890ABCDEFGH"
 	v2ValidSecretKey2             = "6f6e6574-6f72-756c-6c74-68656d616c6c" // hint: | xxd -ps -r
 	v2ValidAPIURL2                = "api-fr-par.scaleway.com"
+	v2ValidS3Endpoint2            = "s3.fr-par.scw.cloud"
+	v2ValidS3UsePathStyle2        = "true"
 	v2ValidInsecure2              = "true"
 	v2ValidSendTelemetry2         = "true"
 	v2ValidDefaultOrganizationID2 = "6d6f7264-6f72-6772-6561-74616761696e" // hint: | xxd -ps -r
 	v2ValidDefaultProjectID2      = "6d6f7264-6f72-6772-6561-74616761696f"
 	v2ValidDefaultRegion2         = string(RegionFrPar)
 	v2ValidDefaultZone2           = string(ZoneFrPar2)
+	v2ValidUserAgent              = defaultUserAgent
 
 	v2ValidAccessKey             = "SCW1234567890ABCDEFG"
 	v2ValidSecretKey             = "7363616c-6577-6573-6862-6f7579616161" // hint: | xxd -ps -r
 	v2ValidAPIURL                = "api.scaleway.com"
+	v2ValidS3Endpoint            = "s3.nl-ams.scw.cloud"
+	v2ValidS3UsePathStyle        = "false"
 	v2ValidInsecure              = "false"
 	v2ValidSendTelemetry         = "true"
 	v2ValidDefaultOrganizationID = "6170692e-7363-616c-6577-61792e636f6d" // hint: | xxd -ps -r
@@ -49,17 +57,22 @@ var (
 			DefaultOrganizationID: &v2ValidDefaultOrganizationID,
 			DefaultProjectID:      &v2ValidDefaultProjectID,
 			DefaultRegion:         &v2ValidDefaultRegion,
+			UserAgent:             &v2ValidUserAgent,
 		},
 	}
+
 	v2PartialValidConfigFile = `
 access_key: ` + v2ValidAccessKey + `
 secret_key: ` + v2ValidSecretKey + `
 api_url: ` + v2ValidAPIURL + `
+s3_endpoint: ` + v2ValidS3Endpoint + `
+s3_use_path_style: ` + v2ValidS3UsePathStyle + `
 insecure: ` + v2ValidInsecure + `
 default_organization_id: ` + v2ValidDefaultOrganizationID + `
 default_project_id: ` + v2ValidDefaultProjectID + `
 default_region: ` + v2ValidDefaultRegion + `
-default_zone: ` + v2ValidDefaultZone
+default_zone: ` + v2ValidDefaultZone + `
+user_agent: ` + v2ValidUserAgent
 
 	v2CompleteValidConfigFile = v2PartialValidConfigFile + `
 profiles:
@@ -67,52 +80,65 @@ profiles:
     access_key: ` + v2ValidAccessKey2 + `
     secret_key: ` + v2ValidSecretKey2 + `
     api_url: ` + v2ValidAPIURL2 + `
+    s3_endpoint: ` + v2ValidS3Endpoint2 + `
+    s3_use_path_style: ` + v2ValidS3UsePathStyle2 + `
     insecure: ` + v2ValidInsecure2 + `
     send_telemetry: ` + v2ValidSendTelemetry2 + `
     default_organization_id: ` + v2ValidDefaultOrganizationID2 + `
     default_project_id: ` + v2ValidDefaultProjectID2 + `
     default_region: ` + v2ValidDefaultRegion2 + `
     default_zone: ` + v2ValidDefaultZone2 + `
+    user_agent: ` + v2ValidUserAgent + `
 `
 
 	v2CompleteValidConfigWithActiveProfileFile = `
 access_key: ` + v2ValidAccessKey + `
 secret_key: ` + v2ValidSecretKey + `
 api_url: ` + v2ValidAPIURL + `
+s3_endpoint: ` + v2ValidS3Endpoint + `
+s3_use_path_style: ` + v2ValidS3UsePathStyle + `
 insecure: ` + v2ValidInsecure + `
 send_telemetry: ` + v2ValidSendTelemetry2 + `
 default_organization_id: ` + v2ValidDefaultOrganizationID + `
 default_project_id: ` + v2ValidDefaultProjectID + `
 default_region: ` + v2ValidDefaultRegion + `
 default_zone: ` + v2ValidDefaultZone + `
+user_agent: ` + v2ValidUserAgent + `
 active_profile: ` + v2ValidProfile + `
 profiles:
   ` + v2ValidProfile + `:
     access_key: ` + v2ValidAccessKey2 + `
     secret_key: ` + v2ValidSecretKey2 + `
     api_url: ` + v2ValidAPIURL2 + `
+    s3_endpoint: ` + v2ValidS3Endpoint2 + `
+    s3_use_path_style: ` + v2ValidS3UsePathStyle2 + `
     insecure: ` + v2ValidInsecure2 + `
     default_organization_id: ` + v2ValidDefaultOrganizationID2 + `
     default_project_id: ` + v2ValidDefaultProjectID2 + `
     default_region: ` + v2ValidDefaultRegion2 + `
     default_zone: ` + v2ValidDefaultZone2 + `
+    user_agent: ` + v2ValidUserAgent + `
 `
 
 	v2MixedValidConfigWithActiveProfileFile = `
 access_key: ` + v2ValidAccessKey + `
 secret_key: ` + v2ValidSecretKey + `
 api_url: ` + v2ValidAPIURL + `
+s3_endpoint: ` + v2ValidS3Endpoint + `
+s3_use_path_style: ` + v2ValidS3UsePathStyle + `
 insecure: ` + v2ValidInsecure + `
 send_telemetry: ` + v2ValidSendTelemetry + `
 default_organization_id: ` + v2ValidDefaultOrganizationID + `
 default_project_id: ` + v2ValidDefaultProjectID + `
 default_region: ` + v2ValidDefaultRegion + `
 default_zone: ` + v2ValidDefaultZone + `
+user_agent: ` + v2ValidUserAgent + `
 active_profile: ` + v2ValidProfile + `
 profiles:
   ` + v2ValidProfile + `:
     access_key: ` + v2ValidAccessKey2 + `
     secret_key: ` + v2ValidSecretKey2 + `
+    user_agent: ` + v2ValidUserAgent + `
 `
 
 	v2SimpleValidConfigFile = `
@@ -121,6 +147,7 @@ secret_key: ` + v2ValidSecretKey + `
 default_organization_id: ` + v2ValidDefaultOrganizationID + `
 default_project_id: ` + v2ValidDefaultProjectID + `
 default_region: ` + v2ValidDefaultRegion + `
+user_agent: ` + v2ValidUserAgent + `
 `
 
 	v2SimpleInvalidConfigFile            = `insecure: "bool""`
@@ -153,12 +180,14 @@ func TestSaveConfig(t *testing.T) {
 					DefaultOrganizationID: s(v2ValidDefaultOrganizationID),
 					DefaultProjectID:      s(v2ValidDefaultProjectID),
 					DefaultRegion:         s(v2ValidDefaultRegion),
+					UserAgent:             s(defaultUserAgent),
 				},
 			},
 			expectedFiles: map[string]string{
 				"valid1/test.conf": v2SimpleValidConfigFile,
 			},
 		},
+
 		{
 			name: "Default config path",
 			env: map[string]string{
@@ -177,6 +206,7 @@ func TestSaveConfig(t *testing.T) {
 				".config/scw/config.yaml": v2SimpleValidConfigFile,
 			},
 		},
+
 		{
 			name: "Add zone only",
 			env: map[string]string{
@@ -194,6 +224,7 @@ func TestSaveConfig(t *testing.T) {
 				".config/scw/config.yaml": v2SimpleValidConfigFile + "default_zone: " + v2ValidDefaultZone + "\n",
 			},
 		},
+
 		{
 			name: "Add new profile",
 			env: map[string]string{
@@ -209,6 +240,8 @@ func TestSaveConfig(t *testing.T) {
 					AccessKey:             s(v2ValidAccessKey2),
 					SecretKey:             s(v2ValidSecretKey2),
 					APIURL:                s(v2ValidAPIURL2),
+					S3Endpoint:            s(v2ValidS3Endpoint2),
+					S3UsePathStyle:        b(true),
 					Insecure:              b(true),
 					DefaultOrganizationID: s(v2ValidDefaultOrganizationID2),
 					DefaultProjectID:      s(v2ValidDefaultProjectID2),
@@ -221,6 +254,7 @@ func TestSaveConfig(t *testing.T) {
 			},
 		},
 	}
+
 	// create home dir
 	dir := initEnv(t)
 
@@ -252,36 +286,44 @@ func TestSaveConfig(t *testing.T) {
 	}
 }
 
-// TestLoadConfig tests config getters return correct values
+// TestLoadProfileAndActiveProfile tests config getters return correct values
 func TestLoadProfileAndActiveProfile(t *testing.T) {
 	tests := []struct {
 		name  string
 		env   map[string]string
 		files map[string]string
+		perms os.FileMode
 
 		expectedError                 string
 		expectedAccessKey             *string
 		expectedSecretKey             *string
 		expectedAPIURL                *string
+		expectedS3Endpoint            *string
+		expectedS3UsePathStyle        *bool
 		expectedInsecure              *bool
 		expectedSendTelemetry         *bool
 		expectedDefaultOrganizationID *string
 		expectedDefaultProjectID      *string
 		expectedDefaultRegion         *string
 		expectedDefaultZone           *string
+		expectedOutput                string
 	}{
 		// no env variables
 		{
-			name:          "No config without home dir",
-			expectedError: "scaleway-sdk-go: cannot read config file: read .: is a directory",
+			name: "No config without home dir",
+			expectedError: "scaleway-sdk-go: cannot read config file: read .: " +
+				"is a directory",
 		},
+
 		{
-			name:          "No config",
-			expectedError: "scaleway-sdk-go: cannot read config file {HOME}/.config/scw/config.yaml: no such file or directory",
+			name: "No config",
+			expectedError: "scaleway-sdk-go: cannot read config file " +
+				"{HOME}/.config/scw/config.yaml: no such file or directory",
 			env: map[string]string{
 				"HOME": "{HOME}",
 			},
 		},
+
 		{
 			name: "Custom-path config is empty", // custom config path
 			env: map[string]string{
@@ -291,6 +333,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 				"valid1/test.conf": emptyFile,
 			},
 		},
+
 		{
 			name: "Custom-path config with valid V2",
 			env: map[string]string{
@@ -305,6 +348,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
 		},
+
 		{
 			name: "Simple config with valid V2", // default config path
 			env: map[string]string{
@@ -319,6 +363,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
 		},
+
 		{
 			name: "Complete config",
 			env: map[string]string{
@@ -330,12 +375,15 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedAccessKey:             s(v2ValidAccessKey),
 			expectedSecretKey:             s(v2ValidSecretKey),
 			expectedAPIURL:                s(v2ValidAPIURL),
+			expectedS3Endpoint:            s(v2ValidS3Endpoint),
+			expectedS3UsePathStyle:        b(false),
 			expectedInsecure:              b(false),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
 			expectedDefaultZone:           s(v2ValidDefaultZone),
 		},
+
 		{
 			name: "Complete config with active profile",
 			env: map[string]string{
@@ -347,6 +395,8 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedAccessKey:             s(v2ValidAccessKey2),
 			expectedSecretKey:             s(v2ValidSecretKey2),
 			expectedAPIURL:                s(v2ValidAPIURL2),
+			expectedS3Endpoint:            s(v2ValidS3Endpoint2),
+			expectedS3UsePathStyle:        b(true),
 			expectedInsecure:              b(true),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID2),
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID2),
@@ -354,6 +404,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedDefaultZone:           s(v2ValidDefaultZone2),
 			expectedSendTelemetry:         b(true),
 		},
+
 		{
 			name: "Mixed config with active profile",
 			env: map[string]string{
@@ -365,6 +416,8 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedAccessKey:             s(v2ValidAccessKey2),
 			expectedSecretKey:             s(v2ValidSecretKey2),
 			expectedAPIURL:                s(v2ValidAPIURL),
+			expectedS3Endpoint:            s(v2ValidS3Endpoint),
+			expectedS3UsePathStyle:        b(false),
 			expectedInsecure:              b(false),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
@@ -372,6 +425,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedDefaultZone:           s(v2ValidDefaultZone),
 			expectedSendTelemetry:         b(true),
 		},
+
 		{
 			name: "Complete config with active profile env variable",
 			env: map[string]string{
@@ -384,6 +438,8 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedAccessKey:             s(v2ValidAccessKey2),
 			expectedSecretKey:             s(v2ValidSecretKey2),
 			expectedAPIURL:                s(v2ValidAPIURL2),
+			expectedS3Endpoint:            s(v2ValidS3Endpoint2),
+			expectedS3UsePathStyle:        b(true),
 			expectedInsecure:              b(true),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID2),
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID2),
@@ -406,6 +462,108 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
 		},
+
+		{
+			name: "Read config.yml too permissive",
+			env: map[string]string{
+				"HOME": "{HOME}",
+			},
+			files: map[string]string{
+				".config/scw/config.yml": v2SimpleValidConfigFile,
+			},
+			perms:                         0o700,
+			expectedAccessKey:             s(v2ValidAccessKey),
+			expectedSecretKey:             s(v2ValidSecretKey),
+			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
+			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
+			expectedDefaultRegion:         s(v2ValidDefaultRegion),
+			expectedOutput: "WARNING: Scaleway configuration file permissions are too " +
+				"permissive. That is insecure.\nYou can fix it with the command 'chmod 0600 " +
+				"{HOME}/.config/scw/config.yml'",
+		},
+
+		{
+			name: "Read config.yml too permissive",
+			env: map[string]string{
+				"HOME": "{HOME}",
+			},
+			files: map[string]string{
+				".config/scw/config.yml": v2SimpleValidConfigFile,
+			},
+			perms:                         0o650,
+			expectedAccessKey:             s(v2ValidAccessKey),
+			expectedSecretKey:             s(v2ValidSecretKey),
+			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
+			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
+			expectedDefaultRegion:         s(v2ValidDefaultRegion),
+			expectedOutput: "WARNING: Scaleway configuration file permissions are too " +
+				"permissive. That is insecure.\nYou can fix it with the command 'chmod 0600 " +
+				"{HOME}/.config/scw/config.yml'",
+		},
+
+		{
+			name: "Read config.yml too permissive",
+			env: map[string]string{
+				"HOME": "{HOME}",
+			},
+			files: map[string]string{
+				".config/scw/config.yml": v2SimpleValidConfigFile,
+			},
+			perms:                         0o477,
+			expectedAccessKey:             s(v2ValidAccessKey),
+			expectedSecretKey:             s(v2ValidSecretKey),
+			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
+			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
+			expectedDefaultRegion:         s(v2ValidDefaultRegion),
+			expectedOutput: "WARNING: Scaleway configuration file permissions are too " +
+				"permissive. That is insecure.\nYou can fix it with the command 'chmod 0600 " +
+				"{HOME}/.config/scw/config.yml'",
+		},
+
+		{
+			name: "Read config.yml too permissive",
+			env: map[string]string{
+				"HOME": "{HOME}",
+			},
+			files: map[string]string{
+				".config/scw/config.yml": v2SimpleValidConfigFile,
+			},
+			perms:                         0o605,
+			expectedAccessKey:             s(v2ValidAccessKey),
+			expectedSecretKey:             s(v2ValidSecretKey),
+			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
+			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
+			expectedDefaultRegion:         s(v2ValidDefaultRegion),
+			expectedOutput: "WARNING: Scaleway configuration file permissions are too " +
+				"permissive. That is insecure.\nYou can fix it with the command 'chmod 0600 " +
+				"{HOME}/.config/scw/config.yml'",
+		},
+
+		{
+			name: "Read config.yml too restrictive",
+			env: map[string]string{
+				"HOME": "{HOME}",
+			},
+			files: map[string]string{
+				".config/scw/config.yml": v2SimpleValidConfigFile,
+			},
+			perms: 0o300,
+			expectedError: "scaleway-sdk-go: cannot read config file: " +
+				"open {HOME}/.config/scw/config.yml: permission denied",
+		},
+
+		{
+			name:                          "Read config.yml with correct permissions",
+			env:                           map[string]string{"HOME": "{HOME}"},
+			files:                         map[string]string{".config/scw/config.yml": v2SimpleValidConfigFile},
+			perms:                         0o600,
+			expectedOutput:                "",
+			expectedAccessKey:             s(v2ValidAccessKey),
+			expectedSecretKey:             s(v2ValidSecretKey),
+			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
+			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
+			expectedDefaultRegion:         s(v2ValidDefaultRegion),
+		},
 	}
 
 	// create home dir
@@ -417,13 +575,29 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			// set up env and config file(s)
-			setEnv(t, test.env, test.files, dir)
+			setEnvWithPerms(t, test.env, test.files, test.perms, dir)
 			test.expectedError = strings.ReplaceAll(test.expectedError, "{HOME}", dir)
+			test.expectedOutput = strings.ReplaceAll(test.expectedOutput, "{HOME}", dir)
 
 			// remove config file(s)
 			defer cleanEnv(t, test.files, dir)
 
+			// Temporarily capturing stdout
+			originalStdout := os.Stdout
+			r, w, _ := os.Pipe()
+			os.Stdout = w
+
+			// err is not checked here but later
 			config, err := LoadConfig()
+
+			// Giving back stdout
+			err2 := w.Close()
+			if err2 != nil {
+				t.Fatal(err2)
+			}
+
+			os.Stdout = originalStdout
+
 			if test.expectedError == "" {
 				testhelpers.AssertNoError(t, err)
 				p, err := config.GetActiveProfile()
@@ -433,6 +607,8 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 				testhelpers.Equals(t, test.expectedAccessKey, p.AccessKey)
 				testhelpers.Equals(t, test.expectedSecretKey, p.SecretKey)
 				testhelpers.Equals(t, test.expectedAPIURL, p.APIURL)
+				testhelpers.Equals(t, test.expectedS3Endpoint, p.S3Endpoint)
+				testhelpers.Equals(t, test.expectedS3UsePathStyle, p.S3UsePathStyle)
 				testhelpers.Equals(t, test.expectedDefaultOrganizationID, p.DefaultOrganizationID)
 				testhelpers.Equals(t, test.expectedDefaultProjectID, p.DefaultProjectID)
 				testhelpers.Equals(t, test.expectedDefaultRegion, p.DefaultRegion)
@@ -442,6 +618,16 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			} else {
 				testhelpers.Equals(t, test.expectedError, err.Error())
 			}
+
+			// In both cases, read captured stdout
+			var buf bytes.Buffer
+			_, err = io.Copy(&buf, r)
+			testhelpers.AssertNoError(t, err)
+			testhelpers.Assert(
+				t,
+				strings.Contains(buf.String(), test.expectedOutput),
+				fmt.Sprintf("expected\n%s\nto contain\n%s", buf.String(), test.expectedOutput),
+			)
 		})
 	}
 }
@@ -525,16 +711,26 @@ func cleanEnv(t *testing.T, files map[string]string, homeDir string) {
 
 func setEnv(t *testing.T, env, files map[string]string, homeDir string) {
 	t.Helper()
+	setEnvWithPerms(t, env, files, defaultConfigPermission, homeDir)
+}
+
+func setEnvWithPerms(t *testing.T, env, files map[string]string, perms os.FileMode, homeDir string) {
+	t.Helper()
 	os.Clearenv()
+
 	for key, value := range env {
 		value = strings.ReplaceAll(value, "{HOME}", homeDir)
 		testhelpers.AssertNoError(t, os.Setenv(key, value))
 	}
 
+	if perms == 0 {
+		perms = defaultConfigPermission
+	}
+
 	for path, content := range files {
 		targetPath := filepath.Join(homeDir, path)
 		testhelpers.AssertNoError(t, os.MkdirAll(filepath.Dir(targetPath), 0o700))
-		testhelpers.AssertNoError(t, os.WriteFile(targetPath, []byte(content), defaultConfigPermission))
+		testhelpers.AssertNoError(t, os.WriteFile(targetPath, []byte(content), perms))
 	}
 }
 
@@ -627,6 +823,17 @@ func TestConfig_ConfigFile(t *testing.T) {
 # Change that if you want to direct requests to a different endpoint.
 # api_url: https://api.scaleway.com
 
+# S3Endpoint overrides the endpoint of the Scaleway Object Storage API to the given URL.
+# Change that if you want to direct requests to a different S3-compatible endpoint.
+# s3_endpoint: https://s3.fr-par.scw.cloud
+
+# S3UsePathStyle enables path-style addressing for S3-compatible APIs.
+# Default to false
+# s3_use_path_style: false
+
+# UserAgent overrides the default user agent of your application.
+# user_agent: scaleway-sdk-go/VERSION (GOVERSION; GOOS; ARCH)
+
 # Insecure enables insecure transport on the client.
 # Default to false
 # insecure: false
@@ -658,7 +865,10 @@ func TestConfig_ConfigFile(t *testing.T) {
 #     default_zone: fr-par-1
 #     default_region: fr-par
 #     api_url: https://api.scaleway.com
+#     s3_endpoint: https://s3.fr-par.scw.cloud
+#     s3_use_path_style: false
 #     insecure: false
+#     user_agent: scaleway-sdk-go/VERSION (GOVERSION; GOOS; ARCH)
 `,
 	}))
 
@@ -706,6 +916,17 @@ access_key: SCW1234567890ABCDEFG
 # Change that if you want to direct requests to a different endpoint.
 # api_url: https://api.scaleway.com
 
+# S3Endpoint overrides the endpoint of the Scaleway Object Storage API to the given URL.
+# Change that if you want to direct requests to a different S3-compatible endpoint.
+# s3_endpoint: https://s3.fr-par.scw.cloud
+
+# S3UsePathStyle enables path-style addressing for S3-compatible APIs.
+# Default to false
+# s3_use_path_style: false
+
+# UserAgent overrides the default user agent of your application.
+# user_agent: scaleway-sdk-go/VERSION (GOVERSION; GOOS; ARCH)
+
 # Insecure enables insecure transport on the client.
 # Default to false
 # insecure: false
@@ -737,7 +958,10 @@ access_key: SCW1234567890ABCDEFG
 #     default_zone: fr-par-1
 #     default_region: fr-par
 #     api_url: https://api.scaleway.com
+#     s3_endpoint: https://s3.fr-par.scw.cloud
+#     s3_use_path_style: false
 #     insecure: false
+#     user_agent: scaleway-sdk-go/VERSION (GOVERSION; GOOS; ARCH)
 `,
 	}))
 
@@ -798,6 +1022,17 @@ secret_key: 7363616c-6577-6573-6862-6f7579616161
 # Change that if you want to direct requests to a different endpoint.
 # api_url: https://api.scaleway.com
 
+# S3Endpoint overrides the endpoint of the Scaleway Object Storage API to the given URL.
+# Change that if you want to direct requests to a different S3-compatible endpoint.
+# s3_endpoint: https://s3.fr-par.scw.cloud
+
+# S3UsePathStyle enables path-style addressing for S3-compatible APIs.
+# Default to false
+# s3_use_path_style: false
+
+# UserAgent overrides the default user agent of your application.
+# user_agent: scaleway-sdk-go/VERSION (GOVERSION; GOOS; ARCH)
+
 # Insecure enables insecure transport on the client.
 # Default to false
 # insecure: false
@@ -829,7 +1064,10 @@ profiles:
     # default_zone: fr-par-1
     # default_region: fr-par
     # api_url: https://api.scaleway.com
+    # s3_endpoint: https://s3.fr-par.scw.cloud
+    # s3_use_path_style: false
     # insecure: false
+    # user_agent: scaleway-sdk-go/VERSION (GOVERSION; GOOS; ARCH)
 
   profile2:
     access_key: SCW234567890ABCDEFGH
@@ -839,7 +1077,10 @@ profiles:
     # default_zone: fr-par-1
     # default_region: fr-par
     # api_url: https://api.scaleway.com
+    # s3_endpoint: https://s3.fr-par.scw.cloud
+    # s3_use_path_style: false
     # insecure: false
+    # user_agent: scaleway-sdk-go/VERSION (GOVERSION; GOOS; ARCH)
 `,
 	}))
 }
@@ -859,6 +1100,7 @@ profiles:
     # default_zone: fr-par-1
     # default_region: fr-pargs
     # api_url: https://api.scaleway.com
+    # s3_endpoint: https://s3.fr-par.scw.cloud
     # insecure: false
 
   profile2:

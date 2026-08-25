@@ -37,6 +37,7 @@ func cassetteRequestFilter(i *cassette.Interaction) error {
 	delete(i.Request.Headers, "x-auth-token")
 	delete(i.Request.Headers, "X-Auth-Token")
 	delete(i.Request.Headers, "Authorization")
+	delete(i.Request.Headers, "X-Registry-Auth")
 
 	// URL substitutions
 	i.Request.URL = regexp.MustCompile(`(.+)organization_id=[0-9a-f-]{36}(.+)`).
@@ -51,6 +52,14 @@ func cassetteRequestFilter(i *cassette.Interaction) error {
 			i.Request.URL,
 			"${1}SCWXXXXXXXXXXXXXXXXX${2}")
 
+	// Buildpacks
+	i.Request.URL = regexp.MustCompile(`pack\.local%2Fbuilder%2F[0-9a-f]{20}`).
+		ReplaceAllString(i.Request.URL, "pack.local%2Fbuilder%2F11111111111111111111")
+	i.Request.URL = regexp.MustCompile(`pack\.local/builder/[0-9a-f]{20}`).
+		ReplaceAllString(i.Request.URL, "pack.local/builder/11111111111111111111")
+	i.Request.Body = regexp.MustCompile(`pack\.local/builder/[0-9a-f]{20}`).
+		ReplaceAllString(i.Request.Body, "pack.local/builder/11111111111111111111")
+
 	return nil
 }
 
@@ -62,6 +71,10 @@ func cassetteResponseFilter(i *cassette.Interaction) error {
 
 	i.Response.Body = regexp.MustCompile(`"secret_key":"[0-9a-f-]{36}"`).
 		ReplaceAllString(i.Response.Body, `"secret_key":"11111111-1111-1111-1111-111111111111"`)
+
+	// Buildpacks
+	i.Response.Body = regexp.MustCompile(`pack\.local/builder/[0-9a-f]{20}`).
+		ReplaceAllString(i.Response.Body, "pack.local/builder/11111111111111111111")
 
 	return nil
 }
@@ -83,6 +96,9 @@ func NewHTTPRecorder(t *testing.T, pkgFolder string, update bool, realTransport 
 	recorderOptions := []recorder.Option{
 		// Ignore requests durations when replaying cassettes
 		recorder.WithSkipRequestLatency(true),
+		// Starting with v3, go-vcr now calls net/url.Parse to build the interaction which results in an error for escaped
+		// Docker URLs on Test_Deploy (container), so we need to unescape these paths on this step.
+		recorder.WithHook(unescapeDockerURL, recorder.AfterCaptureHook),
 		// Remove information that is either sensitive or that would disrupt matching from the request
 		recorder.WithHook(cassetteRequestFilter, recorder.BeforeSaveHook),
 		// Remove secrets and unnecessary information from the response

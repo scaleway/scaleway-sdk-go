@@ -439,8 +439,11 @@ type Deployment struct {
 	// Tags: tags of the Deployment.
 	Tags []string `json:"tags"`
 
-	// NodeAmount: number of nodes allocated per deployment.
-	NodeAmount uint32 `json:"node_amount"`
+	// Deprecated: NodeAmount: dEPRECATED: Use node_count instead. Number of nodes allocated per deployment.
+	NodeAmount uint32 `json:"node_amount,omitempty"`
+
+	// NodeCount: number of nodes allocated per deployment.
+	NodeCount uint32 `json:"node_count"`
 
 	// NodeType: node type used in deployment.
 	NodeType string `json:"node_type"`
@@ -529,8 +532,11 @@ type CreateDeploymentRequest struct {
 	// Tags: tags.
 	Tags []string `json:"tags"`
 
-	// NodeAmount: number of nodes.
-	NodeAmount uint32 `json:"node_amount"`
+	// Deprecated: NodeAmount: dEPRECATED: Use node_count instead. Number of nodes.
+	NodeAmount *uint32 `json:"node_amount,omitempty"`
+
+	// NodeCount: number of nodes.
+	NodeCount *uint32 `json:"node_count,omitempty"`
 
 	// NodeType: node type.
 	NodeType string `json:"node_type"`
@@ -608,8 +614,8 @@ type DeleteUserRequest struct {
 	Username string `json:"-"`
 }
 
-// GetDeploymentCertificateAuthorityRequest: get deployment certificate authority request.
-type GetDeploymentCertificateAuthorityRequest struct {
+// DownloadDeploymentCertificateAuthorityRequest: download deployment certificate authority request.
+type DownloadDeploymentCertificateAuthorityRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
@@ -651,9 +657,6 @@ type ListDeploymentsRequest struct {
 
 	// Name: deployment name to filter for.
 	Name *string `json:"-"`
-
-	// Version: engine version to filter for.
-	Version *string `json:"-"`
 }
 
 // ListDeploymentsResponse: Retrieve a list of deployments.
@@ -856,12 +859,16 @@ type UpgradeDeploymentRequest struct {
 	// DeploymentID: UUID of the Deployment to upgrade.
 	DeploymentID string `json:"-"`
 
-	// NodeAmount: amount of node upgrade target.
-	// Precisely one of NodeAmount, VolumeSizeBytes must be set.
+	// Deprecated: NodeAmount: dEPRECATED: Use node_count instead. Amount of node upgrade target.
+	// Precisely one of NodeAmount, NodeCount, VolumeSizeBytes must be set.
 	NodeAmount *uint32 `json:"node_amount,omitempty"`
 
+	// NodeCount: the target number of nodes for the upgrade.
+	// Precisely one of NodeAmount, NodeCount, VolumeSizeBytes must be set.
+	NodeCount *uint32 `json:"node_count,omitempty"`
+
 	// VolumeSizeBytes: volume size upgrade target.
-	// Precisely one of NodeAmount, VolumeSizeBytes must be set.
+	// Precisely one of NodeAmount, NodeCount, VolumeSizeBytes must be set.
 	VolumeSizeBytes *uint64 `json:"volume_size_bytes,omitempty"`
 }
 
@@ -1126,7 +1133,6 @@ func (s *API) ListDeployments(req *ListDeploymentsRequest, opts ...scw.RequestOp
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "tags", req.Tags)
 	parameter.AddToQuery(query, "name", req.Name)
-	parameter.AddToQuery(query, "version", req.Version)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -1437,8 +1443,8 @@ func (s *API) DeleteUser(req *DeleteUserRequest, opts ...scw.RequestOption) erro
 	return nil
 }
 
-// GetDeploymentCertificateAuthority:
-func (s *API) GetDeploymentCertificateAuthority(req *GetDeploymentCertificateAuthorityRequest, opts ...scw.RequestOption) (*scw.File, error) {
+// DownloadDeploymentCertificateAuthority:
+func (s *API) DownloadDeploymentCertificateAuthority(req *DownloadDeploymentCertificateAuthorityRequest, opts ...scw.RequestOption) (*scw.File, error) {
 	var err error
 
 	if req.Region == "" {

@@ -768,6 +768,9 @@ type Server struct {
 
 	// AppliedRunnerConfigurationIDs: runner configurations applied on the server, optional.
 	AppliedRunnerConfigurationIDs []string `json:"applied_runner_configuration_ids"`
+
+	// KextEnabled: status of kernel extensions for the server.
+	KextEnabled bool `json:"kext_enabled"`
 }
 
 // ConnectivityDiagnosticServerHealth: connectivity diagnostic server health.
@@ -1610,7 +1613,7 @@ func (s *API) ListOS(req *ListOSRequest, opts ...scw.RequestOption) (*ListOSResp
 	return &resp, nil
 }
 
-// GetOS: Get an Operating System (OS).  The response will include the OS's unique ID as well as its name and label.
+// GetOS: Get an Operating System (OS). The response will include the OS's unique ID as well as its name and label.
 func (s *API) GetOS(req *GetOSRequest, opts ...scw.RequestOption) (*OS, error) {
 	var err error
 

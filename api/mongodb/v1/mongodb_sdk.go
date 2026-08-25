@@ -571,6 +571,16 @@ func (enum *VolumeType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// EngineUpgrade: engine upgrade.
+type EngineUpgrade struct {
+	NewVersionID string `json:"new_version_id"`
+}
+
+// ServiceUpdate: service update.
+type ServiceUpdate struct {
+	ServiceName string `json:"service_name"`
+}
+
 // EndpointPrivateNetworkDetails: Private Network details.
 type EndpointPrivateNetworkDetails struct {
 	// PrivateNetworkID: UUID of the Private Network.
@@ -580,14 +590,13 @@ type EndpointPrivateNetworkDetails struct {
 // EndpointPublicNetworkDetails: Public Access details.
 type EndpointPublicNetworkDetails struct{}
 
-// EngineUpgrade: engine upgrade.
-type EngineUpgrade struct {
-	NewVersionID string `json:"new_version_id"`
-}
+// Workflow: workflow.
+type Workflow struct {
+	// Precisely one of EngineUpgrade, ServiceUpdate must be set.
+	EngineUpgrade *EngineUpgrade `json:"engine_upgrade,omitempty"`
 
-// ServiceUpdate: service update.
-type ServiceUpdate struct {
-	ServiceName string `json:"service_name"`
+	// Precisely one of EngineUpgrade, ServiceUpdate must be set.
+	ServiceUpdate *ServiceUpdate `json:"service_update,omitempty"`
 }
 
 // EndpointSpecPrivateNetworkDetails: endpoint spec private network details.
@@ -619,6 +628,13 @@ type Endpoint struct {
 	PublicNetwork *EndpointPublicNetworkDetails `json:"public_network,omitempty"`
 }
 
+// InstanceSetting: instance setting.
+type InstanceSetting struct {
+	Name string `json:"name"`
+
+	Value string `json:"value"`
+}
+
 // InstanceSnapshotSchedule: instance snapshot schedule.
 type InstanceSnapshotSchedule struct {
 	FrequencyHours int32 `json:"frequency_hours"`
@@ -632,6 +648,44 @@ type InstanceSnapshotSchedule struct {
 	LastRun *time.Time `json:"last_run"`
 }
 
+// Maintenance: maintenance.
+type Maintenance struct {
+	// ID: ID of the maintenance.
+	ID string `json:"id"`
+
+	// InstanceID: ID of the instance on which the maintenance is applied.
+	InstanceID string `json:"instance_id"`
+
+	// CreatedAt: creation date of the maintenance.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// StartsAt: start date of the maintenance.
+	StartsAt *time.Time `json:"starts_at"`
+
+	// StopsAt: stop date of the maintenance.
+	StopsAt *time.Time `json:"stops_at"`
+
+	// Status: current status of the maintenance.
+	// Default value: unknown_status
+	Status MaintenanceStatus `json:"status"`
+
+	// ForcedAt: forced application date of the maintenance.
+	ForcedAt *time.Time `json:"forced_at"`
+
+	// AppliedAt: application date of the maintenance.
+	AppliedAt *time.Time `json:"applied_at"`
+
+	// AppliedBy: usertype who launched the maintenance.
+	// Default value: unknown_applied_by
+	AppliedBy MaintenanceAppliedBy `json:"applied_by"`
+
+	// Workflow: workflow to be applied during maintenance.
+	Workflow *Workflow `json:"workflow"`
+
+	// Reason: reason of the maintenance.
+	Reason string `json:"reason"`
+}
+
 // Volume: volume.
 type Volume struct {
 	// Type: type of volume where data is stored.
@@ -640,15 +694,6 @@ type Volume struct {
 
 	// SizeBytes: volume size.
 	SizeBytes scw.Size `json:"size_bytes"`
-}
-
-// Workflow: workflow.
-type Workflow struct {
-	// Precisely one of EngineUpgrade, ServiceUpdate must be set.
-	EngineUpgrade *EngineUpgrade `json:"engine_upgrade,omitempty"`
-
-	// Precisely one of EngineUpgrade, ServiceUpdate must be set.
-	ServiceUpdate *ServiceUpdate `json:"service_update,omitempty"`
 }
 
 // NodeTypeVolumeType: node type volume type.
@@ -743,44 +788,15 @@ type Instance struct {
 
 	// SnapshotSchedule: snapshot schedule configuration of the Database Instance.
 	SnapshotSchedule *InstanceSnapshotSchedule `json:"snapshot_schedule"`
-}
 
-// Maintenance: maintenance.
-type Maintenance struct {
-	// ID: ID of the maintenance.
-	ID string `json:"id"`
+	// Settings: list of settings applied to the Database Instance.
+	Settings []*InstanceSetting `json:"settings"`
 
-	// InstanceID: ID of the instance on which the maintenance is applied.
-	InstanceID string `json:"instance_id"`
+	// Maintenances: list of pending maintenances applicable to the Database Instance.
+	Maintenances []*Maintenance `json:"maintenances"`
 
-	// CreatedAt: creation date of the maintenance.
-	CreatedAt *time.Time `json:"created_at"`
-
-	// StartsAt: start date of the maintenance.
-	StartsAt *time.Time `json:"starts_at"`
-
-	// StopsAt: stop date of the maintenance.
-	StopsAt *time.Time `json:"stops_at"`
-
-	// Status: current status of the maintenance.
-	// Default value: unknown_status
-	Status MaintenanceStatus `json:"status"`
-
-	// ForcedAt: forced application date of the maintenance.
-	ForcedAt *time.Time `json:"forced_at"`
-
-	// AppliedAt: application date of the maintenance.
-	AppliedAt *time.Time `json:"applied_at"`
-
-	// AppliedBy: usertype who launched the maintenance.
-	// Default value: unknown_applied_by
-	AppliedBy MaintenanceAppliedBy `json:"applied_by"`
-
-	// Workflow: workflow to be applied during maintenance.
-	Workflow *Workflow `json:"workflow"`
-
-	// Reason: reason of the maintenance.
-	Reason string `json:"reason"`
+	// UpgradableVersions: list of MongoDB® versions the Database Instance can be upgraded to.
+	UpgradableVersions []string `json:"upgradable_versions"`
 }
 
 // NodeType: node type.
@@ -871,6 +887,9 @@ type Version struct {
 
 	// EndOfLifeAt: date of End of Life.
 	EndOfLifeAt *time.Time `json:"end_of_life_at"`
+
+	// ReleasedAt: date of Release.
+	ReleasedAt *time.Time `json:"released_at"`
 }
 
 // ApplyMaintenanceRequest: apply maintenance request.
@@ -1099,6 +1118,9 @@ type ListInstancesRequest struct {
 
 	// ProjectID: project ID to list the instances of.
 	ProjectID *string `json:"-"`
+
+	// HasMaintenance: retrieve pending maintenances for the database instances if given.
+	HasMaintenance *bool `json:"-"`
 
 	Page *int32 `json:"-"`
 
@@ -1461,11 +1483,12 @@ type UpgradeInstanceRequest struct {
 	InstanceID string `json:"-"`
 
 	// VolumeSizeBytes: increase your Block Storage volume size.
-	// Precisely one of VolumeSizeBytes, VersionID must be set.
+	// Precisely one of VolumeSizeBytes, Version must be set.
 	VolumeSizeBytes *scw.Size `json:"volume_size_bytes,omitempty"`
 
-	// Precisely one of VolumeSizeBytes, VersionID must be set.
-	VersionID *string `json:"version_id,omitempty"`
+	// Version: mongoDB version to upgrade to (e.g., `8.0`, `7.0`, `8.2`).
+	// Precisely one of VolumeSizeBytes, Version must be set.
+	Version *string `json:"version,omitempty"`
 }
 
 // This API allows you to manage your Managed Databases for MongoDB®.
@@ -1580,6 +1603,7 @@ func (s *API) ListInstances(req *ListInstancesRequest, opts ...scw.RequestOption
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "has_maintenance", req.HasMaintenance)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 

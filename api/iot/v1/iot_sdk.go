@@ -2759,7 +2759,7 @@ func (s *API) ListNetworks(req *ListNetworksRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-// CreateNetwork: Create a new network for an existing hub.  Beside the default network, you can add networks for different data providers. Possible network types are Sigfox and REST.
+// CreateNetwork: Create a new network for an existing hub. Beside the default network, you can add networks for different data providers. Possible network types are Sigfox and REST.
 func (s *API) CreateNetwork(req *CreateNetworkRequest, opts ...scw.RequestOption) (*CreateNetworkResponse, error) {
 	var err error
 
@@ -2795,7 +2795,7 @@ func (s *API) CreateNetwork(req *CreateNetworkRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-// GetNetwork: Retrieve an existing network, specified by its network ID.  The response returns full details of the network, including its type, the topic prefix and its endpoint.
+// GetNetwork: Retrieve an existing network, specified by its network ID. The response returns full details of the network, including its type, the topic prefix and its endpoint.
 func (s *API) GetNetwork(req *GetNetworkRequest, opts ...scw.RequestOption) (*Network, error) {
 	var err error
 

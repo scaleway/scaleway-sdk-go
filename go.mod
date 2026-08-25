@@ -1,13 +1,11 @@
 module github.com/scaleway/scaleway-sdk-go
 
-go 1.24.0
-
-toolchain go1.24.1
+go 1.25.0
 
 require (
-	golang.org/x/text v0.34.0
-	gopkg.in/dnaeon/go-vcr.v4 v4.0.6
+	golang.org/x/text v0.41.0
+	gopkg.in/dnaeon/go-vcr.v4 v4.0.7
 	gopkg.in/yaml.v2 v2.4.0
 )
 
-require go.yaml.in/yaml/v4 v4.0.0-rc.4 // indirect
+require go.yaml.in/yaml/v4 v4.0.0-rc.6 // indirect

@@ -237,6 +237,7 @@ const (
 	ExporterStatusReady = ExporterStatus("ready")
 	// The data export encountered an error and stopped sending data.
 	ExporterStatusError = ExporterStatus("error")
+	ExporterStatusIdle  = ExporterStatus("idle")
 )
 
 func (enum ExporterStatus) String() string {
@@ -253,6 +254,7 @@ func (enum ExporterStatus) Values() []ExporterStatus {
 		"creating",
 		"ready",
 		"error",
+		"idle",
 	}
 }
 
@@ -883,6 +885,9 @@ type Exporter struct {
 
 	// UpdatedAt: a timestamp of the last update date of the data export.
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	// Region: the region in which the export is located.
+	Region scw.Region `json:"region"`
 }
 
 // GrafanaProductDashboard: Grafana dashboard.

@@ -280,6 +280,92 @@ func (enum *AuthenticationEventResult) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type CustomAlertRuleSeverity string
+
+const (
+	CustomAlertRuleSeverityUnknownSeverity = CustomAlertRuleSeverity("unknown_severity")
+	CustomAlertRuleSeverityInfo            = CustomAlertRuleSeverity("info")
+	CustomAlertRuleSeverityError           = CustomAlertRuleSeverity("error")
+	CustomAlertRuleSeverityWarning         = CustomAlertRuleSeverity("warning")
+	CustomAlertRuleSeverityCritical        = CustomAlertRuleSeverity("critical")
+)
+
+func (enum CustomAlertRuleSeverity) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(CustomAlertRuleSeverityUnknownSeverity)
+	}
+	return string(enum)
+}
+
+func (enum CustomAlertRuleSeverity) Values() []CustomAlertRuleSeverity {
+	return []CustomAlertRuleSeverity{
+		"unknown_severity",
+		"info",
+		"error",
+		"warning",
+		"critical",
+	}
+}
+
+func (enum CustomAlertRuleSeverity) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *CustomAlertRuleSeverity) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = CustomAlertRuleSeverity(CustomAlertRuleSeverity(tmp).String())
+	return nil
+}
+
+type CustomAlertRuleStatus string
+
+const (
+	CustomAlertRuleStatusUnknownStatus = CustomAlertRuleStatus("unknown_status")
+	CustomAlertRuleStatusEnabled       = CustomAlertRuleStatus("enabled")
+	CustomAlertRuleStatusDisabled      = CustomAlertRuleStatus("disabled")
+	CustomAlertRuleStatusEnabling      = CustomAlertRuleStatus("enabling")
+	CustomAlertRuleStatusDisabling     = CustomAlertRuleStatus("disabling")
+)
+
+func (enum CustomAlertRuleStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(CustomAlertRuleStatusUnknownStatus)
+	}
+	return string(enum)
+}
+
+func (enum CustomAlertRuleStatus) Values() []CustomAlertRuleStatus {
+	return []CustomAlertRuleStatus{
+		"unknown_status",
+		"enabled",
+		"disabled",
+		"enabling",
+		"disabling",
+	}
+}
+
+func (enum CustomAlertRuleStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *CustomAlertRuleStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = CustomAlertRuleStatus(CustomAlertRuleStatus(tmp).String())
+	return nil
+}
+
 type ExportJobStatusCode string
 
 const (
@@ -471,87 +557,155 @@ func (enum *ListExportJobsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListSystemEventsRequestOrderBy string
+
+const (
+	ListSystemEventsRequestOrderByRecordedAtDesc = ListSystemEventsRequestOrderBy("recorded_at_desc")
+	ListSystemEventsRequestOrderByRecordedAtAsc  = ListSystemEventsRequestOrderBy("recorded_at_asc")
+)
+
+func (enum ListSystemEventsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListSystemEventsRequestOrderByRecordedAtDesc)
+	}
+	return string(enum)
+}
+
+func (enum ListSystemEventsRequestOrderBy) Values() []ListSystemEventsRequestOrderBy {
+	return []ListSystemEventsRequestOrderBy{
+		"recorded_at_desc",
+		"recorded_at_asc",
+	}
+}
+
+func (enum ListSystemEventsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListSystemEventsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListSystemEventsRequestOrderBy(ListSystemEventsRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ResourceType string
 
 const (
-	ResourceTypeUnknownType              = ResourceType("unknown_type")
-	ResourceTypeSecmSecret               = ResourceType("secm_secret")
-	ResourceTypeSecmSecretVersion        = ResourceType("secm_secret_version")
-	ResourceTypeKubeCluster              = ResourceType("kube_cluster")
-	ResourceTypeKubePool                 = ResourceType("kube_pool")
-	ResourceTypeKubeNode                 = ResourceType("kube_node")
-	ResourceTypeKubeACL                  = ResourceType("kube_acl")
-	ResourceTypeKeymKey                  = ResourceType("keym_key")
-	ResourceTypeIamUser                  = ResourceType("iam_user")
-	ResourceTypeIamApplication           = ResourceType("iam_application")
-	ResourceTypeIamGroup                 = ResourceType("iam_group")
-	ResourceTypeIamPolicy                = ResourceType("iam_policy")
-	ResourceTypeIamAPIKey                = ResourceType("iam_api_key")
-	ResourceTypeIamSSHKey                = ResourceType("iam_ssh_key")
-	ResourceTypeIamRule                  = ResourceType("iam_rule")
-	ResourceTypeIamSaml                  = ResourceType("iam_saml")
-	ResourceTypeIamSamlCertificate       = ResourceType("iam_saml_certificate")
-	ResourceTypeIamScim                  = ResourceType("iam_scim")
-	ResourceTypeIamScimToken             = ResourceType("iam_scim_token")
-	ResourceTypeSecretManagerSecret      = ResourceType("secret_manager_secret")
-	ResourceTypeSecretManagerVersion     = ResourceType("secret_manager_version")
-	ResourceTypeKeyManagerKey            = ResourceType("key_manager_key")
-	ResourceTypeAccountUser              = ResourceType("account_user")
-	ResourceTypeAccountOrganization      = ResourceType("account_organization")
-	ResourceTypeAccountProject           = ResourceType("account_project")
-	ResourceTypeAccountContractSignature = ResourceType("account_contract_signature")
-	ResourceTypeInstanceServer           = ResourceType("instance_server")
-	ResourceTypeInstancePlacementGroup   = ResourceType("instance_placement_group")
-	ResourceTypeInstanceSecurityGroup    = ResourceType("instance_security_group")
-	ResourceTypeInstanceVolume           = ResourceType("instance_volume")
-	ResourceTypeInstanceSnapshot         = ResourceType("instance_snapshot")
-	ResourceTypeInstanceImage            = ResourceType("instance_image")
-	ResourceTypeInstanceTemplate         = ResourceType("instance_template")
-	ResourceTypeAppleSiliconServer       = ResourceType("apple_silicon_server")
-	ResourceTypeBaremetalServer          = ResourceType("baremetal_server")
-	ResourceTypeBaremetalSetting         = ResourceType("baremetal_setting")
-	ResourceTypeIpamIP                   = ResourceType("ipam_ip")
-	ResourceTypeSbsVolume                = ResourceType("sbs_volume")
-	ResourceTypeSbsSnapshot              = ResourceType("sbs_snapshot")
-	ResourceTypeLoadBalancerLB           = ResourceType("load_balancer_lb")
-	ResourceTypeLoadBalancerIP           = ResourceType("load_balancer_ip")
-	ResourceTypeLoadBalancerFrontend     = ResourceType("load_balancer_frontend")
-	ResourceTypeLoadBalancerBackend      = ResourceType("load_balancer_backend")
-	ResourceTypeLoadBalancerRoute        = ResourceType("load_balancer_route")
-	ResourceTypeLoadBalancerACL          = ResourceType("load_balancer_acl")
-	ResourceTypeLoadBalancerCertificate  = ResourceType("load_balancer_certificate")
-	ResourceTypeSfsFilesystem            = ResourceType("sfs_filesystem")
-	ResourceTypeVpcPrivateNetwork        = ResourceType("vpc_private_network")
-	ResourceTypeVpcVpc                   = ResourceType("vpc_vpc")
-	ResourceTypeVpcSubnet                = ResourceType("vpc_subnet")
-	ResourceTypeVpcRoute                 = ResourceType("vpc_route")
-	ResourceTypeVpcACL                   = ResourceType("vpc_acl")
-	ResourceTypeEdgeServicesPlan         = ResourceType("edge_services_plan")
-	ResourceTypeEdgeServicesPipeline     = ResourceType("edge_services_pipeline")
-	ResourceTypeEdgeServicesDNSStage     = ResourceType("edge_services_dns_stage")
-	ResourceTypeEdgeServicesTLSStage     = ResourceType("edge_services_tls_stage")
-	ResourceTypeEdgeServicesCacheStage   = ResourceType("edge_services_cache_stage")
-	ResourceTypeEdgeServicesRouteStage   = ResourceType("edge_services_route_stage")
-	ResourceTypeEdgeServicesRouteRules   = ResourceType("edge_services_route_rules")
-	ResourceTypeEdgeServicesWafStage     = ResourceType("edge_services_waf_stage")
-	ResourceTypeEdgeServicesBackendStage = ResourceType("edge_services_backend_stage")
-	ResourceTypeS2sVpnGateway            = ResourceType("s2s_vpn_gateway")
-	ResourceTypeS2sCustomerGateway       = ResourceType("s2s_customer_gateway")
-	ResourceTypeS2sRoutingPolicy         = ResourceType("s2s_routing_policy")
-	ResourceTypeS2sConnection            = ResourceType("s2s_connection")
-	ResourceTypeVpcGwGateway             = ResourceType("vpc_gw_gateway")
-	ResourceTypeVpcGwGatewayNetwork      = ResourceType("vpc_gw_gateway_network")
-	ResourceTypeVpcGwDHCP                = ResourceType("vpc_gw_dhcp")
-	ResourceTypeVpcGwDHCPEntry           = ResourceType("vpc_gw_dhcp_entry")
-	ResourceTypeVpcGwPatRule             = ResourceType("vpc_gw_pat_rule")
-	ResourceTypeVpcGwIP                  = ResourceType("vpc_gw_ip")
-	ResourceTypeAuditTrailExportJob      = ResourceType("audit_trail_export_job")
-	ResourceTypeRdbInstance              = ResourceType("rdb_instance")
-	ResourceTypeRdbInstanceBackup        = ResourceType("rdb_instance_backup")
-	ResourceTypeRdbInstanceEndpoint      = ResourceType("rdb_instance_endpoint")
-	ResourceTypeRdbInstanceLogs          = ResourceType("rdb_instance_logs")
-	ResourceTypeRdbInstanceReadReplica   = ResourceType("rdb_instance_read_replica")
-	ResourceTypeRdbInstanceSnapshot      = ResourceType("rdb_instance_snapshot")
+	ResourceTypeUnknownType                     = ResourceType("unknown_type")
+	ResourceTypeSecmSecret                      = ResourceType("secm_secret")
+	ResourceTypeSecmSecretVersion               = ResourceType("secm_secret_version")
+	ResourceTypeKubeCluster                     = ResourceType("kube_cluster")
+	ResourceTypeKubePool                        = ResourceType("kube_pool")
+	ResourceTypeKubeNode                        = ResourceType("kube_node")
+	ResourceTypeKubeACL                         = ResourceType("kube_acl")
+	ResourceTypeKeymKey                         = ResourceType("keym_key")
+	ResourceTypeIamUser                         = ResourceType("iam_user")
+	ResourceTypeIamApplication                  = ResourceType("iam_application")
+	ResourceTypeIamGroup                        = ResourceType("iam_group")
+	ResourceTypeIamPolicy                       = ResourceType("iam_policy")
+	ResourceTypeIamAPIKey                       = ResourceType("iam_api_key")
+	ResourceTypeIamSSHKey                       = ResourceType("iam_ssh_key")
+	ResourceTypeIamRule                         = ResourceType("iam_rule")
+	ResourceTypeIamSaml                         = ResourceType("iam_saml")
+	ResourceTypeIamSamlCertificate              = ResourceType("iam_saml_certificate")
+	ResourceTypeIamScim                         = ResourceType("iam_scim")
+	ResourceTypeIamScimToken                    = ResourceType("iam_scim_token")
+	ResourceTypeSecretManagerSecret             = ResourceType("secret_manager_secret")
+	ResourceTypeSecretManagerVersion            = ResourceType("secret_manager_version")
+	ResourceTypeKeyManagerKey                   = ResourceType("key_manager_key")
+	ResourceTypeAccountUser                     = ResourceType("account_user")
+	ResourceTypeAccountOrganization             = ResourceType("account_organization")
+	ResourceTypeAccountProject                  = ResourceType("account_project")
+	ResourceTypeAccountContractSignature        = ResourceType("account_contract_signature")
+	ResourceTypeInstanceServer                  = ResourceType("instance_server")
+	ResourceTypeInstancePlacementGroup          = ResourceType("instance_placement_group")
+	ResourceTypeInstanceSecurityGroup           = ResourceType("instance_security_group")
+	ResourceTypeInstanceVolume                  = ResourceType("instance_volume")
+	ResourceTypeInstanceSnapshot                = ResourceType("instance_snapshot")
+	ResourceTypeInstanceImage                   = ResourceType("instance_image")
+	ResourceTypeInstanceTemplate                = ResourceType("instance_template")
+	ResourceTypeInstancePrivateNetworkInterface = ResourceType("instance_private_network_interface")
+	ResourceTypeAppleSiliconServer              = ResourceType("apple_silicon_server")
+	ResourceTypeBaremetalServer                 = ResourceType("baremetal_server")
+	ResourceTypeBaremetalSetting                = ResourceType("baremetal_setting")
+	ResourceTypeIpamIP                          = ResourceType("ipam_ip")
+	ResourceTypeSbsVolume                       = ResourceType("sbs_volume")
+	ResourceTypeSbsSnapshot                     = ResourceType("sbs_snapshot")
+	ResourceTypeLoadBalancerLB                  = ResourceType("load_balancer_lb")
+	ResourceTypeLoadBalancerIP                  = ResourceType("load_balancer_ip")
+	ResourceTypeLoadBalancerFrontend            = ResourceType("load_balancer_frontend")
+	ResourceTypeLoadBalancerBackend             = ResourceType("load_balancer_backend")
+	ResourceTypeLoadBalancerRoute               = ResourceType("load_balancer_route")
+	ResourceTypeLoadBalancerACL                 = ResourceType("load_balancer_acl")
+	ResourceTypeLoadBalancerCertificate         = ResourceType("load_balancer_certificate")
+	ResourceTypeSfsFilesystem                   = ResourceType("sfs_filesystem")
+	ResourceTypeVpcPrivateNetwork               = ResourceType("vpc_private_network")
+	ResourceTypeVpcVpc                          = ResourceType("vpc_vpc")
+	ResourceTypeVpcSubnet                       = ResourceType("vpc_subnet")
+	ResourceTypeVpcRoute                        = ResourceType("vpc_route")
+	ResourceTypeVpcACL                          = ResourceType("vpc_acl")
+	ResourceTypeVpcConnector                    = ResourceType("vpc_connector")
+	ResourceTypeVpcIngressRule                  = ResourceType("vpc_ingress_rule")
+	ResourceTypeEdgeServicesPlan                = ResourceType("edge_services_plan")
+	ResourceTypeEdgeServicesPipeline            = ResourceType("edge_services_pipeline")
+	ResourceTypeEdgeServicesVpcEndpoint         = ResourceType("edge_services_vpc_endpoint")
+	ResourceTypeEdgeServicesDNSStage            = ResourceType("edge_services_dns_stage")
+	ResourceTypeEdgeServicesTLSStage            = ResourceType("edge_services_tls_stage")
+	ResourceTypeEdgeServicesCacheStage          = ResourceType("edge_services_cache_stage")
+	ResourceTypeEdgeServicesRouteStage          = ResourceType("edge_services_route_stage")
+	ResourceTypeEdgeServicesRouteRules          = ResourceType("edge_services_route_rules")
+	ResourceTypeEdgeServicesWafStage            = ResourceType("edge_services_waf_stage")
+	ResourceTypeEdgeServicesBackendStage        = ResourceType("edge_services_backend_stage")
+	ResourceTypeS2sVpnGateway                   = ResourceType("s2s_vpn_gateway")
+	ResourceTypeS2sCustomerGateway              = ResourceType("s2s_customer_gateway")
+	ResourceTypeS2sRoutingPolicy                = ResourceType("s2s_routing_policy")
+	ResourceTypeS2sConnection                   = ResourceType("s2s_connection")
+	ResourceTypeVpcGwGateway                    = ResourceType("vpc_gw_gateway")
+	ResourceTypeVpcGwGatewayNetwork             = ResourceType("vpc_gw_gateway_network")
+	ResourceTypeVpcGwDHCP                       = ResourceType("vpc_gw_dhcp")
+	ResourceTypeVpcGwDHCPEntry                  = ResourceType("vpc_gw_dhcp_entry")
+	ResourceTypeVpcGwPatRule                    = ResourceType("vpc_gw_pat_rule")
+	ResourceTypeVpcGwIP                         = ResourceType("vpc_gw_ip")
+	ResourceTypeAuditTrailExportJob             = ResourceType("audit_trail_export_job")
+	ResourceTypeRdbInstance                     = ResourceType("rdb_instance")
+	ResourceTypeRdbInstanceBackup               = ResourceType("rdb_instance_backup")
+	ResourceTypeRdbInstanceEndpoint             = ResourceType("rdb_instance_endpoint")
+	ResourceTypeRdbInstanceLogs                 = ResourceType("rdb_instance_logs")
+	ResourceTypeRdbInstanceReadReplica          = ResourceType("rdb_instance_read_replica")
+	ResourceTypeRdbInstanceSnapshot             = ResourceType("rdb_instance_snapshot")
+	ResourceTypeMongodbInstance                 = ResourceType("mongodb_instance")
+	ResourceTypeMongodbInstanceSnapshot         = ResourceType("mongodb_instance_snapshot")
+	ResourceTypeMongodbInstanceEndpoint         = ResourceType("mongodb_instance_endpoint")
+	ResourceTypeMongodbInstanceMaintenance      = ResourceType("mongodb_instance_maintenance")
+	ResourceTypeAppleSiliconRunner              = ResourceType("apple_silicon_runner")
+	ResourceTypeAuditTrailAlertRule             = ResourceType("audit_trail_alert_rule")
+	ResourceTypeAuditTrailCustomAlertRule       = ResourceType("audit_trail_custom_alert_rule")
+	ResourceTypeDtwhDeployment                  = ResourceType("dtwh_deployment")
+	ResourceTypeDtwhDeploymentEndpoint          = ResourceType("dtwh_deployment_endpoint")
+	ResourceTypeDtwhDeploymentDatabase          = ResourceType("dtwh_deployment_database")
+	ResourceTypeDtwhDeploymentUser              = ResourceType("dtwh_deployment_user")
+	ResourceTypeSsdbDatabase                    = ResourceType("ssdb_database")
+	ResourceTypeSsdbDatabaseBackup              = ResourceType("ssdb_database_backup")
+	ResourceTypeObservabilityDatasource         = ResourceType("observability_datasource")
+	ResourceTypeObservabilityToken              = ResourceType("observability_token")
+	ResourceTypeObservabilityExporter           = ResourceType("observability_exporter")
+	ResourceTypeIliPartner                      = ResourceType("ili_partner")
+	ResourceTypeIliConnection                   = ResourceType("ili_connection")
+	ResourceTypeIliLink                         = ResourceType("ili_link")
+	ResourceTypeIliRoutingPolicy                = ResourceType("ili_routing_policy")
+	ResourceTypeAutoscalingGroup                = ResourceType("autoscaling_group")
+	ResourceTypeGapiDedicatedDeployment         = ResourceType("gapi_dedicated_deployment")
+	ResourceTypeGapiDedicatedModel              = ResourceType("gapi_dedicated_model")
+	ResourceTypeServerlessContainersNamespace   = ResourceType("serverless_containers_namespace")
+	ResourceTypeServerlessContainersContainer   = ResourceType("serverless_containers_container")
+	ResourceTypeServerlessContainersDomain      = ResourceType("serverless_containers_domain")
+	ResourceTypeServerlessContainersTrigger     = ResourceType("serverless_containers_trigger")
 )
 
 func (enum ResourceType) String() string {
@@ -597,6 +751,7 @@ func (enum ResourceType) Values() []ResourceType {
 		"instance_snapshot",
 		"instance_image",
 		"instance_template",
+		"instance_private_network_interface",
 		"apple_silicon_server",
 		"baremetal_server",
 		"baremetal_setting",
@@ -616,8 +771,11 @@ func (enum ResourceType) Values() []ResourceType {
 		"vpc_subnet",
 		"vpc_route",
 		"vpc_acl",
+		"vpc_connector",
+		"vpc_ingress_rule",
 		"edge_services_plan",
 		"edge_services_pipeline",
+		"edge_services_vpc_endpoint",
 		"edge_services_dns_stage",
 		"edge_services_tls_stage",
 		"edge_services_cache_stage",
@@ -642,6 +800,33 @@ func (enum ResourceType) Values() []ResourceType {
 		"rdb_instance_logs",
 		"rdb_instance_read_replica",
 		"rdb_instance_snapshot",
+		"mongodb_instance",
+		"mongodb_instance_snapshot",
+		"mongodb_instance_endpoint",
+		"mongodb_instance_maintenance",
+		"apple_silicon_runner",
+		"audit_trail_alert_rule",
+		"audit_trail_custom_alert_rule",
+		"dtwh_deployment",
+		"dtwh_deployment_endpoint",
+		"dtwh_deployment_database",
+		"dtwh_deployment_user",
+		"ssdb_database",
+		"ssdb_database_backup",
+		"observability_datasource",
+		"observability_token",
+		"observability_exporter",
+		"ili_partner",
+		"ili_connection",
+		"ili_link",
+		"ili_routing_policy",
+		"autoscaling_group",
+		"gapi_dedicated_deployment",
+		"gapi_dedicated_model",
+		"serverless_containers_namespace",
+		"serverless_containers_container",
+		"serverless_containers_domain",
+		"serverless_containers_trigger",
 	}
 }
 
@@ -657,6 +842,47 @@ func (enum *ResourceType) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = ResourceType(ResourceType(tmp).String())
+	return nil
+}
+
+type ServerlessContainersTriggerInfoSourceType string
+
+const (
+	ServerlessContainersTriggerInfoSourceTypeUnknownSourceType = ServerlessContainersTriggerInfoSourceType("unknown_source_type")
+	ServerlessContainersTriggerInfoSourceTypeCron              = ServerlessContainersTriggerInfoSourceType("cron")
+	ServerlessContainersTriggerInfoSourceTypeSqs               = ServerlessContainersTriggerInfoSourceType("sqs")
+	ServerlessContainersTriggerInfoSourceTypeNats              = ServerlessContainersTriggerInfoSourceType("nats")
+)
+
+func (enum ServerlessContainersTriggerInfoSourceType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ServerlessContainersTriggerInfoSourceTypeUnknownSourceType)
+	}
+	return string(enum)
+}
+
+func (enum ServerlessContainersTriggerInfoSourceType) Values() []ServerlessContainersTriggerInfoSourceType {
+	return []ServerlessContainersTriggerInfoSourceType{
+		"unknown_source_type",
+		"cron",
+		"sqs",
+		"nats",
+	}
+}
+
+func (enum ServerlessContainersTriggerInfoSourceType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ServerlessContainersTriggerInfoSourceType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ServerlessContainersTriggerInfoSourceType(ServerlessContainersTriggerInfoSourceType(tmp).String())
 	return nil
 }
 
@@ -740,12 +966,25 @@ type AccountUserInfo struct {
 	PhoneNumber *string `json:"phone_number"`
 }
 
+// AppleSiliconRunnerInfo: apple silicon runner info.
+type AppleSiliconRunnerInfo struct {
+	ID string `json:"id"`
+
+	Name string `json:"name"`
+}
+
 // AppleSiliconServerInfo: apple silicon server info.
 type AppleSiliconServerInfo struct {
 	ID string `json:"id"`
 
 	Name string `json:"name"`
 }
+
+// AuditTrailAlertRuleInfo: audit trail alert rule info.
+type AuditTrailAlertRuleInfo struct{}
+
+// AuditTrailCustomAlertRuleInfo: audit trail custom alert rule info.
+type AuditTrailCustomAlertRuleInfo struct{}
 
 // AuditTrailExportJobInfo: audit trail export job info.
 type AuditTrailExportJobInfo struct{}
@@ -800,9 +1039,23 @@ type EdgeServicesTLSStageInfo struct {
 	PipelineID *string `json:"pipeline_id"`
 }
 
+// EdgeServicesVPCEndpointInfo: edge services vpc endpoint info.
+type EdgeServicesVPCEndpointInfo struct {
+	PrivateNetworkID string `json:"private_network_id"`
+}
+
 // EdgeServicesWAFStageInfo: edge services waf stage info.
 type EdgeServicesWAFStageInfo struct {
 	PipelineID *string `json:"pipeline_id"`
+}
+
+// InstancePrivateNetworkInterfaceInfo: instance private network interface info.
+type InstancePrivateNetworkInterfaceInfo struct {
+	PrivateNetworkID string `json:"private_network_id"`
+
+	ServerID *string `json:"server_id"`
+
+	SecurityGroupID *string `json:"security_group_id"`
 }
 
 // InstanceServerInfo: instance server info.
@@ -883,6 +1136,16 @@ type LoadBalancerRouteInfo struct {
 	BackendID string `json:"backend_id"`
 }
 
+// ObservabilityAlertRuleInfo: observability alert rule info.
+type ObservabilityAlertRuleInfo struct {
+	RuleIDs []string `json:"rule_ids"`
+}
+
+// ObservabilityContactPointInfo: observability contact point info.
+type ObservabilityContactPointInfo struct {
+	Email string `json:"email"`
+}
+
 // SecretManagerSecretInfo: secret manager secret info.
 type SecretManagerSecretInfo struct {
 	Path string `json:"path"`
@@ -893,6 +1156,34 @@ type SecretManagerSecretInfo struct {
 // SecretManagerSecretVersionInfo: secret manager secret version info.
 type SecretManagerSecretVersionInfo struct {
 	Revision uint32 `json:"revision"`
+}
+
+// ServerlessContainersContainerInfo: serverless containers container info.
+type ServerlessContainersContainerInfo struct {
+	NamespaceID string `json:"namespace_id"`
+}
+
+// ServerlessContainersDomainInfo: serverless containers domain info.
+type ServerlessContainersDomainInfo struct {
+	ContainerID string `json:"container_id"`
+}
+
+// ServerlessContainersNamespaceInfo: serverless containers namespace info.
+type ServerlessContainersNamespaceInfo struct{}
+
+// ServerlessContainersTriggerInfo: serverless containers trigger info.
+type ServerlessContainersTriggerInfo struct {
+	ContainerID string `json:"container_id"`
+
+	// SourceType: default value: unknown_source_type
+	SourceType ServerlessContainersTriggerInfoSourceType `json:"source_type"`
+}
+
+// VpcConnectorInfo: vpc connector info.
+type VpcConnectorInfo struct {
+	VpcID string `json:"vpc_id"`
+
+	TargetVpcID string `json:"target_vpc_id"`
 }
 
 // VpcGwGatewayInfo: vpc gw gateway info.
@@ -911,6 +1202,17 @@ type VpcGwGatewayNetworkInfo struct {
 	PnID string `json:"pn_id"`
 
 	Address *scw.IPNet `json:"address"`
+}
+
+// VpcIngressRuleInfo: vpc ingress rule info.
+type VpcIngressRuleInfo struct {
+	VpcID string `json:"vpc_id"`
+
+	Source scw.IPNet `json:"source"`
+
+	NexthopPrivateNetworkID string `json:"nexthop_private_network_id"`
+
+	NexthopResourceIP net.IP `json:"nexthop_resource_ip"`
 }
 
 // VpcPrivateNetworkInfo: vpc private network info.
@@ -953,132 +1255,173 @@ type Resource struct {
 
 	Name *string `json:"name"`
 
+	Action *string `json:"action"`
+
 	// Deprecated
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	SecmSecretInfo *SecretManagerSecretInfo `json:"secm_secret_info,omitempty"`
 
 	// Deprecated
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	SecmSecretVersionInfo *SecretManagerSecretVersionInfo `json:"secm_secret_version_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	KubeClusterInfo *KubernetesClusterInfo `json:"kube_cluster_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	KubePoolInfo *KubernetesPoolInfo `json:"kube_pool_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	KubeNodeInfo *KubernetesNodeInfo `json:"kube_node_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	KubeACLInfo *KubernetesACLInfo `json:"kube_acl_info,omitempty"`
 
 	// Deprecated
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	KeymKeyInfo *KeyManagerKeyInfo `json:"keym_key_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	SecretManagerSecretInfo *SecretManagerSecretInfo `json:"secret_manager_secret_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	SecretManagerVersionInfo *SecretManagerSecretVersionInfo `json:"secret_manager_version_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	KeyManagerKeyInfo *KeyManagerKeyInfo `json:"key_manager_key_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	AccountUserInfo *AccountUserInfo `json:"account_user_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	AccountOrganizationInfo *AccountOrganizationInfo `json:"account_organization_info,omitempty"`
 
 	// Deprecated
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	InstanceServerInfo *InstanceServerInfo `json:"instance_server_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	AppleSiliconServerInfo *AppleSiliconServerInfo `json:"apple_silicon_server_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	AccountProjectInfo *AccountProjectInfo `json:"account_project_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	BaremetalServerInfo *BaremetalServerInfo `json:"baremetal_server_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	BaremetalSettingInfo *BaremetalSettingInfo `json:"baremetal_setting_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	IpamIPInfo *IpamIPInfo `json:"ipam_ip_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	LoadBalancerLBInfo *LoadBalancerLBInfo `json:"load_balancer_lb_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	LoadBalancerIPInfo *LoadBalancerIPInfo `json:"load_balancer_ip_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	LoadBalancerFrontendInfo *LoadBalancerFrontendInfo `json:"load_balancer_frontend_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	LoadBalancerBackendInfo *LoadBalancerBackendInfo `json:"load_balancer_backend_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	LoadBalancerRouteInfo *LoadBalancerRouteInfo `json:"load_balancer_route_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	LoadBalancerACLInfo *LoadBalancerACLInfo `json:"load_balancer_acl_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	LoadBalancerCertificateInfo *LoadBalancerCertificateInfo `json:"load_balancer_certificate_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	EdgeServicesPlanInfo *EdgeServicesPlanInfo `json:"edge_services_plan_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	EdgeServicesPipelineInfo *EdgeServicesPipelineInfo `json:"edge_services_pipeline_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	EdgeServicesDNSStageInfo *EdgeServicesDNSStageInfo `json:"edge_services_dns_stage_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	EdgeServicesTLSStageInfo *EdgeServicesTLSStageInfo `json:"edge_services_tls_stage_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	EdgeServicesCacheStageInfo *EdgeServicesCacheStageInfo `json:"edge_services_cache_stage_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	EdgeServicesRouteStageInfo *EdgeServicesRouteStageInfo `json:"edge_services_route_stage_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	EdgeServicesRouteRulesInfo *EdgeServicesRouteRulesInfo `json:"edge_services_route_rules_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	EdgeServicesWafStageInfo *EdgeServicesWAFStageInfo `json:"edge_services_waf_stage_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	EdgeServicesBackendStageInfo *EdgeServicesBackendStageInfo `json:"edge_services_backend_stage_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	AccountContractSignatureInfo *AccountContractSignatureInfo `json:"account_contract_signature_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	VpcSubnetInfo *VpcSubnetInfo `json:"vpc_subnet_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	VpcRouteInfo *VpcRouteInfo `json:"vpc_route_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	VpcPrivateNetworkInfo *VpcPrivateNetworkInfo `json:"vpc_private_network_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	AuditTrailExportJobInfo *AuditTrailExportJobInfo `json:"audit_trail_export_job_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	VpcGwGatewayInfo *VpcGwGatewayInfo `json:"vpc_gw_gateway_info,omitempty"`
 
-	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo must be set.
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
 	VpcGwGatewayNetworkInfo *VpcGwGatewayNetworkInfo `json:"vpc_gw_gateway_network_info,omitempty"`
+
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
+	AppleSiliconRunnerInfo *AppleSiliconRunnerInfo `json:"apple_silicon_runner_info,omitempty"`
+
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
+	AuditTrailAlertRuleInfo *AuditTrailAlertRuleInfo `json:"audit_trail_alert_rule_info,omitempty"`
+
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
+	VpcConnectorInfo *VpcConnectorInfo `json:"vpc_connector_info,omitempty"`
+
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
+	InstancePrivateNetworkInterfaceInfo *InstancePrivateNetworkInterfaceInfo `json:"instance_private_network_interface_info,omitempty"`
+
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
+	VpcIngressRuleInfo *VpcIngressRuleInfo `json:"vpc_ingress_rule_info,omitempty"`
+
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
+	ObservabilityContactPointInfo *ObservabilityContactPointInfo `json:"observability_contact_point_info,omitempty"`
+
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
+	ObservabilityAlertRuleInfo *ObservabilityAlertRuleInfo `json:"observability_alert_rule_info,omitempty"`
+
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
+	EdgeServicesVpcEndpointInfo *EdgeServicesVPCEndpointInfo `json:"edge_services_vpc_endpoint_info,omitempty"`
+
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
+	AuditTrailCustomAlertRuleInfo *AuditTrailCustomAlertRuleInfo `json:"audit_trail_custom_alert_rule_info,omitempty"`
+
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
+	ServerlessContainersNamespaceInfo *ServerlessContainersNamespaceInfo `json:"serverless_containers_namespace_info,omitempty"`
+
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
+	ServerlessContainersContainerInfo *ServerlessContainersContainerInfo `json:"serverless_containers_container_info,omitempty"`
+
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
+	ServerlessContainersDomainInfo *ServerlessContainersDomainInfo `json:"serverless_containers_domain_info,omitempty"`
+
+	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo must be set.
+	ServerlessContainersTriggerInfo *ServerlessContainersTriggerInfo `json:"serverless_containers_trigger_info,omitempty"`
 }
 
 // EventPrincipal: event principal.
@@ -1182,26 +1525,36 @@ type Event struct {
 
 // SystemEvent: system event.
 type SystemEvent struct {
+	// ID: ID of the system event.
 	ID string `json:"id"`
 
+	// RecordedAt: timestamp of the system event.
 	RecordedAt *time.Time `json:"recorded_at"`
 
+	// Locality: locality of the system event.
 	Locality string `json:"locality"`
 
+	// OrganizationID: organization ID containing the system event.
 	OrganizationID string `json:"organization_id"`
 
+	// ProjectID: project of the resource attached to the system event.
 	ProjectID *string `json:"project_id"`
 
+	// ProductName: name of the Scaleway product in a hyphenated format.
+	ProductName string `json:"product_name"`
+
+	// Source: source of the system event.
 	Source string `json:"source"`
 
+	// SystemName: name of the jobs, notification, etc.
 	SystemName string `json:"system_name"`
 
+	// Resources: resources attached to the event.
 	Resources []*Resource `json:"resources"`
 
-	// Kind: default value: unknown_kind
+	// Kind: source of the event (unknown, cron or notification).
+	// Default value: unknown_kind
 	Kind SystemEventKind `json:"kind"`
-
-	ProductName string `json:"product_name"`
 }
 
 // ExportJobS3: export job s3.
@@ -1245,6 +1598,41 @@ type AlertRule struct {
 	// Status: current status of the alert rule.
 	// Default value: unknown_status
 	Status AlertRuleStatus `json:"status"`
+}
+
+// CustomAlertRule: custom alert rule.
+type CustomAlertRule struct {
+	// ID: ID of the alert rule.
+	ID string `json:"id"`
+
+	// Name: name of the alert rule.
+	Name string `json:"name"`
+
+	// Description: (Optional) Description of the alert rule.
+	Description *string `json:"description"`
+
+	// Status: current status of the alert rule.
+	// Default value: unknown_status
+	Status CustomAlertRuleStatus `json:"status"`
+
+	// Query: the Common Expression Language (CEL) string defining the logic for the alert rule.
+	Query string `json:"query"`
+
+	// EvaluationWindow: the duration of time over which to evaluate the rule (how far back to look for matching events).
+	EvaluationWindow *scw.Duration `json:"evaluation_window"`
+
+	// Occurrences: the minimum number of matched occurrences required within the evaluation window to trigger the alert.
+	Occurrences uint32 `json:"occurrences"`
+
+	// Severity: the severity level assigned to the custom alert rule.
+	// Default value: unknown_severity
+	Severity CustomAlertRuleSeverity `json:"severity"`
+
+	// CreatedAt: custom alert rule creation date.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: custom alert rule last modification date.
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 // ListCombinedEventsResponseCombinedEvent: list combined events response combined event.
@@ -1299,6 +1687,34 @@ type Product struct {
 	Services []*ProductService `json:"services"`
 }
 
+// CreateCustomAlertRuleRequest: create custom alert rule request.
+type CreateCustomAlertRuleRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// OrganizationID: ID of the Organization to target.
+	OrganizationID string `json:"organization_id"`
+
+	// Name: name of the custom alert rule.
+	Name string `json:"name"`
+
+	// Description: (Optional) Description of the custom alert rule.
+	Description *string `json:"description,omitempty"`
+
+	// Query: the Common Expression Language (CEL) string defining the logic for the alert rule.
+	Query string `json:"query"`
+
+	// EvaluationWindow: the duration of time over which to evaluate the rule (how far back to look for matching events).
+	EvaluationWindow *scw.Duration `json:"evaluation_window,omitempty"`
+
+	// Occurrences: the minimum number of matched occurrences required within the evaluation window to trigger the alert.
+	Occurrences uint32 `json:"occurrences"`
+
+	// Severity: (Optional) The severity level assigned to the custom alert rule. By default, the severity will be set to info.
+	// Default value: unknown_severity
+	Severity CustomAlertRuleSeverity `json:"severity"`
+}
+
 // CreateExportJobRequest: create export job request.
 type CreateExportJobRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1316,6 +1732,15 @@ type CreateExportJobRequest struct {
 
 	// Tags: tags of the export.
 	Tags []string `json:"tags"`
+}
+
+// DeleteCustomAlertRuleRequest: delete custom alert rule request.
+type DeleteCustomAlertRuleRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// CustomAlertRuleID: ID of the custom alert rule to delete.
+	CustomAlertRuleID string `json:"-"`
 }
 
 // DeleteExportJobRequest: delete export job request.
@@ -1341,8 +1766,26 @@ type DisableAlertRulesRequest struct {
 
 // DisableAlertRulesResponse: disable alert rules response.
 type DisableAlertRulesResponse struct {
-	// AlertRules: list of the rules that were disabled.
+	// AlertRules: list of the preconfigured rules that were disabled.
 	AlertRules []*AlertRule `json:"alert_rules"`
+}
+
+// DisableCustomAlertRulesRequest: disable custom alert rules request.
+type DisableCustomAlertRulesRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// OrganizationID: ID of the Organization to target.
+	OrganizationID string `json:"organization_id"`
+
+	// CustomAlertRuleIDs: list of IDs of the custom rules to disable.
+	CustomAlertRuleIDs []string `json:"custom_alert_rule_ids"`
+}
+
+// DisableCustomAlertRulesResponse: disable custom alert rules response.
+type DisableCustomAlertRulesResponse struct {
+	// CustomAlertRules: list of the custom rules that were disabled.
+	CustomAlertRules []*CustomAlertRule `json:"custom_alert_rules"`
 }
 
 // EnableAlertRulesRequest: enable alert rules request.
@@ -1359,8 +1802,41 @@ type EnableAlertRulesRequest struct {
 
 // EnableAlertRulesResponse: enable alert rules response.
 type EnableAlertRulesResponse struct {
-	// AlertRules: list of the rules that were enabled.
+	// AlertRules: list of the preconfigured rules that were enabled.
 	AlertRules []*AlertRule `json:"alert_rules"`
+}
+
+// EnableCustomAlertRulesRequest: enable custom alert rules request.
+type EnableCustomAlertRulesRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// OrganizationID: ID of the Organization to target.
+	OrganizationID string `json:"organization_id"`
+
+	// CustomAlertRuleIDs: list of IDs of the custom rules to enable.
+	CustomAlertRuleIDs []string `json:"custom_alert_rule_ids"`
+}
+
+// EnableCustomAlertRulesResponse: enable custom alert rules response.
+type EnableCustomAlertRulesResponse struct {
+	// CustomAlertRules: list of the custom rules that were enabled.
+	CustomAlertRules []*CustomAlertRule `json:"custom_alert_rules"`
+}
+
+// EventsOverview: events overview.
+type EventsOverview struct {
+	LastEvents []*Event `json:"last_events"`
+}
+
+// GetLastEventsOverviewRequest: get last events overview request.
+type GetLastEventsOverviewRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	OrganizationID string `json:"-"`
+
+	ProjectID *string `json:"-"`
 }
 
 // ListAlertRulesRequest: list alert rules request.
@@ -1382,7 +1858,7 @@ type ListAlertRulesRequest struct {
 
 // ListAlertRulesResponse: list alert rules response.
 type ListAlertRulesResponse struct {
-	// AlertRules: single page of alert rules matching the requested criteria.
+	// AlertRules: single page of preconfigured alert rules matching the requested criteria.
 	AlertRules []*AlertRule `json:"alert_rules"`
 
 	// TotalCount: total count of alert rules matching the requested criteria.
@@ -1463,6 +1939,51 @@ type ListCombinedEventsResponse struct {
 	Events []*ListCombinedEventsResponseCombinedEvent `json:"events"`
 
 	NextPageToken *string `json:"next_page_token"`
+}
+
+// ListCustomAlertRulesRequest: list custom alert rules request.
+type ListCustomAlertRulesRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// OrganizationID: ID of the Organization to target.
+	OrganizationID string `json:"-"`
+
+	// Status: (Optional) Status of the custom alert rule.
+	// Default value: unknown_status
+	Status *CustomAlertRuleStatus `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+}
+
+// ListCustomAlertRulesResponse: list custom alert rules response.
+type ListCustomAlertRulesResponse struct {
+	// CustomAlertRules: single page of custom alert rules matching the requested criteria.
+	CustomAlertRules []*CustomAlertRule `json:"custom_alert_rules"`
+
+	// TotalCount: total count of custom alert rules matching the requested criteria.
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListCustomAlertRulesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListCustomAlertRulesResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListCustomAlertRulesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.CustomAlertRules = append(r.CustomAlertRules, results.CustomAlertRules...)
+	r.TotalCount += uint64(len(results.CustomAlertRules))
+	return uint64(len(results.CustomAlertRules)), nil
 }
 
 // ListEventsRequest: list events request.
@@ -1611,6 +2132,37 @@ func (r *ListProductsResponse) UnsafeAppend(res any) (uint64, error) {
 	return uint64(len(results.Products)), nil
 }
 
+// ListSystemEventsRequest: list system events request.
+type ListSystemEventsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// OrganizationID: ID of the Organization containing the Audit Trail system events.
+	OrganizationID string `json:"-"`
+
+	// RecordedAfter: (Optional) The `recorded_after` parameter defines the earliest timestamp from which Audit Trail system events are retrieved. Returns `one hour ago` by default.
+	RecordedAfter *time.Time `json:"-"`
+
+	// RecordedBefore: (Optional) The `recorded_before` parameter defines the latest timestamp up to which Audit Trail system events are retrieved. Returns `now` by default.
+	RecordedBefore *time.Time `json:"-"`
+
+	// OrderBy: default value: recorded_at_desc
+	OrderBy ListSystemEventsRequestOrderBy `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+
+	PageToken *string `json:"-"`
+}
+
+// ListSystemEventsResponse: list system events response.
+type ListSystemEventsResponse struct {
+	// Events: single page of system events matching the requested criteria.
+	Events []*SystemEvent `json:"events"`
+
+	// NextPageToken: page token to use in following calls to keep listing.
+	NextPageToken *string `json:"next_page_token"`
+}
+
 // SetEnabledAlertRulesRequest: set enabled alert rules request.
 type SetEnabledAlertRulesRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1625,8 +2177,41 @@ type SetEnabledAlertRulesRequest struct {
 
 // SetEnabledAlertRulesResponse: set enabled alert rules response.
 type SetEnabledAlertRulesResponse struct {
-	// AlertRules: list of the rules that were enabled.
+	// AlertRules: list of the preconfigured rules that were enabled.
 	AlertRules []*AlertRule `json:"alert_rules"`
+}
+
+// SetEnabledCustomAlertRulesRequest: set enabled custom alert rules request.
+type SetEnabledCustomAlertRulesRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// OrganizationID: ID of the Organization to target.
+	OrganizationID string `json:"organization_id"`
+
+	// EnabledCustomAlertRuleIDs: list of IDs of the custom rules that must be enabled after the update.
+	EnabledCustomAlertRuleIDs []string `json:"enabled_custom_alert_rule_ids"`
+}
+
+// SetEnabledCustomAlertRulesResponse: set enabled custom alert rules response.
+type SetEnabledCustomAlertRulesResponse struct {
+	// CustomAlertRules: list of the custom rules that were enabled.
+	CustomAlertRules []*CustomAlertRule `json:"custom_alert_rules"`
+}
+
+// UpdateCustomAlertRuleRequest: update custom alert rule request.
+type UpdateCustomAlertRuleRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// CustomAlertRuleID: ID of the custom alert rule to update.
+	CustomAlertRuleID string `json:"-"`
+
+	// Name: (Optional) New name for the custom alert rule.
+	Name *string `json:"name,omitempty"`
+
+	// Description: (Optional) New description for the custom alert rule.
+	Description *string `json:"description,omitempty"`
 }
 
 // This API allows you to ensure accountability and security by recording events and changes performed within your Scaleway Organization.
@@ -1746,6 +2331,52 @@ func (s *API) ListAuthenticationEvents(req *ListAuthenticationEventsRequest, opt
 	return &resp, nil
 }
 
+// ListSystemEvents: Retrieve the list of Audit Trail system events for a Scaleway Organization. You must specify the `organization_id`.
+func (s *API) ListSystemEvents(req *ListSystemEventsRequest, opts ...scw.RequestOption) (*ListSystemEventsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "recorded_after", req.RecordedAfter)
+	parameter.AddToQuery(query, "recorded_before", req.RecordedBefore)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "page_token", req.PageToken)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/audit-trail/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/system-events",
+		Query:  query,
+	}
+
+	var resp ListSystemEventsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 // ListCombinedEvents:
 func (s *API) ListCombinedEvents(req *ListCombinedEventsRequest, opts ...scw.RequestOption) (*ListCombinedEventsResponse, error) {
 	var err error
@@ -1822,6 +2453,43 @@ func (s *API) ListProducts(req *ListProductsRequest, opts ...scw.RequestOption) 
 	}
 
 	var resp ListProductsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetLastEventsOverview:
+func (s *API) GetLastEventsOverview(req *GetLastEventsOverviewRequest, opts ...scw.RequestOption) (*EventsOverview, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/audit-trail/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/last-events-overview",
+		Query:  query,
+	}
+
+	var resp EventsOverview
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -1986,6 +2654,50 @@ func (s *API) ListAlertRules(req *ListAlertRulesRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
+// ListCustomAlertRules: List custom alert rules for a specified organization and their current status (enabled or disabled).
+func (s *API) ListCustomAlertRules(req *ListCustomAlertRulesRequest, opts ...scw.RequestOption) (*ListCustomAlertRulesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+	parameter.AddToQuery(query, "status", req.Status)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/audit-trail/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/custom-alert-rules",
+		Query:  query,
+	}
+
+	var resp ListCustomAlertRulesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 // EnableAlertRules: Enable alert rules for a specified organization. Enabled rules will trigger alerts when matching events occur.
 func (s *API) EnableAlertRules(req *EnableAlertRulesRequest, opts ...scw.RequestOption) (*EnableAlertRulesResponse, error) {
 	var err error
@@ -2015,6 +2727,43 @@ func (s *API) EnableAlertRules(req *EnableAlertRulesRequest, opts ...scw.Request
 	}
 
 	var resp EnableAlertRulesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// EnableCustomAlertRules: Enable custom alert rules for a specified organization. Enabled custom rules will trigger alerts when matching events occur.
+func (s *API) EnableCustomAlertRules(req *EnableCustomAlertRulesRequest, opts ...scw.RequestOption) (*EnableCustomAlertRulesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/audit-trail/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/enable-custom-alert-rules",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp EnableCustomAlertRulesResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -2060,6 +2809,43 @@ func (s *API) DisableAlertRules(req *DisableAlertRulesRequest, opts ...scw.Reque
 	return &resp, nil
 }
 
+// DisableCustomAlertRules: Disable custom alert rules for a specified organization. Disabled rules will no longer trigger alerts when matching events occur.
+func (s *API) DisableCustomAlertRules(req *DisableCustomAlertRulesRequest, opts ...scw.RequestOption) (*DisableCustomAlertRulesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/audit-trail/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/disable-custom-alert-rules",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp DisableCustomAlertRulesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 // SetEnabledAlertRules: Set the alert rules to enabled by replacing the set of enabled alert rules for a specified organization. The provided list defines the complete set of rules that should be enabled. Any previously enabled rule not included in the request will be disabled.
 func (s *API) SetEnabledAlertRules(req *SetEnabledAlertRulesRequest, opts ...scw.RequestOption) (*SetEnabledAlertRulesResponse, error) {
 	var err error
@@ -2095,4 +2881,143 @@ func (s *API) SetEnabledAlertRules(req *SetEnabledAlertRulesRequest, opts ...scw
 		return nil, err
 	}
 	return &resp, nil
+}
+
+// SetEnabledCustomAlertRules: Set the custom alert rules to enabled by replacing the set of enabled custom alert rules for a specified organization. The provided list defines the complete set of custom rules that should be enabled. Any previously enabled custom rule not included in the request will be disabled.
+func (s *API) SetEnabledCustomAlertRules(req *SetEnabledCustomAlertRulesRequest, opts ...scw.RequestOption) (*SetEnabledCustomAlertRulesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PUT",
+		Path:   "/audit-trail/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/custom-alert-rules",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp SetEnabledCustomAlertRulesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// CreateCustomAlertRule: Create a custom alert rule in a given region specified by the `region` parameter.
+func (s *API) CreateCustomAlertRule(req *CreateCustomAlertRuleRequest, opts ...scw.RequestOption) (*CustomAlertRule, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/audit-trail/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/custom-alert-rules",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp CustomAlertRule
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UpdateCustomAlertRule: Modify a custom alert rule's metadata including name and description, specified by the `alert_rule_id` and `region` parameters.
+func (s *API) UpdateCustomAlertRule(req *UpdateCustomAlertRuleRequest, opts ...scw.RequestOption) (*CustomAlertRule, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.CustomAlertRuleID) == "" {
+		return nil, errors.New("field CustomAlertRuleID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/audit-trail/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/custom-alert-rules/" + fmt.Sprint(req.CustomAlertRuleID) + "",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp CustomAlertRule
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteCustomAlertRule: Permanently delete a custom alert rule specified by the `region` and `alert_rule_id` parameters. This action is irreversible.
+func (s *API) DeleteCustomAlertRule(req *DeleteCustomAlertRuleRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.CustomAlertRuleID) == "" {
+		return errors.New("field CustomAlertRuleID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/audit-trail/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/custom-alert-rules/" + fmt.Sprint(req.CustomAlertRuleID) + "",
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
 }

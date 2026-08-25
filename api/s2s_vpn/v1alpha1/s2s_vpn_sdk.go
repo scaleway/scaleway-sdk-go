@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"text/template"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
@@ -655,13 +656,11 @@ type VpnGatewayPublicConfig struct {
 	IpamIPv6ID *string `json:"ipam_ipv6_id"`
 }
 
-// CreateConnectionRequestBgpConfig: create connection request bgp config.
-type CreateConnectionRequestBgpConfig struct {
-	RoutingPolicyID string `json:"routing_policy_id"`
+// ChangeConnectionPskRequestSecret: change connection psk request secret.
+type ChangeConnectionPskRequestSecret struct {
+	ID string `json:"id"`
 
-	PrivateIP *scw.IPNet `json:"private_ip"`
-
-	PeerPrivateIP *scw.IPNet `json:"peer_private_ip"`
+	Revision *uint32 `json:"revision"`
 }
 
 // Connection: connection.
@@ -747,6 +746,57 @@ type Connection struct {
 
 	// Region: region of the connection.
 	Region scw.Region `json:"region"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *Connection) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		Connection
+		Platform string
+	}{
+		Connection: *m,
+		Platform:   platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://s2s-vpn.{{ notempty .Platform }}/regions/{{ notempty .Region }}/connections/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
+}
+
+// CreateConnectionRequestBgpConfig: create connection request bgp config.
+type CreateConnectionRequestBgpConfig struct {
+	RoutingPolicyID string `json:"routing_policy_id"`
+
+	PrivateIP *scw.IPNet `json:"private_ip"`
+
+	PeerPrivateIP *scw.IPNet `json:"peer_private_ip"`
+}
+
+// CreateConnectionRequestSecret: create connection request secret.
+type CreateConnectionRequestSecret struct {
+	ID string `json:"id"`
+
+	Revision *uint32 `json:"revision"`
 }
 
 // CreateVpnGatewayRequestPublicConfig: create vpn gateway request public config.
@@ -805,6 +855,41 @@ type CustomerGateway struct {
 
 	// Region: region of the customer gateway.
 	Region scw.Region `json:"region"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *CustomerGateway) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		CustomerGateway
+		Platform string
+	}{
+		CustomerGateway: *m,
+		Platform:        platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://s2s-vpn.{{ notempty .Platform }}/regions/{{ notempty .Region }}/customer-gateways/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // RoutingPolicy: routing policy.
@@ -841,6 +926,41 @@ type RoutingPolicy struct {
 
 	// Region: region of the routing policy.
 	Region scw.Region `json:"region"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *RoutingPolicy) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		RoutingPolicy
+		Platform string
+	}{
+		RoutingPolicy: *m,
+		Platform:      platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://s2s-vpn.{{ notempty .Platform }}/regions/{{ notempty .Region }}/routing-policies/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // GatewayType: gateway type.
@@ -914,6 +1034,59 @@ type VpnGateway struct {
 
 	// Region: region of the VPN gateway.
 	Region scw.Region `json:"region"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *VpnGateway) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		VpnGateway
+		Platform string
+	}{
+		VpnGateway: *m,
+		Platform:   platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://s2s-vpn.{{ notempty .Platform }}/zones/{{ notempty .Zone }}/vpn-gateways/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
+}
+
+// ChangeConnectionPskRequest: change connection psk request.
+type ChangeConnectionPskRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// ConnectionID: ID of the connection to renew the PSK.
+	ConnectionID string `json:"-"`
+
+	// Secret: new PSK Secret of the connection.
+	Secret *ChangeConnectionPskRequestSecret `json:"secret"`
+}
+
+// ChangeConnectionPskResponse: change connection psk response.
+type ChangeConnectionPskResponse struct {
+	// Connection: this connection.
+	Connection *Connection `json:"connection"`
 }
 
 // CreateConnectionRequest: create connection request.
@@ -945,6 +1118,9 @@ type CreateConnectionRequest struct {
 
 	// EnableRoutePropagation: defines whether route propagation is enabled or not.
 	EnableRoutePropagation bool `json:"enable_route_propagation"`
+
+	// Secret: specifies the pre-shared key used for the IPsec tunnel.
+	Secret *CreateConnectionRequestSecret `json:"secret,omitempty"`
 
 	// VpnGatewayID: ID of the VPN gateway to attach to the connection.
 	VpnGatewayID string `json:"vpn_gateway_id"`
@@ -1459,6 +1635,9 @@ type RenewConnectionPskRequest struct {
 
 	// ConnectionID: ID of the connection to renew the PSK.
 	ConnectionID string `json:"-"`
+
+	// GenerateRevision: generate a new revision or update to the latest existing one.
+	GenerateRevision *bool `json:"generate_revision,omitempty"`
 }
 
 // RenewConnectionPskResponse: renew connection psk response.
@@ -1585,7 +1764,7 @@ func NewAPI(client *scw.Client) *API {
 }
 
 func (s *API) Regions() []scw.Region {
-	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
+	return []scw.Region{scw.RegionFrPar, scw.RegionItMil, scw.RegionNlAms, scw.RegionPlWaw}
 }
 
 // ListVpnGatewayTypes: List the different VPN gateway commercial offer types available at Scaleway. The response is an array of objects describing the name and technical details of each available VPN gateway type.
@@ -1667,6 +1846,12 @@ func (s *API) ListVpnGateways(req *ListVpnGatewaysRequest, opts ...scw.RequestOp
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Gateways {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -1697,6 +1882,10 @@ func (s *API) GetVpnGateway(req *GetVpnGatewayRequest, opts ...scw.RequestOption
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1789,6 +1978,10 @@ func (s *API) CreateVpnGateway(req *CreateVpnGatewayRequest, opts ...scw.Request
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1825,6 +2018,10 @@ func (s *API) UpdateVpnGateway(req *UpdateVpnGatewayRequest, opts ...scw.Request
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1855,6 +2052,10 @@ func (s *API) DeleteVpnGateway(req *DeleteVpnGatewayRequest, opts ...scw.Request
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1904,6 +2105,12 @@ func (s *API) ListConnections(req *ListConnectionsRequest, opts ...scw.RequestOp
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Connections {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -1934,6 +2141,10 @@ func (s *API) GetConnection(req *GetConnectionRequest, opts ...scw.RequestOption
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2008,6 +2219,10 @@ func (s *API) UpdateConnection(req *UpdateConnectionRequest, opts ...scw.Request
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -2076,6 +2291,42 @@ func (s *API) RenewConnectionPsk(req *RenewConnectionPskRequest, opts ...scw.Req
 	return &resp, nil
 }
 
+// ChangeConnectionPsk: Change pre-shared key for a given connection.
+func (s *API) ChangeConnectionPsk(req *ChangeConnectionPskRequest, opts ...scw.RequestOption) (*ChangeConnectionPskResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ConnectionID) == "" {
+		return nil, errors.New("field ConnectionID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/s2s-vpn/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/connections/" + fmt.Sprint(req.ConnectionID) + "/change-psk",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp ChangeConnectionPskResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 // SetRoutingPolicy: Set a new routing policy on a connection, overriding the existing one if present, specified by its connection ID.
 func (s *API) SetRoutingPolicy(req *SetRoutingPolicyRequest, opts ...scw.RequestOption) (*Connection, error) {
 	var err error
@@ -2108,6 +2359,10 @@ func (s *API) SetRoutingPolicy(req *SetRoutingPolicyRequest, opts ...scw.Request
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2145,6 +2400,10 @@ func (s *API) DetachRoutingPolicy(req *DetachRoutingPolicyRequest, opts ...scw.R
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -2181,6 +2440,10 @@ func (s *API) EnableRoutePropagation(req *EnableRoutePropagationRequest, opts ..
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -2216,6 +2479,10 @@ func (s *API) DisableRoutePropagation(req *DisableRoutePropagationRequest, opts 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2259,6 +2526,12 @@ func (s *API) ListCustomerGateways(req *ListCustomerGatewaysRequest, opts ...scw
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Gateways {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -2289,6 +2562,10 @@ func (s *API) GetCustomerGateway(req *GetCustomerGatewayRequest, opts ...scw.Req
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2327,6 +2604,10 @@ func (s *API) CreateCustomerGateway(req *CreateCustomerGatewayRequest, opts ...s
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -2362,6 +2643,10 @@ func (s *API) UpdateCustomerGateway(req *UpdateCustomerGatewayRequest, opts ...s
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2435,6 +2720,12 @@ func (s *API) ListRoutingPolicies(req *ListRoutingPoliciesRequest, opts ...scw.R
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.RoutingPolicies {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -2465,6 +2756,10 @@ func (s *API) GetRoutingPolicy(req *GetRoutingPolicyRequest, opts ...scw.Request
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2503,6 +2798,10 @@ func (s *API) CreateRoutingPolicy(req *CreateRoutingPolicyRequest, opts ...scw.R
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -2538,6 +2837,10 @@ func (s *API) UpdateRoutingPolicy(req *UpdateRoutingPolicyRequest, opts ...scw.R
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }

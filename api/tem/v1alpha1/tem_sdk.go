@@ -1816,8 +1816,23 @@ type ListOfferSubscriptionsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// ProjectID: ID of the Project.
-	ProjectID string `json:"project_id"`
+	// Page: (Optional) Requested page number. Value must be greater or equal to 1.
+	Page *int32 `json:"-"`
+
+	// PageSize: (Optional) Requested page size. Value must be between 1 and 100.
+	PageSize *uint32 `json:"-"`
+
+	// OrganizationID: (Optional) ID of the Organization.
+	// Precisely one of OrganizationID, ProjectID must be set.
+	OrganizationID *string `json:"organization_id,omitempty"`
+
+	// ProjectID: (Optional) ID of the Project.
+	// Precisely one of OrganizationID, ProjectID must be set.
+	ProjectID *string `json:"project_id,omitempty"`
+
+	// OfferName: (Optional) Name of the offer associated with the Project.
+	// Default value: unknown_name
+	OfferName *OfferName `json:"-"`
 }
 
 // ListOfferSubscriptionsResponse: list offer subscriptions response.
@@ -3115,12 +3130,26 @@ func (s *API) ListOfferSubscriptions(req *ListOfferSubscriptionsRequest, opts ..
 		req.Region = defaultRegion
 	}
 
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.OrganizationID == nil && req.ProjectID == nil {
+		req.OrganizationID = &defaultOrganizationID
+	}
+
+	defaultProjectID, exist := s.client.GetDefaultProjectID()
+	if exist && req.OrganizationID == nil && req.ProjectID == nil {
+		req.ProjectID = &defaultProjectID
 	}
 
 	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "offer_name", req.OfferName)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 
 	if fmt.Sprint(req.Region) == "" {

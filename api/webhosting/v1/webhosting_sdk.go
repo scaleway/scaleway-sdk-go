@@ -160,6 +160,45 @@ func (enum *BackupStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type BillingMode string
+
+const (
+	BillingModeUnknownBillingMode = BillingMode("unknown_billing_mode")
+	BillingModeSample             = BillingMode("sample")
+	BillingModePurchaseOrder      = BillingMode("purchase_order")
+)
+
+func (enum BillingMode) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(BillingModeUnknownBillingMode)
+	}
+	return string(enum)
+}
+
+func (enum BillingMode) Values() []BillingMode {
+	return []BillingMode{
+		"unknown_billing_mode",
+		"sample",
+		"purchase_order",
+	}
+}
+
+func (enum BillingMode) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *BillingMode) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = BillingMode(BillingMode(tmp).String())
+	return nil
+}
+
 type CheckFreeDomainAvailabilityResponseUnavailableReason string
 
 const (
@@ -206,6 +245,45 @@ func (enum *CheckFreeDomainAvailabilityResponseUnavailableReason) UnmarshalJSON(
 	}
 
 	*enum = CheckFreeDomainAvailabilityResponseUnavailableReason(CheckFreeDomainAvailabilityResponseUnavailableReason(tmp).String())
+	return nil
+}
+
+type CommitmentType string
+
+const (
+	CommitmentTypeUnknownCommitmentType = CommitmentType("unknown_commitment_type")
+	CommitmentTypeFirstCommitment       = CommitmentType("first_commitment")
+	CommitmentTypeNextCommitment        = CommitmentType("next_commitment")
+)
+
+func (enum CommitmentType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(CommitmentTypeUnknownCommitmentType)
+	}
+	return string(enum)
+}
+
+func (enum CommitmentType) Values() []CommitmentType {
+	return []CommitmentType{
+		"unknown_commitment_type",
+		"first_commitment",
+		"next_commitment",
+	}
+}
+
+func (enum CommitmentType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *CommitmentType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = CommitmentType(CommitmentType(tmp).String())
 	return nil
 }
 
@@ -622,17 +700,58 @@ func (enum *DomainZoneOwner) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type HostingProvider string
+
+const (
+	HostingProviderUnknownProvider = HostingProvider("unknown_provider")
+	HostingProviderElements        = HostingProvider("elements")
+	HostingProviderDedibox         = HostingProvider("dedibox")
+)
+
+func (enum HostingProvider) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(HostingProviderUnknownProvider)
+	}
+	return string(enum)
+}
+
+func (enum HostingProvider) Values() []HostingProvider {
+	return []HostingProvider{
+		"unknown_provider",
+		"elements",
+		"dedibox",
+	}
+}
+
+func (enum HostingProvider) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *HostingProvider) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = HostingProvider(HostingProvider(tmp).String())
+	return nil
+}
+
 type HostingStatus string
 
 const (
-	HostingStatusUnknownStatus = HostingStatus("unknown_status")
-	HostingStatusDelivering    = HostingStatus("delivering")
-	HostingStatusReady         = HostingStatus("ready")
-	HostingStatusDeleting      = HostingStatus("deleting")
-	HostingStatusError         = HostingStatus("error")
-	HostingStatusLocked        = HostingStatus("locked")
-	HostingStatusMigrating     = HostingStatus("migrating")
-	HostingStatusUpdating      = HostingStatus("updating")
+	HostingStatusUnknownStatus  = HostingStatus("unknown_status")
+	HostingStatusDelivering     = HostingStatus("delivering")
+	HostingStatusReady          = HostingStatus("ready")
+	HostingStatusDeleting       = HostingStatus("deleting")
+	HostingStatusError          = HostingStatus("error")
+	HostingStatusLocked         = HostingStatus("locked")
+	HostingStatusMigrating      = HostingStatus("migrating")
+	HostingStatusUpdating       = HostingStatus("updating")
+	HostingStatusPaymentPending = HostingStatus("payment_pending")
+	HostingStatusPaymentFailed  = HostingStatus("payment_failed")
 )
 
 func (enum HostingStatus) String() string {
@@ -653,6 +772,8 @@ func (enum HostingStatus) Values() []HostingStatus {
 		"locked",
 		"migrating",
 		"updating",
+		"payment_pending",
+		"payment_failed",
 	}
 }
 
@@ -1246,6 +1367,35 @@ type HostingDomainCustomDomain struct {
 	AutoConfigDomainDNS *AutoConfigDomainDNS `json:"auto_config_domain_dns"`
 }
 
+// OfferCommitment: offer commitment.
+type OfferCommitment struct {
+	// ID: offer commitment ID.
+	ID string `json:"id"`
+
+	// Type: offer commitment type.
+	// Default value: unknown_commitment_type
+	Type CommitmentType `json:"type"`
+
+	// IsDefault: true if the commitment is the default one for that offer.
+	IsDefault bool `json:"is_default"`
+
+	// BillingMode: offer commitment name.
+	// Default value: unknown_billing_mode
+	BillingMode BillingMode `json:"billing_mode"`
+
+	// BillingOperationPath: unique identifier used for billing.
+	BillingOperationPath string `json:"billing_operation_path"`
+
+	// Price: price of the offer commitment.
+	Price *scw.Money `json:"price"`
+
+	// DurationInMonth: duration of the offer commitment in months.
+	DurationInMonth int32 `json:"duration_in_month"`
+
+	// Next: next offer commitment.
+	Next *OfferCommitment `json:"next"`
+}
+
 // ControlPanel: control panel.
 type ControlPanel struct {
 	// Name: control panel name.
@@ -1414,6 +1564,23 @@ type Nameserver struct {
 	IsDefault bool `json:"is_default"`
 }
 
+// HostingCommitment: hosting commitment.
+type HostingCommitment struct {
+	// OfferCommitment: offer commitment for the specified hosting.
+	OfferCommitment *OfferCommitment `json:"offer_commitment"`
+
+	// StartAt: date and time the commitment started.
+	StartAt *time.Time `json:"start_at"`
+
+	// EndAt: date and time the commitment ends.
+	EndAt *time.Time `json:"end_at"`
+
+	// DeleteHostingAtEnd: the hosting may be deleted, automatically renewed, or switched to
+	// its configured post-commitment offer, which may have a different
+	// price and billing period.
+	DeleteHostingAtEnd bool `json:"delete_hosting_at_end"`
+}
+
 // HostingUser: hosting user.
 type HostingUser struct {
 	// Username: main Web Hosting control panel username.
@@ -1461,6 +1628,9 @@ type Offer struct {
 
 	// ControlPanels: lists available control panels for the specified offer.
 	ControlPanels []*ControlPanel `json:"control_panels"`
+
+	// Commitments: lists available offer commitments for the specified offer.
+	Commitments []*OfferCommitment `json:"commitments"`
 
 	// Region: region where the offer is hosted.
 	Region scw.Region `json:"region"`
@@ -2190,6 +2360,13 @@ type Hosting struct {
 
 	// DomainInfo: domain configuration block (subdomain, optional custom domain, and DNS settings).
 	DomainInfo *HostingDomain `json:"domain_info"`
+
+	// Commitment: commitment details to which the hosting is engaged.
+	Commitment *HostingCommitment `json:"commitment"`
+
+	// Provider: provider where the Web Hosting plan is managed (elements, dedibox).
+	// Default value: unknown_provider
+	Provider *HostingProvider `json:"provider"`
 }
 
 // HostingAPIAddCustomDomainRequest: hosting api add custom domain request.
@@ -2242,6 +2419,9 @@ type HostingAPICreateHostingRequest struct {
 
 	// AutoConfigDomainDNS: indicates whether to update hosting domain name servers and DNS records for domains managed by Scaleway Elements (deprecated, use auto_update_* fields instead).
 	AutoConfigDomainDNS *AutoConfigDomainDNS `json:"auto_config_domain_dns,omitempty"`
+
+	// OfferCommitmentID: offer commitment ID to which the hosting will be engaged.
+	OfferCommitmentID *string `json:"offer_commitment_id,omitempty"`
 }
 
 // HostingAPICreateSessionRequest: hosting api create session request.
@@ -2408,6 +2588,9 @@ type HostingAPIUpdateHostingRequest struct {
 
 	// Protected: whether the hosting is protected or not.
 	Protected *bool `json:"protected,omitempty"`
+
+	// DeleteHostingAfterCommitment: whether the hosting is deleted at the end of the commitment period.
+	DeleteHostingAfterCommitment *bool `json:"delete_hosting_after_commitment,omitempty"`
 }
 
 // ListBackupItemsResponse: list backup items response.
@@ -4197,10 +4380,11 @@ func (s *HostingAPI) WaitForHosting(req *WaitForHostingRequest, opts ...scw.Requ
 		retryInterval = *req.RetryInterval
 	}
 	transientStatuses := map[HostingStatus]struct{}{
-		HostingStatusDelivering: {},
-		HostingStatusDeleting:   {},
-		HostingStatusMigrating:  {},
-		HostingStatusUpdating:   {},
+		HostingStatusDelivering:     {},
+		HostingStatusDeleting:       {},
+		HostingStatusMigrating:      {},
+		HostingStatusUpdating:       {},
+		HostingStatusPaymentPending: {},
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{

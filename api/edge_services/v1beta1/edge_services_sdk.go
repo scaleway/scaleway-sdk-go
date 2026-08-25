@@ -449,6 +449,47 @@ func (enum *ListTLSStagesRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListVPCEndpointsRequestOrderBy string
+
+const (
+	ListVPCEndpointsRequestOrderByCreatedAtAsc  = ListVPCEndpointsRequestOrderBy("created_at_asc")
+	ListVPCEndpointsRequestOrderByCreatedAtDesc = ListVPCEndpointsRequestOrderBy("created_at_desc")
+	ListVPCEndpointsRequestOrderByNameAsc       = ListVPCEndpointsRequestOrderBy("name_asc")
+	ListVPCEndpointsRequestOrderByNameDesc      = ListVPCEndpointsRequestOrderBy("name_desc")
+)
+
+func (enum ListVPCEndpointsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListVPCEndpointsRequestOrderByCreatedAtAsc)
+	}
+	return string(enum)
+}
+
+func (enum ListVPCEndpointsRequestOrderBy) Values() []ListVPCEndpointsRequestOrderBy {
+	return []ListVPCEndpointsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"name_asc",
+		"name_desc",
+	}
+}
+
+func (enum ListVPCEndpointsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListVPCEndpointsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListVPCEndpointsRequestOrderBy(ListVPCEndpointsRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListWafStagesRequestOrderBy string
 
 const (
@@ -489,36 +530,40 @@ func (enum *ListWafStagesRequestOrderBy) UnmarshalJSON(data []byte) error {
 type PipelineErrorCode string
 
 const (
-	PipelineErrorCodeUnknownCode               = PipelineErrorCode("unknown_code")
-	PipelineErrorCodeDNSInvalidFormat          = PipelineErrorCode("dns_invalid_format")
-	PipelineErrorCodeDNSInvalidTld             = PipelineErrorCode("dns_invalid_tld")
-	PipelineErrorCodeDNSForbiddenRootDomain    = PipelineErrorCode("dns_forbidden_root_domain")
-	PipelineErrorCodeDNSForbiddenScwCloud      = PipelineErrorCode("dns_forbidden_scw_cloud")
-	PipelineErrorCodeDNSDomainDontExist        = PipelineErrorCode("dns_domain_dont_exist")
-	PipelineErrorCodeDNSCnameDontExist         = PipelineErrorCode("dns_cname_dont_exist")
-	PipelineErrorCodeDNSCnameResolve           = PipelineErrorCode("dns_cname_resolve")
-	PipelineErrorCodeDNSFqdnAlreadyExists      = PipelineErrorCode("dns_fqdn_already_exists")
-	PipelineErrorCodeDNSFqdnAlreadyInUse       = PipelineErrorCode("dns_fqdn_already_in_use")
-	PipelineErrorCodeTLSCertDeleted            = PipelineErrorCode("tls_cert_deleted")
-	PipelineErrorCodeTLSCertDisabled           = PipelineErrorCode("tls_cert_disabled")
-	PipelineErrorCodeTLSCertExpired            = PipelineErrorCode("tls_cert_expired")
-	PipelineErrorCodeTLSCertInvalidFormat      = PipelineErrorCode("tls_cert_invalid_format")
-	PipelineErrorCodeTLSCertMissing            = PipelineErrorCode("tls_cert_missing")
-	PipelineErrorCodeTLSChainOrder             = PipelineErrorCode("tls_chain_order")
-	PipelineErrorCodeTLSKeyInvalidFormat       = PipelineErrorCode("tls_key_invalid_format")
-	PipelineErrorCodeTLSKeyMissing             = PipelineErrorCode("tls_key_missing")
-	PipelineErrorCodeTLSKeyTooMany             = PipelineErrorCode("tls_key_too_many")
-	PipelineErrorCodeTLSManagedDomainRateLimit = PipelineErrorCode("tls_managed_domain_rate_limit")
-	PipelineErrorCodeTLSManagedInternal        = PipelineErrorCode("tls_managed_internal")
-	PipelineErrorCodeTLSPairMismatch           = PipelineErrorCode("tls_pair_mismatch")
-	PipelineErrorCodeTLSRootInconsistent       = PipelineErrorCode("tls_root_inconsistent")
-	PipelineErrorCodeTLSRootIncorrect          = PipelineErrorCode("tls_root_incorrect")
-	PipelineErrorCodeTLSRootMissing            = PipelineErrorCode("tls_root_missing")
-	PipelineErrorCodeTLSSanMismatch            = PipelineErrorCode("tls_san_mismatch")
-	PipelineErrorCodeTLSSelfSigned             = PipelineErrorCode("tls_self_signed")
-	PipelineErrorCodeTLSCaaMalfunction         = PipelineErrorCode("tls_caa_malfunction")
-	PipelineErrorCodePipelineInvalidWorkflow   = PipelineErrorCode("pipeline_invalid_workflow")
-	PipelineErrorCodePipelineMissingHeadStage  = PipelineErrorCode("pipeline_missing_head_stage")
+	PipelineErrorCodeUnknownCode                 = PipelineErrorCode("unknown_code")
+	PipelineErrorCodeDNSInvalidFormat            = PipelineErrorCode("dns_invalid_format")
+	PipelineErrorCodeDNSInvalidTld               = PipelineErrorCode("dns_invalid_tld")
+	PipelineErrorCodeDNSForbiddenRootDomain      = PipelineErrorCode("dns_forbidden_root_domain")
+	PipelineErrorCodeDNSForbiddenScwCloud        = PipelineErrorCode("dns_forbidden_scw_cloud")
+	PipelineErrorCodeDNSDomainDontExist          = PipelineErrorCode("dns_domain_dont_exist")
+	PipelineErrorCodeDNSCnameDontExist           = PipelineErrorCode("dns_cname_dont_exist")
+	PipelineErrorCodeDNSCnameResolve             = PipelineErrorCode("dns_cname_resolve")
+	PipelineErrorCodeDNSFqdnAlreadyExists        = PipelineErrorCode("dns_fqdn_already_exists")
+	PipelineErrorCodeDNSFqdnAlreadyInUse         = PipelineErrorCode("dns_fqdn_already_in_use")
+	PipelineErrorCodeTLSCertDeleted              = PipelineErrorCode("tls_cert_deleted")
+	PipelineErrorCodeTLSCertDisabled             = PipelineErrorCode("tls_cert_disabled")
+	PipelineErrorCodeTLSCertExpired              = PipelineErrorCode("tls_cert_expired")
+	PipelineErrorCodeTLSCertInvalidFormat        = PipelineErrorCode("tls_cert_invalid_format")
+	PipelineErrorCodeTLSCertMissing              = PipelineErrorCode("tls_cert_missing")
+	PipelineErrorCodeTLSChainOrder               = PipelineErrorCode("tls_chain_order")
+	PipelineErrorCodeTLSKeyInvalidFormat         = PipelineErrorCode("tls_key_invalid_format")
+	PipelineErrorCodeTLSKeyMissing               = PipelineErrorCode("tls_key_missing")
+	PipelineErrorCodeTLSKeyTooMany               = PipelineErrorCode("tls_key_too_many")
+	PipelineErrorCodeTLSManagedDomainRateLimit   = PipelineErrorCode("tls_managed_domain_rate_limit")
+	PipelineErrorCodeTLSManagedInternal          = PipelineErrorCode("tls_managed_internal")
+	PipelineErrorCodeTLSManagedUnsupported       = PipelineErrorCode("tls_managed_unsupported")
+	PipelineErrorCodeTLSNotWildcard              = PipelineErrorCode("tls_not_wildcard")
+	PipelineErrorCodeTLSPairMismatch             = PipelineErrorCode("tls_pair_mismatch")
+	PipelineErrorCodeTLSRootInconsistent         = PipelineErrorCode("tls_root_inconsistent")
+	PipelineErrorCodeTLSRootIncorrect            = PipelineErrorCode("tls_root_incorrect")
+	PipelineErrorCodeTLSRootMissing              = PipelineErrorCode("tls_root_missing")
+	PipelineErrorCodeTLSSanMismatch              = PipelineErrorCode("tls_san_mismatch")
+	PipelineErrorCodeTLSSelfSigned               = PipelineErrorCode("tls_self_signed")
+	PipelineErrorCodeTLSCaaMalfunction           = PipelineErrorCode("tls_caa_malfunction")
+	PipelineErrorCodePipelineInvalidWorkflow     = PipelineErrorCode("pipeline_invalid_workflow")
+	PipelineErrorCodePipelineMissingHeadStage    = PipelineErrorCode("pipeline_missing_head_stage")
+	PipelineErrorCodePipelineWebsocketLimit      = PipelineErrorCode("pipeline_websocket_limit")
+	PipelineErrorCodePipelineConfigurationFailed = PipelineErrorCode("pipeline_configuration_failed")
 )
 
 func (enum PipelineErrorCode) String() string {
@@ -552,6 +597,8 @@ func (enum PipelineErrorCode) Values() []PipelineErrorCode {
 		"tls_key_too_many",
 		"tls_managed_domain_rate_limit",
 		"tls_managed_internal",
+		"tls_managed_unsupported",
+		"tls_not_wildcard",
 		"tls_pair_mismatch",
 		"tls_root_inconsistent",
 		"tls_root_incorrect",
@@ -561,6 +608,8 @@ func (enum PipelineErrorCode) Values() []PipelineErrorCode {
 		"tls_caa_malfunction",
 		"pipeline_invalid_workflow",
 		"pipeline_missing_head_stage",
+		"pipeline_websocket_limit",
+		"pipeline_configuration_failed",
 	}
 }
 
@@ -836,6 +885,43 @@ func (enum *PurgeRequestStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type RuleHTTPMatchHostFilterHostFilterType string
+
+const (
+	RuleHTTPMatchHostFilterHostFilterTypeUnknownHostFilter = RuleHTTPMatchHostFilterHostFilterType("unknown_host_filter")
+	RuleHTTPMatchHostFilterHostFilterTypeRegex             = RuleHTTPMatchHostFilterHostFilterType("regex")
+)
+
+func (enum RuleHTTPMatchHostFilterHostFilterType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(RuleHTTPMatchHostFilterHostFilterTypeUnknownHostFilter)
+	}
+	return string(enum)
+}
+
+func (enum RuleHTTPMatchHostFilterHostFilterType) Values() []RuleHTTPMatchHostFilterHostFilterType {
+	return []RuleHTTPMatchHostFilterHostFilterType{
+		"unknown_host_filter",
+		"regex",
+	}
+}
+
+func (enum RuleHTTPMatchHostFilterHostFilterType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *RuleHTTPMatchHostFilterHostFilterType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = RuleHTTPMatchHostFilterHostFilterType(RuleHTTPMatchHostFilterHostFilterType(tmp).String())
+	return nil
+}
+
 type RuleHTTPMatchMethodFilter string
 
 const (
@@ -1043,6 +1129,45 @@ func (enum *SearchWafStagesRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type StageStatus string
+
+const (
+	StageStatusUnknownStatus = StageStatus("unknown_status")
+	StageStatusInactive      = StageStatus("inactive")
+	StageStatusActive        = StageStatus("active")
+)
+
+func (enum StageStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(StageStatusUnknownStatus)
+	}
+	return string(enum)
+}
+
+func (enum StageStatus) Values() []StageStatus {
+	return []StageStatus{
+		"unknown_status",
+		"inactive",
+		"active",
+	}
+}
+
+func (enum StageStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *StageStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = StageStatus(StageStatus(tmp).String())
+	return nil
+}
+
 type WafStageMode string
 
 const (
@@ -1107,6 +1232,16 @@ type ScalewayLB struct {
 
 	// HasWebsocket: defines whether to forward websocket requests to the load balancer.
 	HasWebsocket *bool `json:"has_websocket"`
+
+	PrivateNetworkID *string `json:"private_network_id"`
+}
+
+// RuleHTTPMatchHostFilter: rule http match host filter.
+type RuleHTTPMatchHostFilter struct {
+	// HostFilterType: default value: unknown_host_filter
+	HostFilterType RuleHTTPMatchHostFilterHostFilterType `json:"host_filter_type"`
+
+	Value string `json:"value"`
 }
 
 // RuleHTTPMatchPathFilter: rule http match path filter.
@@ -1186,6 +1321,9 @@ type RuleHTTPMatch struct {
 
 	// PathFilter: HTTP URL path to filter for. A request whose path matches the given filter will be considered to match the rule. All paths will match if none is provided.
 	PathFilter *RuleHTTPMatchPathFilter `json:"path_filter"`
+
+	// HostFilter: host to filter for. A request whose host matches the given filter will be considered to match the rule. All hosts will match if none is provided.
+	HostFilter *RuleHTTPMatchHostFilter `json:"host_filter"`
 }
 
 // BackendStage: backend stage.
@@ -1195,6 +1333,10 @@ type BackendStage struct {
 
 	// PipelineID: pipeline ID the backend stage belongs to.
 	PipelineID string `json:"pipeline_id"`
+
+	// Status: current status of the stage.
+	// Default value: unknown_status
+	Status StageStatus `json:"status"`
 
 	// CreatedAt: date the backend stage was created.
 	CreatedAt *time.Time `json:"created_at"`
@@ -1210,9 +1352,11 @@ type BackendStage struct {
 	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer, ScalewayServerlessFunction must be set.
 	ScalewayLB *ScalewayLBBackendConfig `json:"scaleway_lb,omitempty"`
 
+	// ScalewayServerlessContainer: scaleway Serverless container origin linked to the backend stage.
 	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer, ScalewayServerlessFunction must be set.
 	ScalewayServerlessContainer *ScalewayServerlessContainerBackendConfig `json:"scaleway_serverless_container,omitempty"`
 
+	// ScalewayServerlessFunction: scaleway Serverless function origin linked to the backend stage.
 	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer, ScalewayServerlessFunction must be set.
 	ScalewayServerlessFunction *ScalewayServerlessFunctionBackendConfig `json:"scaleway_serverless_function,omitempty"`
 }
@@ -1231,20 +1375,24 @@ type CacheStage struct {
 	// IncludeCookies: defines whether responses to requests with cookies must be stored in the cache.
 	IncludeCookies bool `json:"include_cookies"`
 
+	// Status: current status of the stage.
+	// Default value: unknown_status
+	Status StageStatus `json:"status"`
+
 	// CreatedAt: date the cache stage was created.
 	CreatedAt *time.Time `json:"created_at"`
 
 	// UpdatedAt: date the cache stage was last updated.
 	UpdatedAt *time.Time `json:"updated_at"`
 
-	// BackendStageID: backend stage ID the cache stage is linked to.
-	// Precisely one of BackendStageID, WafStageID, RouteStageID must be set.
-	BackendStageID *string `json:"backend_stage_id,omitempty"`
-
-	// Precisely one of BackendStageID, WafStageID, RouteStageID must be set.
+	// Precisely one of WafStageID, BackendStageID, RouteStageID must be set.
 	WafStageID *string `json:"waf_stage_id,omitempty"`
 
-	// Precisely one of BackendStageID, WafStageID, RouteStageID must be set.
+	// BackendStageID: backend stage ID the cache stage is linked to.
+	// Precisely one of WafStageID, BackendStageID, RouteStageID must be set.
+	BackendStageID *string `json:"backend_stage_id,omitempty"`
+
+	// Precisely one of WafStageID, BackendStageID, RouteStageID must be set.
 	RouteStageID *string `json:"route_stage_id,omitempty"`
 }
 
@@ -1256,6 +1404,8 @@ type DNSStage struct {
 	// DefaultFqdn: default Fully Qualified Domain Name attached to the stage.
 	DefaultFqdn string `json:"default_fqdn"`
 
+	DefaultPrivateFqdn string `json:"default_private_fqdn"`
+
 	// Fqdns: list of additional (custom) Fully Qualified Domain Names attached to the stage.
 	Fqdns []string `json:"fqdns"`
 
@@ -1265,6 +1415,10 @@ type DNSStage struct {
 
 	// PipelineID: pipeline ID the DNS stage belongs to.
 	PipelineID string `json:"pipeline_id"`
+
+	// Status: current status of the stage.
+	// Default value: unknown_status
+	Status StageStatus `json:"status"`
 
 	// CreatedAt: date the DNS stage was created.
 	CreatedAt *time.Time `json:"created_at"`
@@ -1283,6 +1437,12 @@ type DNSStage struct {
 	// BackendStageID: backend stage ID the DNS stage is linked to.
 	// Precisely one of TLSStageID, CacheStageID, BackendStageID must be set.
 	BackendStageID *string `json:"backend_stage_id,omitempty"`
+
+	// WildcardDomain: support of wildcard (subdomains) for the given domain (a wildcard certificate is required to make it work).
+	WildcardDomain bool `json:"wildcard_domain"`
+
+	// FullPrivate: fully Qualified Domain Names are accessible exclusively within the VPC.
+	FullPrivate bool `json:"full_private"`
 }
 
 // Pipeline: pipeline.
@@ -1314,6 +1474,8 @@ type Pipeline struct {
 
 	// UpdatedAt: date the pipeline was last updated.
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	VpcEndpointIDs []string `json:"vpc_endpoint_ids"`
 }
 
 // RouteStage: route stage.
@@ -1325,8 +1487,16 @@ type RouteStage struct {
 	PipelineID string `json:"pipeline_id"`
 
 	// WafStageID: ID of the WAF stage HTTP requests should be forwarded to when no rules are matched.
-	// Precisely one of WafStageID must be set.
+	// Precisely one of WafStageID, BackendStageID must be set.
 	WafStageID *string `json:"waf_stage_id,omitempty"`
+
+	// BackendStageID: ID of the backend stage HTTP requests should be forwarded to when no rules are matched.
+	// Precisely one of WafStageID, BackendStageID must be set.
+	BackendStageID *string `json:"backend_stage_id,omitempty"`
+
+	// Status: current status of the stage.
+	// Default value: unknown_status
+	Status StageStatus `json:"status"`
 
 	// CreatedAt: date the route stage was created.
 	CreatedAt *time.Time `json:"created_at"`
@@ -1351,6 +1521,10 @@ type TLSStage struct {
 
 	// CertificateExpiresAt: expiration date of the certificate.
 	CertificateExpiresAt *time.Time `json:"certificate_expires_at"`
+
+	// Status: current status of the stage.
+	// Default value: unknown_status
+	Status StageStatus `json:"status"`
 
 	// CreatedAt: date the TLS stage was created.
 	CreatedAt *time.Time `json:"created_at"`
@@ -1388,6 +1562,10 @@ type WafStage struct {
 	// ParanoiaLevel: sensitivity level (`1`,`2`,`3`,`4`) to use when classifying requests as malicious. With a high level, requests are more likely to be classed as malicious, and false positives are expected. With a lower level, requests are more likely to be classed as benign.
 	ParanoiaLevel uint32 `json:"paranoia_level"`
 
+	// Status: current status of the stage.
+	// Default value: unknown_status
+	Status StageStatus `json:"status"`
+
 	// CreatedAt: date the WAF stage was created.
 	CreatedAt *time.Time `json:"created_at"`
 
@@ -1401,23 +1579,27 @@ type WafStage struct {
 
 // SetRouteRulesRequestRouteRule: set route rules request route rule.
 type SetRouteRulesRequestRouteRule struct {
-	// RuleHTTPMatch: rule condition to be matched. Requests matching the condition defined here will be directly forwarded to the backend specified by the `backend_stage_id` field. Requests that do not match will be checked by the next rule's condition.
+	// RuleHTTPMatch: rule condition to be matched. Requests matching the condition defined here will be directly forwarded to the backend specified by the `backend_stage_id` or `waf_stage_id` fields. Requests that do not match will be checked by the next rule's condition.
 	// Precisely one of RuleHTTPMatch must be set.
 	RuleHTTPMatch *RuleHTTPMatch `json:"rule_http_match,omitempty"`
 
 	// BackendStageID: ID of the backend stage that requests matching the rule should be forwarded to.
-	// Precisely one of BackendStageID must be set.
+	// Precisely one of BackendStageID, WafStageID must be set.
 	BackendStageID *string `json:"backend_stage_id,omitempty"`
+
+	// WafStageID: ID of the WAF stage that requests matching the rule should be forwarded to.
+	// Precisely one of BackendStageID, WafStageID must be set.
+	WafStageID *string `json:"waf_stage_id,omitempty"`
 }
 
 // RouteRule: route rule.
 type RouteRule struct {
-	// RuleHTTPMatch: rule condition to be matched. Requests matching the condition defined here will be directly forwarded to the backend specified by the `backend_stage_id` field. Requests that do not match will be checked by the next rule's condition.
+	// RuleHTTPMatch: rule condition to be matched. Requests matching the condition defined here will be directly forwarded to the backend specified by the `backend_stage_id` or `waf_stage_id` fields. Requests that do not match will be checked by the next rule's condition.
 	// Precisely one of RuleHTTPMatch must be set.
 	RuleHTTPMatch *RuleHTTPMatch `json:"rule_http_match,omitempty"`
 
 	// BackendStageID: ID of the backend stage that requests matching the rule should be forwarded to.
-	// Precisely one of BackendStageID must be set.
+	// Precisely one of BackendStageID, WafStageID must be set.
 	BackendStageID *string `json:"backend_stage_id,omitempty"`
 
 	// Position: position of the rule which determines the order of processing within the route stage.
@@ -1425,6 +1607,10 @@ type RouteRule struct {
 
 	// RouteStageID: route stage ID the route rule belongs to.
 	RouteStageID string `json:"route_stage_id"`
+
+	// WafStageID: ID of the WAF stage that requests matching the rule should be forwarded to.
+	// Precisely one of BackendStageID, WafStageID must be set.
+	WafStageID *string `json:"waf_stage_id,omitempty"`
 }
 
 // CheckPEMChainRequestSecretChain: check pem chain request secret chain.
@@ -1451,6 +1637,9 @@ type PlanDetails struct {
 
 	// BackendLimit: number of backends per pipeline included in subscription plan.
 	BackendLimit uint64 `json:"backend_limit"`
+
+	// WildcardDomain: support of wildcard subdomains for the customized domain.
+	WildcardDomain bool `json:"wildcard_domain"`
 }
 
 // PlanUsageDetails: plan usage details.
@@ -1515,6 +1704,27 @@ type PurgeRequest struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 }
 
+// VPCEndpoint: vpc endpoint.
+type VPCEndpoint struct {
+	// ID: the VPC Endpoint ID.
+	ID string `json:"id"`
+
+	// ProjectID: project ID of the VPC Endpoint.
+	ProjectID string `json:"project_id"`
+
+	// Region: zone of the VPC Endpoint.
+	Region scw.Region `json:"region"`
+
+	// PrivateNetworkID: private Network ID of the VPC Endpoint.
+	PrivateNetworkID string `json:"private_network_id"`
+
+	// CreatedAt: date the VPC Endpoint was created.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: date the VPC Endpoint was last updated.
+	UpdatedAt *time.Time `json:"updated_at"`
+}
+
 // SetHeadStageRequestAddNewHeadStage: set head stage request add new head stage.
 type SetHeadStageRequestAddNewHeadStage struct {
 	NewStageID string `json:"new_stage_id"`
@@ -1543,7 +1753,7 @@ type AddRouteRulesRequest struct {
 	// RouteStageID: ID of the route stage to update.
 	RouteStageID string `json:"-"`
 
-	// RouteRules: list of rules to be checked against every HTTP request. The first matching rule will forward the request to its specified backend stage. If no rules are matched, the request is forwarded to the WAF stage defined by `waf_stage_id`.
+	// RouteRules: list of rules to be checked against every HTTP request. The first matching rule will forward the request to its specified backend stage. If no rules are matched, the request is forwarded to the stage defined by `waf_stage_id` or `backend_stage_id`.
 	RouteRules []*SetRouteRulesRequestRouteRule `json:"route_rules"`
 
 	// AfterPosition: add rules after the given position.
@@ -1557,7 +1767,7 @@ type AddRouteRulesRequest struct {
 
 // AddRouteRulesResponse: add route rules response.
 type AddRouteRulesResponse struct {
-	// RouteRules: list of rules to be checked against every HTTP request. The first matching rule will forward the request to its specified backend stage. If no rules are matched, the request is forwarded to the WAF stage defined by `waf_stage_id`.
+	// RouteRules: list of rules to be checked against every HTTP request. The first matching rule will forward the request to its specified backend stage. If no rules are matched, the request is forwarded to the stage defined by `waf_stage_id` or `backend_stage_id`.
 	RouteRules []*RouteRule `json:"route_rules"`
 }
 
@@ -1619,9 +1829,11 @@ type CreateBackendStageRequest struct {
 	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer, ScalewayServerlessFunction must be set.
 	ScalewayLB *ScalewayLBBackendConfig `json:"scaleway_lb,omitempty"`
 
+	// ScalewayServerlessContainer: scaleway Serverless container origin linked to the backend stage.
 	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer, ScalewayServerlessFunction must be set.
 	ScalewayServerlessContainer *ScalewayServerlessContainerBackendConfig `json:"scaleway_serverless_container,omitempty"`
 
+	// ScalewayServerlessFunction: scaleway Serverless function origin linked to the backend stage.
 	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer, ScalewayServerlessFunction must be set.
 	ScalewayServerlessFunction *ScalewayServerlessFunctionBackendConfig `json:"scaleway_serverless_function,omitempty"`
 }
@@ -1667,6 +1879,12 @@ type CreateDNSStageRequest struct {
 	// BackendStageID: backend stage ID the DNS stage will be linked to.
 	// Precisely one of TLSStageID, CacheStageID, BackendStageID must be set.
 	BackendStageID *string `json:"backend_stage_id,omitempty"`
+
+	// WildcardDomain: support of wildcard (subdomains) for the given domain (a wildcard certificate is required to make it work).
+	WildcardDomain *bool `json:"wildcard_domain,omitempty"`
+
+	// FullPrivate: when true, Fully Qualified Domain Names are accessible exclusively within the VPC.
+	FullPrivate *bool `json:"full_private,omitempty"`
 }
 
 // CreatePipelineRequest: create pipeline request.
@@ -1701,8 +1919,12 @@ type CreateRouteStageRequest struct {
 	PipelineID string `json:"-"`
 
 	// WafStageID: ID of the WAF stage HTTP requests should be forwarded to when no rules are matched.
-	// Precisely one of WafStageID must be set.
+	// Precisely one of WafStageID, BackendStageID must be set.
 	WafStageID *string `json:"waf_stage_id,omitempty"`
+
+	// BackendStageID: ID of the backend stage HTTP requests should be forwarded to when no rules are matched.
+	// Precisely one of WafStageID, BackendStageID must be set.
+	BackendStageID *string `json:"backend_stage_id,omitempty"`
 }
 
 // CreateTLSStageRequest: create tls stage request.
@@ -1729,6 +1951,18 @@ type CreateTLSStageRequest struct {
 
 	// Precisely one of CacheStageID, BackendStageID, RouteStageID, WafStageID must be set.
 	WafStageID *string `json:"waf_stage_id,omitempty"`
+}
+
+// CreateVPCEndpointRequest: create vpc endpoint request.
+type CreateVPCEndpointRequest struct {
+	// ProjectID: project ID of the VPC Endpoint.
+	ProjectID string `json:"project_id"`
+
+	// Region: zone of the VPC Endpoint.
+	Region scw.Region `json:"region"`
+
+	// PrivateNetworkID: private Network ID of the VPC Endpoint.
+	PrivateNetworkID string `json:"private_network_id"`
 }
 
 // CreateWafStageRequest: create waf stage request.
@@ -1787,6 +2021,12 @@ type DeleteRouteStageRequest struct {
 type DeleteTLSStageRequest struct {
 	// TLSStageID: ID of the TLS stage to delete.
 	TLSStageID string `json:"-"`
+}
+
+// DeleteVPCEndpointRequest: delete vpc endpoint request.
+type DeleteVPCEndpointRequest struct {
+	// VpcEndpointID: the VPC Endpoint ID.
+	VpcEndpointID string `json:"-"`
 }
 
 // DeleteWafStageRequest: delete waf stage request.
@@ -1887,6 +2127,12 @@ type GetRouteStageRequest struct {
 type GetTLSStageRequest struct {
 	// TLSStageID: ID of the requested TLS stage.
 	TLSStageID string `json:"-"`
+}
+
+// GetVPCEndpointRequest: get vpc endpoint request.
+type GetVPCEndpointRequest struct {
+	// VpcEndpointID: the VPC Endpoint ID.
+	VpcEndpointID string `json:"-"`
 }
 
 // GetWafStageRequest: get waf stage request.
@@ -2218,7 +2464,7 @@ type ListPurgeRequestsRequest struct {
 	// PageSize: number of purge requests to return per page.
 	PageSize *uint32 `json:"-"`
 
-	// OrganizationID: organization ID to filter for. Only purge requests from this Project will be returned.
+	// OrganizationID: organization ID to filter for. Only purge requests from this Organization will be returned.
 	OrganizationID *string `json:"-"`
 
 	// ProjectID: project ID to filter for. Only purge requests from this Project will be returned.
@@ -2264,7 +2510,7 @@ type ListRouteRulesRequest struct {
 
 // ListRouteRulesResponse: list route rules response.
 type ListRouteRulesResponse struct {
-	// RouteRules: list of rules to be checked against every HTTP request. The first matching rule will forward the request to its specified backend stage. If no rules are matched, the request is forwarded to the WAF stage defined by `waf_stage_id`.
+	// RouteRules: list of rules to be checked against every HTTP request. The first matching rule will forward the request to its specified backend stage. If no rules are matched, the request is forwarded to the stage defined by `waf_stage_id` or `backend_stage_id`.
 	RouteRules []*RouteRule `json:"route_rules"`
 
 	// TotalCount: count of all route rules matching the requested criteria.
@@ -2382,6 +2628,53 @@ func (r *ListTLSStagesResponse) UnsafeAppend(res any) (uint64, error) {
 	r.Stages = append(r.Stages, results.Stages...)
 	r.TotalCount += uint64(len(results.Stages))
 	return uint64(len(results.Stages)), nil
+}
+
+// ListVPCEndpointsRequest: list vpc endpoints request.
+type ListVPCEndpointsRequest struct {
+	// OrderBy: sort order of VPC Endpoints in the response.
+	// Default value: created_at_asc
+	OrderBy ListVPCEndpointsRequestOrderBy `json:"-"`
+
+	// Page: page number to return, from the paginated results.
+	Page *int32 `json:"-"`
+
+	// PageSize: number of VPC Endpoints to return per page.
+	PageSize *uint32 `json:"-"`
+
+	// ProjectID: project ID to filter for. Only VPC Endpoints from this project will be returned.
+	ProjectID *string `json:"-"`
+
+	// OrganizationID: organization ID to filter for. Only VPC Endpoints from this Organization will be returned.
+	OrganizationID *string `json:"-"`
+}
+
+// ListVPCEndpointsResponse: list vpc endpoints response.
+type ListVPCEndpointsResponse struct {
+	// VpcEndpoints: paginated list of VPC Endpoints.
+	VpcEndpoints []*VPCEndpoint `json:"vpc_endpoints"`
+
+	// TotalCount: count of all VPC Endpoints matching the requested criteria.
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListVPCEndpointsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListVPCEndpointsResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListVPCEndpointsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.VpcEndpoints = append(r.VpcEndpoints, results.VpcEndpoints...)
+	r.TotalCount += uint64(len(results.VpcEndpoints))
+	return uint64(len(results.VpcEndpoints)), nil
 }
 
 // ListWafStagesRequest: list waf stages request.
@@ -2504,18 +2797,58 @@ type SetHeadStageRequest struct {
 	SwapHeadStage *SetHeadStageRequestSwapHeadStage `json:"swap_head_stage,omitempty"`
 }
 
+// SetPipelineVPCEndpointsRequest: set pipeline vpc endpoints request.
+type SetPipelineVPCEndpointsRequest struct {
+	// PipelineID: pipeline ID for which VPC Endpoints must be set.
+	PipelineID string `json:"-"`
+
+	// VpcEndpointIDs: list of VPC Endpoints to attach.
+	VpcEndpointIDs []string `json:"vpc_endpoint_ids"`
+}
+
+// SetPipelineVPCEndpointsResponse: set pipeline vpc endpoints response.
+type SetPipelineVPCEndpointsResponse struct {
+	// PipelineID: pipeline ID.
+	PipelineID string `json:"pipeline_id"`
+
+	// VpcEndpoints: list of VPC Endpoints for the given Pipeline ID.
+	VpcEndpoints []*VPCEndpoint `json:"vpc_endpoints"`
+
+	// TotalCount: count of all VPC Endpoints for the given Pipeline ID.
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *SetPipelineVPCEndpointsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *SetPipelineVPCEndpointsResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*SetPipelineVPCEndpointsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.VpcEndpoints = append(r.VpcEndpoints, results.VpcEndpoints...)
+	r.TotalCount += uint64(len(results.VpcEndpoints))
+	return uint64(len(results.VpcEndpoints)), nil
+}
+
 // SetRouteRulesRequest: set route rules request.
 type SetRouteRulesRequest struct {
 	// RouteStageID: ID of the route stage to update.
 	RouteStageID string `json:"-"`
 
-	// RouteRules: list of rules to be checked against every HTTP request. The first matching rule will forward the request to its specified backend stage. If no rules are matched, the request is forwarded to the WAF stage defined by `waf_stage_id`.
+	// RouteRules: list of rules to be checked against every HTTP request. The first matching rule will forward the request to its specified backend stage. If no rules are matched, the request is forwarded to the stage defined by `waf_stage_id` or `backend_stage_id`.
 	RouteRules []*SetRouteRulesRequestRouteRule `json:"route_rules"`
 }
 
 // SetRouteRulesResponse: set route rules response.
 type SetRouteRulesResponse struct {
-	// RouteRules: list of rules to be checked against every HTTP request. The first matching rule will forward the request to its specified backend stage. If no rules are matched, the request is forwarded to the WAF stage defined by `waf_stage_id`.
+	// RouteRules: list of rules to be checked against every HTTP request. The first matching rule will forward the request to its specified backend stage. If no rules are matched, the request is forwarded to the stage defined by `waf_stage_id` or `backend_stage_id`.
 	RouteRules []*RouteRule `json:"route_rules"`
 }
 
@@ -2532,9 +2865,11 @@ type UpdateBackendStageRequest struct {
 	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer, ScalewayServerlessFunction must be set.
 	ScalewayLB *ScalewayLBBackendConfig `json:"scaleway_lb,omitempty"`
 
+	// ScalewayServerlessContainer: scaleway Serverless container origin linked to the backend stage.
 	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer, ScalewayServerlessFunction must be set.
 	ScalewayServerlessContainer *ScalewayServerlessContainerBackendConfig `json:"scaleway_serverless_container,omitempty"`
 
+	// ScalewayServerlessFunction: scaleway Serverless function origin linked to the backend stage.
 	// Precisely one of ScalewayS3, ScalewayLB, ScalewayServerlessContainer, ScalewayServerlessFunction must be set.
 	ScalewayServerlessFunction *ScalewayServerlessFunctionBackendConfig `json:"scaleway_serverless_function,omitempty"`
 
@@ -2583,6 +2918,12 @@ type UpdateDNSStageRequest struct {
 	// BackendStageID: backend stage ID the DNS stage will be linked to.
 	// Precisely one of TLSStageID, CacheStageID, BackendStageID must be set.
 	BackendStageID *string `json:"backend_stage_id,omitempty"`
+
+	// WildcardDomain: support of wildcard (subdomains) for the given domain (a wildcard certificate is required to make it work).
+	WildcardDomain *bool `json:"wildcard_domain,omitempty"`
+
+	// FullPrivate: when true, Fully Qualified Domain Names are accessible exclusively within the VPC.
+	FullPrivate *bool `json:"full_private,omitempty"`
 }
 
 // UpdatePipelineRequest: update pipeline request.
@@ -2603,8 +2944,12 @@ type UpdateRouteStageRequest struct {
 	RouteStageID string `json:"-"`
 
 	// WafStageID: ID of the WAF stage HTTP requests should be forwarded to when no rules are matched.
-	// Precisely one of WafStageID must be set.
+	// Precisely one of WafStageID, BackendStageID must be set.
 	WafStageID *string `json:"waf_stage_id,omitempty"`
+
+	// BackendStageID: ID of the backend stage HTTP requests should be forwarded to when no rules are matched.
+	// Precisely one of WafStageID, BackendStageID must be set.
+	BackendStageID *string `json:"backend_stage_id,omitempty"`
 }
 
 // UpdateTLSStageRequest: update tls stage request.
@@ -2866,6 +3211,139 @@ func (s *API) DeletePipeline(req *DeletePipelineRequest, opts ...scw.RequestOpti
 		return err
 	}
 	return nil
+}
+
+// GetVPCEndpoint: Retrieve information about an existing VPC Endpoint, specified by its `vpc_endpoint_id`.
+func (s *API) GetVPCEndpoint(req *GetVPCEndpointRequest, opts ...scw.RequestOption) (*VPCEndpoint, error) {
+	var err error
+
+	if fmt.Sprint(req.VpcEndpointID) == "" {
+		return nil, errors.New("field VpcEndpointID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/edge-services/v1beta1/vpc-endpoints/" + fmt.Sprint(req.VpcEndpointID) + "",
+	}
+
+	var resp VPCEndpoint
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListVPCEndpoints: List all VPC Endpoints, for a Scaleway Organization or Scaleway Project. By default, the VPC Endpoints returned in the list are ordered by creation date in ascending order, though this can be modified via the `order_by` field.
+func (s *API) ListVPCEndpoints(req *ListVPCEndpointsRequest, opts ...scw.RequestOption) (*ListVPCEndpointsResponse, error) {
+	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/edge-services/v1beta1/vpc-endpoints",
+		Query:  query,
+	}
+
+	var resp ListVPCEndpointsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// CreateVPCEndpoint: Create a new VPC Endpoint. You must specify a `private_network_id` to define to which Private Network the VPC endpoint will be attached to.
+func (s *API) CreateVPCEndpoint(req *CreateVPCEndpointRequest, opts ...scw.RequestOption) (*VPCEndpoint, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/edge-services/v1beta1/vpc-endpoints",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp VPCEndpoint
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteVPCEndpoint: Delete an existing VPC Endpoint, specified by its `vpc_endpoint_id`.
+func (s *API) DeleteVPCEndpoint(req *DeleteVPCEndpointRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if fmt.Sprint(req.VpcEndpointID) == "" {
+		return errors.New("field VpcEndpointID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/edge-services/v1beta1/vpc-endpoints/" + fmt.Sprint(req.VpcEndpointID) + "",
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// SetPipelineVPCEndpoints: Attach VPC Endpoint to the given Pipeline. You must specify a `pipeline_id` and `vpc_endpoint_ids` which contains the list of VPC Endpoints.
+func (s *API) SetPipelineVPCEndpoints(req *SetPipelineVPCEndpointsRequest, opts ...scw.RequestOption) (*SetPipelineVPCEndpointsResponse, error) {
+	var err error
+
+	if fmt.Sprint(req.PipelineID) == "" {
+		return nil, errors.New("field PipelineID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PUT",
+		Path:   "/edge-services/v1beta1/pipelines/" + fmt.Sprint(req.PipelineID) + "/vpc-endpoints",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp SetPipelineVPCEndpointsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 // ListHeadStages: List Head stage for your pipeline.
@@ -3353,7 +3831,7 @@ func (s *API) ListBackendStages(req *ListBackendStagesRequest, opts ...scw.Reque
 	return &resp, nil
 }
 
-// CreateBackendStage: Create a new backend stage. You must specify either a `scaleway_s3` (for a Scaleway Object Storage bucket) or `scaleway_lb` (for a Scaleway Load Balancer) field to configure the origin.
+// CreateBackendStage: Create a new backend stage. You must specify a type of backend (`scaleway_s3`, `scaleway_lb`, etc.) to configure the origin.
 func (s *API) CreateBackendStage(req *CreateBackendStageRequest, opts ...scw.RequestOption) (*BackendStage, error) {
 	var err error
 
@@ -3380,7 +3858,7 @@ func (s *API) CreateBackendStage(req *CreateBackendStageRequest, opts ...scw.Req
 	return &resp, nil
 }
 
-// GetBackendStage: Retrieve information about an existing backend stage, specified by its `backend_stage_id`. Its full details, including `scaleway_s3` or `scaleway_lb`, are returned in the response object.
+// GetBackendStage: Retrieve information about an existing backend stage, specified by its `backend_stage_id`. Its full details are returned in the response object.
 func (s *API) GetBackendStage(req *GetBackendStageRequest, opts ...scw.RequestOption) (*BackendStage, error) {
 	var err error
 
@@ -3684,7 +4162,7 @@ func (s *API) ListRouteStages(req *ListRouteStagesRequest, opts ...scw.RequestOp
 	return &resp, nil
 }
 
-// CreateRouteStage: Create a new route stage. You must specify the `waf_stage_id` field to customize the route.
+// CreateRouteStage: Create a new route stage. You must specify the `waf_stage_id` or `backend_stage_id` fields to customize the route.
 func (s *API) CreateRouteStage(req *CreateRouteStageRequest, opts ...scw.RequestOption) (*RouteStage, error) {
 	var err error
 
@@ -4088,7 +4566,7 @@ func (s *API) CheckLBOrigin(req *CheckLBOriginRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-// ListPlans:
+// ListPlans: List all available Edge Services subscription plans.
 func (s *API) ListPlans(opts ...scw.RequestOption) (*ListPlansResponse, error) {
 	var err error
 
@@ -4106,7 +4584,7 @@ func (s *API) ListPlans(opts ...scw.RequestOption) (*ListPlansResponse, error) {
 	return &resp, nil
 }
 
-// SelectPlan:
+// SelectPlan: Subscribe to the Edge Services subscription plan of your choice, for the given Scaleway Project.
 func (s *API) SelectPlan(req *SelectPlanRequest, opts ...scw.RequestOption) (*Plan, error) {
 	var err error
 
@@ -4134,7 +4612,7 @@ func (s *API) SelectPlan(req *SelectPlanRequest, opts ...scw.RequestOption) (*Pl
 	return &resp, nil
 }
 
-// GetCurrentPlan:
+// GetCurrentPlan: Get the current Edge Services subscription plan for your Scaleway Project.
 func (s *API) GetCurrentPlan(req *GetCurrentPlanRequest, opts ...scw.RequestOption) (*Plan, error) {
 	var err error
 
@@ -4161,7 +4639,7 @@ func (s *API) GetCurrentPlan(req *GetCurrentPlanRequest, opts ...scw.RequestOpti
 	return &resp, nil
 }
 
-// DeleteCurrentPlan:
+// DeleteCurrentPlan: Unsubscribe from the current Edge Services subscription plan for your Scaleway Project.
 func (s *API) DeleteCurrentPlan(req *DeleteCurrentPlanRequest, opts ...scw.RequestOption) error {
 	var err error
 

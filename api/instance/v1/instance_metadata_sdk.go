@@ -218,7 +218,6 @@ func (meta *MetadataAPI) ListUserData() (res *UserData, err error) {
 			Transport: &http.Transport{
 				DialContext: (&net.Dialer{
 					LocalAddr:     localTCPAddr,
-					DualStack:     false,
 					FallbackDelay: time.Second * -1,
 				}).DialContext,
 			},
@@ -264,7 +263,6 @@ func (meta *MetadataAPI) GetUserData(key string) ([]byte, error) {
 			Transport: &http.Transport{
 				DialContext: (&net.Dialer{
 					LocalAddr:     localTCPAddr,
-					DualStack:     false,
 					FallbackDelay: time.Second * -1,
 				}).DialContext,
 			},
@@ -311,7 +309,6 @@ func (meta *MetadataAPI) SetUserData(key string, value []byte) error {
 			Transport: &http.Transport{
 				DialContext: (&net.Dialer{
 					LocalAddr:     localTCPAddr,
-					DualStack:     false,
 					FallbackDelay: time.Second * -1,
 				}).DialContext,
 			},
@@ -352,7 +349,6 @@ func (meta *MetadataAPI) DeleteUserData(key string) error {
 			Transport: &http.Transport{
 				DialContext: (&net.Dialer{
 					LocalAddr:     localTCPAddr,
-					DualStack:     false,
 					FallbackDelay: time.Second * -1,
 				}).DialContext,
 			},

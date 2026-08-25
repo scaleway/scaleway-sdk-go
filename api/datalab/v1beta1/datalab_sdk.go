@@ -516,55 +516,55 @@ type Cluster struct {
 	Versions []*ClusterVersion `json:"versions"`
 }
 
-// Datalab: A Data Lab resource.
+// Datalab: A Clusters for Apache Spark™ resource.
 type Datalab struct {
-	// ID: the unique identifier of the Data Lab.
+	// ID: the unique identifier of the cluster.
 	ID string `json:"id"`
 
-	// ProjectID: the unique identifier of the project where the Data Lab has been created.
+	// ProjectID: the unique identifier of the project where the cluster has been created.
 	ProjectID string `json:"project_id"`
 
-	// Name: the name of the Data Lab.
+	// Name: the name of the cluster.
 	Name string `json:"name"`
 
-	// Description: the description of the Data Lab.
+	// Description: the description of the cluster.
 	Description string `json:"description"`
 
-	// Tags: the tags of the Data Lab.
+	// Tags: the tags of the cluster.
 	Tags []string `json:"tags"`
 
-	// Main: the Spark Main node specification of Data lab. It holds the parameters `node_type`, `spark_ui_url` (available to reach Spark UI), `spark_master_url` (used to reach the cluster within a VPC), `root_volume` (size of the volume assigned to the cluster).
+	// Main: the Apache Spark™ Main node specification of cluster. It holds the parameters `node_type`, `spark_ui_url` (available to reach Apache Spark™ UI), `spark_master_url` (used to reach the cluster within a VPC), `root_volume` (size of the volume assigned to the cluster).
 	Main *DatalabSparkMain `json:"main"`
 
 	// Worker: the cluster worker nodes specification. It holds the parameters `node_type`, `node_count`, `root_volume` (size of the volume assigned to the cluster).
 	Worker *DatalabSparkWorker `json:"worker"`
 
-	// Status: the status of the Data Lab. For a working Data Lab the status is marked as `ready`.
+	// Status: the status of the cluster. For a working cluster the status is marked as `ready`.
 	// Default value: unknown_status
 	Status DatalabStatus `json:"status"`
 
-	// CreatedAt: the creation timestamp of the Data Lab.
+	// CreatedAt: the creation timestamp of the cluster.
 	CreatedAt *time.Time `json:"created_at"`
 
-	// UpdatedAt: the last update date of the Data Lab.
+	// UpdatedAt: the last update date of the cluster.
 	UpdatedAt *time.Time `json:"updated_at"`
 
-	// Region: the region of the Data Lab.
+	// Region: the region of the cluster.
 	Region scw.Region `json:"region"`
 
-	// HasNotebook: whether a JupyterLab notebook is associated with the Data Lab or not.
+	// HasNotebook: whether a JupyterLab notebook is associated with the cluster or not.
 	HasNotebook bool `json:"has_notebook"`
 
 	// NotebookURL: the URL of the notebook if available.
 	NotebookURL *string `json:"notebook_url"`
 
-	// SparkVersion: the version of Spark running inside the Data Lab.
+	// SparkVersion: the version of Apache Spark™ running inside the cluster.
 	SparkVersion string `json:"spark_version"`
 
-	// TotalStorage: the total persistent volume storage selected to run Spark.
+	// TotalStorage: the total persistent volume storage selected to run Apache Spark™.
 	TotalStorage *Volume `json:"total_storage"`
 
-	// PrivateNetworkID: the unique identifier of the private network to which the Data Lab is attached to.
+	// PrivateNetworkID: the unique identifier of the private network to which the cluster is attached to.
 	PrivateNetworkID string `json:"private_network_id"`
 
 	// NotebookMasterURL: the URL that is used to reach the cluster from the notebook when available. This URL cannot be used to reach the cluster from a server.
@@ -623,21 +623,21 @@ type Notebook struct {
 	Versions []*NotebookVersion `json:"versions"`
 }
 
-// CreateDatalabRequest: A request to create a Data Lab.
+// CreateDatalabRequest: A request to create a cluster.
 type CreateDatalabRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// ProjectID: the unique identifier of the project where the Data Lab will be created.
+	// ProjectID: the unique identifier of the project where the cluster will be created.
 	ProjectID string `json:"project_id"`
 
-	// Name: the name of the Data Lab.
+	// Name: the name of the cluster.
 	Name string `json:"name"`
 
-	// Description: the description of the Data Lab.
+	// Description: the description of the cluster.
 	Description string `json:"description"`
 
-	// Tags: the tags of the Data Lab.
+	// Tags: the tags of the cluster.
 	Tags []string `json:"tags"`
 
 	// Main: the cluster main node specification. It holds the parameters `node_type` which specifies the node type of the main node. See ListNodeTypes for available options. See ListNodeTypes for available options.
@@ -646,34 +646,34 @@ type CreateDatalabRequest struct {
 	// Worker: the cluster worker node specification. It holds the parameters `node_type` which specifies the node type of the worker node and `node_count` for specifying the amount of nodes.
 	Worker *CreateDatalabRequestSparkWorker `json:"worker,omitempty"`
 
-	// HasNotebook: select this option to include a notebook as part of the Data Lab.
+	// HasNotebook: select this option to include a notebook as part of the cluster.
 	HasNotebook bool `json:"has_notebook"`
 
-	// SparkVersion: the version of Spark running inside the Data Lab, available options can be viewed at ListClusterVersions.
+	// SparkVersion: the version of Apache Spark™ running inside the cluster, available options can be viewed at ListClusterVersions.
 	SparkVersion string `json:"spark_version"`
 
 	// TotalStorage: the maximum persistent volume storage that will be available during workload.
 	TotalStorage *Volume `json:"total_storage,omitempty"`
 
-	// PrivateNetworkID: the unique identifier of the private network the Data Lab will be attached to.
+	// PrivateNetworkID: the unique identifier of the private network the cluster will be attached to.
 	PrivateNetworkID string `json:"private_network_id"`
 }
 
-// DeleteDatalabRequest: A request to delete a Data Lab.
+// DeleteDatalabRequest: A request to delete a cluster.
 type DeleteDatalabRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// DatalabID: the unique identifier of the Data Lab.
+	// DatalabID: the unique identifier of the cluster.
 	DatalabID string `json:"-"`
 }
 
-// GetDatalabRequest: A request to get information about a Data Lab.
+// GetDatalabRequest: A request to get information about a cluster.
 type GetDatalabRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// DatalabID: the unique identifier of the Data Lab.
+	// DatalabID: the unique identifier of the cluster.
 	DatalabID string `json:"-"`
 }
 
@@ -721,21 +721,21 @@ func (r *ListClusterVersionsResponse) UnsafeAppend(res any) (uint64, error) {
 	return uint64(len(results.Clusters)), nil
 }
 
-// ListDatalabsRequest: A request to list Data Labs.
+// ListDatalabsRequest: A request to list clusters.
 type ListDatalabsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// OrganizationID: the unique identifier of the organization whose Data Labs you want to list.
+	// OrganizationID: the unique identifier of the organization whose clusters you want to list.
 	OrganizationID *string `json:"-"`
 
-	// ProjectID: the unique identifier of the project whose Data Labs you want to list.
+	// ProjectID: the unique identifier of the project whose clusters you want to list.
 	ProjectID *string `json:"-"`
 
-	// Name: the name of the Data Lab you want to list.
+	// Name: the name of the cluster you want to list.
 	Name *string `json:"-"`
 
-	// Tags: the tags associated with the Data Lab you want to list.
+	// Tags: the tags associated with the cluster you want to list.
 	Tags []string `json:"-"`
 
 	// Page: the page number for pagination.
@@ -749,12 +749,12 @@ type ListDatalabsRequest struct {
 	OrderBy ListDatalabsRequestOrderBy `json:"-"`
 }
 
-// ListDatalabsResponse: A response to list Data Labs.
+// ListDatalabsResponse: A response to list clusters.
 type ListDatalabsResponse struct {
-	// Datalabs: the list of Data Labs. This is a list composed of messages of type `DataLab`.
+	// Datalabs: the list of clusters. This is a list composed of messages of type `DataLab`.
 	Datalabs []*Datalab `json:"datalabs"`
 
-	// TotalCount: the total count of Data Labs.
+	// TotalCount: the total count of clusters.
 	TotalCount uint64 `json:"total_count"`
 }
 
@@ -872,28 +872,28 @@ func (r *ListNotebookVersionsResponse) UnsafeAppend(res any) (uint64, error) {
 	return uint64(len(results.Notebooks)), nil
 }
 
-// UpdateDatalabRequest: A request to update a Data Lab.
+// UpdateDatalabRequest: A request to update a cluster.
 type UpdateDatalabRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// DatalabID: the unique identifier of the Data Lab.
+	// DatalabID: the unique identifier of the cluster.
 	DatalabID string `json:"-"`
 
-	// Name: the updated name of the Data Lab.
+	// Name: the updated name of the cluster.
 	Name *string `json:"name,omitempty"`
 
-	// Description: the updated description of the Data Lab.
+	// Description: the updated description of the cluster.
 	Description *string `json:"description,omitempty"`
 
-	// Tags: the updated tags of the Data Lab.
+	// Tags: the updated tags of the cluster.
 	Tags []string `json:"tags"`
 
-	// NodeCount: the updated node count of the Data Lab. Scale up or down the number of worker nodes.
+	// NodeCount: the updated node count of the cluster. Scale up or down the number of worker nodes.
 	NodeCount *uint32 `json:"node_count,omitempty"`
 }
 
-// This API allows you to manage your Data Lab resources.
+// This API allows you to manage your Apache Spark™ resources.
 type API struct {
 	client *scw.Client
 }
@@ -906,10 +906,10 @@ func NewAPI(client *scw.Client) *API {
 }
 
 func (s *API) Regions() []scw.Region {
-	return []scw.Region{scw.RegionFrPar}
+	return []scw.Region{scw.RegionFrPar, scw.RegionItMil}
 }
 
-// CreateDatalab: Create a new Data Lab. In this call, one can personalize the node counts, add a notebook, choose the private network, define the persistent volume storage capacity.
+// CreateDatalab: Create a new cluster. In this call, one can personalize the node counts, add a notebook, choose the private network, define the persistent volume storage capacity.
 func (s *API) CreateDatalab(req *CreateDatalabRequest, opts ...scw.RequestOption) (*Datalab, error) {
 	var err error
 
@@ -946,7 +946,7 @@ func (s *API) CreateDatalab(req *CreateDatalabRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-// GetDatalab: Retrieve information about a given Data Lab cluster, specified by the `region` and `datalab_id` parameters. Its full details, including name, status, node counts, are returned in the response object.
+// GetDatalab: Retrieve information about a given cluster, specified by the `region` and `datalab_id` parameters. Its full details, including name, status, node counts, are returned in the response object.
 func (s *API) GetDatalab(req *GetDatalabRequest, opts ...scw.RequestOption) (*Datalab, error) {
 	var err error
 
@@ -1026,7 +1026,7 @@ func (s *API) WaitForDatalab(req *WaitForDatalabRequest, opts ...scw.RequestOpti
 	return res.(*Datalab), nil
 }
 
-// ListDatalabs: List information about Data Lab cluster within a project or an organization.
+// ListDatalabs: List information about cluster within a project or an organization.
 func (s *API) ListDatalabs(req *ListDatalabsRequest, opts ...scw.RequestOption) (*ListDatalabsResponse, error) {
 	var err error
 
@@ -1068,7 +1068,7 @@ func (s *API) ListDatalabs(req *ListDatalabsRequest, opts ...scw.RequestOption) 
 	return &resp, nil
 }
 
-// UpdateDatalab: Update a Data Labs node counts. Allows for up- and downscaling on demand, depending on the expected workload.
+// UpdateDatalab: Update a cluster node counts. Allows for up- and downscaling on demand, depending on the expected workload.
 func (s *API) UpdateDatalab(req *UpdateDatalabRequest, opts ...scw.RequestOption) (*Datalab, error) {
 	var err error
 
@@ -1104,7 +1104,7 @@ func (s *API) UpdateDatalab(req *UpdateDatalabRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-// DeleteDatalab: Delete a Data Lab based on its region and id.
+// DeleteDatalab: Delete a cluster based on its region and id.
 func (s *API) DeleteDatalab(req *DeleteDatalabRequest, opts ...scw.RequestOption) (*Datalab, error) {
 	var err error
 
@@ -1135,7 +1135,7 @@ func (s *API) DeleteDatalab(req *DeleteDatalabRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-// ListNodeTypes: List the available compute node types for creating a Data Lab.
+// ListNodeTypes: List the available compute node types for creating a new cluster.
 func (s *API) ListNodeTypes(req *ListNodeTypesRequest, opts ...scw.RequestOption) (*ListNodeTypesResponse, error) {
 	var err error
 
@@ -1213,7 +1213,7 @@ func (s *API) ListNotebookVersions(req *ListNotebookVersionsRequest, opts ...scw
 	return &resp, nil
 }
 
-// ListClusterVersions: List the Spark versions the product is compatible with.
+// ListClusterVersions: List the Apache Spark™ versions the product is compatible with.
 func (s *API) ListClusterVersions(req *ListClusterVersionsRequest, opts ...scw.RequestOption) (*ListClusterVersionsResponse, error) {
 	var err error
 

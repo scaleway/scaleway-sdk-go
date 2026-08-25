@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"text/template"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
@@ -194,6 +195,56 @@ type Attachment struct {
 
 	// Zone: the zone where the resource is located.
 	Zone *scw.Zone `json:"zone"`
+
+	// Region: the region where the attachment is located.
+	Region scw.Region `json:"region"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *Attachment) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		Attachment
+		Platform string
+	}{
+		Attachment: *m,
+		Platform:   platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://file.{{ notempty .Platform }}/regions/{{ notempty .Region }}/attachments/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
+}
+
+// FileSystemType: file system type.
+type FileSystemType struct {
+	// Name: filesystem type name.
+	Name string `json:"name"`
+
+	// FilesystemPriceGbPerHour: price of the filesystem billed in GB/hour.
+	FilesystemPriceGbPerHour *scw.Money `json:"filesystem_price_gb_per_hour"`
+
+	// SnapshotPriceGbPerHour: price of the snapshot billed in GB/hour.
+	SnapshotPriceGbPerHour *scw.Money `json:"snapshot_price_gb_per_hour"`
 }
 
 // FileSystem: Represents a filesystem resource and its properties.
@@ -231,6 +282,44 @@ type FileSystem struct {
 
 	// UpdatedAt: last update date of the properties of the filesystem.
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	// FilesystemTypeID: UUID of the filesystem type.
+	FilesystemTypeID string `json:"filesystem_type_id"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *FileSystem) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		FileSystem
+		Platform string
+	}{
+		FileSystem: *m,
+		Platform:   platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://file.{{ notempty .Platform }}/regions/{{ notempty .Region }}/file-systems/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // CreateFileSystemRequest: Request to create a new filesystem.
@@ -244,8 +333,11 @@ type CreateFileSystemRequest struct {
 	// ProjectID: UUID of the project the filesystem belongs to.
 	ProjectID string `json:"project_id"`
 
-	// Size: must be compliant with the minimum (100 GB) and maximum (10 TB) allowed size.
+	// Size: must be compliant with the minimum (25 GB) and maximum (50 TB) allowed size.
 	Size uint64 `json:"size"`
+
+	// Type: type of the filesystem.
+	Type *string `json:"type,omitempty"`
 
 	// Tags: list of tags assigned to the filesystem.
 	Tags []string `json:"tags"`
@@ -322,6 +414,46 @@ func (r *ListAttachmentsResponse) UnsafeAppend(res any) (uint64, error) {
 	return uint64(len(results.Attachments)), nil
 }
 
+// ListFileSystemTypesRequest: Request to list filesystem types with pagination options.
+type ListFileSystemTypesRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// Page: page number (starts at 1).
+	Page *int32 `json:"-"`
+
+	// PageSize: number of entries per page (default: 50, max: 100).
+	PageSize *uint32 `json:"-"`
+}
+
+// ListFileSystemTypesResponse: list file system types response.
+type ListFileSystemTypesResponse struct {
+	// FilesystemTypes: returns paginated list of filesystem-types.
+	FilesystemTypes []*FileSystemType `json:"filesystem_types"`
+
+	// TotalCount: total number of file system types.
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListFileSystemTypesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListFileSystemTypesResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListFileSystemTypesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.FilesystemTypes = append(r.FilesystemTypes, results.FilesystemTypes...)
+	r.TotalCount += uint64(len(results.FilesystemTypes))
+	return uint64(len(results.FilesystemTypes)), nil
+}
+
 // ListFileSystemsRequest: Request to list filesystems with filtering and pagination options.
 type ListFileSystemsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -346,8 +478,14 @@ type ListFileSystemsRequest struct {
 	// Name: filter the returned filesystems by their names.
 	Name *string `json:"-"`
 
+	// FilesystemType: type of the filesystem.
+	FilesystemType *string `json:"-"`
+
 	// Tags: filter by tags. Only filesystems with one or more matching tags will be returned.
 	Tags []string `json:"-"`
+
+	// FilesystemIDs: filter by filesystem IDs. Only filesystems with one or more matching IDs will be returned.
+	FilesystemIDs []string `json:"-"`
 }
 
 // ListFileSystemsResponse: Response containing a list of filesystems and total count.
@@ -389,8 +527,8 @@ type UpdateFileSystemRequest struct {
 	// Name: when defined, is the new name of the filesystem.
 	Name *string `json:"name,omitempty"`
 
-	// Size: size in bytes, with a granularity of 100 GB (10^11 bytes).
-	// Must be compliant with the minimum (100 GB) and maximum (10 TB) allowed size.
+	// Size: size in bytes, with a granularity in GB (10^9 bytes).
+	// Must be compliant with the minimum (25 GB) and maximum (50 TB) allowed size.
 	Size *uint64 `json:"size,omitempty"`
 
 	// Tags: list of tags assigned to the filesystem.
@@ -411,6 +549,43 @@ func NewAPI(client *scw.Client) *API {
 
 func (s *API) Regions() []scw.Region {
 	return []scw.Region{scw.RegionFrPar}
+}
+
+// ListFileSystemTypes: List filesystems types.
+func (s *API) ListFileSystemTypes(req *ListFileSystemTypesRequest, opts ...scw.RequestOption) (*ListFileSystemTypesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/file/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/filesystem-types",
+		Query:  query,
+	}
+
+	var resp ListFileSystemTypesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 // GetFileSystem: Retrieve all properties and current status of a specific filesystem identified by its ID.
@@ -440,6 +615,10 @@ func (s *API) GetFileSystem(req *GetFileSystemRequest, opts ...scw.RequestOption
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -513,7 +692,9 @@ func (s *API) ListFileSystems(req *ListFileSystemsRequest, opts ...scw.RequestOp
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "name", req.Name)
+	parameter.AddToQuery(query, "filesystem_type", req.FilesystemType)
 	parameter.AddToQuery(query, "tags", req.Tags)
+	parameter.AddToQuery(query, "filesystem_ids", req.FilesystemIDs)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -530,6 +711,12 @@ func (s *API) ListFileSystems(req *ListFileSystemsRequest, opts ...scw.RequestOp
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Filesystems {
+			el.setSRN(apiMetadata.Domain)
+		}
 	}
 	return &resp, nil
 }
@@ -578,6 +765,12 @@ func (s *API) ListAttachments(req *ListAttachmentsRequest, opts ...scw.RequestOp
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Attachments {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -614,6 +807,10 @@ func (s *API) CreateFileSystem(req *CreateFileSystemRequest, opts ...scw.Request
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -679,6 +876,10 @@ func (s *API) UpdateFileSystem(req *UpdateFileSystemRequest, opts ...scw.Request
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }

@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"text/template"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
@@ -140,6 +141,8 @@ type LinkKind string
 const (
 	LinkKindHosted     = LinkKind("hosted")
 	LinkKindSelfHosted = LinkKind("self_hosted")
+	LinkKindL2Hosted   = LinkKind("l2_hosted")
+	LinkKindL3Hosted   = LinkKind("l3_hosted")
 )
 
 func (enum LinkKind) String() string {
@@ -154,6 +157,8 @@ func (enum LinkKind) Values() []LinkKind {
 	return []LinkKind{
 		"hosted",
 		"self_hosted",
+		"l2_hosted",
+		"l3_hosted",
 	}
 }
 
@@ -471,6 +476,9 @@ type PartnerHost struct {
 
 	// DisapprovedReason: reason given by partner to explain why they did not approve the request for a hosted link.
 	DisapprovedReason *string `json:"disapproved_reason"`
+
+	// L3Connectivity: whether or not the partner supports L3 connectivity.
+	L3Connectivity bool `json:"l3_connectivity"`
 }
 
 // SelfHost: self host.
@@ -523,6 +531,41 @@ type DedicatedConnection struct {
 
 	// Region: region of the dedicated connection.
 	Region scw.Region `json:"region"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *DedicatedConnection) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		DedicatedConnection
+		Platform string
+	}{
+		DedicatedConnection: *m,
+		Platform:            platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://interlink.{{ notempty .Platform }}/regions/{{ notempty .Region }}/dedicated-connections/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Link: link.
@@ -600,6 +643,41 @@ type Link struct {
 
 	// Region: region of the link.
 	Region scw.Region `json:"region"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *Link) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		Link
+		Platform string
+	}{
+		Link:     *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://interlink.{{ notempty .Platform }}/regions/{{ notempty .Region }}/links/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Partner: partner.
@@ -624,6 +702,47 @@ type Partner struct {
 
 	// UpdatedAt: last modification date of the partner.
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	// L3Connectivity: whether or not the partner supports L3 connectivity.
+	L3Connectivity bool `json:"l3_connectivity"`
+
+	// Region: region of the partner.
+	Region scw.Region `json:"region"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *Partner) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		Partner
+		Platform string
+	}{
+		Partner:  *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://interlink.{{ notempty .Platform }}/regions/{{ notempty .Region }}/partners/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Pop: pop.
@@ -654,6 +773,41 @@ type Pop struct {
 
 	// Region: region of the PoP.
 	Region scw.Region `json:"region"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *Pop) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		Pop
+		Platform string
+	}{
+		Pop:      *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://interlink.{{ notempty .Platform }}/regions/{{ notempty .Region }}/pops/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // RoutingPolicy: routing policy.
@@ -690,6 +844,41 @@ type RoutingPolicy struct {
 
 	// Region: region of the routing policy.
 	Region scw.Region `json:"region"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *RoutingPolicy) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		RoutingPolicy
+		Platform string
+	}{
+		RoutingPolicy: *m,
+		Platform:      platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://interlink.{{ notempty .Platform }}/regions/{{ notempty .Region }}/routing-policies/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // AttachRoutingPolicyRequest: attach routing policy request.
@@ -1059,6 +1248,9 @@ type ListPartnersRequest struct {
 
 	// PopIDs: filter for partners present (offering a connection) in one of these PoPs.
 	PopIDs []string `json:"-"`
+
+	// L3Connectivity: filter for partners supporting L3 connectivity.
+	L3Connectivity *bool `json:"-"`
 }
 
 // ListPartnersResponse: list partners response.
@@ -1113,11 +1305,14 @@ type ListPopsRequest struct {
 	// PartnerID: filter for PoPs hosting an available shared connection from this partner.
 	PartnerID *string `json:"-"`
 
-	// LinkBandwidthMbps: filter for PoPs with a shared connection allowing this bandwidth size. Note that we cannot guarantee that PoPs returned will have available capacity.
+	// LinkBandwidthMbps: filter for PoPs with a connection allowing this bandwidth size. Note that we cannot guarantee that PoPs returned will have available capacity.
 	LinkBandwidthMbps *uint64 `json:"-"`
 
 	// DedicatedAvailable: filter for PoPs with a dedicated connection available for self-hosted links.
 	DedicatedAvailable *bool `json:"-"`
+
+	// L3ConnectivityPartners: filter for PoPs with a shared connection available from a partner supporting L3 connectivity.
+	L3ConnectivityPartners *bool `json:"-"`
 }
 
 // ListPopsResponse: list pops response.
@@ -1269,7 +1464,7 @@ func NewAPI(client *scw.Client) *API {
 }
 
 func (s *API) Regions() []scw.Region {
-	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
+	return []scw.Region{scw.RegionFrPar, scw.RegionItMil, scw.RegionNlAms, scw.RegionPlWaw}
 }
 
 // ListDedicatedConnections: For self-hosted users, list their dedicated physical connections in a given region. By default, the connections returned in the list are ordered by name in ascending order, though this can be modified via the `order_by` field.
@@ -1314,6 +1509,12 @@ func (s *API) ListDedicatedConnections(req *ListDedicatedConnectionsRequest, opt
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Connections {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -1344,6 +1545,10 @@ func (s *API) GetDedicatedConnection(req *GetDedicatedConnectionRequest, opts ..
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1414,6 +1619,7 @@ func (s *API) ListPartners(req *ListPartnersRequest, opts ...scw.RequestOption) 
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "pop_ids", req.PopIDs)
+	parameter.AddToQuery(query, "l3_connectivity", req.L3Connectivity)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -1430,6 +1636,12 @@ func (s *API) ListPartners(req *ListPartnersRequest, opts ...scw.RequestOption) 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Partners {
+			el.setSRN(apiMetadata.Domain)
+		}
 	}
 	return &resp, nil
 }
@@ -1462,6 +1674,10 @@ func (s *API) GetPartner(req *GetPartnerRequest, opts ...scw.RequestOption) (*Pa
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1488,6 +1704,7 @@ func (s *API) ListPops(req *ListPopsRequest, opts ...scw.RequestOption) (*ListPo
 	parameter.AddToQuery(query, "partner_id", req.PartnerID)
 	parameter.AddToQuery(query, "link_bandwidth_mbps", req.LinkBandwidthMbps)
 	parameter.AddToQuery(query, "dedicated_available", req.DedicatedAvailable)
+	parameter.AddToQuery(query, "l3_connectivity_partners", req.L3ConnectivityPartners)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -1504,6 +1721,12 @@ func (s *API) ListPops(req *ListPopsRequest, opts ...scw.RequestOption) (*ListPo
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Pops {
+			el.setSRN(apiMetadata.Domain)
+		}
 	}
 	return &resp, nil
 }
@@ -1535,6 +1758,10 @@ func (s *API) GetPop(req *GetPopRequest, opts ...scw.RequestOption) (*Pop, error
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1589,6 +1816,12 @@ func (s *API) ListLinks(req *ListLinksRequest, opts ...scw.RequestOption) (*List
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Links {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -1619,6 +1852,10 @@ func (s *API) GetLink(req *GetLinkRequest, opts ...scw.RequestOption) (*Link, er
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1704,6 +1941,10 @@ func (s *API) CreateLink(req *CreateLinkRequest, opts ...scw.RequestOption) (*Li
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1740,6 +1981,10 @@ func (s *API) UpdateLink(req *UpdateLinkRequest, opts ...scw.RequestOption) (*Li
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1770,6 +2015,10 @@ func (s *API) DeleteLink(req *DeleteLinkRequest, opts ...scw.RequestOption) (*Li
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1807,6 +2056,10 @@ func (s *API) AttachVpc(req *AttachVpcRequest, opts ...scw.RequestOption) (*Link
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1842,6 +2095,10 @@ func (s *API) DetachVpc(req *DetachVpcRequest, opts ...scw.RequestOption) (*Link
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1879,6 +2136,10 @@ func (s *API) AttachRoutingPolicy(req *AttachRoutingPolicyRequest, opts ...scw.R
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1914,6 +2175,10 @@ func (s *API) DetachRoutingPolicy(req *DetachRoutingPolicyRequest, opts ...scw.R
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1951,6 +2216,10 @@ func (s *API) SetRoutingPolicy(req *SetRoutingPolicyRequest, opts ...scw.Request
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1987,6 +2256,10 @@ func (s *API) EnableRoutePropagation(req *EnableRoutePropagationRequest, opts ..
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -2022,6 +2295,10 @@ func (s *API) DisableRoutePropagation(req *DisableRoutePropagationRequest, opts 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2066,6 +2343,12 @@ func (s *API) ListRoutingPolicies(req *ListRoutingPoliciesRequest, opts ...scw.R
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.RoutingPolicies {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -2096,6 +2379,10 @@ func (s *API) GetRoutingPolicy(req *GetRoutingPolicyRequest, opts ...scw.Request
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2134,6 +2421,10 @@ func (s *API) CreateRoutingPolicy(req *CreateRoutingPolicyRequest, opts ...scw.R
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -2169,6 +2460,10 @@ func (s *API) UpdateRoutingPolicy(req *UpdateRoutingPolicyRequest, opts ...scw.R
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }

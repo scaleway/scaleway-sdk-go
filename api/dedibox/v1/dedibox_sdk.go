@@ -2781,7 +2781,7 @@ type IP struct {
 
 // Offer: offer.
 type Offer struct {
-	// ID: ID of the offer.
+	// ID: ID of the offer (aka product.id).
 	ID uint64 `json:"id"`
 
 	// Name: name of the offer.
@@ -2797,6 +2797,9 @@ type Offer struct {
 
 	// Pricing: price of the offer.
 	Pricing *scw.Money `json:"pricing"`
+
+	// OfferID: original Dedibox ID of the offer.
+	OfferID *uint64 `json:"offer_id"`
 
 	// ServerInfo: server info if it is a server offer.
 	// Precisely one of ServerInfo, ServiceLevelInfo, RpnInfo, SanInfo, AntidosInfo, BackupInfo, UsbStorageInfo, StorageInfo, LicenseInfo, FailoverIPInfo, FailoverBlockInfo, BandwidthInfo must be set.
@@ -2968,7 +2971,7 @@ type ServiceLevel struct {
 
 // RpnSan: rpn san.
 type RpnSan struct {
-	// ID: rPN SAN  ID.
+	// ID: rPN SAN ID.
 	ID uint64 `json:"id"`
 
 	// DatacenterName: datacenter location.
@@ -3504,7 +3507,7 @@ type RpnGroupMember struct {
 
 // RpnSanSummary: rpn san summary.
 type RpnSanSummary struct {
-	// ID: rPN SAN  ID.
+	// ID: rPN SAN ID.
 	ID uint64 `json:"id"`
 
 	// DatacenterName: datacenter location.
@@ -6215,7 +6218,7 @@ func (s *API) SubscribeServerOption(req *SubscribeServerOptionRequest, opts ...s
 	return &resp, nil
 }
 
-// CreateServer: Create a new baremetal server. The order return you a service ID to follow the provisionning status you could call GetService.
+// CreateServer: Create a new baremetal server. The order return you a service ID to follow the provisioning status you could call GetService.
 func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) (*Service, error) {
 	var err error
 

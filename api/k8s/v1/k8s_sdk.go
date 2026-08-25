@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"text/template"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
@@ -802,10 +803,10 @@ type CoreV1Taint struct {
 
 // CreateClusterRequestPoolConfigUpgradePolicy: create cluster request pool config upgrade policy.
 type CreateClusterRequestPoolConfigUpgradePolicy struct {
-	// MaxUnavailable: the maximum number of nodes that can be not ready at the same time.
+	// MaxUnavailable: the maximum number of nodes that can be `upgrading` at the same time.
 	MaxUnavailable *uint32 `json:"max_unavailable"`
 
-	// MaxSurge: the maximum number of nodes to be created during the upgrade.
+	// MaxSurge: the maximum number of nodes to be created during the upgrade, e.g. the pool will scale up to reach `size`+`max_surge` before downscaling to `size` after node upgrades.
 	MaxSurge *uint32 `json:"max_surge"`
 }
 
@@ -851,6 +852,12 @@ type ClusterAutoscalerConfig struct {
 
 	// MaxGracefulTerminationSec: maximum number of seconds the cluster autoscaler waits for pod termination when trying to scale down a node, defaults to 600 (10 minutes).
 	MaxGracefulTerminationSec uint32 `json:"max_graceful_termination_sec"`
+
+	// SkipNodesWithLocalStorage: cluster autoscaler will never delete nodes with pods with local storage, e.g. EmptyDir or HostPath, defaults to true.
+	SkipNodesWithLocalStorage bool `json:"skip_nodes_with_local_storage"`
+
+	// LogLevel: cluster autoscaler logging level expressed from 0 to 4 (4 being the more verbose), defaults to 2. see https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#how-can-i-increase-the-information-that-the-ca-is-logging for details.
+	LogLevel int32 `json:"log_level"`
 }
 
 // ClusterOpenIDConnectConfig: cluster open id connect config.
@@ -879,8 +886,10 @@ type ClusterOpenIDConnectConfig struct {
 
 // PoolUpgradePolicy: pool upgrade policy.
 type PoolUpgradePolicy struct {
+	// MaxUnavailable: the maximum number of nodes that can be `upgrading` at the same time.
 	MaxUnavailable uint32 `json:"max_unavailable"`
 
+	// MaxSurge: the maximum number of nodes to be created during the upgrade, e.g. the pool will scale up to reach `size`+`max_surge` before downscaling to `size` after node upgrades.
 	MaxSurge uint32 `json:"max_surge"`
 }
 
@@ -913,6 +922,44 @@ type ACLRule struct {
 
 	// Description: description of the ACL.
 	Description string `json:"description"`
+
+	// Region: region of the ACL rule.
+	Region scw.Region `json:"region"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *ACLRule) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		ACLRule
+		Platform string
+	}{
+		ACLRule:  *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://k8s.{{ notempty .Platform }}/regions/{{ notempty .Region }}/acl-rules/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // CreateClusterRequestAutoUpgrade: create cluster request auto upgrade.
@@ -957,6 +1004,12 @@ type CreateClusterRequestAutoscalerConfig struct {
 
 	// MaxGracefulTerminationSec: maximum number of seconds the cluster autoscaler waits for pod termination when trying to scale down a node, defaults to 600 (10 minutes).
 	MaxGracefulTerminationSec *uint32 `json:"max_graceful_termination_sec"`
+
+	// SkipNodesWithLocalStorage: cluster autoscaler will never delete nodes with pods with local storage, e.g. EmptyDir or HostPath, defaults to true.
+	SkipNodesWithLocalStorage *bool `json:"skip_nodes_with_local_storage"`
+
+	// LogLevel: cluster autoscaler logging level expressed from 0 to 4 (4 being the more verbose), defaults to 2. see https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#how-can-i-increase-the-information-that-the-ca-is-logging for details.
+	LogLevel *int32 `json:"log_level"`
 }
 
 // CreateClusterRequestOpenIDConnectConfig: create cluster request open id connect config.
@@ -1019,7 +1072,7 @@ type CreateClusterRequestPoolConfig struct {
 	// KubeletArgs: kubelet arguments to be used by this pool. Note that this feature is experimental.
 	KubeletArgs map[string]string `json:"kubelet_args"`
 
-	// UpgradePolicy: pool upgrade policy.
+	// UpgradePolicy: defines how node provisioning should behave during pool version upgrade.
 	UpgradePolicy *CreateClusterRequestPoolConfigUpgradePolicy `json:"upgrade_policy"`
 
 	// Zone: zone in which the pool's nodes will be spawned.
@@ -1049,22 +1102,18 @@ type CreateClusterRequestPoolConfig struct {
 
 	// StartupTaints: kubernetes taints applied at node creation but not reconciled afterwards.
 	StartupTaints []*CoreV1Taint `json:"startup_taints"`
+
+	// PrivateNetworkID: private network where the nodes are attached. Should be member of the same VPC as the API Server.
+	PrivateNetworkID *string `json:"private_network_id"`
 }
 
 // CreatePoolRequestUpgradePolicy: create pool request upgrade policy.
 type CreatePoolRequestUpgradePolicy struct {
+	// MaxUnavailable: the maximum number of nodes that can be `upgrading` at the same time.
 	MaxUnavailable *uint32 `json:"max_unavailable"`
 
+	// MaxSurge: the maximum number of nodes to be created during the upgrade, e.g. the pool will scale up to reach `size`+`max_surge` before downscaling to `size` after node upgrades.
 	MaxSurge *uint32 `json:"max_surge"`
-}
-
-// ExternalNodeCoreV1Taint: external node core v1 taint.
-type ExternalNodeCoreV1Taint struct {
-	Key string `json:"key"`
-
-	Value string `json:"value"`
-
-	Effect string `json:"effect"`
 }
 
 // ClusterType: cluster type.
@@ -1100,6 +1149,44 @@ type ClusterType struct {
 
 	// MaxEtcdSize: maximum amount of data that can be stored in etcd for the offer.
 	MaxEtcdSize scw.Size `json:"max_etcd_size"`
+
+	// Region: the region of the cluster type.
+	Region scw.Region `json:"region"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *ClusterType) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		ClusterType
+		Platform string
+	}{
+		ClusterType: *m,
+		Platform:    platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://k8s.{{ notempty .Platform }}/regions/{{ notempty .Region }}/cluster-types/{{ notempty .Name }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Version: version.
@@ -1136,6 +1223,41 @@ type Version struct {
 
 	// ReleasedAt: date at which this version was made available by Kapsule product.
 	ReleasedAt *time.Time `json:"released_at"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *Version) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		Version
+		Platform string
+	}{
+		Version:  *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://k8s.{{ notempty .Platform }}/regions/{{ notempty .Region }}/versions/{{ notempty .Name }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Cluster: cluster.
@@ -1215,7 +1337,7 @@ type Cluster struct {
 	CommitmentEndsAt *time.Time `json:"commitment_ends_at"`
 
 	// Deprecated: ACLAvailable: defines whether ACL is available on the cluster.
-	ACLAvailable bool `json:"acl_available,omitempty"`
+	ACLAvailable *bool `json:"acl_available,omitempty"`
 
 	// IamNodesGroupID: iAM group that nodes are members of (this field might be empty during early stage of cluster creation).
 	IamNodesGroupID string `json:"iam_nodes_group_id"`
@@ -1228,6 +1350,41 @@ type Cluster struct {
 
 	// ServiceDNSIP: IP used for the DNS Service.
 	ServiceDNSIP net.IP `json:"service_dns_ip"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *Cluster) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		Cluster
+		Platform string
+	}{
+		Cluster:  *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://k8s.{{ notempty .Platform }}/regions/{{ notempty .Region }}/clusters/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Node: node.
@@ -1271,6 +1428,41 @@ type Node struct {
 
 	// UpdatedAt: date on which the node was last updated.
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *Node) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		Node
+		Platform string
+	}{
+		Node:     *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://k8s.{{ notempty .Platform }}/regions/{{ notempty .Region }}/nodes/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Pool: pool.
@@ -1328,7 +1520,7 @@ type Pool struct {
 	// KubeletArgs: kubelet arguments to be used by this pool. Note that this feature is experimental.
 	KubeletArgs map[string]string `json:"kubelet_args"`
 
-	// UpgradePolicy: pool upgrade policy.
+	// UpgradePolicy: defines how node provisioning should behave during pool version upgrade.
 	UpgradePolicy *PoolUpgradePolicy `json:"upgrade_policy"`
 
 	// Zone: zone in which the pool's nodes will be spawned.
@@ -1359,8 +1551,49 @@ type Pool struct {
 	// StartupTaints: kubernetes taints applied at node creation but not reconciled afterwards.
 	StartupTaints []*CoreV1Taint `json:"startup_taints"`
 
+	// PrivateNetworkID: private network where the nodes are attached. Should be member of the same VPC as the API Server.
+	PrivateNetworkID *string `json:"private_network_id"`
+
+	// ErrorMessage: details of the error, if any occurred when managing the pool.
+	ErrorMessage *string `json:"error_message"`
+
 	// Region: cluster region of the pool.
 	Region scw.Region `json:"region"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *Pool) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		Pool
+		Platform string
+	}{
+		Pool:     *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://k8s.{{ notempty .Platform }}/regions/{{ notempty .Region }}/pools/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // NodeMetadataCoreV1Taint: node metadata core v1 taint.
@@ -1414,6 +1647,12 @@ type UpdateClusterRequestAutoscalerConfig struct {
 
 	// MaxGracefulTerminationSec: maximum number of seconds the cluster autoscaler waits for pod termination when trying to scale down a node, defaults to 600 (10 minutes).
 	MaxGracefulTerminationSec *uint32 `json:"max_graceful_termination_sec"`
+
+	// SkipNodesWithLocalStorage: cluster autoscaler will never delete nodes with pods with local storage, e.g. EmptyDir or HostPath, defaults to true.
+	SkipNodesWithLocalStorage *bool `json:"skip_nodes_with_local_storage"`
+
+	// LogLevel: cluster autoscaler logging level expressed from 0 to 4 (4 being the more verbose), defaults to 2. see https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#how-can-i-increase-the-information-that-the-ca-is-logging for details.
+	LogLevel *int32 `json:"log_level"`
 }
 
 // UpdateClusterRequestOpenIDConnectConfig: update cluster request open id connect config.
@@ -1442,8 +1681,10 @@ type UpdateClusterRequestOpenIDConnectConfig struct {
 
 // UpdatePoolRequestUpgradePolicy: update pool request upgrade policy.
 type UpdatePoolRequestUpgradePolicy struct {
+	// MaxUnavailable: new maximum number of nodes that can be `upgrading` at the same time.
 	MaxUnavailable *uint32 `json:"max_unavailable"`
 
+	// MaxSurge: new maximum number of nodes to be created during the upgrade.
 	MaxSurge *uint32 `json:"max_surge"`
 }
 
@@ -1540,14 +1781,6 @@ type CreateClusterRequest struct {
 	ServiceDNSIP *net.IP `json:"service_dns_ip,omitempty"`
 }
 
-// CreateExternalNodeRequest: create external node request.
-type CreateExternalNodeRequest struct {
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"-"`
-
-	PoolID string `json:"-"`
-}
-
 // CreatePoolRequest: create pool request.
 type CreatePoolRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1590,7 +1823,7 @@ type CreatePoolRequest struct {
 	// KubeletArgs: kubelet arguments to be used by this pool. Note that this feature is experimental.
 	KubeletArgs map[string]string `json:"kubelet_args"`
 
-	// UpgradePolicy: pool upgrade policy.
+	// UpgradePolicy: defines how node provisioning should behave during pool version upgrade.
 	UpgradePolicy *CreatePoolRequestUpgradePolicy `json:"upgrade_policy,omitempty"`
 
 	// Zone: zone in which the pool's nodes will be spawned.
@@ -1620,6 +1853,12 @@ type CreatePoolRequest struct {
 
 	// StartupTaints: kubernetes taints applied at node creation but not reconciled afterwards.
 	StartupTaints []*CoreV1Taint `json:"startup_taints"`
+
+	// PrivateNetworkID: private network where the nodes are attached. Should be member of the same VPC as the API Server.
+	PrivateNetworkID *string `json:"private_network_id,omitempty"`
+
+	// UserData: user data applied and reconciled with the pool.
+	UserData map[string][]byte `json:"user_data"`
 }
 
 // DeleteACLRuleRequest: delete acl rule request.
@@ -1652,10 +1891,7 @@ type DeleteNodeRequest struct {
 	NodeID string `json:"-"`
 
 	// SkipDrain: skip draining node from its workload (Note: this parameter is currently inactive).
-	SkipDrain bool `json:"-"`
-
-	// Replace: add a new node after the deletion of this node.
-	Replace bool `json:"-"`
+	SkipDrain bool `json:"skip_drain"`
 }
 
 // DeletePoolRequest: delete pool request.
@@ -1665,37 +1901,6 @@ type DeletePoolRequest struct {
 
 	// PoolID: ID of the pool to delete.
 	PoolID string `json:"-"`
-}
-
-// ExternalNode: external node.
-type ExternalNode struct {
-	ID string `json:"id"`
-
-	Name string `json:"name"`
-
-	ClusterURL string `json:"cluster_url"`
-
-	PoolVersion string `json:"pool_version"`
-
-	ClusterCa string `json:"cluster_ca"`
-
-	KubeToken string `json:"kube_token"`
-
-	KubeletConfig string `json:"kubelet_config"`
-
-	ExternalIP string `json:"external_ip"`
-
-	ContainerdVersion string `json:"containerd_version"`
-
-	RuncVersion string `json:"runc_version"`
-
-	CniPluginsVersion string `json:"cni_plugins_version"`
-
-	NodeLabels map[string]string `json:"node_labels"`
-
-	NodeTaints []*ExternalNodeCoreV1Taint `json:"node_taints"`
-
-	IamToken string `json:"iam_token"`
 }
 
 // ExternalNodeAuth: external node auth.
@@ -1748,6 +1953,18 @@ type GetPoolRequest struct {
 
 	// PoolID: ID of the requested pool.
 	PoolID string `json:"-"`
+}
+
+// GetUserDataRequest: get user data request.
+type GetUserDataRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// PoolID: pool the user data will be attached to.
+	PoolID string `json:"-"`
+
+	// Key: user data key to retrieved.
+	Key string `json:"-"`
 }
 
 // GetVersionRequest: get version request.
@@ -1927,6 +2144,9 @@ type ListClustersRequest struct {
 
 	// PrivateNetworkID: private Network ID to filter on, only clusters within this Private Network will be returned.
 	PrivateNetworkID *string `json:"-"`
+
+	// Version: version to filter on, only cluster matching this prefix version will be returned.
+	Version *string `json:"-"`
 }
 
 // ListClustersResponse: list clusters response.
@@ -2324,7 +2544,7 @@ func NewAPI(client *scw.Client) *API {
 }
 
 func (s *API) Regions() []scw.Region {
-	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
+	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw, scw.RegionItMil}
 }
 
 // ListClusters: List all existing Kubernetes clusters in a specific region.
@@ -2351,6 +2571,7 @@ func (s *API) ListClusters(req *ListClustersRequest, opts ...scw.RequestOption) 
 	parameter.AddToQuery(query, "status", req.Status)
 	parameter.AddToQuery(query, "type", req.Type)
 	parameter.AddToQuery(query, "private_network_id", req.PrivateNetworkID)
+	parameter.AddToQuery(query, "version", req.Version)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -2367,6 +2588,12 @@ func (s *API) ListClusters(req *ListClustersRequest, opts ...scw.RequestOption) 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Clusters {
+			el.setSRN(apiMetadata.Domain)
+		}
 	}
 	return &resp, nil
 }
@@ -2414,6 +2641,10 @@ func (s *API) CreateCluster(req *CreateClusterRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -2444,6 +2675,10 @@ func (s *API) GetCluster(req *GetClusterRequest, opts ...scw.RequestOption) (*Cl
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2530,6 +2765,10 @@ func (s *API) UpdateCluster(req *UpdateClusterRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -2564,6 +2803,10 @@ func (s *API) DeleteCluster(req *DeleteClusterRequest, opts ...scw.RequestOption
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2601,6 +2844,10 @@ func (s *API) UpgradeCluster(req *UpgradeClusterRequest, opts ...scw.RequestOpti
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -2636,6 +2883,10 @@ func (s *API) SetClusterType(req *SetClusterTypeRequest, opts ...scw.RequestOpti
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2698,6 +2949,12 @@ func (s *API) ListClusterAvailableTypes(req *ListClusterAvailableTypesRequest, o
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.ClusterTypes {
+			el.setSRN(apiMetadata.Domain)
+		}
 	}
 	return &resp, nil
 }
@@ -2809,6 +3066,12 @@ func (s *API) ListClusterACLRules(req *ListClusterACLRulesRequest, opts ...scw.R
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Rules {
+			el.setSRN(apiMetadata.Domain)
+		}
 	}
 	return &resp, nil
 }
@@ -2955,6 +3218,12 @@ func (s *API) ListPools(req *ListPoolsRequest, opts ...scw.RequestOption) (*List
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Pools {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -3000,6 +3269,10 @@ func (s *API) CreatePool(req *CreatePoolRequest, opts ...scw.RequestOption) (*Po
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -3030,6 +3303,10 @@ func (s *API) GetPool(req *GetPoolRequest, opts ...scw.RequestOption) (*Pool, er
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -3117,6 +3394,10 @@ func (s *API) UpgradePool(req *UpgradePoolRequest, opts ...scw.RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -3153,6 +3434,10 @@ func (s *API) UpdatePool(req *UpdatePoolRequest, opts ...scw.RequestOption) (*Po
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -3183,6 +3468,10 @@ func (s *API) DeletePool(req *DeletePoolRequest, opts ...scw.RequestOption) (*Po
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -3220,6 +3509,10 @@ func (s *API) SetPoolTaints(req *SetPoolTaintsRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -3256,6 +3549,10 @@ func (s *API) SetPoolStartupTaints(req *SetPoolStartupTaintsRequest, opts ...scw
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -3287,6 +3584,46 @@ func (s *API) SetPoolLabels(req *SetPoolLabelsRequest, opts ...scw.RequestOption
 	}
 
 	var resp Pool
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
+	return &resp, nil
+}
+
+// GetUserData: Retrieve specific user data content for a given pool.
+// Tip: add `?dl=1` at the end of the URL to directly retrieve the base64 decoded content of your user data.
+func (s *API) GetUserData(req *GetUserDataRequest, opts ...scw.RequestOption) (*scw.File, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.PoolID) == "" {
+		return nil, errors.New("field PoolID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.Key) == "" {
+		return nil, errors.New("field Key cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/pools/" + fmt.Sprint(req.PoolID) + "/user-data/" + fmt.Sprint(req.Key) + "",
+	}
+
+	var resp scw.File
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
@@ -3358,42 +3695,6 @@ func (s *API) AuthExternalNode(req *AuthExternalNodeRequest, opts ...scw.Request
 	return &resp, nil
 }
 
-// CreateExternalNode: Retrieve metadata for a Kosmos node. This method is not intended to be called by end users but rather programmatically by the kapsule-node-agent.
-func (s *API) CreateExternalNode(req *CreateExternalNodeRequest, opts ...scw.RequestOption) (*ExternalNode, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	if fmt.Sprint(req.PoolID) == "" {
-		return nil, errors.New("field PoolID cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "POST",
-		Path:   "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/pools/" + fmt.Sprint(req.PoolID) + "/external-nodes",
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp ExternalNode
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
 // ListNodes: List all the existing nodes for a specific Kubernetes cluster.
 func (s *API) ListNodes(req *ListNodesRequest, opts ...scw.RequestOption) (*ListNodesResponse, error) {
 	var err error
@@ -3436,6 +3737,12 @@ func (s *API) ListNodes(req *ListNodesRequest, opts ...scw.RequestOption) (*List
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Nodes {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -3466,6 +3773,10 @@ func (s *API) GetNode(req *GetNodeRequest, opts ...scw.RequestOption) (*Node, er
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -3522,7 +3833,7 @@ func (s *API) WaitForNode(req *WaitForNodeRequest, opts ...scw.RequestOption) (*
 	return res.(*Node), nil
 }
 
-// Deprecated: ReplaceNode: Replace a specific Node. The node will first be drained and pods will be rescheduled onto another node. Note that when there is not enough space to reschedule all the pods (such as in a one-node cluster, or with specific constraints), disruption of your applications may occur.
+// ReplaceNode: Replace a specific Node. The node will first be drained and pods will be rescheduled onto another node. Note that when there is not enough space to reschedule all the pods (such as in a one-node cluster, or with specific constraints), disruption of your applications may occur.
 func (s *API) ReplaceNode(req *ReplaceNodeRequest, opts ...scw.RequestOption) (*Node, error) {
 	var err error
 
@@ -3554,6 +3865,10 @@ func (s *API) ReplaceNode(req *ReplaceNodeRequest, opts ...scw.RequestOption) (*
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -3591,10 +3906,14 @@ func (s *API) RebootNode(req *RebootNodeRequest, opts ...scw.RequestOption) (*No
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
-// DeleteNode: Delete a specific Node. The node will first be drained and pods will be rescheduled onto another node. Note that when there is not enough space to reschedule all the pods (such as in a one-node cluster, or with specific constraints), disruption of your applications may occur.
+// DeleteNode: Delete a specific Node. Pool size is reduced by 1. The node will first be drained and pods will be rescheduled onto another node. Note that when there is not enough space to reschedule all the pods (such as in a one-node cluster, or with specific constraints), disruption of your applications may occur.
 func (s *API) DeleteNode(req *DeleteNodeRequest, opts ...scw.RequestOption) (*Node, error) {
 	var err error
 
@@ -3605,7 +3924,6 @@ func (s *API) DeleteNode(req *DeleteNodeRequest, opts ...scw.RequestOption) (*No
 
 	query := url.Values{}
 	parameter.AddToQuery(query, "skip_drain", req.SkipDrain)
-	parameter.AddToQuery(query, "replace", req.Replace)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -3626,6 +3944,10 @@ func (s *API) DeleteNode(req *DeleteNodeRequest, opts ...scw.RequestOption) (*No
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -3685,6 +4007,10 @@ func (s *API) GetVersion(req *GetVersionRequest, opts ...scw.RequestOption) (*Ve
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -3721,6 +4047,12 @@ func (s *API) ListClusterTypes(req *ListClusterTypesRequest, opts ...scw.Request
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.ClusterTypes {
+			el.setSRN(apiMetadata.Domain)
+		}
 	}
 	return &resp, nil
 }

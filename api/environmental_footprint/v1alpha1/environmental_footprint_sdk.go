@@ -59,6 +59,22 @@ const (
 	ProductCategoryLoadBalancer = ProductCategory("load_balancer")
 	// The Kubernetes product category.
 	ProductCategoryKubernetes = ProductCategory("kubernetes")
+	// The Managed Relational Databases product category.
+	ProductCategoryManagedRelationalDatabases = ProductCategory("managed_relational_databases")
+	// The Managed MongoDB product category.
+	ProductCategoryManagedMongodb = ProductCategory("managed_mongodb")
+	// The Managed Redis product category.
+	ProductCategoryManagedRedis = ProductCategory("managed_redis")
+	// The Managed Inference product category.
+	ProductCategoryManagedInference = ProductCategory("managed_inference")
+	// The Generative API's product category.
+	ProductCategoryGenerativeAPIs = ProductCategory("generative_apis")
+	// The Serverless Functions product category.
+	ProductCategoryServerlessFunctions = ProductCategory("serverless_functions")
+	// The Serverless Containers product category.
+	ProductCategoryServerlessContainers = ProductCategory("serverless_containers")
+	// The Serverless Jobs product category.
+	ProductCategoryServerlessJobs = ProductCategory("serverless_jobs")
 )
 
 func (enum ProductCategory) String() string {
@@ -80,6 +96,14 @@ func (enum ProductCategory) Values() []ProductCategory {
 		"object_storage",
 		"load_balancer",
 		"kubernetes",
+		"managed_relational_databases",
+		"managed_mongodb",
+		"managed_redis",
+		"managed_inference",
+		"generative_apis",
+		"serverless_functions",
+		"serverless_containers",
+		"serverless_jobs",
 	}
 }
 
@@ -155,6 +179,12 @@ const (
 	ServiceCategoryNetwork = ServiceCategory("network")
 	// The Containers service category.
 	ServiceCategoryContainers = ServiceCategory("containers")
+	// The Databases service category.
+	ServiceCategoryDatabases = ServiceCategory("databases")
+	// The AI service category.
+	ServiceCategoryAi = ServiceCategory("ai")
+	// The Serverless service category.
+	ServiceCategoryServerless = ServiceCategory("serverless")
 )
 
 func (enum ServiceCategory) String() string {
@@ -173,6 +203,9 @@ func (enum ServiceCategory) Values() []ServiceCategory {
 		"storage",
 		"network",
 		"containers",
+		"databases",
+		"ai",
+		"serverless",
 	}
 }
 
@@ -225,7 +258,7 @@ type ZoneImpact struct {
 	// TotalZoneImpact: the total estimated impact for this zone across all given service categories, and product categories during the given period.
 	TotalZoneImpact *Impact `json:"total_zone_impact"`
 
-	// Skus: list of estimated impact values per SKU.
+	// Skus: list of estimated impact values per SKU for this zone.
 	Skus []*SkuImpact `json:"skus"`
 }
 
@@ -239,6 +272,9 @@ type RegionImpact struct {
 
 	// Zones: list of estimated impact values per zone.
 	Zones []*ZoneImpact `json:"zones"`
+
+	// Skus: list of estimated impact values per SKU for this region.
+	Skus []*SkuImpact `json:"skus"`
 }
 
 // ProjectImpact: project impact.
