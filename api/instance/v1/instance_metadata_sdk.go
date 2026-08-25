@@ -536,12 +536,11 @@ func (meta *MetadataAPI) DeleteUserData(key string) error {
 }
 
 // DeleteUserDataWithContext deletes the userdata key and the associated value
-func (meta *MetadataAPI) DeleteUserDataWithContext(key string) error {
+func (meta *MetadataAPI) DeleteUserDataWithContext(ctx context.Context, key string) error {
 	if key == "" {
 		return errors.New("key must not be empty in DeleteUserData")
 	}
 
-	ctx := context.Background()
 	retries := 0
 	for retries <= metadataRetryBindPort {
 		port := rand.Intn(1024)
