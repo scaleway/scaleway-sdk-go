@@ -136,9 +136,7 @@ const (
 	// Cilium CNI will be configured (https://github.com/cilium/cilium).
 	CNICilium = CNI("cilium")
 	// Calico CNI will be configured (https://github.com/projectcalico/calico).
-	CNICalico  = CNI("calico")
-	CNIWeave   = CNI("weave")
-	CNIFlannel = CNI("flannel")
+	CNICalico = CNI("calico")
 	// Kilo CNI will be configured (https://github.com/squat/kilo/). Note that this CNI is only available for Kosmos clusters.
 	CNIKilo = CNI("kilo")
 	// Does not install any CNI. This feature is only available through a ticket and is not covered by support.
@@ -160,8 +158,6 @@ func (enum CNI) Values() []CNI {
 		"unknown_cni",
 		"cilium",
 		"calico",
-		"weave",
-		"flannel",
 		"kilo",
 		"none",
 		"cilium_native",
@@ -740,10 +736,8 @@ type Runtime string
 
 const (
 	RuntimeUnknownRuntime = Runtime("unknown_runtime")
-	RuntimeDocker         = Runtime("docker")
 	// Containerd Runtime will be configured (https://github.com/containerd/containerd).
 	RuntimeContainerd = Runtime("containerd")
-	RuntimeCrio       = Runtime("crio")
 )
 
 func (enum Runtime) String() string {
@@ -757,9 +751,7 @@ func (enum Runtime) String() string {
 func (enum Runtime) Values() []Runtime {
 	return []Runtime{
 		"unknown_runtime",
-		"docker",
 		"containerd",
-		"crio",
 	}
 }
 
@@ -808,6 +800,11 @@ type CreateClusterRequestPoolConfigUpgradePolicy struct {
 
 	// MaxSurge: the maximum number of nodes to be created during the upgrade, e.g. the pool will scale up to reach `size`+`max_surge` before downscaling to `size` after node upgrades.
 	MaxSurge *uint32 `json:"max_surge"`
+}
+
+// ComponentInfo: component info.
+type ComponentInfo struct {
+	Version string `json:"version"`
 }
 
 // ClusterAutoUpgrade: cluster auto upgrade.
@@ -1105,6 +1102,9 @@ type CreateClusterRequestPoolConfig struct {
 
 	// PrivateNetworkID: private network where the nodes are attached. Should be member of the same VPC as the API Server.
 	PrivateNetworkID *string `json:"private_network_id"`
+
+	// MaxTerminationGracePeriod: maximum amount of time before the API forces the drain and deletion of a `deleting` node. It overrides pods `PodDisruptionBudget` and `terminationGracePeriodSeconds`. Defaults to 15 minutes, up to 1 hour.
+	MaxTerminationGracePeriod *scw.Duration `json:"max_termination_grace_period"`
 }
 
 // CreatePoolRequestUpgradePolicy: create pool request upgrade policy.
@@ -1203,8 +1203,8 @@ type Version struct {
 	// AvailableCnis: supported Container Network Interface (CNI) plugins for this version.
 	AvailableCnis []CNI `json:"available_cnis"`
 
-	// AvailableContainerRuntimes: supported container runtimes for this version.
-	AvailableContainerRuntimes []Runtime `json:"available_container_runtimes"`
+	// Deprecated: AvailableContainerRuntimes: supported container runtimes for this version.
+	AvailableContainerRuntimes []Runtime `json:"available_container_runtimes,omitempty"`
 
 	// AvailableFeatureGates: supported feature gates for this version.
 	AvailableFeatureGates []string `json:"available_feature_gates"`
@@ -1223,6 +1223,9 @@ type Version struct {
 
 	// ReleasedAt: date at which this version was made available by Kapsule product.
 	ReleasedAt *time.Time `json:"released_at"`
+
+	// AdditionalComponents: map containing every sub-component version shipped with this Kapsule version.
+	AdditionalComponents map[string]*ComponentInfo `json:"additional_components"`
 
 	// This field is automatically generated, do not edit it
 	Srn string `json:"srn,omitempty"`
@@ -1557,6 +1560,9 @@ type Pool struct {
 	// ErrorMessage: details of the error, if any occurred when managing the pool.
 	ErrorMessage *string `json:"error_message"`
 
+	// MaxTerminationGracePeriod: maximum amount of time before the API forces the drain and deletion of a `deleting` node. It overrides pods `PodDisruptionBudget` and `terminationGracePeriodSeconds`. Defaults to 15 minutes, up to 1 hour.
+	MaxTerminationGracePeriod *scw.Duration `json:"max_termination_grace_period"`
+
 	// Region: cluster region of the pool.
 	Region scw.Region `json:"region"`
 
@@ -1859,6 +1865,9 @@ type CreatePoolRequest struct {
 
 	// UserData: user data applied and reconciled with the pool.
 	UserData map[string][]byte `json:"user_data"`
+
+	// MaxTerminationGracePeriod: maximum amount of time before the API forces the drain and deletion of a `deleting` node. It overrides pods `PodDisruptionBudget` and `terminationGracePeriodSeconds`. Defaults to 15 minutes, up to 1 hour.
+	MaxTerminationGracePeriod *scw.Duration `json:"max_termination_grace_period,omitempty"`
 }
 
 // DeleteACLRuleRequest: delete acl rule request.
@@ -2502,6 +2511,9 @@ type UpdatePoolRequest struct {
 
 	// SecurityGroupID: security group ID in which all the nodes of the pool will be moved.
 	SecurityGroupID *string `json:"security_group_id,omitempty"`
+
+	// MaxTerminationGracePeriod: new maximum amount of time before the API forces the drain and deletion of a `deleting` node.
+	MaxTerminationGracePeriod *scw.Duration `json:"max_termination_grace_period,omitempty"`
 }
 
 // UpgradeClusterRequest: upgrade cluster request.
