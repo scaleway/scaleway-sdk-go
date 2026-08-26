@@ -136,9 +136,7 @@ const (
 	// Cilium CNI will be configured (https://github.com/cilium/cilium).
 	CNICilium = CNI("cilium")
 	// Calico CNI will be configured (https://github.com/projectcalico/calico).
-	CNICalico  = CNI("calico")
-	CNIWeave   = CNI("weave")
-	CNIFlannel = CNI("flannel")
+	CNICalico = CNI("calico")
 	// Kilo CNI will be configured (https://github.com/squat/kilo/). Note that this CNI is only available for Kosmos clusters.
 	CNIKilo = CNI("kilo")
 	// Does not install any CNI. This feature is only available through a ticket and is not covered by support.
@@ -160,8 +158,6 @@ func (enum CNI) Values() []CNI {
 		"unknown_cni",
 		"cilium",
 		"calico",
-		"weave",
-		"flannel",
 		"kilo",
 		"none",
 		"cilium_native",
@@ -740,10 +736,8 @@ type Runtime string
 
 const (
 	RuntimeUnknownRuntime = Runtime("unknown_runtime")
-	RuntimeDocker         = Runtime("docker")
 	// Containerd Runtime will be configured (https://github.com/containerd/containerd).
 	RuntimeContainerd = Runtime("containerd")
-	RuntimeCrio       = Runtime("crio")
 )
 
 func (enum Runtime) String() string {
@@ -757,9 +751,7 @@ func (enum Runtime) String() string {
 func (enum Runtime) Values() []Runtime {
 	return []Runtime{
 		"unknown_runtime",
-		"docker",
 		"containerd",
-		"crio",
 	}
 }
 
