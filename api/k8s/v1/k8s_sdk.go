@@ -802,6 +802,11 @@ type CreateClusterRequestPoolConfigUpgradePolicy struct {
 	MaxSurge *uint32 `json:"max_surge"`
 }
 
+// ComponentInfo: component info.
+type ComponentInfo struct {
+	Version string `json:"version"`
+}
+
 // ClusterAutoUpgrade: cluster auto upgrade.
 type ClusterAutoUpgrade struct {
 	// Enabled: defines whether auto upgrade is enabled for the cluster.
@@ -1215,6 +1220,9 @@ type Version struct {
 
 	// ReleasedAt: date at which this version was made available by Kapsule product.
 	ReleasedAt *time.Time `json:"released_at"`
+
+	// AdditionalComponents: map containing every sub-component version shipped with this Kapsule version.
+	AdditionalComponents map[string]*ComponentInfo `json:"additional_components"`
 
 	// This field is automatically generated, do not edit it
 	Srn string `json:"srn,omitempty"`
@@ -1952,7 +1960,7 @@ type GetUserDataRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// PoolID: pool the user data will be attached to.
+	// PoolID: pool the user data are associated to.
 	PoolID string `json:"-"`
 
 	// Key: user data key to retrieved.
