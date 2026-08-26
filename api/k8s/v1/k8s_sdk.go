@@ -1602,6 +1602,12 @@ func (m *Pool) setSRN(platform string) {
 	// note: if the error was not nil, we simply don't set the SRN
 }
 
+// UserDataSummary: user data summary.
+type UserDataSummary struct {
+	// Key: key name of a given user data.
+	Key string `json:"key"`
+}
+
 // NodeMetadataCoreV1Taint: node metadata core v1 taint.
 type NodeMetadataCoreV1Taint struct {
 	Key string `json:"key"`
@@ -1969,7 +1975,7 @@ type GetUserDataRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
-	// PoolID: pool the user data will be attached to.
+	// PoolID: pool the user data are associated to.
 	PoolID string `json:"-"`
 
 	// Key: user data key to retrieved.
@@ -2295,6 +2301,21 @@ func (r *ListPoolsResponse) UnsafeAppend(res any) (uint64, error) {
 	r.Pools = append(r.Pools, results.Pools...)
 	r.TotalCount += uint64(len(results.Pools))
 	return uint64(len(results.Pools)), nil
+}
+
+// ListUserDataRequest: list user data request.
+type ListUserDataRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// PoolID: pool the user data are associated to.
+	PoolID string `json:"-"`
+}
+
+// ListUserDataResponse: list user data response.
+type ListUserDataResponse struct {
+	// UserData: user data information.
+	UserData []*UserDataSummary `json:"user_data"`
 }
 
 // ListVersionsRequest: list versions request.
@@ -3636,6 +3657,37 @@ func (s *API) GetUserData(req *GetUserDataRequest, opts ...scw.RequestOption) (*
 	}
 
 	var resp scw.File
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListUserData: This list only the user data key and not the content.
+func (s *API) ListUserData(req *ListUserDataRequest, opts ...scw.RequestOption) (*ListUserDataResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.PoolID) == "" {
+		return nil, errors.New("field PoolID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/k8s/v1/regions/" + fmt.Sprint(req.Region) + "/pools/" + fmt.Sprint(req.PoolID) + "/user-data",
+	}
+
+	var resp ListUserDataResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
