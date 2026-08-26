@@ -1195,8 +1195,8 @@ type Version struct {
 	// AvailableCnis: supported Container Network Interface (CNI) plugins for this version.
 	AvailableCnis []CNI `json:"available_cnis"`
 
-	// AvailableContainerRuntimes: supported container runtimes for this version.
-	AvailableContainerRuntimes []Runtime `json:"available_container_runtimes"`
+	// Deprecated: AvailableContainerRuntimes: supported container runtimes for this version.
+	AvailableContainerRuntimes []Runtime `json:"available_container_runtimes,omitempty"`
 
 	// AvailableFeatureGates: supported feature gates for this version.
 	AvailableFeatureGates []string `json:"available_feature_gates"`
