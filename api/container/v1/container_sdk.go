@@ -1812,7 +1812,7 @@ func NewAPI(client *scw.Client) *API {
 }
 
 func (s *API) Regions() []scw.Region {
-	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw, scw.RegionItMil}
+	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }
 
 // CreateNamespace: Namespace name must be unique inside a project.
