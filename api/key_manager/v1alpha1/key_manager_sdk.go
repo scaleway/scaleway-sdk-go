@@ -88,6 +88,8 @@ const (
 	KeyAlgorithmAsymmetricEncryptionRsaOaep3072Sha256 = KeyAlgorithmAsymmetricEncryption("rsa_oaep_3072_sha256")
 	// RSA-OAEP (Optimal Asymmetric Encryption Padding) with a 4096-bit key and SHA-256 hash function.
 	KeyAlgorithmAsymmetricEncryptionRsaOaep4096Sha256 = KeyAlgorithmAsymmetricEncryption("rsa_oaep_4096_sha256")
+	KeyAlgorithmAsymmetricEncryptionMlKem768          = KeyAlgorithmAsymmetricEncryption("ml_kem_768")
+	KeyAlgorithmAsymmetricEncryptionMlKem1024         = KeyAlgorithmAsymmetricEncryption("ml_kem_1024")
 )
 
 func (enum KeyAlgorithmAsymmetricEncryption) String() string {
@@ -104,6 +106,8 @@ func (enum KeyAlgorithmAsymmetricEncryption) Values() []KeyAlgorithmAsymmetricEn
 		"rsa_oaep_2048_sha256",
 		"rsa_oaep_3072_sha256",
 		"rsa_oaep_4096_sha256",
+		"ml_kem_768",
+		"ml_kem_1024",
 	}
 }
 
@@ -892,6 +896,25 @@ type UnprotectKeyRequest struct {
 	KeyID string `json:"-"`
 }
 
+// UnwrapKeyRequest: unwrap key request.
+type UnwrapKeyRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	KeyID string `json:"-"`
+
+	Ciphertext []byte `json:"ciphertext"`
+
+	AssociatedData *[]byte `json:"associated_data,omitempty"`
+}
+
+// UnwrapKeyResponse: unwrap key response.
+type UnwrapKeyResponse struct {
+	KeyID string `json:"key_id"`
+
+	Plaintext []byte `json:"plaintext"`
+}
+
 // UpdateKeyRequest: update key request.
 type UpdateKeyRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -935,6 +958,25 @@ type VerifyResponse struct {
 
 	// Valid: returns `true` if the signature is valid for the digest and key, and `false` otherwise.
 	Valid bool `json:"valid"`
+}
+
+// WrapKeyRequest: wrap key request.
+type WrapKeyRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	KeyID string `json:"-"`
+
+	Plaintext []byte `json:"plaintext"`
+
+	AssociatedData *[]byte `json:"associated_data,omitempty"`
+}
+
+// WrapKeyResponse: wrap key response.
+type WrapKeyResponse struct {
+	KeyID string `json:"key_id"`
+
+	Ciphertext []byte `json:"ciphertext"`
 }
 
 // This API allows you to create, manage and use cryptographic keys in a centralized and secure service.
@@ -1701,6 +1743,78 @@ func (s *API) ListAlgorithms(req *ListAlgorithmsRequest, opts ...scw.RequestOpti
 	}
 
 	var resp ListAlgorithmsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// WrapKey: Wrap (encrypt) a key using an existing key, specified by the `key_id` parameter. The key must use ML-KEM algorithm. The maximum key size that can be wrapped is 2 KB of plaintext.
+func (s *API) WrapKey(req *WrapKeyRequest, opts ...scw.RequestOption) (*WrapKeyResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.KeyID) == "" {
+		return nil, errors.New("field KeyID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/key-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/keys/" + fmt.Sprint(req.KeyID) + "/wrap",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp WrapKeyResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UnwrapKey: Unwrap (decrypt) a wrapped key using an existing key, specified by the `key_id` parameter. The key must use ML-KEM algorithm. The maximum key size that can be unwrapped is 4 KB of ciphertext.
+func (s *API) UnwrapKey(req *UnwrapKeyRequest, opts ...scw.RequestOption) (*UnwrapKeyResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.KeyID) == "" {
+		return nil, errors.New("field KeyID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/key-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/keys/" + fmt.Sprint(req.KeyID) + "/unwrap",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp UnwrapKeyResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
