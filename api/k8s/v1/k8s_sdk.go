@@ -1105,6 +1105,9 @@ type CreateClusterRequestPoolConfig struct {
 
 	// MaxTerminationGracePeriod: maximum amount of time before the API forces the drain and deletion of a `deleting` node. It overrides pods `PodDisruptionBudget` and `terminationGracePeriodSeconds`. Defaults to 15 minutes, up to 1 hour.
 	MaxTerminationGracePeriod *scw.Duration `json:"max_termination_grace_period"`
+
+	// UserData: user data applied and reconciled with the pool.
+	UserData map[string][]byte `json:"user_data"`
 }
 
 // CreatePoolRequestUpgradePolicy: create pool request upgrade policy.
