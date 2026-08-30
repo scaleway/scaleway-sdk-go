@@ -4541,10 +4541,15 @@ type ListOSRequest struct {
 	Type OSType `json:"-"`
 
 	// ServerID: filter OS by compatible server ID.
-	ServerID uint64 `json:"-"`
+	// Precisely one of ServerID, OfferID must be set.
+	ServerID *uint64 `json:"server_id,omitempty"`
 
 	// ProjectID: project ID.
 	ProjectID *string `json:"-"`
+
+	// OfferID: filter OS by compatible offer ID.
+	// Precisely one of ServerID, OfferID must be set.
+	OfferID *uint64 `json:"offer_id,omitempty"`
 }
 
 // ListOSResponse: list os response.
@@ -7145,8 +7150,9 @@ func (s *API) ListOS(req *ListOSRequest, opts ...scw.RequestOption) (*ListOSResp
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "type", req.Type)
-	parameter.AddToQuery(query, "server_id", req.ServerID)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "server_id", req.ServerID)
+	parameter.AddToQuery(query, "offer_id", req.OfferID)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
