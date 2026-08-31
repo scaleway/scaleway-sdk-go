@@ -25,6 +25,36 @@ func WithHTTPClient(httpClient httpClient) ClientOption {
 	}
 }
 
+// WithRateLimit client option throttles outgoing requests using a token bucket
+// limiter. rps is the sustained requests-per-second rate and burst is the
+// maximum number of requests that can be sent instantaneously.
+//
+// A value of zero for rps disables rate limiting. The limiter is applied as
+// an http.RoundTripper and composes with the request logger and insecure mode
+// transports.
+func WithRateLimit(rps float64, burst int) ClientOption {
+	return func(s *settings) {
+		s.rateLimitRPS = rps
+		s.rateLimitBurst = burst
+	}
+}
+
+// WithRetryPolicy client option enables automatic retries on transient HTTP
+// failures (429, 5xx, network errors) according to the given RetryPolicy.
+// If policy is nil, DefaultRetryPolicy() is used.
+//
+// Retries honor the Retry-After response header and use an exponential
+// backoff with full jitter. A shared retry budget (if configured) caps the
+// total number of retries across all requests made through the same client.
+func WithRetryPolicy(policy *RetryPolicy) ClientOption {
+	return func(s *settings) {
+		if policy == nil {
+			policy = DefaultRetryPolicy()
+		}
+		s.retryPolicy = policy
+	}
+}
+
 // WithoutAuth client option sets the client token to an empty token.
 func WithoutAuth() ClientOption {
 	return func(s *settings) {
@@ -211,6 +241,9 @@ type settings struct {
 	defaultRegion         *Region
 	defaultZone           *Zone
 	defaultPageSize       *uint32
+	rateLimitRPS          float64
+	rateLimitBurst        int
+	retryPolicy           *RetryPolicy
 }
 
 func newSettings() *settings {
