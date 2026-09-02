@@ -96,7 +96,7 @@ type Metadata struct {
 	Organization   string `json:"organization,omitempty"`
 	Project        string `json:"project,omitempty"`
 	CommercialType string `json:"commercial_type,omitempty"`
-	Image          Image  `json:"image,omitempty"`
+	Image          Image  `json:"image"`
 	// PublicIP IPv4 only
 	PublicIP struct {
 		ID               string `json:"id"`
@@ -106,7 +106,7 @@ type Metadata struct {
 		Netmask          string `json:"netmask"`
 		Family           string `json:"family"`
 		ProvisioningMode string `json:"provisioning_mode"`
-	} `json:"public_ip,omitempty"`
+	} `json:"public_ip"`
 	PublicIpsV4 []MetadataIP `json:"public_ips_v4,omitempty"`
 	PublicIpsV6 []MetadataIP `json:"public_ips_v6,omitempty"`
 	PrivateIP   string       `json:"private_ip,omitempty"`
@@ -114,14 +114,14 @@ type Metadata struct {
 		Netmask string `json:"netmask,omitempty"`
 		Gateway string `json:"gateway,omitempty"`
 		Address string `json:"address,omitempty"`
-	} `json:"ipv6,omitempty"`
+	} `json:"ipv6"`
 	Location struct {
 		PlatformID   string `json:"platform_id,omitempty"`
 		HypervisorID string `json:"hypervisor_id,omitempty"`
 		NodeID       string `json:"node_id,omitempty"`
 		ClusterID    string `json:"cluster_id,omitempty"`
 		ZoneID       string `json:"zone_id,omitempty"`
-	} `json:"location,omitempty"`
+	} `json:"location"`
 	Tags          []string `json:"tags,omitempty"`
 	StateDetail   string   `json:"state_detail,omitempty"`
 	SSHPublicKeys []struct {
@@ -146,7 +146,7 @@ type Metadata struct {
 		Organization string `json:"organization,omitempty"`
 		Project      string `json:"project,omitempty"`
 		ID           string `json:"id,omitempty"`
-	} `json:"bootscript,omitempty"`
+	} `json:"bootscript"`
 	Volumes map[string]struct {
 		Name             string `json:"name,omitempty"`
 		ModificationDate string `json:"modification_date,omitempty"`
@@ -159,7 +159,7 @@ type Metadata struct {
 		Server           struct {
 			ID   string `json:"id,omitempty"`
 			Name string `json:"name,omitempty"`
-		} `json:"server,omitempty"`
+		} `json:"server"`
 		ID   string `json:"id,omitempty"`
 		Size int    `json:"size,omitempty"`
 	} `json:"volumes,omitempty"`
@@ -177,7 +177,7 @@ type Metadata struct {
 	SecurityGroup struct {
 		ID   string `json:"id,omitempty"`
 		Name string `json:"name,omitempty"`
-	} `json:"security_group,omitempty"`
+	} `json:"security_group"`
 	State          string   `json:"state,omitempty"`
 	Arch           string   `json:"arch,omitempty"`
 	AllowedActions []string `json:"allowed_actions,omitempty"`
@@ -200,7 +200,7 @@ type Metadata struct {
 		PolicyRespected bool     `json:"policy_respected,omitempty"`
 		Tags            []string `json:"tags,omitempty"`
 		Zone            string   `json:"zone,omitempty"`
-	} `json:"placement_group,omitempty"`
+	} `json:"placement_group"`
 }
 
 // ListUserData returns the metadata available from the server

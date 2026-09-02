@@ -6,20 +6,20 @@ import "strings"
 func toPascalInitCase(s string, initCase bool) string {
 	s = addWordBoundariesToNumbers(s)
 	s = strings.Trim(s, " ")
-	n := ""
+	var n strings.Builder
 	capNext := initCase
 	for _, v := range s {
 		if v >= 'A' && v <= 'Z' {
-			n += string(v)
+			n.WriteString(string(v))
 		}
 		if v >= '0' && v <= '9' {
-			n += string(v)
+			n.WriteString(string(v))
 		}
 		if v >= 'a' && v <= 'z' {
 			if capNext {
-				n += strings.ToUpper(string(v))
+				n.WriteString(strings.ToUpper(string(v)))
 			} else {
-				n += string(v)
+				n.WriteString(string(v))
 			}
 		}
 		if v == '_' || v == ' ' || v == '-' {
@@ -28,7 +28,7 @@ func toPascalInitCase(s string, initCase bool) string {
 			capNext = false
 		}
 	}
-	return n
+	return n.String()
 }
 
 func ToPascal(s string) string {
