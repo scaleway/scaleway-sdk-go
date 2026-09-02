@@ -8,7 +8,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"maps"
 	"net"
 	"net/http"
 	"net/url"
@@ -2426,7 +2425,7 @@ type CreateSecurityGroupRuleRequest struct {
 	// Action: default value: unknown_action
 	Action SecurityGroupRuleAction `json:"action,omitempty"`
 
-	IPRange scw.IPNet `json:"ip_range"`
+	IPRange scw.IPNet `json:"ip_range,omitempty"`
 
 	// DestPortFrom: beginning of the range of ports to apply this rule to (inclusive).
 	DestPortFrom *uint32 `json:"dest_port_from,omitempty"`
@@ -2916,7 +2915,9 @@ func (r *GetServerTypesAvailabilityResponse) UnsafeAppend(res any) (uint32, erro
 	if r.Servers == nil {
 		r.Servers = make(map[string]*GetServerTypesAvailabilityResponseAvailability)
 	}
-	maps.Copy(r.Servers, results.Servers)
+	for k, v := range results.Servers {
+		r.Servers[k] = v
+	}
 	r.TotalCount += uint32(len(results.Servers))
 	return uint32(len(results.Servers)), nil
 }
@@ -3401,7 +3402,9 @@ func (r *ListServersTypesResponse) UnsafeAppend(res any) (uint32, error) {
 	if r.Servers == nil {
 		r.Servers = make(map[string]*ServerType)
 	}
-	maps.Copy(r.Servers, results.Servers)
+	for k, v := range results.Servers {
+		r.Servers[k] = v
+	}
 	r.TotalCount += uint32(len(results.Servers))
 	return uint32(len(results.Servers)), nil
 }
@@ -3553,7 +3556,9 @@ func (r *ListVolumesTypesResponse) UnsafeAppend(res any) (uint32, error) {
 	if r.Volumes == nil {
 		r.Volumes = make(map[string]*VolumeType)
 	}
-	maps.Copy(r.Volumes, results.Volumes)
+	for k, v := range results.Volumes {
+		r.Volumes[k] = v
+	}
 	r.TotalCount += uint32(len(results.Volumes))
 	return uint32(len(results.Volumes)), nil
 }
