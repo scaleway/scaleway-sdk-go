@@ -6638,6 +6638,8 @@ func (s *API) DeleteIP(req *DeleteIPRequest, opts ...scw.RequestOption) error {
 }
 
 // ListPrivateNICs: List all private NICs of a specified Instance.
+// Some private NICs, such as those in deleting, detaching, or in error state are
+// not listed. We strongly recommend migrating to v2alpha1 to retrieve all private NICs.
 func (s *API) ListPrivateNICs(req *ListPrivateNICsRequest, opts ...scw.RequestOption) (*ListPrivateNICsResponse, error) {
 	var err error
 
@@ -6677,6 +6679,11 @@ func (s *API) ListPrivateNICs(req *ListPrivateNICsRequest, opts ...scw.RequestOp
 }
 
 // CreatePrivateNIC: Create a private NIC connecting an Instance to a Private Network.
+// Some private NICs, such as those in deleting, detaching, or in error state are
+// not listed in v1.
+// Therefore, you may encounter quota limits errors when creating a new private NIC, even if your visible
+// count is below the threshold.
+// We strongly recommend migrating to v2alpha1 to see all private NICs.
 func (s *API) CreatePrivateNIC(req *CreatePrivateNICRequest, opts ...scw.RequestOption) (*CreatePrivateNICResponse, error) {
 	var err error
 
