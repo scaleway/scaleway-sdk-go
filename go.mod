@@ -8,4 +8,7 @@ require (
 	gopkg.in/yaml.v2 v2.4.0
 )
 
-require go.yaml.in/yaml/v4 v4.0.0-rc.6 // indirect
+require (
+	go.yaml.in/yaml/v4 v4.0.0-rc.6 // indirect
+	golang.org/x/time v0.15.0 // indirect
+)

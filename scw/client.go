@@ -37,6 +37,8 @@ type Client struct {
 	defaultRegion         *Region
 	defaultZone           *Zone
 	defaultPageSize       *uint32
+	retryPolicy           *RetryPolicy
+	retryBudget           *retryBudget
 }
 
 type ApiMetadata struct {
@@ -91,6 +93,12 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 		setRequestLogging(s.httpClient)
 	}
 
+	// rate limiting
+	if s.rateLimitRPS > 0 {
+		logger.Debugf("client: using rate limit %.2f rps burst %d\n", s.rateLimitRPS, s.rateLimitBurst)
+		setRateLimit(s.httpClient, s.rateLimitRPS, s.rateLimitBurst)
+	}
+
 	logger.Debugf("client: using sdk version " + getVersion() + "\n")
 
 	return &Client{
@@ -105,6 +113,8 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 		defaultRegion:         s.defaultRegion,
 		defaultZone:           s.defaultZone,
 		defaultPageSize:       s.defaultPageSize,
+		retryPolicy:           s.retryPolicy,
+		retryBudget:           newRetryBudget(s.retryPolicy),
 	}, nil
 }
 
@@ -277,8 +287,27 @@ func (c *Client) do(req *ScalewayRequest, res any) (sdkErr error) {
 
 	httpRequest.Header = req.getAllHeaders(req.auth, c.userAgent, false)
 
-	// execute request
-	httpResponse, err := c.httpClient.Do(httpRequest)
+	// Buffer the request body so it can be re-read on each retry attempt.
+	// This is a no-op for nil bodies and bodies that already implement
+	// io.ReadSeeker (e.g. *bytes.Reader set via ScalewayRequest.SetBody).
+	if c.retryPolicy != nil {
+		if bufErr := bufferBody(httpRequest); bufErr != nil {
+			return bufErr
+		}
+	}
+
+	// execute request, optionally with retry
+	execute := func(r *http.Request) (*http.Response, error) {
+		return c.httpClient.Do(r)
+	}
+
+	var httpResponse *http.Response
+	if c.retryPolicy != nil {
+		httpResponse, err = c.retryPolicy.doWithRetry(ctx, c.retryBudget, execute, httpRequest)
+	} else {
+		httpResponse, err = c.httpClient.Do(httpRequest)
+	}
+
 	if err != nil {
 		return errors.Wrap(err, "error executing request")
 	}
