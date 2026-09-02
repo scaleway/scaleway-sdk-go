@@ -151,7 +151,8 @@ const (
 	// ML-DSA (Module-Lattice Digital Signature Algorithm) FIPS 204 post-quantum signature scheme with security category 3.
 	KeyAlgorithmAsymmetricSigningMlDsa65 = KeyAlgorithmAsymmetricSigning("ml_dsa_65")
 	// ML-DSA (Module-Lattice Digital Signature Algorithm) FIPS 204 post-quantum signature scheme with security category 5.
-	KeyAlgorithmAsymmetricSigningMlDsa87 = KeyAlgorithmAsymmetricSigning("ml_dsa_87")
+	KeyAlgorithmAsymmetricSigningMlDsa87           = KeyAlgorithmAsymmetricSigning("ml_dsa_87")
+	KeyAlgorithmAsymmetricSigningEcSecp256k1Sha256 = KeyAlgorithmAsymmetricSigning("ec_secp256k1_sha256")
 )
 
 func (enum KeyAlgorithmAsymmetricSigning) String() string {
@@ -176,6 +177,7 @@ func (enum KeyAlgorithmAsymmetricSigning) Values() []KeyAlgorithmAsymmetricSigni
 		"ml_dsa_44",
 		"ml_dsa_65",
 		"ml_dsa_87",
+		"ec_secp256k1_sha256",
 	}
 }
 
