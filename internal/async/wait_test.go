@@ -117,6 +117,7 @@ func TestWaitSync(t *testing.T) {
 		},
 	}
 	for _, c := range testsCases {
+		c := c // do not remove me
 		t.Run(c.name, func(t *testing.T) {
 			t.Parallel()
 
