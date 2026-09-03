@@ -942,7 +942,7 @@ func (m *ACLRule) setSRN(platform string) {
 
 	notEmpty := func(a any) (string, error) {
 		s := fmt.Sprint(a)
-		if s == "" {
+		if s == "" || s == "<nil>" {
 			return "", errors.New("value is empty")
 		}
 		return s, nil
@@ -1175,7 +1175,7 @@ func (m *ClusterType) setSRN(platform string) {
 
 	notEmpty := func(a any) (string, error) {
 		s := fmt.Sprint(a)
-		if s == "" {
+		if s == "" || s == "<nil>" {
 			return "", errors.New("value is empty")
 		}
 		return s, nil
@@ -1249,7 +1249,7 @@ func (m *Version) setSRN(platform string) {
 
 	notEmpty := func(a any) (string, error) {
 		s := fmt.Sprint(a)
-		if s == "" {
+		if s == "" || s == "<nil>" {
 			return "", errors.New("value is empty")
 		}
 		return s, nil
@@ -1376,7 +1376,7 @@ func (m *Cluster) setSRN(platform string) {
 
 	notEmpty := func(a any) (string, error) {
 		s := fmt.Sprint(a)
-		if s == "" {
+		if s == "" || s == "<nil>" {
 			return "", errors.New("value is empty")
 		}
 		return s, nil
@@ -1454,7 +1454,7 @@ func (m *Node) setSRN(platform string) {
 
 	notEmpty := func(a any) (string, error) {
 		s := fmt.Sprint(a)
-		if s == "" {
+		if s == "" || s == "<nil>" {
 			return "", errors.New("value is empty")
 		}
 		return s, nil
@@ -1588,7 +1588,7 @@ func (m *Pool) setSRN(platform string) {
 
 	notEmpty := func(a any) (string, error) {
 		s := fmt.Sprint(a)
-		if s == "" {
+		if s == "" || s == "<nil>" {
 			return "", errors.New("value is empty")
 		}
 		return s, nil
