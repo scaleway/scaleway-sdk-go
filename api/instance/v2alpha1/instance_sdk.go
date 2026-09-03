@@ -518,6 +518,12 @@ const (
 	PrivateNetworkInterfaceStatusDetaching = PrivateNetworkInterfaceStatus("detaching")
 	// Attached, detached, or when the associated security-group rules are being updated on the interface.
 	PrivateNetworkInterfaceStatusSyncing = PrivateNetworkInterfaceStatus("syncing")
+	// Interface is being deleted.
+	PrivateNetworkInterfaceStatusDeleting = PrivateNetworkInterfaceStatus("deleting")
+	// Stop the server to fix the issue.
+	PrivateNetworkInterfaceStatusDetachError = PrivateNetworkInterfaceStatus("detach_error")
+	// Stop the server to fix the issue.
+	PrivateNetworkInterfaceStatusDeleteError = PrivateNetworkInterfaceStatus("delete_error")
 )
 
 func (enum PrivateNetworkInterfaceStatus) String() string {
@@ -535,6 +541,9 @@ func (enum PrivateNetworkInterfaceStatus) Values() []PrivateNetworkInterfaceStat
 		"attaching",
 		"detaching",
 		"syncing",
+		"deleting",
+		"detach_error",
+		"delete_error",
 	}
 }
 
@@ -874,6 +883,12 @@ const (
 	ServerPrivateNetworkInterfaceStatusDetaching = ServerPrivateNetworkInterfaceStatus("detaching")
 	// The associated security-group rules are being updated on the interface.
 	ServerPrivateNetworkInterfaceStatusSyncing = ServerPrivateNetworkInterfaceStatus("syncing")
+	// Interface is being deleted.
+	ServerPrivateNetworkInterfaceStatusDeleting = ServerPrivateNetworkInterfaceStatus("deleting")
+	// Stop the server to fix the issue.
+	ServerPrivateNetworkInterfaceStatusDetachError = ServerPrivateNetworkInterfaceStatus("detach_error")
+	// Stop the server to fix the issue.
+	ServerPrivateNetworkInterfaceStatusDeleteError = ServerPrivateNetworkInterfaceStatus("delete_error")
 )
 
 func (enum ServerPrivateNetworkInterfaceStatus) String() string {
@@ -891,6 +906,9 @@ func (enum ServerPrivateNetworkInterfaceStatus) Values() []ServerPrivateNetworkI
 		"attaching",
 		"detaching",
 		"syncing",
+		"deleting",
+		"detach_error",
+		"delete_error",
 	}
 }
 
@@ -2301,11 +2319,11 @@ type DeleteServerRequest struct {
 	// Precisely one of DeleteAllIPs, DeleteIPIDs must be set.
 	DeleteIPIDs *[]string `json:"delete_ip_ids,omitempty"`
 
-	// DeleteAllVolumes: whether to delete all volumes attached to the server.
+	// DeleteAllVolumes: whether to delete all volumes attached to the server. Deletion of SBS volumes is not supported yet.
 	// Precisely one of DeleteAllVolumes, DeleteVolumeIDs must be set.
 	DeleteAllVolumes *bool `json:"delete_all_volumes,omitempty"`
 
-	// DeleteVolumeIDs: list of volume IDs to delete.
+	// DeleteVolumeIDs: list of volume IDs to delete. Deletion of SBS volumes is not supported yet.
 	// Precisely one of DeleteAllVolumes, DeleteVolumeIDs must be set.
 	DeleteVolumeIDs *[]string `json:"delete_volume_ids,omitempty"`
 
@@ -2349,6 +2367,15 @@ type DeleteUserDataRequest struct {
 
 	// Key: the key of the user data to delete.
 	Key string `json:"-"`
+}
+
+// DetachAndDeletePrivateNetworkInterfaceRequest: detach and delete private network interface request.
+type DetachAndDeletePrivateNetworkInterfaceRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// PrivateNetworkInterfaceID: ID of the private network interface to detach and delete.
+	PrivateNetworkInterfaceID string `json:"-"`
 }
 
 // DetachServerFileSystemRequest: detach server file system request.
@@ -4801,6 +4828,7 @@ func (s *API) WaitForPrivateNetworkInterface(req *WaitForPrivateNetworkInterface
 		PrivateNetworkInterfaceStatusAttaching: {},
 		PrivateNetworkInterfaceStatusDetaching: {},
 		PrivateNetworkInterfaceStatusSyncing:   {},
+		PrivateNetworkInterfaceStatusDeleting:  {},
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
@@ -4890,6 +4918,42 @@ func (s *API) DeletePrivateNetworkInterface(req *DeletePrivateNetworkInterfaceRe
 		return err
 	}
 	return nil
+}
+
+// DetachAndDeletePrivateNetworkInterface:
+func (s *API) DetachAndDeletePrivateNetworkInterface(req *DetachAndDeletePrivateNetworkInterfaceRequest, opts ...scw.RequestOption) (*PrivateNetworkInterface, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.PrivateNetworkInterfaceID) == "" {
+		return nil, errors.New("field PrivateNetworkInterfaceID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/instance/v2alpha1/zones/" + fmt.Sprint(req.Zone) + "/private-network-interfaces/" + fmt.Sprint(req.PrivateNetworkInterfaceID) + "/detach-and-delete",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp PrivateNetworkInterface
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 // ListPlacementGroups: List all placement groups.
