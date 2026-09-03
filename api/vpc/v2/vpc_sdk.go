@@ -587,7 +587,7 @@ func (m *Subnet) setSRN(platform string) {
 
 	notEmpty := func(a any) (string, error) {
 		s := fmt.Sprint(a)
-		if s == "" {
+		if s == "" || s == "<nil>" {
 			return "", errors.New("value is empty")
 		}
 		return s, nil
@@ -664,7 +664,7 @@ func (m *PrivateNetwork) setSRN(platform string) {
 
 	notEmpty := func(a any) (string, error) {
 		s := fmt.Sprint(a)
-		if s == "" {
+		if s == "" || s == "<nil>" {
 			return "", errors.New("value is empty")
 		}
 		return s, nil
@@ -742,7 +742,7 @@ func (m *Route) setSRN(platform string) {
 
 	notEmpty := func(a any) (string, error) {
 		s := fmt.Sprint(a)
-		if s == "" {
+		if s == "" || s == "<nil>" {
 			return "", errors.New("value is empty")
 		}
 		return s, nil
@@ -860,7 +860,7 @@ func (m *IngressRule) setSRN(platform string) {
 
 	notEmpty := func(a any) (string, error) {
 		s := fmt.Sprint(a)
-		if s == "" {
+		if s == "" || s == "<nil>" {
 			return "", errors.New("value is empty")
 		}
 		return s, nil
@@ -962,7 +962,7 @@ func (m *VPCConnector) setSRN(platform string) {
 
 	notEmpty := func(a any) (string, error) {
 		s := fmt.Sprint(a)
-		if s == "" {
+		if s == "" || s == "<nil>" {
 			return "", errors.New("value is empty")
 		}
 		return s, nil
@@ -1042,7 +1042,7 @@ func (m *VPC) setSRN(platform string) {
 
 	notEmpty := func(a any) (string, error) {
 		s := fmt.Sprint(a)
-		if s == "" {
+		if s == "" || s == "<nil>" {
 			return "", errors.New("value is empty")
 		}
 		return s, nil

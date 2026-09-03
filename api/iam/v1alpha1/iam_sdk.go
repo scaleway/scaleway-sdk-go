@@ -1161,7 +1161,7 @@ func (m *JWT) setSRN(platform string) {
 
 	notEmpty := func(a any) (string, error) {
 		s := fmt.Sprint(a)
-		if s == "" {
+		if s == "" || s == "<nil>" {
 			return "", errors.New("value is empty")
 		}
 		return s, nil
@@ -1307,7 +1307,7 @@ func (m *APIKey) setSRN(platform string) {
 
 	notEmpty := func(a any) (string, error) {
 		s := fmt.Sprint(a)
-		if s == "" {
+		if s == "" || s == "<nil>" {
 			return "", errors.New("value is empty")
 		}
 		return s, nil
@@ -1378,7 +1378,7 @@ func (m *Application) setSRN(platform string) {
 
 	notEmpty := func(a any) (string, error) {
 		s := fmt.Sprint(a)
-		if s == "" {
+		if s == "" || s == "<nil>" {
 			return "", errors.New("value is empty")
 		}
 		return s, nil
@@ -1471,7 +1471,7 @@ func (m *Group) setSRN(platform string) {
 
 	notEmpty := func(a any) (string, error) {
 		s := fmt.Sprint(a)
-		if s == "" {
+		if s == "" || s == "<nil>" {
 			return "", errors.New("value is empty")
 		}
 		return s, nil
@@ -1538,7 +1538,7 @@ func (m *Log) setSRN(platform string) {
 
 	notEmpty := func(a any) (string, error) {
 		s := fmt.Sprint(a)
-		if s == "" {
+		if s == "" || s == "<nil>" {
 			return "", errors.New("value is empty")
 		}
 		return s, nil
@@ -1650,7 +1650,7 @@ func (m *Policy) setSRN(platform string) {
 
 	notEmpty := func(a any) (string, error) {
 		s := fmt.Sprint(a)
-		if s == "" {
+		if s == "" || s == "<nil>" {
 			return "", errors.New("value is empty")
 		}
 		return s, nil
@@ -1715,7 +1715,7 @@ func (m *Quotum) setSRN(platform string) {
 
 	notEmpty := func(a any) (string, error) {
 		s := fmt.Sprint(a)
-		if s == "" {
+		if s == "" || s == "<nil>" {
 			return "", errors.New("value is empty")
 		}
 		return s, nil
@@ -1778,7 +1778,7 @@ func (m *Rule) setSRN(platform string) {
 
 	notEmpty := func(a any) (string, error) {
 		s := fmt.Sprint(a)
-		if s == "" {
+		if s == "" || s == "<nil>" {
 			return "", errors.New("value is empty")
 		}
 		return s, nil
@@ -1843,7 +1843,7 @@ func (m *SSHKey) setSRN(platform string) {
 
 	notEmpty := func(a any) (string, error) {
 		s := fmt.Sprint(a)
-		if s == "" {
+		if s == "" || s == "<nil>" {
 			return "", errors.New("value is empty")
 		}
 		return s, nil
@@ -1898,7 +1898,7 @@ func (m *SamlCertificate) setSRN(platform string) {
 
 	notEmpty := func(a any) (string, error) {
 		s := fmt.Sprint(a)
-		if s == "" {
+		if s == "" || s == "<nil>" {
 			return "", errors.New("value is empty")
 		}
 		return s, nil
@@ -2010,7 +2010,7 @@ func (m *User) setSRN(platform string) {
 
 	notEmpty := func(a any) (string, error) {
 		s := fmt.Sprint(a)
-		if s == "" {
+		if s == "" || s == "<nil>" {
 			return "", errors.New("value is empty")
 		}
 		return s, nil
@@ -3322,7 +3322,7 @@ func (m *Saml) setSRN(platform string) {
 
 	notEmpty := func(a any) (string, error) {
 		s := fmt.Sprint(a)
-		if s == "" {
+		if s == "" || s == "<nil>" {
 			return "", errors.New("value is empty")
 		}
 		return s, nil
