@@ -33,6 +33,10 @@ func NewMetadataAPI() *MetadataAPI {
 }
 
 // Deprecated: use getMetadataURLWithContext instead.
+//
+// FIXME: bye bye
+//
+//go:fix inline
 func (meta *MetadataAPI) getMetadataURL() string {
 	return meta.getMetadataURLWithContext(context.Background())
 }
@@ -43,11 +47,11 @@ func (meta *MetadataAPI) getMetadataURLWithContext(ctx context.Context) string {
 	}
 
 	for _, url := range []string{metadataAPIv4, metadataAPIv6} {
-		http.DefaultClient.Timeout = 3 * time.Second
 		req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, bytes.NewBufferString(""))
 		if err != nil {
 			logger.Warningf("Failed to create metadata URL %s: %v", url, err)
 		}
+
 		resp, err := http.DefaultClient.Do(req)
 		if err == nil && resp.StatusCode == http.StatusOK {
 			meta.MetadataURL = &url
@@ -59,6 +63,9 @@ func (meta *MetadataAPI) getMetadataURLWithContext(ctx context.Context) string {
 }
 
 // GetMetadata returns the metadata available from the server
+// Deprecated: use GetMetadataWithContext instead
+//
+//go:fix inline
 func (meta *MetadataAPI) GetMetadata() (m *Metadata, err error) {
 	return meta.GetMetadataWithContext(context.Background())
 }
@@ -212,6 +219,9 @@ type Metadata struct {
 }
 
 // ListUserData returns the metadata available from the server
+// Deprecated: use ListUserDataWithContext instead
+//
+//go:fix inline
 func (meta *MetadataAPI) ListUserData() (res *UserData, err error) {
 	return meta.ListUserDataWithContext(context.Background())
 }
@@ -257,6 +267,9 @@ func (meta *MetadataAPI) ListUserDataWithContext(ctx context.Context) (res *User
 }
 
 // GetUserData returns the value for the given metadata key
+// Deprecated: use GetUserDataWithContext instead
+//
+//go:fix inline
 func (meta *MetadataAPI) GetUserData(key string) ([]byte, error) {
 	return meta.GetUserDataWithContext(context.Background(), key)
 }
@@ -307,6 +320,9 @@ func (meta *MetadataAPI) GetUserDataWithContext(ctx context.Context, key string)
 }
 
 // SetUserData sets the userdata key with the given value
+// Deprecated: use SetUserDataWithContext instead
+//
+//go:fix inline
 func (meta *MetadataAPI) SetUserData(key string, value []byte) error {
 	return meta.SetUserDataWithContext(context.Background(), key, value)
 }
@@ -351,6 +367,9 @@ func (meta *MetadataAPI) SetUserDataWithContext(ctx context.Context, key string,
 }
 
 // DeleteUserData deletes the userdata key and the associated value
+// Deprecated: use DeleteUserDataWithContext instead
+//
+//go:fix inline
 func (meta *MetadataAPI) DeleteUserData(key string) error {
 	return meta.DeleteUserDataWithContext(context.Background(), key)
 }
