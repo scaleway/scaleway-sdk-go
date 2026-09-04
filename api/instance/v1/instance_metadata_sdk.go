@@ -32,15 +32,6 @@ func NewMetadataAPI() *MetadataAPI {
 	return &MetadataAPI{}
 }
 
-// Deprecated: use getMetadataURLWithContext instead.
-//
-// FIXME: bye bye
-//
-//go:fix inline
-func (meta *MetadataAPI) getMetadataURL() string {
-	return meta.getMetadataURLWithContext(context.Background())
-}
-
 func (meta *MetadataAPI) getMetadataURLWithContext(ctx context.Context) string {
 	if meta.MetadataURL != nil {
 		return *meta.MetadataURL
@@ -63,6 +54,7 @@ func (meta *MetadataAPI) getMetadataURLWithContext(ctx context.Context) string {
 }
 
 // GetMetadata returns the metadata available from the server
+//
 // Deprecated: use GetMetadataWithContext instead
 //
 //go:fix inline
@@ -219,6 +211,7 @@ type Metadata struct {
 }
 
 // ListUserData returns the metadata available from the server
+//
 // Deprecated: use ListUserDataWithContext instead
 //
 //go:fix inline
@@ -267,6 +260,7 @@ func (meta *MetadataAPI) ListUserDataWithContext(ctx context.Context) (res *User
 }
 
 // GetUserData returns the value for the given metadata key
+//
 // Deprecated: use GetUserDataWithContext instead
 //
 //go:fix inline
@@ -320,6 +314,7 @@ func (meta *MetadataAPI) GetUserDataWithContext(ctx context.Context, key string)
 }
 
 // SetUserData sets the userdata key with the given value
+//
 // Deprecated: use SetUserDataWithContext instead
 //
 //go:fix inline
@@ -367,6 +362,7 @@ func (meta *MetadataAPI) SetUserDataWithContext(ctx context.Context, key string,
 }
 
 // DeleteUserData deletes the userdata key and the associated value
+//
 // Deprecated: use DeleteUserDataWithContext instead
 //
 //go:fix inline
