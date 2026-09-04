@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"text/template"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
@@ -1322,6 +1323,41 @@ type Volume struct {
 
 	// Zone: zone in which the volume is located.
 	Zone scw.Zone `json:"zone"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *Volume) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		Volume
+		Platform string
+	}{
+		Volume:   *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" || s == "<nil>" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://instance.{{ notempty .Platform }}/zones/{{ notempty .Zone }}/volumes/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // VolumeSummary: volume summary.
@@ -1422,6 +1458,41 @@ type PlacementGroup struct {
 
 	// Zone: zone in which the placement group is located.
 	Zone scw.Zone `json:"zone"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *PlacementGroup) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		PlacementGroup
+		Platform string
+	}{
+		PlacementGroup: *m,
+		Platform:       platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" || s == "<nil>" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://instance.{{ notempty .Platform }}/zones/{{ notempty .Zone }}/placement-groups/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // PrivateNIC: private nic.
@@ -1453,6 +1524,41 @@ type PrivateNIC struct {
 
 	// IpamIPIDs: the list of IPAM IPs associated with this private NIC.
 	IpamIPIDs []string `json:"ipam_ip_ids"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *PrivateNIC) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		PrivateNIC
+		Platform string
+	}{
+		PrivateNIC: *m,
+		Platform:   platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" || s == "<nil>" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://instance.{{ notempty .Platform }}/zones/{{ notempty .Zone }}/private-network-interfaces/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // SecurityGroupSummary: security group summary.
@@ -1749,6 +1855,41 @@ type Server struct {
 
 	// DNS: public DNS of the server.
 	DNS *string `json:"dns"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *Server) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		Server
+		Platform string
+	}{
+		Server:   *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" || s == "<nil>" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://instance.{{ notempty .Platform }}/zones/{{ notempty .Zone }}/servers/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // IP: ip.
@@ -1861,6 +2002,41 @@ type SecurityGroup struct {
 
 	// Zone: zone in which the security group is located.
 	Zone scw.Zone `json:"zone"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *SecurityGroup) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		SecurityGroup
+		Platform string
+	}{
+		SecurityGroup: *m,
+		Platform:      platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" || s == "<nil>" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://instance.{{ notempty .Platform }}/zones/{{ notempty .Zone }}/security-groups/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // SecurityGroupRule: security group rule.
@@ -1960,6 +2136,41 @@ type Snapshot struct {
 
 	// ErrorReason: reason for the failed snapshot import.
 	ErrorReason *string `json:"error_reason"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *Snapshot) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		Snapshot
+		Platform string
+	}{
+		Snapshot: *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" || s == "<nil>" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://instance.{{ notempty .Platform }}/zones/{{ notempty .Zone }}/snapshots/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Task: task.
@@ -4435,6 +4646,12 @@ func (s *API) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Servers {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -5213,6 +5430,12 @@ func (s *API) ListSnapshots(req *ListSnapshotsRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Snapshots {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -5476,6 +5699,12 @@ func (s *API) ListVolumes(req *ListVolumesRequest, opts ...scw.RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Volumes {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -5656,6 +5885,12 @@ func (s *API) ListSecurityGroups(req *ListSecurityGroupsRequest, opts ...scw.Req
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.SecurityGroups {
+			el.setSRN(apiMetadata.Domain)
+		}
 	}
 	return &resp, nil
 }
@@ -6166,6 +6401,12 @@ func (s *API) ListPlacementGroups(req *ListPlacementGroupsRequest, opts ...scw.R
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.PlacementGroups {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -6638,6 +6879,8 @@ func (s *API) DeleteIP(req *DeleteIPRequest, opts ...scw.RequestOption) error {
 }
 
 // ListPrivateNICs: List all private NICs of a specified Instance.
+// Some private NICs, such as those in deleting, detaching, or in error state are
+// not listed. We strongly recommend migrating to v2alpha1 to retrieve all private NICs.
 func (s *API) ListPrivateNICs(req *ListPrivateNICsRequest, opts ...scw.RequestOption) (*ListPrivateNICsResponse, error) {
 	var err error
 
@@ -6673,10 +6916,21 @@ func (s *API) ListPrivateNICs(req *ListPrivateNICsRequest, opts ...scw.RequestOp
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.PrivateNics {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
 // CreatePrivateNIC: Create a private NIC connecting an Instance to a Private Network.
+// Some private NICs, such as those in deleting, detaching, or in error state are
+// not listed in v1.
+// Therefore, you may encounter quota limits errors when creating a new private NIC, even if your visible
+// count is below the threshold.
+// We strongly recommend migrating to v2alpha1 to see all private NICs.
 func (s *API) CreatePrivateNIC(req *CreatePrivateNICRequest, opts ...scw.RequestOption) (*CreatePrivateNICResponse, error) {
 	var err error
 
@@ -6783,6 +7037,10 @@ func (s *API) UpdatePrivateNIC(req *UpdatePrivateNICRequest, opts ...scw.Request
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
