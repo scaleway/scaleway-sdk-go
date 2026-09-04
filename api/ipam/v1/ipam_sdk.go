@@ -310,7 +310,7 @@ func (m *IP) setSRN(platform string) {
 
 	notEmpty := func(a any) (string, error) {
 		s := fmt.Sprint(a)
-		if s == "" {
+		if s == "" || s == "<nil>" {
 			return "", errors.New("value is empty")
 		}
 		return s, nil
