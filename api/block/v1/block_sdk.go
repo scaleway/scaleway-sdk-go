@@ -504,6 +504,9 @@ type Snapshot struct {
 	// Public: true if the snapshot can be used by anyone to create a volume from.
 	Public bool `json:"public"`
 
+	// KmsKeyID: kMS Key used for securing the parent volume's encryption.
+	KmsKeyID *string `json:"kms_key_id"`
+
 	// This field is automatically generated, do not edit it
 	Srn string `json:"srn,omitempty"`
 }

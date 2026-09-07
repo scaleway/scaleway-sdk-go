@@ -561,6 +561,12 @@ type Mailbox struct {
 	// ID: unique identifier of the mailbox.
 	ID string `json:"id"`
 
+	// ProjectID: ID of the Project to which the mailbox belongs.
+	ProjectID string `json:"project_id"`
+
+	// OrganizationID: ID of the Organization to which the mailbox belongs.
+	OrganizationID string `json:"organization_id"`
+
 	// DomainID: ID of the domain to which the mailbox belongs.
 	DomainID string `json:"domain_id"`
 
@@ -663,6 +669,9 @@ type Domain struct {
 
 	// ProjectID: ID of the Project to which the domain belongs.
 	ProjectID string `json:"project_id"`
+
+	// OrganizationID: ID of the Organization to which the domain belongs.
+	OrganizationID string `json:"organization_id"`
 
 	// Name: fully qualified domain name.
 	Name string `json:"name"`

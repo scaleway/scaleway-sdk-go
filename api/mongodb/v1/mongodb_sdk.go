@@ -897,6 +897,7 @@ type ApplyMaintenanceRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"-"`
 
+	// MaintenanceID: ID of the maintenance.
 	MaintenanceID string `json:"-"`
 }
 
