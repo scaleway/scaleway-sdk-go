@@ -18,8 +18,10 @@ import (
 var metadataRetryBindPort = 200
 
 const (
-	metadataAPIv4 = "http://169.254.42.42"
-	metadataAPIv6 = "http://[fd00:42::42]"
+	metadataAPIv4         = "http://169.254.42.42"
+	metadataAPIv6         = "http://[fd00:42::42]"
+	metadataTimeout       = time.Second * 3
+	metadataFallbackDelay = time.Second * -1
 )
 
 // MetadataAPI metadata API
@@ -60,7 +62,7 @@ func (meta *MetadataAPI) getMetadataURLWithContext(ctx context.Context) string {
 //
 //go:fix inline
 func (meta *MetadataAPI) GetMetadata() (m *Metadata, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), metadataTimeout)
 	defer cancel()
 
 	return meta.GetMetadataWithContext(ctx)
@@ -220,7 +222,7 @@ type Metadata struct {
 //
 //go:fix inline
 func (meta *MetadataAPI) ListUserData() (res *UserData, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), metadataTimeout)
 	defer cancel()
 
 	return meta.ListUserDataWithContext(ctx)
@@ -240,7 +242,7 @@ func (meta *MetadataAPI) ListUserDataWithContext(ctx context.Context) (res *User
 			Transport: &http.Transport{
 				DialContext: (&net.Dialer{
 					LocalAddr:     localTCPAddr,
-					FallbackDelay: time.Second * -1,
+					FallbackDelay: metadataFallbackDelay,
 				}).DialContext,
 			},
 		}
@@ -272,7 +274,7 @@ func (meta *MetadataAPI) ListUserDataWithContext(ctx context.Context) (res *User
 //
 //go:fix inline
 func (meta *MetadataAPI) GetUserData(key string) ([]byte, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), metadataTimeout)
 	defer cancel()
 
 	return meta.GetUserDataWithContext(ctx, key)
@@ -296,7 +298,7 @@ func (meta *MetadataAPI) GetUserDataWithContext(ctx context.Context, key string)
 			Transport: &http.Transport{
 				DialContext: (&net.Dialer{
 					LocalAddr:     localTCPAddr,
-					FallbackDelay: time.Second * -1,
+					FallbackDelay: metadataFallbackDelay,
 				}).DialContext,
 			},
 		}
@@ -329,7 +331,7 @@ func (meta *MetadataAPI) GetUserDataWithContext(ctx context.Context, key string)
 //
 //go:fix inline
 func (meta *MetadataAPI) SetUserData(key string, value []byte) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), metadataTimeout)
 	defer cancel()
 
 	return meta.SetUserDataWithContext(ctx, key, value)
@@ -353,7 +355,7 @@ func (meta *MetadataAPI) SetUserDataWithContext(ctx context.Context, key string,
 			Transport: &http.Transport{
 				DialContext: (&net.Dialer{
 					LocalAddr:     localTCPAddr,
-					FallbackDelay: time.Second * -1,
+					FallbackDelay: metadataFallbackDelay,
 				}).DialContext,
 			},
 		}
@@ -380,7 +382,7 @@ func (meta *MetadataAPI) SetUserDataWithContext(ctx context.Context, key string,
 //
 //go:fix inline
 func (meta *MetadataAPI) DeleteUserData(key string) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), metadataTimeout)
 	defer cancel()
 
 	return meta.DeleteUserDataWithContext(ctx, key)
@@ -404,7 +406,7 @@ func (meta *MetadataAPI) DeleteUserDataWithContext(ctx context.Context, key stri
 			Transport: &http.Transport{
 				DialContext: (&net.Dialer{
 					LocalAddr:     localTCPAddr,
-					FallbackDelay: time.Second * -1,
+					FallbackDelay: metadataFallbackDelay,
 				}).DialContext,
 			},
 		}
