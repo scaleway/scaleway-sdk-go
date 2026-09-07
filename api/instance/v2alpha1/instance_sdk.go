@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"text/template"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
@@ -518,6 +519,12 @@ const (
 	PrivateNetworkInterfaceStatusDetaching = PrivateNetworkInterfaceStatus("detaching")
 	// Attached, detached, or when the associated security-group rules are being updated on the interface.
 	PrivateNetworkInterfaceStatusSyncing = PrivateNetworkInterfaceStatus("syncing")
+	// Interface is being deleted.
+	PrivateNetworkInterfaceStatusDeleting = PrivateNetworkInterfaceStatus("deleting")
+	// Stop the server to fix the issue.
+	PrivateNetworkInterfaceStatusDetachError = PrivateNetworkInterfaceStatus("detach_error")
+	// Stop the server to fix the issue.
+	PrivateNetworkInterfaceStatusDeleteError = PrivateNetworkInterfaceStatus("delete_error")
 )
 
 func (enum PrivateNetworkInterfaceStatus) String() string {
@@ -535,6 +542,9 @@ func (enum PrivateNetworkInterfaceStatus) Values() []PrivateNetworkInterfaceStat
 		"attaching",
 		"detaching",
 		"syncing",
+		"deleting",
+		"detach_error",
+		"delete_error",
 	}
 }
 
@@ -874,6 +884,12 @@ const (
 	ServerPrivateNetworkInterfaceStatusDetaching = ServerPrivateNetworkInterfaceStatus("detaching")
 	// The associated security-group rules are being updated on the interface.
 	ServerPrivateNetworkInterfaceStatusSyncing = ServerPrivateNetworkInterfaceStatus("syncing")
+	// Interface is being deleted.
+	ServerPrivateNetworkInterfaceStatusDeleting = ServerPrivateNetworkInterfaceStatus("deleting")
+	// Stop the server to fix the issue.
+	ServerPrivateNetworkInterfaceStatusDetachError = ServerPrivateNetworkInterfaceStatus("detach_error")
+	// Stop the server to fix the issue.
+	ServerPrivateNetworkInterfaceStatusDeleteError = ServerPrivateNetworkInterfaceStatus("delete_error")
 )
 
 func (enum ServerPrivateNetworkInterfaceStatus) String() string {
@@ -891,6 +907,9 @@ func (enum ServerPrivateNetworkInterfaceStatus) Values() []ServerPrivateNetworkI
 		"attaching",
 		"detaching",
 		"syncing",
+		"deleting",
+		"detach_error",
+		"delete_error",
 	}
 }
 
@@ -1586,6 +1605,41 @@ type SecurityGroup struct {
 
 	// Zone: zone in which the security group is located.
 	Zone scw.Zone `json:"zone"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *SecurityGroup) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		SecurityGroup
+		Platform string
+	}{
+		SecurityGroup: *m,
+		Platform:      platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" || s == "<nil>" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://instance.{{ notempty .Platform }}/zones/{{ notempty .Zone }}/security-groups/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // CreateServerRequestPublicNetworkInterface: create server request public network interface.
@@ -1638,6 +1692,41 @@ type PlacementGroup struct {
 
 	// Zone: zone in which the placement group is located.
 	Zone scw.Zone `json:"zone"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *PlacementGroup) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		PlacementGroup
+		Platform string
+	}{
+		PlacementGroup: *m,
+		Platform:       platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" || s == "<nil>" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://instance.{{ notempty .Platform }}/zones/{{ notempty .Zone }}/placement-groups/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // PrivateNetworkInterfaceSummary: private network interface summary.
@@ -1672,6 +1761,9 @@ type PrivateNetworkInterfaceSummary struct {
 
 	// UpdatedAt: last update timestamp of the private network interface.
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	// Zone: zone in which the network interface is located.
+	Zone scw.Zone `json:"zone"`
 }
 
 // SecurityGroupSummary: security group summary.
@@ -1713,6 +1805,9 @@ type SecurityGroupSummary struct {
 
 	// UpdatedAt: last update timestamp of the security group.
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	// Zone: zone in which the security group is located.
+	Zone scw.Zone `json:"zone"`
 }
 
 // ServerType: server type.
@@ -1783,6 +1878,9 @@ type ServerSummary struct {
 
 	// RescueMode: whether the server is in rescue mode.
 	RescueMode bool `json:"rescue_mode"`
+
+	// Zone: zone in which the server is located.
+	Zone scw.Zone `json:"zone"`
 }
 
 // Snapshot: snapshot.
@@ -1824,6 +1922,41 @@ type Snapshot struct {
 
 	// Public: whether the snapshot is public.
 	Public bool `json:"public"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *Snapshot) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		Snapshot
+		Platform string
+	}{
+		Snapshot: *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" || s == "<nil>" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://instance.{{ notempty .Platform }}/zones/{{ notempty .Zone }}/snapshots/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // TemplateSummary: template summary.
@@ -1923,6 +2056,41 @@ type Volume struct {
 
 	// Zone: zone in which the volume is located.
 	Zone scw.Zone `json:"zone"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *Volume) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		Volume
+		Platform string
+	}{
+		Volume:   *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" || s == "<nil>" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://instance.{{ notempty .Platform }}/zones/{{ notempty .Zone }}/volumes/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // ServerFilesystem: server filesystem.
@@ -2301,11 +2469,11 @@ type DeleteServerRequest struct {
 	// Precisely one of DeleteAllIPs, DeleteIPIDs must be set.
 	DeleteIPIDs *[]string `json:"delete_ip_ids,omitempty"`
 
-	// DeleteAllVolumes: whether to delete all volumes attached to the server.
+	// DeleteAllVolumes: whether to delete all volumes attached to the server. Deletion of SBS volumes is not supported yet.
 	// Precisely one of DeleteAllVolumes, DeleteVolumeIDs must be set.
 	DeleteAllVolumes *bool `json:"delete_all_volumes,omitempty"`
 
-	// DeleteVolumeIDs: list of volume IDs to delete.
+	// DeleteVolumeIDs: list of volume IDs to delete. Deletion of SBS volumes is not supported yet.
 	// Precisely one of DeleteAllVolumes, DeleteVolumeIDs must be set.
 	DeleteVolumeIDs *[]string `json:"delete_volume_ids,omitempty"`
 
@@ -2349,6 +2517,15 @@ type DeleteUserDataRequest struct {
 
 	// Key: the key of the user data to delete.
 	Key string `json:"-"`
+}
+
+// DetachAndDeletePrivateNetworkInterfaceRequest: detach and delete private network interface request.
+type DetachAndDeletePrivateNetworkInterfaceRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// PrivateNetworkInterfaceID: ID of the private network interface to detach and delete.
+	PrivateNetworkInterfaceID string `json:"-"`
 }
 
 // DetachServerFileSystemRequest: detach server file system request.
@@ -3088,6 +3265,44 @@ type PrivateNetworkInterface struct {
 
 	// UpdatedAt: last update timestamp of the private network interface.
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	// Zone: zone in which the network interface is located.
+	Zone scw.Zone `json:"zone"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *PrivateNetworkInterface) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		PrivateNetworkInterface
+		Platform string
+	}{
+		PrivateNetworkInterface: *m,
+		Platform:                platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" || s == "<nil>" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://instance.{{ notempty .Platform }}/zones/{{ notempty .Zone }}/private-network-interfaces/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // RebootServerRequest: reboot server request.
@@ -3207,6 +3422,41 @@ type Server struct {
 
 	// Zone: zone in which the server is located.
 	Zone scw.Zone `json:"zone"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *Server) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		Server
+		Platform string
+	}{
+		Server:   *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" || s == "<nil>" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://instance.{{ notempty .Platform }}/zones/{{ notempty .Zone }}/servers/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // SetSecurityGroupRulesRequest: set security group rules request.
@@ -3390,6 +3640,41 @@ type Template struct {
 
 	// Zone: zone in which the template is located.
 	Zone scw.Zone `json:"zone"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *Template) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		Template
+		Platform string
+	}{
+		Template: *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" || s == "<nil>" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://instance.{{ notempty .Platform }}/zones/{{ notempty .Zone }}/templates/{{ notempty .ID }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // UpdatePlacementGroupRequest: update placement group request.
@@ -3964,6 +4249,10 @@ func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) 
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -3994,6 +4283,10 @@ func (s *API) GetServer(req *GetServerRequest, opts ...scw.RequestOption) (*Serv
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -4080,6 +4373,10 @@ func (s *API) UpdateServer(req *UpdateServerRequest, opts ...scw.RequestOption) 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -4192,6 +4489,10 @@ func (s *API) StartServer(req *StartServerRequest, opts ...scw.RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -4227,6 +4528,10 @@ func (s *API) RebootServer(req *RebootServerRequest, opts ...scw.RequestOption) 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -4264,6 +4569,10 @@ func (s *API) PauseServer(req *PauseServerRequest, opts ...scw.RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -4299,6 +4608,10 @@ func (s *API) StopServer(req *StopServerRequest, opts ...scw.RequestOption) (*Se
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -4336,6 +4649,10 @@ func (s *API) StopAndDeleteServer(req *StopAndDeleteServerRequest, opts ...scw.R
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -4371,6 +4688,10 @@ func (s *API) AttachServerVolume(req *AttachServerVolumeRequest, opts ...scw.Req
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -4408,6 +4729,10 @@ func (s *API) DetachServerVolume(req *DetachServerVolumeRequest, opts ...scw.Req
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -4443,6 +4768,10 @@ func (s *API) AttachServerFileSystem(req *AttachServerFileSystemRequest, opts ..
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -4480,6 +4809,10 @@ func (s *API) DetachServerFileSystem(req *DetachServerFileSystemRequest, opts ..
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -4515,6 +4848,10 @@ func (s *API) AttachServerIP(req *AttachServerIPRequest, opts ...scw.RequestOpti
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -4552,6 +4889,10 @@ func (s *API) DetachServerIP(req *DetachServerIPRequest, opts ...scw.RequestOpti
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -4587,6 +4928,10 @@ func (s *API) SetServerDefaultIP(req *SetServerDefaultIPRequest, opts ...scw.Req
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -4624,6 +4969,10 @@ func (s *API) AttachServerPrivateNetworkInterface(req *AttachServerPrivateNetwor
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -4659,6 +5008,10 @@ func (s *API) DetachServerPrivateNetworkInterface(req *DetachServerPrivateNetwor
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -4744,6 +5097,10 @@ func (s *API) CreatePrivateNetworkInterface(req *CreatePrivateNetworkInterfaceRe
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -4775,6 +5132,10 @@ func (s *API) GetPrivateNetworkInterface(req *GetPrivateNetworkInterfaceRequest,
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -4801,6 +5162,7 @@ func (s *API) WaitForPrivateNetworkInterface(req *WaitForPrivateNetworkInterface
 		PrivateNetworkInterfaceStatusAttaching: {},
 		PrivateNetworkInterfaceStatusDetaching: {},
 		PrivateNetworkInterfaceStatusSyncing:   {},
+		PrivateNetworkInterfaceStatusDeleting:  {},
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
@@ -4860,6 +5222,10 @@ func (s *API) UpdatePrivateNetworkInterface(req *UpdatePrivateNetworkInterfaceRe
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -4890,6 +5256,46 @@ func (s *API) DeletePrivateNetworkInterface(req *DeletePrivateNetworkInterfaceRe
 		return err
 	}
 	return nil
+}
+
+// DetachAndDeletePrivateNetworkInterface:
+func (s *API) DetachAndDeletePrivateNetworkInterface(req *DetachAndDeletePrivateNetworkInterfaceRequest, opts ...scw.RequestOption) (*PrivateNetworkInterface, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.PrivateNetworkInterfaceID) == "" {
+		return nil, errors.New("field PrivateNetworkInterfaceID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/instance/v2alpha1/zones/" + fmt.Sprint(req.Zone) + "/private-network-interfaces/" + fmt.Sprint(req.PrivateNetworkInterfaceID) + "/detach-and-delete",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp PrivateNetworkInterface
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
+	return &resp, nil
 }
 
 // ListPlacementGroups: List all placement groups.
@@ -4936,6 +5342,12 @@ func (s *API) ListPlacementGroups(req *ListPlacementGroupsRequest, opts ...scw.R
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.PlacementGroups {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -4973,6 +5385,10 @@ func (s *API) CreatePlacementGroup(req *CreatePlacementGroupRequest, opts ...scw
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -5003,6 +5419,10 @@ func (s *API) GetPlacementGroup(req *GetPlacementGroupRequest, opts ...scw.Reque
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -5039,6 +5459,10 @@ func (s *API) UpdatePlacementGroup(req *UpdatePlacementGroupRequest, opts ...scw
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -5153,6 +5577,10 @@ func (s *API) CreateSecurityGroup(req *CreateSecurityGroupRequest, opts ...scw.R
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -5183,6 +5611,10 @@ func (s *API) GetSecurityGroup(req *GetSecurityGroupRequest, opts ...scw.Request
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -5219,6 +5651,10 @@ func (s *API) UpdateSecurityGroup(req *UpdateSecurityGroupRequest, opts ...scw.R
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -5313,6 +5749,10 @@ func (s *API) SetSecurityGroupRules(req *SetSecurityGroupRulesRequest, opts ...s
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -5348,6 +5788,10 @@ func (s *API) UpdateSecurityGroupRule(req *UpdateSecurityGroupRuleRequest, opts 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -5678,6 +6122,10 @@ func (s *API) CreateTemplate(req *CreateTemplateRequest, opts ...scw.RequestOpti
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -5708,6 +6156,10 @@ func (s *API) GetTemplate(req *GetTemplateRequest, opts ...scw.RequestOption) (*
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -5744,6 +6196,10 @@ func (s *API) UpdateTemplate(req *UpdateTemplateRequest, opts ...scw.RequestOpti
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -6056,6 +6512,10 @@ func (s *API) CreateServerFromTemplate(req *CreateServerFromTemplateRequest, opt
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -6157,6 +6617,12 @@ func (s *VolumeAPI) ListVolumes(req *VolumeAPIListVolumesRequest, opts ...scw.Re
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Volumes {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -6194,6 +6660,10 @@ func (s *VolumeAPI) CreateVolume(req *VolumeAPICreateVolumeRequest, opts ...scw.
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -6224,6 +6694,10 @@ func (s *VolumeAPI) GetVolume(req *VolumeAPIGetVolumeRequest, opts ...scw.Reques
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -6312,6 +6786,10 @@ func (s *VolumeAPI) UpdateVolume(req *VolumeAPIUpdateVolumeRequest, opts ...scw.
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -6389,6 +6867,12 @@ func (s *VolumeAPI) ListSnapshots(req *VolumeAPIListSnapshotsRequest, opts ...sc
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Snapshots {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -6426,6 +6910,10 @@ func (s *VolumeAPI) CreateSnapshot(req *VolumeAPICreateSnapshotRequest, opts ...
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -6456,6 +6944,10 @@ func (s *VolumeAPI) GetSnapshot(req *VolumeAPIGetSnapshotRequest, opts ...scw.Re
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -6541,6 +7033,10 @@ func (s *VolumeAPI) UpdateSnapshot(req *VolumeAPIUpdateSnapshotRequest, opts ...
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -6607,6 +7103,10 @@ func (s *VolumeAPI) ImportSnapshotFromObjectStorage(req *VolumeAPIImportSnapshot
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -6642,6 +7142,10 @@ func (s *VolumeAPI) ExportSnapshotToObjectStorage(req *VolumeAPIExportSnapshotTo
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }

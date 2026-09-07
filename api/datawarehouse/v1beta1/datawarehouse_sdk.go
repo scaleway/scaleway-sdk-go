@@ -350,7 +350,7 @@ func (m *Endpoint) setSRN(platform string) {
 
 	notEmpty := func(a any) (string, error) {
 		s := fmt.Sprint(a)
-		if s == "" {
+		if s == "" || s == "<nil>" {
 			return "", errors.New("value is empty")
 		}
 		return s, nil
@@ -409,7 +409,7 @@ func (m *Database) setSRN(platform string) {
 
 	notEmpty := func(a any) (string, error) {
 		s := fmt.Sprint(a)
-		if s == "" {
+		if s == "" || s == "<nil>" {
 			return "", errors.New("value is empty")
 		}
 		return s, nil
@@ -499,7 +499,7 @@ func (m *Deployment) setSRN(platform string) {
 
 	notEmpty := func(a any) (string, error) {
 		s := fmt.Sprint(a)
-		if s == "" {
+		if s == "" || s == "<nil>" {
 			return "", errors.New("value is empty")
 		}
 		return s, nil
@@ -573,7 +573,7 @@ func (m *User) setSRN(platform string) {
 
 	notEmpty := func(a any) (string, error) {
 		s := fmt.Sprint(a)
-		if s == "" {
+		if s == "" || s == "<nil>" {
 			return "", errors.New("value is empty")
 		}
 		return s, nil
