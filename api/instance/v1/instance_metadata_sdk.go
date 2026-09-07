@@ -41,6 +41,7 @@ func (meta *MetadataAPI) getMetadataURLWithContext(ctx context.Context) string {
 		req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, bytes.NewBufferString(""))
 		if err != nil {
 			logger.Warningf("Failed to create metadata URL %s: %v", url, err)
+			continue
 		}
 
 		resp, err := http.DefaultClient.Do(req)
