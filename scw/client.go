@@ -608,9 +608,18 @@ func newVariableFromType(t any) any {
 }
 
 func newHTTPClient() *http.Client {
+	rlState := &RateLimitState{
+		remaining: 1,
+	}
+
+	rlTransport := &RateLimitTransport{
+		Base:  http.DefaultTransport,
+		State: rlState,
+	}
+
 	return &http.Client{
 		Timeout:   30 * time.Second,
-		Transport: http.DefaultTransport.(*http.Transport).Clone(),
+		Transport: rlTransport,
 	}
 }
 
