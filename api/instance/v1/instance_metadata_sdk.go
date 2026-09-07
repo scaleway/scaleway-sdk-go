@@ -59,7 +59,10 @@ func (meta *MetadataAPI) getMetadataURLWithContext(ctx context.Context) string {
 //
 //go:fix inline
 func (meta *MetadataAPI) GetMetadata() (m *Metadata, err error) {
-	return meta.GetMetadataWithContext(context.Background())
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	return meta.GetMetadataWithContext(ctx)
 }
 
 // GetMetadataWithContext returns the metadata available from the server
@@ -216,7 +219,10 @@ type Metadata struct {
 //
 //go:fix inline
 func (meta *MetadataAPI) ListUserData() (res *UserData, err error) {
-	return meta.ListUserDataWithContext(context.Background())
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	return meta.ListUserDataWithContext(ctx)
 }
 
 // ListUserDataWithContext returns the metadata available from the server
@@ -265,7 +271,10 @@ func (meta *MetadataAPI) ListUserDataWithContext(ctx context.Context) (res *User
 //
 //go:fix inline
 func (meta *MetadataAPI) GetUserData(key string) ([]byte, error) {
-	return meta.GetUserDataWithContext(context.Background(), key)
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	return meta.GetUserDataWithContext(ctx, key)
 }
 
 // GetUserDataWithContext returns the value for the given metadata key
@@ -319,7 +328,10 @@ func (meta *MetadataAPI) GetUserDataWithContext(ctx context.Context, key string)
 //
 //go:fix inline
 func (meta *MetadataAPI) SetUserData(key string, value []byte) error {
-	return meta.SetUserDataWithContext(context.Background(), key, value)
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	return meta.SetUserDataWithContext(ctx, key, value)
 }
 
 // SetUserDataWithContext sets the userdata key with the given value
@@ -367,7 +379,10 @@ func (meta *MetadataAPI) SetUserDataWithContext(ctx context.Context, key string,
 //
 //go:fix inline
 func (meta *MetadataAPI) DeleteUserData(key string) error {
-	return meta.DeleteUserDataWithContext(context.Background(), key)
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	return meta.DeleteUserDataWithContext(ctx, key)
 }
 
 // DeleteUserDataWithContext deletes the userdata key and the associated value
