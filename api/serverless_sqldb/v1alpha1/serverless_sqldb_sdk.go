@@ -373,11 +373,8 @@ type Database struct {
 	// Started: whether your Serverless SQL Database is running or not.
 	Started bool `json:"started"`
 
-	// Deprecated: EngineMajorVersion: the major version of the underlying database engine. (deprecated in favor of `version`).
-	EngineMajorVersion *uint32 `json:"engine_major_version,omitempty"`
-
-	// Version: the major version of the underlying database engine.
-	Version *Version `json:"version"`
+	// EngineMajorVersion: the major version of the underlying database engine.
+	EngineMajorVersion uint32 `json:"engine_major_version"`
 
 	// This field is automatically generated, do not edit it
 	Srn string `json:"srn,omitempty"`
@@ -1074,50 +1071,6 @@ func (s *API) ExportDatabaseBackup(req *ExportDatabaseBackupRequest, opts ...scw
 	apiMetadata, err := s.client.GetAPIMetadata()
 	if err == nil {
 		resp.setSRN(apiMetadata.Domain)
-	}
-	return &resp, nil
-}
-
-// ListVersions: List available PostgreSQL major versions.
-func (s *API) ListVersions(req *ListVersionsRequest, opts ...scw.RequestOption) (*ListVersionsResponse, error) {
-	var err error
-
-	if req.Region == "" {
-		defaultRegion, _ := s.client.GetDefaultRegion()
-		req.Region = defaultRegion
-	}
-
-	defaultPageSize, exist := s.client.GetDefaultPageSize()
-	if (req.PageSize == nil || *req.PageSize == 0) && exist {
-		req.PageSize = &defaultPageSize
-	}
-
-	query := url.Values{}
-	parameter.AddToQuery(query, "version", req.Version)
-	parameter.AddToQuery(query, "page", req.Page)
-	parameter.AddToQuery(query, "page_size", req.PageSize)
-
-	if fmt.Sprint(req.Region) == "" {
-		return nil, errors.New("field Region cannot be empty in request")
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "GET",
-		Path:   "/serverless-sqldb/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/versions",
-		Query:  query,
-	}
-
-	var resp ListVersionsResponse
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.Versions {
-			el.setSRN(apiMetadata.Domain)
-		}
 	}
 	return &resp, nil
 }
