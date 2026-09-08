@@ -1314,6 +1314,11 @@ type TLSSecret struct {
 	Region scw.Region `json:"region"`
 }
 
+// WafExclusionRule: waf exclusion rule.
+type WafExclusionRule struct {
+	RuleID uint32 `json:"rule_id"`
+}
+
 // RuleHTTPMatch: rule http match.
 type RuleHTTPMatch struct {
 	// MethodFilters: HTTP methods to filter for. A request using any of these methods will be considered to match the rule. Possible values are `get`, `post`, `put`, `patch`, `delete`, `head`, `options`. All methods will match if none is provided.
@@ -1575,6 +1580,9 @@ type WafStage struct {
 	// BackendStageID: ID of the backend stage to forward requests to after the WAF stage.
 	// Precisely one of BackendStageID must be set.
 	BackendStageID *string `json:"backend_stage_id,omitempty"`
+
+	// ExclusionRules: list of OWASP® CRS rule IDs excluded from WAF.
+	ExclusionRules []*WafExclusionRule `json:"exclusion_rules"`
 }
 
 // SetRouteRulesRequestRouteRule: set route rules request route rule.
@@ -1981,6 +1989,9 @@ type CreateWafStageRequest struct {
 
 	// ParanoiaLevel: sensitivity level (`1`,`2`,`3`,`4`) to use when classifying requests as malicious. With a high level, requests are more likely to be classed as malicious, and false positives are expected. With a lower level, requests are more likely to be classed as benign.
 	ParanoiaLevel uint32 `json:"paranoia_level"`
+
+	// ExclusionRules: list of OWASP® CRS rule IDs excluded from WAF.
+	ExclusionRules []*WafExclusionRule `json:"exclusion_rules"`
 
 	// BackendStageID: ID of the backend stage to forward requests to after the WAF stage.
 	// Precisely one of BackendStageID must be set.
@@ -3020,6 +3031,9 @@ type UpdateWafStageRequest struct {
 
 	// ParanoiaLevel: sensitivity level (`1`,`2`,`3`,`4`) to use when classifying requests as malicious. With a high level, requests are more likely to be classed as malicious, and false positives are expected. With a lower level, requests are more likely to be classed as benign.
 	ParanoiaLevel *uint32 `json:"paranoia_level,omitempty"`
+
+	// ExclusionRules: list of OWASP® CRS rule IDs excluded from WAF.
+	ExclusionRules []*WafExclusionRule `json:"exclusion_rules"`
 
 	// BackendStageID: ID of the backend stage to forward requests to after the WAF stage.
 	// Precisely one of BackendStageID must be set.
