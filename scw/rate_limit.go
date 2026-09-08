@@ -10,9 +10,13 @@ import (
 
 // RateLimitState stores the current limit state
 type RateLimitState struct {
-	mu        sync.RWMutex
+	mu sync.RWMutex
+
+	// remaning is the number of requests still available for this time window
 	remaining int
-	resetAt   time.Time
+
+	// resetAt is the time to wait before the next time window
+	resetAt time.Time
 }
 
 // Update updates the limit state with the headers values
@@ -23,8 +27,8 @@ func (s *RateLimitState) Update(remaining int, resetInSeconds int) {
 	s.resetAt = time.Now().Add(time.Duration(resetInSeconds) * time.Second)
 }
 
-// WaitDuration computes the time to wait before the next request
-func (s *RateLimitState) WaitDuration() time.Duration {
+// GetWaitDuration computes the time to wait before the next request
+func (s *RateLimitState) GetWaitDuration() time.Duration {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
@@ -58,7 +62,7 @@ func (t *RateLimitTransport) base() http.RoundTripper {
 func (t *RateLimitTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	for {
 		// Proactive strategy: check if we should wait
-		wait := t.State.WaitDuration()
+		wait := t.State.GetWaitDuration()
 		if wait > 0 {
 			if err := sleepWithContext(req.Context(), wait); err != nil {
 				return nil, err
@@ -84,7 +88,7 @@ func (t *RateLimitTransport) RoundTrip(req *http.Request) (*http.Response, error
 		if resp.StatusCode == http.StatusTooManyRequests {
 			retryAfterStr := resp.Header.Get("Retry-After")
 			if retryAfterSec, err := strconv.Atoi(retryAfterStr); err == nil {
-				resp.Body.Close()
+				err = resp.Body.Close()
 				if err != nil {
 					return nil, err
 				}
