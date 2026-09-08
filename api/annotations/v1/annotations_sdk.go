@@ -89,7 +89,7 @@ type Binding struct {
 	// ID: ID of the binding.
 	ID string `json:"id"`
 
-	// Srn: scaleway Resource Number associated to the binding.
+	// Srn: scaleway Resource Name associated to the binding.
 	Srn string `json:"srn"`
 
 	// Key: key associated to the binding.
@@ -128,7 +128,7 @@ type Value struct {
 
 // CreateBindingRequest: create binding request.
 type CreateBindingRequest struct {
-	// Srn: scaleway Resource Number to associate.
+	// Srn: scaleway Resource Name to associate.
 	Srn string `json:"srn"`
 
 	// ValueID: ID of the value to associate.
@@ -161,7 +161,7 @@ type CreateValueRequest struct {
 
 // DeleteAllBindingsMatchingSRNRequest: delete all bindings matching srn request.
 type DeleteAllBindingsMatchingSRNRequest struct {
-	// Srn: scaleway Resource Number for which all bindings should be deleted.
+	// Srn: scaleway Resource Name for which all bindings should be deleted.
 	Srn string `json:"-"`
 
 	// OrganizationID: ID of the organization.
@@ -194,7 +194,7 @@ type DeleteAllValuesMatchingKeyRequest struct {
 
 // DeleteAllValuesMatchingKeyResponse: delete all values matching key response.
 type DeleteAllValuesMatchingKeyResponse struct {
-	// TotalDeleted: total number of bindings deleted.
+	// TotalDeleted: total number of values deleted.
 	TotalDeleted uint64 `json:"total_deleted"`
 }
 
@@ -251,7 +251,7 @@ type ListBindingsRequest struct {
 	// OrganizationID: ID of the organization.
 	OrganizationID string `json:"-"`
 
-	// Srn: scaleway Resource Number for which to list all bindings.
+	// Srn: scaleway Resource Name for which to list all bindings.
 	Srn *string `json:"-"`
 
 	// ValueID: value ID for which to list all bindings.
@@ -432,7 +432,7 @@ func (s *API) CreateKey(req *CreateKeyRequest, opts ...scw.RequestOption) (*Key,
 	return &resp, nil
 }
 
-// ListKeys: List of keys.
+// ListKeys: List all keys, sorted alphabetically by name.
 func (s *API) ListKeys(req *ListKeysRequest, opts ...scw.RequestOption) (*ListKeysResponse, error) {
 	var err error
 
@@ -558,7 +558,7 @@ func (s *API) CreateValue(req *CreateValueRequest, opts ...scw.RequestOption) (*
 	return &resp, nil
 }
 
-// ListValues: List all values for a key, sorted alphabetically by name.
+// ListValues: List all values, sorted alphabetically by name.
 func (s *API) ListValues(req *ListValuesRequest, opts ...scw.RequestOption) (*ListValuesResponse, error) {
 	var err error
 
@@ -615,7 +615,7 @@ func (s *API) GetValue(req *GetValueRequest, opts ...scw.RequestOption) (*Value,
 	return &resp, nil
 }
 
-// UpdateValue: Update name or description. Global update.
+// UpdateValue: Update name or description.
 func (s *API) UpdateValue(req *UpdateValueRequest, opts ...scw.RequestOption) (*Value, error) {
 	var err error
 
@@ -734,7 +734,7 @@ func (s *API) CreateBinding(req *CreateBindingRequest, opts ...scw.RequestOption
 	return &resp, nil
 }
 
-// ListBindings: List all bindings, or filter by Scaleway Resource Number or value ID. Response order by ID.
+// ListBindings: List all bindings, or filter by Scaleway Resource Name or value ID. Response order by ID.
 func (s *API) ListBindings(req *ListBindingsRequest, opts ...scw.RequestOption) (*ListBindingsResponse, error) {
 	var err error
 
@@ -812,7 +812,7 @@ func (s *API) DeleteAllBindingsMatchingValue(req *DeleteAllBindingsMatchingValue
 	return &resp, nil
 }
 
-// DeleteAllBindingsMatchingSRN: Delete ALL bindings associated with a Scaleway Resource Number.
+// DeleteAllBindingsMatchingSRN: Delete ALL bindings associated with a Scaleway Resource Name.
 func (s *API) DeleteAllBindingsMatchingSRN(req *DeleteAllBindingsMatchingSRNRequest, opts ...scw.RequestOption) (*DeleteAllBindingsMatchingSRNResponse, error) {
 	var err error
 

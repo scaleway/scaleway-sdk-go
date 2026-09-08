@@ -2301,11 +2301,11 @@ type DeleteServerRequest struct {
 	// Precisely one of DeleteAllIPs, DeleteIPIDs must be set.
 	DeleteIPIDs *[]string `json:"delete_ip_ids,omitempty"`
 
-	// DeleteAllVolumes: whether to delete all volumes attached to the server.
+	// DeleteAllVolumes: whether to delete all volumes attached to the server. Deletion of SBS volumes is not supported yet.
 	// Precisely one of DeleteAllVolumes, DeleteVolumeIDs must be set.
 	DeleteAllVolumes *bool `json:"delete_all_volumes,omitempty"`
 
-	// DeleteVolumeIDs: list of volume IDs to delete.
+	// DeleteVolumeIDs: list of volume IDs to delete. Deletion of SBS volumes is not supported yet.
 	// Precisely one of DeleteAllVolumes, DeleteVolumeIDs must be set.
 	DeleteVolumeIDs *[]string `json:"delete_volume_ids,omitempty"`
 
