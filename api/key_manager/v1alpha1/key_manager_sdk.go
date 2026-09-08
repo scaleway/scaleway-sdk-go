@@ -88,8 +88,6 @@ const (
 	KeyAlgorithmAsymmetricEncryptionRsaOaep3072Sha256 = KeyAlgorithmAsymmetricEncryption("rsa_oaep_3072_sha256")
 	// RSA-OAEP (Optimal Asymmetric Encryption Padding) with a 4096-bit key and SHA-256 hash function.
 	KeyAlgorithmAsymmetricEncryptionRsaOaep4096Sha256 = KeyAlgorithmAsymmetricEncryption("rsa_oaep_4096_sha256")
-	KeyAlgorithmAsymmetricEncryptionMlKem768          = KeyAlgorithmAsymmetricEncryption("ml_kem_768")
-	KeyAlgorithmAsymmetricEncryptionMlKem1024         = KeyAlgorithmAsymmetricEncryption("ml_kem_1024")
 )
 
 func (enum KeyAlgorithmAsymmetricEncryption) String() string {
@@ -106,8 +104,6 @@ func (enum KeyAlgorithmAsymmetricEncryption) Values() []KeyAlgorithmAsymmetricEn
 		"rsa_oaep_2048_sha256",
 		"rsa_oaep_3072_sha256",
 		"rsa_oaep_4096_sha256",
-		"ml_kem_768",
-		"ml_kem_1024",
 	}
 }
 
@@ -193,6 +189,45 @@ func (enum *KeyAlgorithmAsymmetricSigning) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = KeyAlgorithmAsymmetricSigning(KeyAlgorithmAsymmetricSigning(tmp).String())
+	return nil
+}
+
+type KeyAlgorithmKeyEncapsulation string
+
+const (
+	KeyAlgorithmKeyEncapsulationUnknownKeyEncapsulation = KeyAlgorithmKeyEncapsulation("unknown_key_encapsulation")
+	KeyAlgorithmKeyEncapsulationMlKem768                = KeyAlgorithmKeyEncapsulation("ml_kem_768")
+	KeyAlgorithmKeyEncapsulationMlKem1024               = KeyAlgorithmKeyEncapsulation("ml_kem_1024")
+)
+
+func (enum KeyAlgorithmKeyEncapsulation) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(KeyAlgorithmKeyEncapsulationUnknownKeyEncapsulation)
+	}
+	return string(enum)
+}
+
+func (enum KeyAlgorithmKeyEncapsulation) Values() []KeyAlgorithmKeyEncapsulation {
+	return []KeyAlgorithmKeyEncapsulation{
+		"unknown_key_encapsulation",
+		"ml_kem_768",
+		"ml_kem_1024",
+	}
+}
+
+func (enum KeyAlgorithmKeyEncapsulation) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *KeyAlgorithmKeyEncapsulation) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = KeyAlgorithmKeyEncapsulation(KeyAlgorithmKeyEncapsulation(tmp).String())
 	return nil
 }
 
@@ -328,6 +363,7 @@ const (
 	ListAlgorithmsRequestUsageSymmetricEncryption  = ListAlgorithmsRequestUsage("symmetric_encryption")
 	ListAlgorithmsRequestUsageAsymmetricEncryption = ListAlgorithmsRequestUsage("asymmetric_encryption")
 	ListAlgorithmsRequestUsageAsymmetricSigning    = ListAlgorithmsRequestUsage("asymmetric_signing")
+	ListAlgorithmsRequestUsageKeyEncapsulation     = ListAlgorithmsRequestUsage("key_encapsulation")
 )
 
 func (enum ListAlgorithmsRequestUsage) String() string {
@@ -344,6 +380,7 @@ func (enum ListAlgorithmsRequestUsage) Values() []ListAlgorithmsRequestUsage {
 		"symmetric_encryption",
 		"asymmetric_encryption",
 		"asymmetric_signing",
+		"key_encapsulation",
 	}
 }
 
@@ -461,18 +498,22 @@ type KeyRotationPolicy struct {
 type KeyUsage struct {
 	// SymmetricEncryption: see the `Key.Algorithm.SymmetricEncryption` enum for a description of values.
 	// Default value: unknown_symmetric_encryption
-	// Precisely one of SymmetricEncryption, AsymmetricEncryption, AsymmetricSigning must be set.
+	// Precisely one of SymmetricEncryption, AsymmetricEncryption, AsymmetricSigning, KeyEncapsulation must be set.
 	SymmetricEncryption *KeyAlgorithmSymmetricEncryption `json:"symmetric_encryption,omitempty"`
 
 	// AsymmetricEncryption: see the `Key.Algorithm.AsymmetricEncryption` enum for a description of values.
 	// Default value: unknown_asymmetric_encryption
-	// Precisely one of SymmetricEncryption, AsymmetricEncryption, AsymmetricSigning must be set.
+	// Precisely one of SymmetricEncryption, AsymmetricEncryption, AsymmetricSigning, KeyEncapsulation must be set.
 	AsymmetricEncryption *KeyAlgorithmAsymmetricEncryption `json:"asymmetric_encryption,omitempty"`
 
 	// AsymmetricSigning: see the `Key.Algorithm.AsymmetricSigning` enum for a description of values.
 	// Default value: unknown_asymmetric_signing
-	// Precisely one of SymmetricEncryption, AsymmetricEncryption, AsymmetricSigning must be set.
+	// Precisely one of SymmetricEncryption, AsymmetricEncryption, AsymmetricSigning, KeyEncapsulation must be set.
 	AsymmetricSigning *KeyAlgorithmAsymmetricSigning `json:"asymmetric_signing,omitempty"`
+
+	// KeyEncapsulation: default value: unknown_key_encapsulation
+	// Precisely one of SymmetricEncryption, AsymmetricEncryption, AsymmetricSigning, KeyEncapsulation must be set.
+	KeyEncapsulation *KeyAlgorithmKeyEncapsulation `json:"key_encapsulation,omitempty"`
 }
 
 // ListAlgorithmsResponseAlgorithm: list algorithms response algorithm.
