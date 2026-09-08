@@ -1119,7 +1119,7 @@ type CreateConnectionRequest struct {
 	// EnableRoutePropagation: defines whether route propagation is enabled or not.
 	EnableRoutePropagation bool `json:"enable_route_propagation"`
 
-	// Secret: specifies the pre-shared key used for the IPsec tunnel.
+	// Secret: previously created secret in Secret Manager containing the PSK to be used for the IPsec tunnel. If no secret given, S2S VPN will create one automatically in Secret Manager, reference it's secret_id and revision in the connection and use the generated PSK. Secret revision is also optional and maybe used to refer to a previous revision. If no revision given, "latest" is used.
 	Secret *CreateConnectionRequestSecret `json:"secret,omitempty"`
 
 	// VpnGatewayID: ID of the VPN gateway to attach to the connection.
