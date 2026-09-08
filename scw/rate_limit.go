@@ -71,8 +71,8 @@ func (t *RateLimitTransport) RoundTrip(req *http.Request) (*http.Response, error
 		}
 
 		// State update
-		remainingStr := resp.Header.Get("x-ratelimit-remaining")
-		resetStr := resp.Header.Get("x-ratelimit-reset")
+		remainingStr := resp.Header.Get("X-Ratelimit-Remaining")
+		resetStr := resp.Header.Get("X-Ratelimit-Reset")
 
 		if remainingStr != "" && resetStr != "" {
 			remaining, _ := strconv.Atoi(remainingStr)
@@ -82,9 +82,12 @@ func (t *RateLimitTransport) RoundTrip(req *http.Request) (*http.Response, error
 
 		// Reactive strategy: 429 handling
 		if resp.StatusCode == http.StatusTooManyRequests {
-			retryAfterStr := resp.Header.Get("retry-after")
+			retryAfterStr := resp.Header.Get("Retry-After")
 			if retryAfterSec, err := strconv.Atoi(retryAfterStr); err == nil {
 				resp.Body.Close()
+				if err != nil {
+					return nil, err
+				}
 
 				retryWait := time.Duration(retryAfterSec) * time.Second
 				if err := sleepWithContext(req.Context(), retryWait); err != nil {
@@ -100,7 +103,7 @@ func (t *RateLimitTransport) RoundTrip(req *http.Request) (*http.Response, error
 	}
 }
 
-// sleepWithContext pauses the goroutine, while still listening to context's concellation.
+// sleepWithContext pauses the goroutine, while still listening to context's cancellation.
 func sleepWithContext(ctx context.Context, d time.Duration) error {
 	timer := time.NewTimer(d)
 	defer timer.Stop()
