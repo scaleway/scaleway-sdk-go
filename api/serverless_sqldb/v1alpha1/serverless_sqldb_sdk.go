@@ -212,6 +212,53 @@ func (enum *ListDatabasesRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// Version: version.
+type Version struct {
+	// Name: major number of the PostgreSQL engine.
+	Name string `json:"name"`
+
+	// EndOfLifeAt: date of End Of Life.
+	EndOfLifeAt *time.Time `json:"end_of_life_at"`
+
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"region"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *Version) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+	data := struct {
+		Version
+		Platform string
+	}{
+		Version:  *m,
+		Platform: platform,
+	}
+
+	notEmpty := func(a any) (string, error) {
+		s := fmt.Sprint(a)
+		if s == "" || s == "<nil>" {
+			return "", errors.New("value is empty")
+		}
+		return s, nil
+	}
+	templ := "srn://serverless-db.{{ notempty .Platform }}/regions/{{ notempty .Region }}/versions/{{ notempty .Name }}"
+	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
+	if err != nil {
+		return
+	}
+	var out bytes.Buffer
+	if err := t.Execute(&out, data); err == nil {
+		m.Srn = out.String()
+	}
+	// note: if the error was not nil, we simply don't set the SRN
+}
+
 // DatabaseBackup: database backup.
 type DatabaseBackup struct {
 	// ID: UUID that uniquely identifies a Serverless SQL Database backup.
@@ -384,6 +431,9 @@ type CreateDatabaseRequest struct {
 
 	// FromBackupID: the ID of the backup to create the database from.
 	FromBackupID *string `json:"from_backup_id,omitempty"`
+
+	// Version: the major version of the postgreSQL requested.
+	Version string `json:"version"`
 }
 
 // DeleteDatabaseRequest: delete database request.
@@ -526,6 +576,46 @@ func (r *ListDatabasesResponse) UnsafeAppend(res any) (uint64, error) {
 	r.Databases = append(r.Databases, results.Databases...)
 	r.TotalCount += uint64(len(results.Databases))
 	return uint64(len(results.Databases)), nil
+}
+
+// ListVersionsRequest: list versions request.
+type ListVersionsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	Version *string `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+}
+
+// ListVersionsResponse: list versions response.
+type ListVersionsResponse struct {
+	// Versions: available PostgreSQL versions.
+	Versions []*Version `json:"versions"`
+
+	// TotalCount: total count of versions available.
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListVersionsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListVersionsResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListVersionsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Versions = append(r.Versions, results.Versions...)
+	r.TotalCount += uint64(len(results.Versions))
+	return uint64(len(results.Versions)), nil
 }
 
 // RestoreDatabaseFromBackupRequest: restore database from backup request.
