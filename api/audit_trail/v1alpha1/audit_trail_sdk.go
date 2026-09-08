@@ -40,6 +40,47 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
+type Action string
+
+const (
+	ActionUnknownAction = Action("unknown_action")
+	ActionCreate        = Action("create")
+	ActionUpdate        = Action("update")
+	ActionDelete        = Action("delete")
+)
+
+func (enum Action) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ActionUnknownAction)
+	}
+	return string(enum)
+}
+
+func (enum Action) Values() []Action {
+	return []Action{
+		"unknown_action",
+		"create",
+		"update",
+		"delete",
+	}
+}
+
+func (enum Action) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *Action) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = Action(Action(tmp).String())
+	return nil
+}
+
 type AlertRuleStatus string
 
 const (
@@ -1330,7 +1371,8 @@ type Resource struct {
 
 	Name *string `json:"name"`
 
-	Action *string `json:"action"`
+	// Action: default value: unknown_action
+	Action *Action `json:"action"`
 
 	// Deprecated
 	// Precisely one of SecmSecretInfo, SecmSecretVersionInfo, KubeClusterInfo, KubePoolInfo, KubeNodeInfo, KubeACLInfo, KeymKeyInfo, SecretManagerSecretInfo, SecretManagerVersionInfo, KeyManagerKeyInfo, AccountUserInfo, AccountOrganizationInfo, InstanceServerInfo, AppleSiliconServerInfo, AccountProjectInfo, BaremetalServerInfo, BaremetalSettingInfo, IpamIPInfo, LoadBalancerLBInfo, LoadBalancerIPInfo, LoadBalancerFrontendInfo, LoadBalancerBackendInfo, LoadBalancerRouteInfo, LoadBalancerACLInfo, LoadBalancerCertificateInfo, EdgeServicesPlanInfo, EdgeServicesPipelineInfo, EdgeServicesDNSStageInfo, EdgeServicesTLSStageInfo, EdgeServicesCacheStageInfo, EdgeServicesRouteStageInfo, EdgeServicesRouteRulesInfo, EdgeServicesWafStageInfo, EdgeServicesBackendStageInfo, AccountContractSignatureInfo, VpcSubnetInfo, VpcRouteInfo, VpcPrivateNetworkInfo, AuditTrailExportJobInfo, VpcGwGatewayInfo, VpcGwGatewayNetworkInfo, AppleSiliconRunnerInfo, AuditTrailAlertRuleInfo, VpcConnectorInfo, InstancePrivateNetworkInterfaceInfo, VpcIngressRuleInfo, ObservabilityContactPointInfo, ObservabilityAlertRuleInfo, EdgeServicesVpcEndpointInfo, AuditTrailCustomAlertRuleInfo, ServerlessContainersNamespaceInfo, ServerlessContainersContainerInfo, ServerlessContainersDomainInfo, ServerlessContainersTriggerInfo, ServerlessFunctionsNamespaceInfo, ServerlessFunctionsFunctionInfo, ServerlessFunctionsDomainInfo, ServerlessFunctionsCronInfo, ServerlessFunctionsTriggerInfo must be set.
