@@ -240,6 +240,47 @@ func (enum *ListServersRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type RunnerConfigurationAction string
+
+const (
+	RunnerConfigurationActionUnknownAction = RunnerConfigurationAction("unknown_action")
+	RunnerConfigurationActionRemove        = RunnerConfigurationAction("remove")
+	RunnerConfigurationActionUpdate        = RunnerConfigurationAction("update")
+	RunnerConfigurationActionAdd           = RunnerConfigurationAction("add")
+)
+
+func (enum RunnerConfigurationAction) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(RunnerConfigurationActionUnknownAction)
+	}
+	return string(enum)
+}
+
+func (enum RunnerConfigurationAction) Values() []RunnerConfigurationAction {
+	return []RunnerConfigurationAction{
+		"unknown_action",
+		"remove",
+		"update",
+		"add",
+	}
+}
+
+func (enum RunnerConfigurationAction) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *RunnerConfigurationAction) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = RunnerConfigurationAction(RunnerConfigurationAction(tmp).String())
+	return nil
+}
+
 type RunnerConfigurationProvider string
 
 const (
@@ -626,6 +667,15 @@ type RunnerConfiguration struct {
 
 	// Provider: default value: unknown_provider
 	Provider RunnerConfigurationProvider `json:"provider"`
+
+	DownloadRunner bool `json:"download_runner"`
+
+	// Action: default value: unknown_action
+	Action RunnerConfigurationAction `json:"action"`
+
+	ID string `json:"id"`
+
+	Labels []string `json:"labels"`
 }
 
 // RunnerConfigurationV2: runner configuration v2.
@@ -1040,6 +1090,12 @@ type GetServerTypeRequest struct {
 	ServerType string `json:"-"`
 }
 
+// GetUserConfigurationRequest: get user configuration request.
+type GetUserConfigurationRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+}
+
 // ListOSRequest: list os request.
 type ListOSRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
@@ -1343,6 +1399,17 @@ type StartConnectivityDiagnosticResponse struct {
 	DiagnosticID string `json:"diagnostic_id"`
 }
 
+// UpdateRunnerConfigurationStatusRequest: update runner configuration status request.
+type UpdateRunnerConfigurationStatusRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	RunnerErrors map[string]string `json:"runner_errors"`
+}
+
+// UpdateRunnerConfigurationStatusResponse: update runner configuration status response.
+type UpdateRunnerConfigurationStatusResponse struct{}
+
 // UpdateRunnerRequest: update runner request.
 type UpdateRunnerRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
@@ -1380,6 +1447,15 @@ type UpdateServerRequest struct {
 
 	// AppliedRunnerConfigurations: runner configurations to apply on the server, existing ones missing from the specified configuration will be removed from the server.
 	AppliedRunnerConfigurations *AppliedRunnerConfigurations `json:"applied_runner_configurations,omitempty"`
+}
+
+// UserConfiguration: user configuration.
+type UserConfiguration struct {
+	VncPassword string `json:"vnc_password"`
+
+	SSHKeys []string `json:"ssh_keys"`
+
+	RunnerConfigurations []*RunnerConfiguration `json:"runner_configurations"`
 }
 
 // This API allows you to manage your Apple silicon machines.
@@ -2146,6 +2222,65 @@ func (s *API) DeleteRunner(req *DeleteRunnerRequest, opts ...scw.RequestOption) 
 		return err
 	}
 	return nil
+}
+
+// GetUserConfiguration:
+func (s *API) GetUserConfiguration(req *GetUserConfigurationRequest, opts ...scw.RequestOption) (*UserConfiguration, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/apple-silicon-internal/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/user-configuration",
+	}
+
+	var resp UserConfiguration
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UpdateRunnerConfigurationStatus:
+func (s *API) UpdateRunnerConfigurationStatus(req *UpdateRunnerConfigurationStatusRequest, opts ...scw.RequestOption) (*UpdateRunnerConfigurationStatusResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/apple-silicon-internal/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/runner-configuration-status",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp UpdateRunnerConfigurationStatusResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 // Apple silicon - Private Networks API.
