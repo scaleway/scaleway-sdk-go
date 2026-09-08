@@ -196,8 +196,10 @@ type KeyAlgorithmKeyEncapsulation string
 
 const (
 	KeyAlgorithmKeyEncapsulationUnknownKeyEncapsulation = KeyAlgorithmKeyEncapsulation("unknown_key_encapsulation")
-	KeyAlgorithmKeyEncapsulationMlKem768                = KeyAlgorithmKeyEncapsulation("ml_kem_768")
-	KeyAlgorithmKeyEncapsulationMlKem1024               = KeyAlgorithmKeyEncapsulation("ml_kem_1024")
+	// ML-KEM (Module-Lattice Key Encapsulation Mechanism) FIPS 203 post-quantum KEM with security category 3 (recommended).
+	KeyAlgorithmKeyEncapsulationMlKem768 = KeyAlgorithmKeyEncapsulation("ml_kem_768")
+	// ML-KEM (Module-Lattice Key Encapsulation Mechanism) FIPS 203 post-quantum KEM with security category 5.
+	KeyAlgorithmKeyEncapsulationMlKem1024 = KeyAlgorithmKeyEncapsulation("ml_kem_1024")
 )
 
 func (enum KeyAlgorithmKeyEncapsulation) String() string {
@@ -511,7 +513,8 @@ type KeyUsage struct {
 	// Precisely one of SymmetricEncryption, AsymmetricEncryption, AsymmetricSigning, KeyEncapsulation must be set.
 	AsymmetricSigning *KeyAlgorithmAsymmetricSigning `json:"asymmetric_signing,omitempty"`
 
-	// KeyEncapsulation: default value: unknown_key_encapsulation
+	// KeyEncapsulation: see the `Key.Algorithm.KeyEncapulation` enum for a description of values.
+	// Default value: unknown_key_encapsulation
 	// Precisely one of SymmetricEncryption, AsymmetricEncryption, AsymmetricSigning, KeyEncapsulation must be set.
 	KeyEncapsulation *KeyAlgorithmKeyEncapsulation `json:"key_encapsulation,omitempty"`
 }
