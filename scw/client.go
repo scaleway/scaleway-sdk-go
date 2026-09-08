@@ -638,15 +638,24 @@ func setInsecureMode(c httpClient) {
 		return
 	}
 
-	transportClient, ok := standardHTTPClient.Transport.(*http.Transport)
-	if !ok {
-		logger.Warningf("client: cannot use insecure mode with Transport client of type %T", standardHTTPClient.Transport)
+	switch v := standardHTTPClient.Transport.(type) {
+	case *http.Transport:
+		if v.TLSClientConfig == nil {
+			v.TLSClientConfig = &tls.Config{}
+		}
+		v.TLSClientConfig.InsecureSkipVerify = true
+	case *RateLimitTransport:
+		if v.TLSClientConfig == nil {
+			v.TLSClientConfig = &tls.Config{}
+		}
+		v.TLSClientConfig.InsecureSkipVerify = true
+	default:
+		logger.Warningf(
+			"client: cannot use insecure mode with Transport client of type %T",
+			standardHTTPClient.Transport,
+		)
 		return
 	}
-	if transportClient.TLSClientConfig == nil {
-		transportClient.TLSClientConfig = &tls.Config{}
-	}
-	transportClient.TLSClientConfig.InsecureSkipVerify = true
 }
 
 func setRequestLogging(c httpClient) {

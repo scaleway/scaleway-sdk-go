@@ -2,6 +2,7 @@ package scw
 
 import (
 	"bytes"
+	"crypto/tls"
 	"net/http"
 	"os"
 	"strings"
@@ -249,13 +250,23 @@ func TestNewClientWithOptions(t *testing.T) {
 		testhelpers.Equals(t, auth.NewToken(testAccessKey, testSecretKey), client.auth)
 		testhelpers.Equals(t, testAPIURL, client.apiURL)
 
-		clientTransport, ok := client.httpClient.(*http.Client).Transport.(*http.Transport)
-		if loggerTransport, isLogger := client.httpClient.(*http.Client).Transport.(*requestLoggerTransport); !ok && isLogger {
-			clientTransport, ok = loggerTransport.rt.(*http.Transport)
+		var tlsConfig *tls.Config
+		switch t := client.httpClient.(*http.Client).Transport.(type) {
+		case *http.Transport:
+			tlsConfig = t.TLSClientConfig
+		case *RateLimitTransport:
+			tlsConfig = t.TLSClientConfig
+		case *requestLoggerTransport:
+			switch rt := t.rt.(type) {
+			case *http.Transport:
+				tlsConfig = rt.TLSClientConfig
+			case *RateLimitTransport:
+				tlsConfig = rt.TLSClientConfig
+			}
 		}
-		testhelpers.Assert(t, ok, "clientTransport must be not nil")
-		testhelpers.Assert(t, clientTransport.TLSClientConfig != nil, "TLSClientConfig must be not nil")
-		testhelpers.Equals(t, testInsecure, clientTransport.TLSClientConfig.InsecureSkipVerify)
+
+		testhelpers.Assert(t, tlsConfig != nil, "TLSClientConfig must be not nil")
+		testhelpers.Equals(t, testInsecure, tlsConfig.InsecureSkipVerify)
 
 		s3Endpoint, exist := client.GetS3Endpoint()
 		testhelpers.Equals(t, testS3Endpoint, s3Endpoint)
