@@ -2,6 +2,7 @@ package scw
 
 import (
 	"context"
+	"crypto/tls"
 	"net/http"
 	"strconv"
 	"sync"
@@ -46,8 +47,9 @@ func (s *RateLimitState) GetWaitDuration() time.Duration {
 
 // RateLimitTransport implements http.RoundTripper
 type RateLimitTransport struct {
-	Base  http.RoundTripper
-	State *RateLimitState
+	Base            http.RoundTripper
+	State           *RateLimitState
+	TLSClientConfig *tls.Config
 }
 
 // base returns the transport
