@@ -124,12 +124,32 @@ func (enum *AlertRuleStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// Reason for authentication failure.
 type AuthenticationEventFailureReason string
 
 const (
+	// Unknown failure reason.
 	AuthenticationEventFailureReasonUnknownFailureReason = AuthenticationEventFailureReason("unknown_failure_reason")
-	AuthenticationEventFailureReasonInvalidMfa           = AuthenticationEventFailureReason("invalid_mfa")
-	AuthenticationEventFailureReasonInvalidPassword      = AuthenticationEventFailureReason("invalid_password")
+	// Invalid MFA code.
+	AuthenticationEventFailureReasonInvalidMfa = AuthenticationEventFailureReason("invalid_mfa")
+	// Invalid password.
+	AuthenticationEventFailureReasonInvalidPassword = AuthenticationEventFailureReason("invalid_password")
+	// Invalid captcha.
+	AuthenticationEventFailureReasonInvalidCaptcha = AuthenticationEventFailureReason("invalid_captcha")
+	// Invalid authentication code.
+	AuthenticationEventFailureReasonInvalidAuthenticationCode = AuthenticationEventFailureReason("invalid_authentication_code")
+	// Invalid passkey assertion.
+	AuthenticationEventFailureReasonInvalidPasskey = AuthenticationEventFailureReason("invalid_passkey")
+	// Passkey user verification requirement not met.
+	AuthenticationEventFailureReasonPasskeyUvNotMet = AuthenticationEventFailureReason("passkey_uv_not_met")
+	// Passkey user verification not verified.
+	AuthenticationEventFailureReasonPasskeyUvNotVerified = AuthenticationEventFailureReason("passkey_uv_not_verified")
+	// Login session expired.
+	AuthenticationEventFailureReasonExpiredSession = AuthenticationEventFailureReason("expired_session")
+	// Password was correct but an authentication code is required.
+	AuthenticationEventFailureReasonAuthenticationCodeRequired = AuthenticationEventFailureReason("authentication_code_required")
+	// Password was correct but a second factor (OTP or WebAuthn) is required.
+	AuthenticationEventFailureReasonMfaRequired = AuthenticationEventFailureReason("mfa_required")
 )
 
 func (enum AuthenticationEventFailureReason) String() string {
@@ -145,6 +165,14 @@ func (enum AuthenticationEventFailureReason) Values() []AuthenticationEventFailu
 		"unknown_failure_reason",
 		"invalid_mfa",
 		"invalid_password",
+		"invalid_captcha",
+		"invalid_authentication_code",
+		"invalid_passkey",
+		"passkey_uv_not_met",
+		"passkey_uv_not_verified",
+		"expired_session",
+		"authentication_code_required",
+		"mfa_required",
 	}
 }
 
@@ -163,11 +191,16 @@ func (enum *AuthenticationEventFailureReason) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// MFA type used for the authentication attempt.
 type AuthenticationEventMFAType string
 
 const (
+	// Unknown MFA type.
 	AuthenticationEventMFATypeUnknownMfaType = AuthenticationEventMFAType("unknown_mfa_type")
-	AuthenticationEventMFATypeTotp           = AuthenticationEventMFAType("totp")
+	// Time-based one-time password (TOTP).
+	AuthenticationEventMFATypeTotp = AuthenticationEventMFAType("totp")
+	// WebAuthn-based MFA.
+	AuthenticationEventMFATypeWebauthn = AuthenticationEventMFAType("webauthn")
 )
 
 func (enum AuthenticationEventMFAType) String() string {
@@ -182,6 +215,7 @@ func (enum AuthenticationEventMFAType) Values() []AuthenticationEventMFAType {
 	return []AuthenticationEventMFAType{
 		"unknown_mfa_type",
 		"totp",
+		"webauthn",
 	}
 }
 
@@ -200,14 +234,22 @@ func (enum *AuthenticationEventMFAType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// Authentication method used.
 type AuthenticationEventMethod string
 
 const (
-	AuthenticationEventMethodUnknownMethod      = AuthenticationEventMethod("unknown_method")
-	AuthenticationEventMethodPassword           = AuthenticationEventMethod("password")
+	// Unknown authentication method.
+	AuthenticationEventMethodUnknownMethod = AuthenticationEventMethod("unknown_method")
+	// Password-based authentication.
+	AuthenticationEventMethodPassword = AuthenticationEventMethod("password")
+	// Authentication code.
 	AuthenticationEventMethodAuthenticationCode = AuthenticationEventMethod("authentication_code")
-	AuthenticationEventMethodOauth2             = AuthenticationEventMethod("oauth2")
-	AuthenticationEventMethodSaml               = AuthenticationEventMethod("saml")
+	// OAuth 2.0 / OpenID Connect.
+	AuthenticationEventMethodOauth2 = AuthenticationEventMethod("oauth2")
+	// SAML-based authentication.
+	AuthenticationEventMethodSaml = AuthenticationEventMethod("saml")
+	// WebAuthn passkey authentication.
+	AuthenticationEventMethodPasskey = AuthenticationEventMethod("passkey")
 )
 
 func (enum AuthenticationEventMethod) String() string {
@@ -225,6 +267,7 @@ func (enum AuthenticationEventMethod) Values() []AuthenticationEventMethod {
 		"authentication_code",
 		"oauth2",
 		"saml",
+		"passkey",
 	}
 }
 
