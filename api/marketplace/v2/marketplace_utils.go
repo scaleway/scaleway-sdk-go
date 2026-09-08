@@ -1,6 +1,7 @@
 package marketplace
 
 import (
+	"slices"
 	"strings"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
@@ -76,10 +77,5 @@ func (s *API) GetLocalImageByLabel(req *GetLocalImageByLabelRequest, opts ...scw
 // IsCompatible returns true if a local image is compatible with the given instance type
 // commercialType should be an uppercase string ex: DEV1-S
 func (li *LocalImage) IsCompatible(commercialType string) bool {
-	for _, compatibleCommercialType := range li.CompatibleCommercialTypes {
-		if compatibleCommercialType == commercialType {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(li.CompatibleCommercialTypes, commercialType)
 }
