@@ -1401,12 +1401,12 @@ type DNSStage struct {
 	// ID: ID of the DNS stage.
 	ID string `json:"id"`
 
-	// DefaultFqdn: default Fully Qualified Domain Name attached to the stage.
+	// DefaultFqdn: default Fully Qualified Domain Name provided for the Pipeline.
 	DefaultFqdn string `json:"default_fqdn"`
 
 	DefaultPrivateFqdn string `json:"default_private_fqdn"`
 
-	// Fqdns: list of additional (custom) Fully Qualified Domain Names attached to the stage.
+	// Fqdns: custom Fully Qualified Domain Names configured (only the first one is valid).
 	Fqdns []string `json:"fqdns"`
 
 	// Type: type of the stage.
@@ -1660,6 +1660,11 @@ type ListHeadStagesResponseHeadStage struct {
 	DNSStageID *string `json:"dns_stage_id,omitempty"`
 }
 
+// Node: node.
+type Node struct {
+	IP net.IP `json:"ip"`
+}
+
 // PipelineStages: pipeline stages.
 type PipelineStages struct {
 	Pipeline *Pipeline `json:"pipeline"`
@@ -1865,7 +1870,7 @@ type CreateDNSStageRequest struct {
 	// PipelineID: pipeline ID the DNS stage belongs to.
 	PipelineID string `json:"-"`
 
-	// Fqdns: fully Qualified Domain Name (in the format subdomain.example.com) to attach to the stage.
+	// Fqdns: custom Fully Qualified Domain Name to be configured (only 1 FQDN can be setup for now).
 	Fqdns *[]string `json:"fqdns,omitempty"`
 
 	// TLSStageID: TLS stage ID the DNS stage will be linked to.
@@ -2329,6 +2334,32 @@ func (r *ListHeadStagesResponse) UnsafeAppend(res any) (uint64, error) {
 	r.HeadStages = append(r.HeadStages, results.HeadStages...)
 	r.TotalCount += uint64(len(results.HeadStages))
 	return uint64(len(results.HeadStages)), nil
+}
+
+// ListNodesResponse: list nodes response.
+type ListNodesResponse struct {
+	Nodes []*Node `json:"nodes"`
+
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListNodesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListNodesResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListNodesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Nodes = append(r.Nodes, results.Nodes...)
+	r.TotalCount += uint64(len(results.Nodes))
+	return uint64(len(results.Nodes)), nil
 }
 
 // ListPipelinesRequest: list pipelines request.
@@ -2904,7 +2935,7 @@ type UpdateDNSStageRequest struct {
 	// DNSStageID: ID of the DNS stage to update.
 	DNSStageID string `json:"-"`
 
-	// Fqdns: fully Qualified Domain Name (in the format subdomain.example.com) attached to the stage.
+	// Fqdns: custom Fully Qualified Domain Name to be configured (only 1 FQDN can be setup for now).
 	Fqdns *[]string `json:"fqdns,omitempty"`
 
 	// TLSStageID: TLS stage ID the DNS stage will be linked to.
@@ -3004,6 +3035,24 @@ func NewAPI(client *scw.Client) *API {
 	return &API{
 		client: client,
 	}
+}
+
+// ListNodes:
+func (s *API) ListNodes(opts ...scw.RequestOption) (*ListNodesResponse, error) {
+	var err error
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/edge-services/v1beta1/nodes",
+	}
+
+	var resp ListNodesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 // ListPipelines: List all pipelines, for a Scaleway Organization or Scaleway Project. By default, the pipelines returned in the list are ordered by creation date in ascending order, though this can be modified via the `order_by` field.
