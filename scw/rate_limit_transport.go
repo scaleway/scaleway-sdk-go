@@ -8,6 +8,8 @@ import (
 	"time"
 )
 
+const defaultMaxRetries = 5
+
 // RateLimitTransport implements http.RoundTripper
 type RateLimitTransport struct {
 	// Base contains a default RoundTripper that we use in our custom
@@ -16,6 +18,10 @@ type RateLimitTransport struct {
 
 	// State stores the current limit state values
 	State *RateLimitState
+
+	// MaxRetries is the maximum number of 429 retries before returning
+	// the response to the caller. Defaults to 5 if zero.
+	MaxRetries int
 }
 
 // base returns the transport : safety net in case RateLimitTransport was
@@ -30,7 +36,12 @@ func (t *RateLimitTransport) base() http.RoundTripper {
 
 // RoundTrip intercepts each SDK request
 func (t *RateLimitTransport) RoundTrip(req *http.Request) (*http.Response, error) {
-	for {
+	maxRetries := t.MaxRetries
+	if maxRetries == 0 {
+		maxRetries = defaultMaxRetries
+	}
+
+	for retry := 0; ; retry++ {
 		// Proactive strategy: check if we should wait
 		wait := t.State.GetWaitDuration()
 		if wait > 0 {
@@ -55,7 +66,7 @@ func (t *RateLimitTransport) RoundTrip(req *http.Request) (*http.Response, error
 		}
 
 		// Reactive strategy: 429 handling
-		if resp.StatusCode == http.StatusTooManyRequests {
+		if resp.StatusCode == http.StatusTooManyRequests && retry < maxRetries {
 			retryAfterStr := resp.Header.Get("Retry-After")
 			if retryAfterSec, err := strconv.Atoi(retryAfterStr); err == nil {
 				err = resp.Body.Close()
@@ -72,7 +83,7 @@ func (t *RateLimitTransport) RoundTrip(req *http.Request) (*http.Response, error
 			}
 		}
 
-		// Success, or 404, 500...
+		// Success, or 404, 500... or exceeded t.MaxRetries of 429s
 		return resp, nil
 	}
 }
