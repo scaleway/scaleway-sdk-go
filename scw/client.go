@@ -613,8 +613,9 @@ func newHTTPClient() *http.Client {
 	}
 
 	rlTransport := &RateLimitTransport{
-		Base:  http.DefaultTransport.(*http.Transport).Clone(),
-		State: rlState,
+		Base:       http.DefaultTransport.(*http.Transport).Clone(),
+		State:      rlState,
+		MaxRetries: defaultMaxRetries,
 	}
 
 	return &http.Client{
