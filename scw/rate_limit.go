@@ -11,9 +11,11 @@ import (
 
 // RateLimitState stores the current limit state
 type RateLimitState struct {
+	// mu protects RateLimitState from concurrent edits by different
+	// goroutines
 	mu sync.RWMutex
 
-	// remaning is the number of requests still available for this time window
+	// remaining is the number of requests still available for this time window
 	remaining int
 
 	// resetAt is the time to wait before the next time window
@@ -47,16 +49,21 @@ func (s *RateLimitState) GetWaitDuration() time.Duration {
 
 // RateLimitTransport implements http.RoundTripper
 type RateLimitTransport struct {
-	Base            http.RoundTripper
-	State           *RateLimitState
-	TLSClientConfig *tls.Config
+	// Base contains a default RoundTripper that we use in our custom
+	// RoundTrip method
+	Base http.RoundTripper
+
+	// State stores the current limit state values
+	State *RateLimitState
 }
 
-// base returns the transport
+// base returns the transport : safety net in case RateLimitTransport was
+// created manually without a Base.
 func (t *RateLimitTransport) base() http.RoundTripper {
 	if t.Base != nil {
 		return t.Base
 	}
+
 	return http.DefaultTransport
 }
 
@@ -107,6 +114,20 @@ func (t *RateLimitTransport) RoundTrip(req *http.Request) (*http.Response, error
 		// Success, or 404, 500...
 		return resp, nil
 	}
+}
+
+func (t *RateLimitTransport) SetInsecureTransport() {
+	// Need to cast to *http.Transport to access TLSClientConfig.
+	// If the cast fails, probably doesn't have a TLSClientConfig anyway.
+	transport, ok := t.Base.(*http.Transport)
+	if !ok {
+		return
+	}
+
+	if transport.TLSClientConfig == nil {
+		transport.TLSClientConfig = &tls.Config{}
+	}
+	transport.TLSClientConfig.InsecureSkipVerify = true
 }
 
 // sleepWithContext pauses the goroutine, while still listening to context's cancellation.

@@ -613,7 +613,7 @@ func newHTTPClient() *http.Client {
 	}
 
 	rlTransport := &RateLimitTransport{
-		Base:  http.DefaultTransport,
+		Base:  http.DefaultTransport.(*http.Transport).Clone(),
 		State: rlState,
 	}
 
@@ -638,24 +638,20 @@ func setInsecureMode(c httpClient) {
 		return
 	}
 
-	switch v := standardHTTPClient.Transport.(type) {
-	case *http.Transport:
-		if v.TLSClientConfig == nil {
-			v.TLSClientConfig = &tls.Config{}
-		}
-		v.TLSClientConfig.InsecureSkipVerify = true
-	case *RateLimitTransport:
-		if v.TLSClientConfig == nil {
-			v.TLSClientConfig = &tls.Config{}
-		}
-		v.TLSClientConfig.InsecureSkipVerify = true
-	default:
+	transportClient, ok := standardHTTPClient.Transport.(*http.Transport)
+	if !ok {
 		logger.Warningf(
 			"client: cannot use insecure mode with Transport client of type %T",
 			standardHTTPClient.Transport,
 		)
 		return
 	}
+
+	if transportClient.TLSClientConfig == nil {
+		transportClient.TLSClientConfig = &tls.Config{}
+	}
+
+	transportClient.TLSClientConfig.InsecureSkipVerify = true
 }
 
 func setRequestLogging(c httpClient) {

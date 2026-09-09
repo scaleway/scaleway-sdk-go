@@ -2,8 +2,10 @@ package scw
 
 import (
 	"bytes"
+	"context"
 	"crypto/tls"
 	"net/http"
+	"net/http/httptest"
 	"os"
 	"strings"
 	"testing"
@@ -255,13 +257,13 @@ func TestNewClientWithOptions(t *testing.T) {
 		case *http.Transport:
 			tlsConfig = t.TLSClientConfig
 		case *RateLimitTransport:
-			tlsConfig = t.TLSClientConfig
+			tlsConfig = t.base().(*http.Transport).TLSClientConfig
 		case *requestLoggerTransport:
 			switch rt := t.rt.(type) {
 			case *http.Transport:
 				tlsConfig = rt.TLSClientConfig
 			case *RateLimitTransport:
-				tlsConfig = rt.TLSClientConfig
+				tlsConfig = rt.base().(*http.Transport).TLSClientConfig
 			}
 		}
 
@@ -356,6 +358,29 @@ func TestSetInsecureMode(t *testing.T) {
 	testhelpers.Equals(t, "client: cannot use insecure mode with HTTP client of type scw.fakeHTTPClient", getLogMessage(lines[1]))
 
 	logger.DefaultLogger.Init(os.Stderr, logger.LogLevelWarning)
+}
+
+// TestSetInsecureModeRateLimitTransport verifies that insecure mode actually
+// disables certificate verification on the transport used by RoundTrip.
+func TestSetInsecureModeRateLimitTransport(t *testing.T) {
+	// Use a self-signed certificate
+	server := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer server.Close()
+
+	// Build the SDK HTTP client and enable insecure mode
+	httpClient := newHTTPClient()
+	setInsecureMode(httpClient)
+
+	// A request must succeed despite the self-signed cert
+	req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL, nil)
+	testhelpers.AssertNoError(t, err)
+
+	resp, err := httpClient.Do(req)
+	testhelpers.AssertNoError(t, err)
+	testhelpers.Equals(t, http.StatusOK, resp.StatusCode)
+	_ = resp.Body.Close()
 }
 
 func TestNewVariableFromType(t *testing.T) {
