@@ -67,6 +67,14 @@ func (t *RateLimitTransport) RoundTrip(req *http.Request) (*http.Response, error
 
 		// Reactive strategy: 429 handling
 		if resp.StatusCode == http.StatusTooManyRequests && retry < maxRetries {
+			// This is necessary since the body of a successful HTTP request is consumed
+			if req.GetBody != nil {
+				req.Body, err = req.GetBody()
+				if err != nil {
+					return nil, err
+				}
+			}
+
 			retryAfterStr := resp.Header.Get("Retry-After")
 			if retryAfterSec, err := strconv.Atoi(retryAfterStr); err == nil {
 				err = resp.Body.Close()
