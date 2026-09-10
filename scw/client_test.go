@@ -4,8 +4,6 @@ import (
 	"bytes"
 	"context"
 	"crypto/tls"
-	"encoding/json"
-	"io"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -415,79 +413,154 @@ func TestClientGetAPIMetadata(t *testing.T) {
 	})
 }
 
+type rateLimitResponse struct {
+	code    int
+	headers http.Header
+}
+
 func TestRateLimit(t *testing.T) {
 	cases := []struct {
-		name           string
-		clientMsg      []byte
-		responseStatus string
-		responseHeader http.Header
-		expectError    bool
+		name             string
+		responses        []rateLimitResponse
+		maxRetries       int
+		expectedStatus   string
+		expectedHeader   http.Header
+		expectedHitCount int32
 	}{
 		{
-			name:           "basic",
-			clientMsg:      []byte(`{"code": 200, "headers": {"x-ratelimit-limit": "50, 50;w=1", "x-ratelimit-remaining": "49", "x-ratelimit-reset": "2"}}`),
-			responseStatus: "200 OK",
-			responseHeader: http.Header{
-				"X-Ratelimit-Limit": {"50, 50;w=1"}, "X-Ratelimit-Remaining": {"49"}, "X-Ratelimit-Reset": {"2"},
+			name: "basic 200 with rate-limit headers",
+			responses: []rateLimitResponse{
+				{
+					code:    http.StatusOK,
+					headers: http.Header{"X-Ratelimit-Limit": {"50, 50;w=1"}, "X-Ratelimit-Remaining": {"49"}, "X-Ratelimit-Reset": {"2"}},
+				},
 			},
-			expectError: false,
+			maxRetries:       1,
+			expectedStatus:   "200 OK",
+			expectedHeader:   http.Header{"X-Ratelimit-Limit": {"50, 50;w=1"}, "X-Ratelimit-Remaining": {"49"}, "X-Ratelimit-Reset": {"2"}},
+			expectedHitCount: 1,
 		},
 		{
-			name:           "429",
-			clientMsg:      []byte(`{"code": 429, "headers": {"x-ratelimit-limit": "50, 50;w=1", "x-ratelimit-remaining": "0", "x-ratelimit-reset": "2", "retry-after":"6"}}`),
-			responseStatus: "429 Too Many Requests",
-			responseHeader: http.Header{
-				"X-Ratelimit-Limit": {"50, 50;w=1"}, "X-Ratelimit-Remaining": {"0"}, "X-Ratelimit-Reset": {"2"}, "Retry-After": {"6"},
+			name: "429 then success on retry",
+			responses: []rateLimitResponse{
+				{
+					code:    http.StatusTooManyRequests,
+					headers: http.Header{"X-Ratelimit-Remaining": {"0"}, "X-Ratelimit-Reset": {"0"}, "Retry-After": {"0"}},
+				},
+				{
+					code:    http.StatusOK,
+					headers: http.Header{"X-Ratelimit-Remaining": {"49"}, "X-Ratelimit-Reset": {"2"}},
+				},
 			},
-			expectError: true,
+			maxRetries:       1,
+			expectedStatus:   "200 OK",
+			expectedHeader:   http.Header{"X-Ratelimit-Remaining": {"49"}, "X-Ratelimit-Reset": {"2"}},
+			expectedHitCount: 2,
+		},
+		{
+			name: "429 with no Retry-After does not retry",
+			responses: []rateLimitResponse{
+				{
+					code:    http.StatusTooManyRequests,
+					headers: http.Header{"X-Ratelimit-Remaining": {"0"}, "X-Ratelimit-Reset": {"2"}},
+				},
+			},
+			maxRetries:       5,
+			expectedStatus:   "429 Too Many Requests",
+			expectedHeader:   http.Header{"X-Ratelimit-Remaining": {"0"}, "X-Ratelimit-Reset": {"2"}},
+			expectedHitCount: 1,
+		},
+		{
+			name: "429 with malformed Retry-After does not retry",
+			responses: []rateLimitResponse{
+				{
+					code:    http.StatusTooManyRequests,
+					headers: http.Header{"X-Ratelimit-Remaining": {"0"}, "X-Ratelimit-Reset": {"0"}, "Retry-After": {"not-a-number"}},
+				},
+			},
+			maxRetries:       5,
+			expectedStatus:   "429 Too Many Requests",
+			expectedHeader:   http.Header{"X-Ratelimit-Remaining": {"0"}, "X-Ratelimit-Reset": {"0"}, "Retry-After": {"not-a-number"}},
+			expectedHitCount: 1,
+		},
+		{
+			name: "429 retry exhaustion returns last 429",
+			responses: []rateLimitResponse{
+				{
+					code:    http.StatusTooManyRequests,
+					headers: http.Header{"X-Ratelimit-Remaining": {"0"}, "X-Ratelimit-Reset": {"0"}, "Retry-After": {"0"}},
+				},
+				{
+					code:    http.StatusTooManyRequests,
+					headers: http.Header{"X-Ratelimit-Remaining": {"0"}, "X-Ratelimit-Reset": {"0"}, "Retry-After": {"0"}},
+				},
+			},
+			maxRetries:       1,
+			expectedStatus:   "429 Too Many Requests",
+			expectedHeader:   http.Header{"X-Ratelimit-Remaining": {"0"}, "X-Ratelimit-Reset": {"0"}, "Retry-After": {"0"}},
+			expectedHitCount: 2,
+		},
+		{
+			name: "malformed rate-limit headers do not crash",
+			responses: []rateLimitResponse{
+				{
+					code:    http.StatusOK,
+					headers: http.Header{"X-Ratelimit-Limit": {"not-a-number"}, "X-Ratelimit-Remaining": {"abc"}, "X-Ratelimit-Reset": {"xyz"}},
+				},
+			},
+			maxRetries:       1,
+			expectedStatus:   "200 OK",
+			expectedHeader:   http.Header{"X-Ratelimit-Limit": {"not-a-number"}, "X-Ratelimit-Remaining": {"abc"}, "X-Ratelimit-Reset": {"xyz"}},
+			expectedHitCount: 1,
 		},
 	}
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
+			var hitCount int32
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				hitCount++
+				idx := hitCount - 1
+				if int(idx) >= len(c.responses) {
+					idx = int32(len(c.responses)) - 1
+				}
+
+				resp := c.responses[idx]
+
+				for k, v := range resp.headers {
+					for _, val := range v {
+						w.Header().Set(k, val)
+					}
+				}
+
+				w.WriteHeader(resp.code)
+			}))
+			defer server.Close()
+
 			client := newHTTPClient()
 			tp := client.Transport.(*RateLimitTransport)
-			tp.MaxRetries = 1
-
-			server := NewTestServer()
+			tp.MaxRetries = c.maxRetries
 
 			req, err := http.NewRequestWithContext(
-				context.Background(), http.MethodPost, server.URL, bytes.NewBuffer(c.clientMsg),
+				context.Background(), http.MethodPost, server.URL, bytes.NewBufferString("{}"),
 			)
 			testhelpers.AssertNoError(t, err)
 
 			req.Header.Set("Content-Type", "application/json; charset=UTF-8")
 
 			resp, err := client.Do(req)
+			defer func() {
+				err := resp.Body.Close()
+				if err != nil {
+					t.Fatalf("could not close http response: %v\n", err)
+				}
+			}()
+
 			testhelpers.AssertNoError(t, err)
 
-			testhelpers.Equals(t, c.responseStatus, resp.Status)
-			testhelpers.HeaderContains(t, c.responseHeader, resp.Header)
+			testhelpers.Equals(t, c.expectedStatus, resp.Status)
+			testhelpers.HeaderContains(t, c.expectedHeader, resp.Header)
+			testhelpers.Equals(t, c.expectedHitCount, hitCount)
 		})
 	}
-}
-
-type ClientMessage struct {
-	Code    int               `json:"code"`
-	Headers map[string]string `json:"headers"`
-}
-
-// NewTestServer creates a dummy test server to try out the HTTP client
-func NewTestServer() *httptest.Server {
-	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		body, _ := io.ReadAll(r.Body)
-		var msg ClientMessage
-		err := json.Unmarshal(body, &msg)
-		if err != nil {
-			panic(err)
-		}
-
-		for k, v := range msg.Headers {
-			w.Header().Set(k, v)
-		}
-
-		w.WriteHeader(msg.Code)
-
-		return
-	}))
 }
