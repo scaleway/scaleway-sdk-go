@@ -2,6 +2,7 @@ package testhelpers
 
 import (
 	"fmt"
+	"net/http"
 	"path/filepath"
 	"reflect"
 	"runtime"
@@ -35,5 +36,19 @@ func Equals(tb testing.TB, exp, act any) {
 		_, file, line, _ := runtime.Caller(1)
 		fmt.Printf("\033[31m%s:%d:\n\n\texp: %#v\n\n\tgot: %#v\033[39m\n\n", filepath.Base(file), line, exp, act)
 		tb.FailNow()
+	}
+}
+
+// HeaderContains fails if exp is not a subset of act
+func HeaderContains(tb testing.TB, exp, act http.Header) {
+	tb.Helper()
+	for k, v := range exp {
+		if !reflect.DeepEqual(act[k], v) {
+			_, file, line, _ := runtime.Caller(1)
+			fmt.Printf(
+				"\033%s:%d:\n\n\texp: key: %#v, value: %#v\n\n\tgot: key: %#v, value: %#v\033\n\n",
+				filepath.Base(file), line, k, v, k, act[k],
+			)
+		}
 	}
 }

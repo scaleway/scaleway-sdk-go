@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"context"
 	"crypto/tls"
+	"encoding/json"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -411,4 +413,67 @@ func TestClientGetAPIMetadata(t *testing.T) {
 		testhelpers.Equals(t, "scw", metadata.Partition)
 		testhelpers.Equals(t, "external", metadata.Platform)
 	})
+}
+
+func TestRateLimit(t *testing.T) {
+	cases := []struct {
+		name           string
+		clientMsg      []byte
+		responseStatus string
+		responseHeader http.Header
+	}{
+		{
+			name:           "basic",
+			clientMsg:      []byte(`{"code": 200, "headers": {"x-ratelimit-limit": "50, 50;w=1", "x-ratelimit-remaining": "49", "x-ratelimit-reset": "2"}}`),
+			responseStatus: "200 OK",
+			responseHeader: http.Header{
+				"X-Ratelimit-Limit": {"50, 50;w=1"}, "X-Ratelimit-Remaining": {"49"}, "X-Ratelimit-Reset": {"2"},
+			},
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			client := newHTTPClient()
+			server := NewTestServer()
+
+			req, err := http.NewRequestWithContext(
+				context.Background(), http.MethodPost, server.URL, bytes.NewBuffer(c.clientMsg),
+			)
+			testhelpers.AssertNoError(t, err)
+
+			req.Header.Set("Content-Type", "application/json; charset=UTF-8")
+
+			resp, err := client.Do(req)
+			testhelpers.AssertNoError(t, err)
+
+			testhelpers.Equals(t, c.responseStatus, resp.Status)
+			testhelpers.HeaderContains(t, c.responseHeader, resp.Header)
+		})
+	}
+}
+
+type ClientMessage struct {
+	Code    int               `json:"code"`
+	Headers map[string]string `json:"headers"`
+}
+
+// NewTestServer creates a dummy test server to try out the HTTP client
+func NewTestServer() *httptest.Server {
+	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		body, _ := io.ReadAll(r.Body)
+		var msg ClientMessage
+		err := json.Unmarshal(body, &msg)
+		if err != nil {
+			panic(err)
+		}
+
+		for k, v := range msg.Headers {
+			w.Header().Set(k, v)
+		}
+
+		w.WriteHeader(msg.Code)
+
+		return
+	}))
 }
