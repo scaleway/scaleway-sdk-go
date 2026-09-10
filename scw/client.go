@@ -608,9 +608,19 @@ func newVariableFromType(t any) any {
 }
 
 func newHTTPClient() *http.Client {
+	rlState := &RateLimitState{
+		remaining: 1,
+	}
+
+	rlTransport := &RateLimitTransport{
+		Base:       http.DefaultTransport.(*http.Transport).Clone(),
+		State:      rlState,
+		MaxRetries: defaultMaxRetries,
+	}
+
 	return &http.Client{
 		Timeout:   30 * time.Second,
-		Transport: http.DefaultTransport.(*http.Transport).Clone(),
+		Transport: rlTransport,
 	}
 }
 
@@ -631,12 +641,17 @@ func setInsecureMode(c httpClient) {
 
 	transportClient, ok := standardHTTPClient.Transport.(*http.Transport)
 	if !ok {
-		logger.Warningf("client: cannot use insecure mode with Transport client of type %T", standardHTTPClient.Transport)
+		logger.Warningf(
+			"client: cannot use insecure mode with Transport client of type %T",
+			standardHTTPClient.Transport,
+		)
 		return
 	}
+
 	if transportClient.TLSClientConfig == nil {
 		transportClient.TLSClientConfig = &tls.Config{}
 	}
+
 	transportClient.TLSClientConfig.InsecureSkipVerify = true
 }
 
