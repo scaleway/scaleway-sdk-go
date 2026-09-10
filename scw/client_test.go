@@ -421,6 +421,7 @@ func TestRateLimit(t *testing.T) {
 		clientMsg      []byte
 		responseStatus string
 		responseHeader http.Header
+		expectError    bool
 	}{
 		{
 			name:           "basic",
@@ -429,12 +430,25 @@ func TestRateLimit(t *testing.T) {
 			responseHeader: http.Header{
 				"X-Ratelimit-Limit": {"50, 50;w=1"}, "X-Ratelimit-Remaining": {"49"}, "X-Ratelimit-Reset": {"2"},
 			},
+			expectError: false,
+		},
+		{
+			name:           "429",
+			clientMsg:      []byte(`{"code": 429, "headers": {"x-ratelimit-limit": "50, 50;w=1", "x-ratelimit-remaining": "0", "x-ratelimit-reset": "2", "retry-after":"6"}}`),
+			responseStatus: "429 Too Many Requests",
+			responseHeader: http.Header{
+				"X-Ratelimit-Limit": {"50, 50;w=1"}, "X-Ratelimit-Remaining": {"0"}, "X-Ratelimit-Reset": {"2"}, "Retry-After": {"6"},
+			},
+			expectError: true,
 		},
 	}
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			client := newHTTPClient()
+			tp := client.Transport.(*RateLimitTransport)
+			tp.MaxRetries = 1
+
 			server := NewTestServer()
 
 			req, err := http.NewRequestWithContext(
