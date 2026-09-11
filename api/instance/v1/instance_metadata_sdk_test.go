@@ -166,19 +166,22 @@ func TestGetMetadataURLWithContext_Cached(t *testing.T) {
 func canBindPrivilegedPort(t *testing.T) {
 	t.Helper()
 
-	ln, err := net.Listen("tcp", ":1")
+	var lc net.ListenConfig
+	ln, err := lc.Listen(context.Background(), "tcp", ":1")
 	if err != nil {
 		t.Skipf("skipping: cannot bind to privileged port: %v", err)
 	}
 
-	ln.Close()
+	if err := ln.Close(); err != nil {
+		t.Fatalf("failed to close listener: %v", err)
+	}
 }
 
 // TestNewUserDataHTTPClient verifies that the helper produces a working
 // HTTP client when bound to an ephemeral port (port 0).
 func TestNewUserDataHTTPClient(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("ok"))
+		_, _ = w.Write([]byte("ok"))
 	}))
 	defer srv.Close()
 
@@ -192,11 +195,20 @@ func TestNewUserDataHTTPClient(t *testing.T) {
 		t.Fatal("expected non-nil client and transport")
 	}
 
-	resp, err := client.Get(srv.URL)
+	req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, srv.URL, nil)
+	if err != nil {
+		t.Fatalf("failed to create request: %v", err)
+	}
+
+	resp, err := client.Do(req)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			t.Errorf("failed to close response body: %v", err)
+		}
+	}()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -252,7 +264,9 @@ func TestListUserDataWithContext_Success(t *testing.T) {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(UserData{UserData: []string{"key1", "key2"}})
+		if err := json.NewEncoder(w).Encode(UserData{UserData: []string{"key1", "key2"}}); err != nil {
+			t.Errorf("failed to encode response: %v", err)
+		}
 	}))
 	defer srv.Close()
 
@@ -277,7 +291,7 @@ func TestGetUserDataWithContext_Success(t *testing.T) {
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/user_data/mykey" {
-			w.Write([]byte("myvalue"))
+			_, _ = w.Write([]byte("myvalue"))
 			return
 		}
 		http.NotFound(w, r)
