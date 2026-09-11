@@ -6,7 +6,9 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"net"
 	"net/http"
+	"net/http/httptest"
 	"testing"
 )
 
@@ -155,5 +157,211 @@ func TestGetMetadataURLWithContext_Cached(t *testing.T) {
 
 	if len(rt.requests) != 0 {
 		t.Errorf("expected no HTTP requests, got %d", len(rt.requests))
+	}
+}
+
+// canBindPrivilegedPort skips the test if the process cannot bind to a
+// privileged port (< 1024). The userdata API requires requests to originate
+// from a privileged source port.
+func canBindPrivilegedPort(t *testing.T) {
+	t.Helper()
+
+	ln, err := net.Listen("tcp", ":1")
+	if err != nil {
+		t.Skipf("skipping: cannot bind to privileged port: %v", err)
+	}
+
+	ln.Close()
+}
+
+// TestNewUserDataHTTPClient verifies that the helper produces a working
+// HTTP client when bound to an ephemeral port (port 0).
+func TestNewUserDataHTTPClient(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("ok"))
+	}))
+	defer srv.Close()
+
+	addr, err := net.ResolveTCPAddr("tcp", ":0")
+	if err != nil {
+		t.Fatalf("failed to resolve tcp address: %v", err)
+	}
+
+	client := newUserDataHTTPClient(addr)
+	if client == nil || client.Transport == nil {
+		t.Fatal("expected non-nil client and transport")
+	}
+
+	resp, err := client.Get(srv.URL)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		t.Fatalf("failed to read body: %v", err)
+	}
+
+	if string(body) != "ok" {
+		t.Errorf("expected 'ok', got %q", body)
+	}
+}
+
+// TestGetUserDataWithContext_EmptyKey verifies that an empty key returns an
+// error without making an HTTP request.
+func TestGetUserDataWithContext_EmptyKey(t *testing.T) {
+	meta := NewMetadataAPI()
+
+	_, err := meta.GetUserDataWithContext(context.Background(), "")
+	if err == nil {
+		t.Fatal("expected error for empty key, got nil")
+	}
+}
+
+// TestSetUserDataWithContext_EmptyKey verifies that an empty key returns an
+// error without making an HTTP request.
+func TestSetUserDataWithContext_EmptyKey(t *testing.T) {
+	meta := NewMetadataAPI()
+	err := meta.SetUserDataWithContext(context.Background(), "", []byte("value"))
+	if err == nil {
+		t.Fatal("expected error for empty key, got nil")
+	}
+}
+
+// TestDeleteUserDataWithContext_EmptyKey verifies that an empty key returns
+// an error without making an HTTP request.
+func TestDeleteUserDataWithContext_EmptyKey(t *testing.T) {
+	meta := NewMetadataAPI()
+
+	err := meta.DeleteUserDataWithContext(context.Background(), "")
+	if err == nil {
+		t.Fatal("expected error for empty key, got nil")
+	}
+}
+
+// TestListUserDataWithContext_Success verifies that ListUserDataWithContext
+// decodes the userdata list returned by the metadata service.
+func TestListUserDataWithContext_Success(t *testing.T) {
+	canBindPrivilegedPort(t)
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/user_data" {
+			http.NotFound(w, r)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(UserData{UserData: []string{"key1", "key2"}})
+	}))
+	defer srv.Close()
+
+	url := srv.URL
+	meta := NewMetadataAPI()
+	meta.MetadataURL = &url
+
+	res, err := meta.ListUserDataWithContext(context.Background())
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if len(res.UserData) != 2 || res.UserData[0] != "key1" || res.UserData[1] != "key2" {
+		t.Errorf("unexpected userdata: %+v", res)
+	}
+}
+
+// TestGetUserDataWithContext_Success verifies that GetUserDataWithContext
+// returns the raw bytes for a given key.
+func TestGetUserDataWithContext_Success(t *testing.T) {
+	canBindPrivilegedPort(t)
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/user_data/mykey" {
+			w.Write([]byte("myvalue"))
+			return
+		}
+		http.NotFound(w, r)
+	}))
+	defer srv.Close()
+
+	url := srv.URL
+	meta := NewMetadataAPI()
+	meta.MetadataURL = &url
+
+	got, err := meta.GetUserDataWithContext(context.Background(), "mykey")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if string(got) != "myvalue" {
+		t.Errorf("expected 'myvalue', got %q", got)
+	}
+}
+
+// TestSetUserDataWithContext_Success verifies that SetUserDataWithContext
+// sends a PATCH request with the correct body.
+func TestSetUserDataWithContext_Success(t *testing.T) {
+	canBindPrivilegedPort(t)
+
+	var receivedBody []byte
+	var receivedMethod string
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/user_data/mykey" {
+			receivedMethod = r.Method
+			receivedBody, _ = io.ReadAll(r.Body)
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+		http.NotFound(w, r)
+	}))
+	defer srv.Close()
+
+	url := srv.URL
+	meta := NewMetadataAPI()
+	meta.MetadataURL = &url
+
+	err := meta.SetUserDataWithContext(context.Background(), "mykey", []byte("myvalue"))
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if receivedMethod != http.MethodPatch {
+		t.Errorf("expected method %s, got %s", http.MethodPatch, receivedMethod)
+	}
+
+	if string(receivedBody) != "myvalue" {
+		t.Errorf("expected body 'myvalue', got %q", receivedBody)
+	}
+}
+
+// TestDeleteUserDataWithContext_Success verifies that DeleteUserDataWithContext
+// sends a DELETE request for the given key.
+func TestDeleteUserDataWithContext_Success(t *testing.T) {
+	canBindPrivilegedPort(t)
+
+	var receivedMethod string
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/user_data/mykey" {
+			receivedMethod = r.Method
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+		http.NotFound(w, r)
+	}))
+	defer srv.Close()
+
+	url := srv.URL
+	meta := NewMetadataAPI()
+	meta.MetadataURL = &url
+
+	err := meta.DeleteUserDataWithContext(context.Background(), "mykey")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if receivedMethod != http.MethodDelete {
+		t.Errorf("expected method %s, got %s", http.MethodDelete, receivedMethod)
 	}
 }
