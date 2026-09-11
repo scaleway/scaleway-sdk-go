@@ -792,6 +792,24 @@ type Project struct {
 	// Status: status of the Project.
 	// Default value: unknown_status
 	Status ProjectStatus `json:"status"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+func (m *Project) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://account.%s/projects/%s", platform, fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // CheckContractSignatureResponse: check contract signature response.
@@ -1202,6 +1220,10 @@ func (s *ProjectAPI) CreateProject(req *ProjectAPICreateProjectRequest, opts ...
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1239,6 +1261,12 @@ func (s *ProjectAPI) ListProjects(req *ProjectAPIListProjectsRequest, opts ...sc
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Projects {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -1265,6 +1293,10 @@ func (s *ProjectAPI) GetProject(req *ProjectAPIGetProjectRequest, opts ...scw.Re
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1367,6 +1399,10 @@ func (s *ProjectAPI) DeleteProjectWithResources(req *ProjectAPIDeleteProjectWith
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1398,6 +1434,10 @@ func (s *ProjectAPI) UpdateProject(req *ProjectAPIUpdateProjectRequest, opts ...
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }

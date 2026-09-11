@@ -12,7 +12,6 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-	"text/template"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
@@ -541,31 +540,14 @@ func (m *DedicatedConnection) setSRN(platform string) {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		DedicatedConnection
-		Platform string
-	}{
-		DedicatedConnection: *m,
-		Platform:            platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" || s == "<nil>" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://interlink.{{ notempty .Platform }}/regions/{{ notempty .Region }}/dedicated-connections/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://interlink.%s/regions/%s/dedicated-connections/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Link: link.
@@ -653,31 +635,14 @@ func (m *Link) setSRN(platform string) {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		Link
-		Platform string
-	}{
-		Link:     *m,
-		Platform: platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" || s == "<nil>" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://interlink.{{ notempty .Platform }}/regions/{{ notempty .Region }}/links/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://interlink.%s/regions/%s/links/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Partner: partner.
@@ -718,31 +683,14 @@ func (m *Partner) setSRN(platform string) {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		Partner
-		Platform string
-	}{
-		Partner:  *m,
-		Platform: platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" || s == "<nil>" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://interlink.{{ notempty .Platform }}/regions/{{ notempty .Region }}/partners/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://interlink.%s/regions/%s/partners/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Pop: pop.
@@ -783,31 +731,14 @@ func (m *Pop) setSRN(platform string) {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		Pop
-		Platform string
-	}{
-		Pop:      *m,
-		Platform: platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" || s == "<nil>" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://interlink.{{ notempty .Platform }}/regions/{{ notempty .Region }}/pops/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://interlink.%s/regions/%s/pops/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // RoutingPolicy: routing policy.
@@ -854,31 +785,14 @@ func (m *RoutingPolicy) setSRN(platform string) {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		RoutingPolicy
-		Platform string
-	}{
-		RoutingPolicy: *m,
-		Platform:      platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" || s == "<nil>" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://interlink.{{ notempty .Platform }}/regions/{{ notempty .Region }}/routing-policies/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://interlink.%s/regions/%s/routing-policies/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // AttachRoutingPolicyRequest: attach routing policy request.
