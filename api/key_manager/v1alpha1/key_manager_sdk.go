@@ -311,6 +311,45 @@ func (enum *KeyOrigin) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type KeyRotationStatus string
+
+const (
+	KeyRotationStatusUnknownStatus = KeyRotationStatus("unknown_status")
+	KeyRotationStatusEnabled       = KeyRotationStatus("enabled")
+	KeyRotationStatusDeleted       = KeyRotationStatus("deleted")
+)
+
+func (enum KeyRotationStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(KeyRotationStatusUnknownStatus)
+	}
+	return string(enum)
+}
+
+func (enum KeyRotationStatus) Values() []KeyRotationStatus {
+	return []KeyRotationStatus{
+		"unknown_status",
+		"enabled",
+		"deleted",
+	}
+}
+
+func (enum KeyRotationStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *KeyRotationStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = KeyRotationStatus(KeyRotationStatus(tmp).String())
+	return nil
+}
+
 type KeyState string
 
 const (
@@ -397,6 +436,43 @@ func (enum *ListAlgorithmsRequestUsage) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = ListAlgorithmsRequestUsage(ListAlgorithmsRequestUsage(tmp).String())
+	return nil
+}
+
+type ListKeyRotationsRequestOrderBy string
+
+const (
+	ListKeyRotationsRequestOrderByCreatedAtAsc  = ListKeyRotationsRequestOrderBy("created_at_asc")
+	ListKeyRotationsRequestOrderByCreatedAtDesc = ListKeyRotationsRequestOrderBy("created_at_desc")
+)
+
+func (enum ListKeyRotationsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListKeyRotationsRequestOrderByCreatedAtAsc)
+	}
+	return string(enum)
+}
+
+func (enum ListKeyRotationsRequestOrderBy) Values() []ListKeyRotationsRequestOrderBy {
+	return []ListKeyRotationsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
+}
+
+func (enum ListKeyRotationsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListKeyRotationsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListKeyRotationsRequestOrderBy(ListKeyRotationsRequestOrderBy(tmp).String())
 	return nil
 }
 
@@ -525,6 +601,31 @@ type ListAlgorithmsResponseAlgorithm struct {
 	Name string `json:"name"`
 
 	Recommended bool `json:"recommended"`
+}
+
+// KeyRotation: key rotation.
+type KeyRotation struct {
+	// KeyID: ID of the associated key.
+	KeyID string `json:"key_id"`
+
+	// Index: the rotation index tracks the specific version of the key material.
+	Index uint32 `json:"index"`
+
+	// Status: see the `KeyRotation.Status` enum for a description of possible values.
+	// Default value: unknown_status
+	Status KeyRotationStatus `json:"status"`
+
+	// ManuallyRotated: returns `true` if the key was rotated manually, or `false` if it was rotated automatically by a rotation policy.
+	ManuallyRotated bool `json:"manually_rotated"`
+
+	// CreatedAt: key rotation creation date.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: key rotation last modification date.
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	// DeletedAt: key rotation deletion date.
+	DeletedAt *time.Time `json:"deleted_at"`
 }
 
 // Key: key.
@@ -685,6 +786,9 @@ type DeleteKeyMaterialRequest struct {
 
 	// KeyID: ID of the key of which to delete the key material.
 	KeyID string `json:"-"`
+
+	// KeyRotationIndex: default to latest rotation if not set.
+	KeyRotationIndex *uint32 `json:"key_rotation_index,omitempty"`
 }
 
 // DeleteKeyRequest: delete key request.
@@ -801,6 +905,53 @@ type ListAlgorithmsRequest struct {
 type ListAlgorithmsResponse struct {
 	// Algorithms: returns a list of algorithms matching the requested criteria.
 	Algorithms []*ListAlgorithmsResponseAlgorithm `json:"algorithms"`
+}
+
+// ListKeyRotationsRequest: list key rotations request.
+type ListKeyRotationsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// KeyID: ID of the key to list rotations for.
+	KeyID string `json:"-"`
+
+	// OrderBy: default value: created_at_asc
+	OrderBy ListKeyRotationsRequestOrderBy `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+
+	// Status: see the `KeyRotation.Status` enum for a description of possible values.
+	Status []KeyRotationStatus `json:"-"`
+}
+
+// ListKeyRotationsResponse: list key rotations response.
+type ListKeyRotationsResponse struct {
+	// Rotations: single page of key rotations matching the requested criteria.
+	Rotations []*KeyRotation `json:"rotations"`
+
+	// TotalCount: total count of key rotations matching the requested criteria.
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListKeyRotationsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListKeyRotationsResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListKeyRotationsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Rotations = append(r.Rotations, results.Rotations...)
+	r.TotalCount += uint64(len(results.Rotations))
+	return uint64(len(results.Rotations)), nil
 }
 
 // ListKeysRequest: list keys request.
@@ -1448,6 +1599,50 @@ func (s *API) ListKeys(req *ListKeysRequest, opts ...scw.RequestOption) (*ListKe
 		for _, el := range resp.Keys {
 			el.setSRN(apiMetadata.Domain)
 		}
+	}
+	return &resp, nil
+}
+
+// ListKeyRotations: Retrieve a list of all rotations associated with a specific key.
+// The `key_id` and `region` parameters in the path are required.
+func (s *API) ListKeyRotations(req *ListKeyRotationsRequest, opts ...scw.RequestOption) (*ListKeyRotationsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "status", req.Status)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.KeyID) == "" {
+		return nil, errors.New("field KeyID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/key-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/keys/" + fmt.Sprint(req.KeyID) + "/rotations",
+		Query:  query,
+	}
+
+	var resp ListKeyRotationsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
 	}
 	return &resp, nil
 }
