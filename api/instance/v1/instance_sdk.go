@@ -12,7 +12,6 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-	"text/template"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
@@ -1333,31 +1332,14 @@ func (m *Volume) setSRN(platform string) {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		Volume
-		Platform string
-	}{
-		Volume:   *m,
-		Platform: platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" || s == "<nil>" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://instance.{{ notempty .Platform }}/zones/{{ notempty .Zone }}/volumes/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://instance.%s/zones/%s/volumes/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // VolumeSummary: volume summary.
@@ -1468,31 +1450,14 @@ func (m *PlacementGroup) setSRN(platform string) {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		PlacementGroup
-		Platform string
-	}{
-		PlacementGroup: *m,
-		Platform:       platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" || s == "<nil>" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://instance.{{ notempty .Platform }}/zones/{{ notempty .Zone }}/placement-groups/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://instance.%s/zones/%s/placement-groups/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // PrivateNIC: private nic.
@@ -1534,31 +1499,14 @@ func (m *PrivateNIC) setSRN(platform string) {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		PrivateNIC
-		Platform string
-	}{
-		PrivateNIC: *m,
-		Platform:   platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" || s == "<nil>" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://instance.{{ notempty .Platform }}/zones/{{ notempty .Zone }}/private-network-interfaces/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://instance.%s/zones/%s/private-network-interfaces/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // SecurityGroupSummary: security group summary.
@@ -1865,31 +1813,14 @@ func (m *Server) setSRN(platform string) {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		Server
-		Platform string
-	}{
-		Server:   *m,
-		Platform: platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" || s == "<nil>" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://instance.{{ notempty .Platform }}/zones/{{ notempty .Zone }}/servers/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://instance.%s/zones/%s/servers/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // IP: ip.
@@ -2012,31 +1943,14 @@ func (m *SecurityGroup) setSRN(platform string) {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		SecurityGroup
-		Platform string
-	}{
-		SecurityGroup: *m,
-		Platform:      platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" || s == "<nil>" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://instance.{{ notempty .Platform }}/zones/{{ notempty .Zone }}/security-groups/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://instance.%s/zones/%s/security-groups/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // SecurityGroupRule: security group rule.
@@ -2146,31 +2060,14 @@ func (m *Snapshot) setSRN(platform string) {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		Snapshot
-		Platform string
-	}{
-		Snapshot: *m,
-		Platform: platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" || s == "<nil>" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://instance.{{ notempty .Platform }}/zones/{{ notempty .Zone }}/snapshots/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://instance.%s/zones/%s/snapshots/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Task: task.

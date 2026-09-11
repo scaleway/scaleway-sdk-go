@@ -12,7 +12,6 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-	"text/template"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
@@ -288,45 +287,22 @@ type IP struct {
 	Srn string `json:"srn,omitempty"`
 }
 
-func (m *IP) getSRNTemplates() []string {
-	return []string{
-		"srn://ipam.{{ notempty .Platform }}/zones/{{ notempty .Zone }}/ips/{{ notempty .ID }}",
-		"srn://ipam.{{ notempty .Platform }}/regions/{{ notempty .Region }}/ips/{{ notempty .ID }}",
-	}
-}
-
 func (m *IP) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		IP
-		Platform string
-	}{
-		IP:       *m,
-		Platform: platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" || s == "<nil>" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if m.Zone != nil && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://ipam.%s/zones/%s/ips/%s", platform, fmt.Sprint(*m.Zone), fmt.Sprint(m.ID))
+		return
 	}
-	for _, templ := range m.getSRNTemplates() {
-		t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-		if err != nil {
-			continue
-		}
-		var out bytes.Buffer
-		if err := t.Execute(&out, data); err != nil {
-			continue
-		}
-		m.Srn = out.String()
-		// first pattern wins
-		break
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://ipam.%s/regions/%s/ips/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
+		return
 	}
 }
 
