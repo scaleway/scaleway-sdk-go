@@ -786,6 +786,9 @@ type DeleteKeyMaterialRequest struct {
 
 	// KeyID: ID of the key of which to delete the key material.
 	KeyID string `json:"-"`
+
+	// KeyRotationIndex: default to latest rotation if not set.
+	KeyRotationIndex *uint32 `json:"key_rotation_index,omitempty"`
 }
 
 // DeleteKeyRequest: delete key request.
