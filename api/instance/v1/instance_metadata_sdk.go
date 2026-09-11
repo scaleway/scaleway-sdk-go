@@ -24,14 +24,60 @@ const (
 	metadataFallbackDelay = time.Second * -1
 )
 
+// metadataHTTPClient is the default HTTP client used to reach the metadata
+// service. Both metadata addresses (IPv4 link-local 169.254.42.42 and IPv6
+// fd00:42::42) are non globally routable, so we bypass proxy resolution
+// entirely by setting a transport with Proxy: nil.
+var metadataHTTPClient = &http.Client{
+	Timeout: metadataTimeout,
+	Transport: &http.Transport{
+		Proxy: nil,
+	},
+}
+
+// MetadataAPIOption is a function which applies options to a MetadataAPI.
+type MetadataAPIOption func(*MetadataAPI)
+
+// WithMetadataHTTPClient allows passing a custom http.Client which will be used
+// for all metadata requests. This is primarily useful for testing.
+func WithMetadataHTTPClient(client *http.Client) MetadataAPIOption {
+	return func(m *MetadataAPI) {
+		m.httpClient = client
+	}
+}
+
 // MetadataAPI metadata API
 type MetadataAPI struct {
 	MetadataURL *string
+	httpClient  *http.Client
 }
 
 // NewMetadataAPI returns a MetadataAPI object from a Scaleway client.
-func NewMetadataAPI() *MetadataAPI {
-	return &MetadataAPI{}
+func NewMetadataAPI(opts ...MetadataAPIOption) *MetadataAPI {
+	meta := &MetadataAPI{
+		httpClient: metadataHTTPClient,
+	}
+
+	for _, opt := range opts {
+		opt(meta)
+	}
+
+	return meta
+}
+
+// newUserDataHTTPClient returns an HTTP client configured to bind to the
+// given local TCP address. The userdata API requires requests to come from
+// a privileged source port (see ListUserData and friends).
+func newUserDataHTTPClient(localAddr *net.TCPAddr) *http.Client {
+	return &http.Client{
+		Transport: &http.Transport{
+			Proxy: nil,
+			DialContext: (&net.Dialer{
+				LocalAddr:     localAddr,
+				FallbackDelay: metadataFallbackDelay,
+			}).DialContext,
+		},
+	}
 }
 
 func (meta *MetadataAPI) getMetadataURLWithContext(ctx context.Context) string {
@@ -46,13 +92,21 @@ func (meta *MetadataAPI) getMetadataURLWithContext(ctx context.Context) string {
 			continue
 		}
 
-		resp, err := http.DefaultClient.Do(req)
-		if err == nil && resp.StatusCode == http.StatusOK {
+		resp, err := meta.httpClient.Do(req)
+		if err != nil {
+			logger.Warningf("Failed to reach metadata URL %s: %v", url, err)
+			continue
+		}
+
+		if resp.StatusCode == http.StatusOK {
+			resp.Body.Close()
 			meta.MetadataURL = &url
 			return url
 		}
-		defer resp.Body.Close()
+
+		resp.Body.Close()
 	}
+
 	return metadataAPIv4
 }
 
@@ -75,7 +129,7 @@ func (meta *MetadataAPI) GetMetadataWithContext(ctx context.Context) (m *Metadat
 		return nil, err
 	}
 
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := meta.httpClient.Do(req)
 	if err != nil {
 		return nil, errors.Wrap(err, "error getting metadataURL")
 	}
@@ -238,14 +292,7 @@ func (meta *MetadataAPI) ListUserDataWithContext(ctx context.Context) (res *User
 			return nil, errors.Wrap(err, "error resolving tcp address")
 		}
 
-		userdataClient := &http.Client{
-			Transport: &http.Transport{
-				DialContext: (&net.Dialer{
-					LocalAddr:     localTCPAddr,
-					FallbackDelay: metadataFallbackDelay,
-				}).DialContext,
-			},
-		}
+		userdataClient := newUserDataHTTPClient(localTCPAddr)
 
 		req, err := http.NewRequestWithContext(ctx, http.MethodGet, meta.getMetadataURLWithContext(ctx)+"/user_data?format=json", bytes.NewBufferString(""))
 		if err != nil {
@@ -294,14 +341,7 @@ func (meta *MetadataAPI) GetUserDataWithContext(ctx context.Context, key string)
 			return make([]byte, 0), errors.Wrap(err, "error resolving tcp address")
 		}
 
-		userdataClient := &http.Client{
-			Transport: &http.Transport{
-				DialContext: (&net.Dialer{
-					LocalAddr:     localTCPAddr,
-					FallbackDelay: metadataFallbackDelay,
-				}).DialContext,
-			},
-		}
+		userdataClient := newUserDataHTTPClient(localTCPAddr)
 
 		req, err := http.NewRequestWithContext(ctx, http.MethodGet, meta.getMetadataURLWithContext(ctx)+"/user_data/"+key, bytes.NewBufferString(""))
 		if err != nil {
@@ -351,14 +391,7 @@ func (meta *MetadataAPI) SetUserDataWithContext(ctx context.Context, key string,
 			return errors.Wrap(err, "error resolving tcp address")
 		}
 
-		userdataClient := &http.Client{
-			Transport: &http.Transport{
-				DialContext: (&net.Dialer{
-					LocalAddr:     localTCPAddr,
-					FallbackDelay: metadataFallbackDelay,
-				}).DialContext,
-			},
-		}
+		userdataClient := newUserDataHTTPClient(localTCPAddr)
 		request, err := http.NewRequestWithContext(ctx, http.MethodPatch, meta.getMetadataURLWithContext(ctx)+"/user_data/"+key, bytes.NewBuffer(value))
 		if err != nil {
 			return errors.Wrap(err, "error creating patch userdata request")
@@ -402,14 +435,7 @@ func (meta *MetadataAPI) DeleteUserDataWithContext(ctx context.Context, key stri
 			return errors.Wrap(err, "error resolving tcp address")
 		}
 
-		userdataClient := &http.Client{
-			Transport: &http.Transport{
-				DialContext: (&net.Dialer{
-					LocalAddr:     localTCPAddr,
-					FallbackDelay: metadataFallbackDelay,
-				}).DialContext,
-			},
-		}
+		userdataClient := newUserDataHTTPClient(localTCPAddr)
 		request, err := http.NewRequestWithContext(ctx, http.MethodDelete, meta.getMetadataURLWithContext(ctx)+"/user_data/"+key, bytes.NewBufferString(""))
 		if err != nil {
 			return errors.Wrap(err, "error creating delete userdata request")
