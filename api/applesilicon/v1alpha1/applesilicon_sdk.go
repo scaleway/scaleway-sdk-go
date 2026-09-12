@@ -2239,7 +2239,7 @@ func (s *API) GetUserConfiguration(req *GetUserConfigurationRequest, opts ...scw
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
-		Path:   "/apple-silicon-internal/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/user-configuration",
+		Path:   "/apple-silicon/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/user-configuration",
 	}
 
 	var resp UserConfiguration
@@ -2266,7 +2266,7 @@ func (s *API) UpdateRunnerConfigurationStatus(req *UpdateRunnerConfigurationStat
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "PATCH",
-		Path:   "/apple-silicon-internal/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/runner-configuration-status",
+		Path:   "/apple-silicon/v1alpha1/zones/" + fmt.Sprint(req.Zone) + "/runner-configuration-status",
 	}
 
 	err = scwReq.SetBody(req)
