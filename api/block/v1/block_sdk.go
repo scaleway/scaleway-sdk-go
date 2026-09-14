@@ -506,8 +506,8 @@ type Snapshot struct {
 	// KmsKeyID: kMS Key used for securing the parent volume's encryption.
 	KmsKeyID *string `json:"kms_key_id"`
 
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
+	// Srn: the SRN of the snapshot.
+	Srn string `json:"srn"`
 }
 
 func (m *Snapshot) setSRN(platform string) {
@@ -542,8 +542,8 @@ type VolumeType struct {
 	// Zone: zone of the volume type.
 	Zone scw.Zone `json:"zone"`
 
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
+	// Srn: the SRN of the volume type.
+	Srn string `json:"srn"`
 }
 
 func (m *VolumeType) setSRN(platform string) {
@@ -609,8 +609,8 @@ type Volume struct {
 	// KmsKeyID: kMS Key used for securing the volume's encryption.
 	KmsKeyID *string `json:"kms_key_id"`
 
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
+	// Srn: the SRN of the volume.
+	Srn string `json:"srn"`
 }
 
 func (m *Volume) setSRN(platform string) {

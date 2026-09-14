@@ -216,14 +216,14 @@ type Version struct {
 	// Name: major number of the PostgreSQL engine.
 	Name string `json:"name"`
 
+	// Srn: the SRN of the version.
+	Srn string `json:"srn"`
+
 	// EndOfLifeAt: date of End Of Life.
 	EndOfLifeAt *time.Time `json:"end_of_life_at"`
 
 	// Region: region to target. If none is passed will use default region from the config.
 	Region scw.Region `json:"region"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *Version) setSRN(platform string) {
@@ -245,6 +245,9 @@ func (m *Version) setSRN(platform string) {
 type DatabaseBackup struct {
 	// ID: UUID that uniquely identifies a Serverless SQL Database backup.
 	ID string `json:"id"`
+
+	// Srn: the SRN of the database backup.
+	Srn string `json:"srn"`
 
 	// Status: status of the Serverless SQL Database backup. One of `unknown_status` | `error` | `ready` | `locked`.
 	// Default value: unknown_status
@@ -279,9 +282,6 @@ type DatabaseBackup struct {
 
 	// Region: region of the database backup.
 	Region scw.Region `json:"region"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *DatabaseBackup) setSRN(platform string) {
@@ -303,6 +303,9 @@ func (m *DatabaseBackup) setSRN(platform string) {
 type Database struct {
 	// ID: UUID that uniquely identifies your Serverless SQL DB Database.
 	ID string `json:"id"`
+
+	// Srn: the SRN of the database.
+	Srn string `json:"srn"`
 
 	// Name: name of the database.
 	Name string `json:"name"`
@@ -343,9 +346,6 @@ type Database struct {
 
 	// Version: the major version of the underlying database engine.
 	Version *Version `json:"version"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *Database) setSRN(platform string) {

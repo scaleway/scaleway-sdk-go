@@ -282,8 +282,8 @@ type FlexibleIP struct {
 	// Zone: availability Zone of the flexible IP.
 	Zone scw.Zone `json:"zone"`
 
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
+	// Srn: the SRN of the flexible ip.
+	Srn string `json:"srn"`
 }
 
 func (m *FlexibleIP) setSRN(platform string) {

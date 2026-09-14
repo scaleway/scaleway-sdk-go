@@ -793,8 +793,8 @@ type Project struct {
 	// Default value: unknown_status
 	Status ProjectStatus `json:"status"`
 
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
+	// Srn: the SRN of the project.
+	Srn string `json:"srn"`
 }
 
 func (m *Project) setSRN(platform string) {
