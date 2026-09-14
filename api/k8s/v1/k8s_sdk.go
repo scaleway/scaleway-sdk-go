@@ -908,6 +908,9 @@ type ACLRule struct {
 	// ID: ID of the ACL rule.
 	ID string `json:"id"`
 
+	// Srn: the SRN of the ACL rule.
+	Srn string `json:"srn"`
+
 	// IP: IP subnet to allow.
 	// Precisely one of IP, ScalewayRanges must be set.
 	IP *scw.IPNet `json:"ip,omitempty"`
@@ -921,9 +924,6 @@ type ACLRule struct {
 
 	// Region: region of the ACL rule.
 	Region scw.Region `json:"region"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *ACLRule) setSRN(platform string) {
@@ -1106,6 +1106,9 @@ type ClusterType struct {
 	// Name: cluster type name.
 	Name string `json:"name"`
 
+	// Srn: the SRN of the cluster type.
+	Srn string `json:"srn"`
+
 	// Availability: cluster type availability.
 	// Default value: available
 	Availability ClusterTypeAvailability `json:"availability"`
@@ -1137,9 +1140,6 @@ type ClusterType struct {
 
 	// Region: the region of the cluster type.
 	Region scw.Region `json:"region"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *ClusterType) setSRN(platform string) {
@@ -1161,6 +1161,9 @@ func (m *ClusterType) setSRN(platform string) {
 type Version struct {
 	// Name: name of the Kubernetes version.
 	Name string `json:"name"`
+
+	// Srn: the SRN of the version.
+	Srn string `json:"srn"`
 
 	// Label: label of the Kubernetes version.
 	Label string `json:"label"`
@@ -1194,9 +1197,6 @@ type Version struct {
 
 	// AdditionalComponents: map containing every sub-component version shipped with this Kapsule version.
 	AdditionalComponents map[string]*ComponentInfo `json:"additional_components"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *Version) setSRN(platform string) {
@@ -1218,6 +1218,9 @@ func (m *Version) setSRN(platform string) {
 type Cluster struct {
 	// ID: cluster ID.
 	ID string `json:"id"`
+
+	// Srn: the SRN of the cluster.
+	Srn string `json:"srn"`
 
 	// Type: cluster type.
 	Type string `json:"type"`
@@ -1304,9 +1307,6 @@ type Cluster struct {
 
 	// ServiceDNSIP: IP used for the DNS Service.
 	ServiceDNSIP net.IP `json:"service_dns_ip"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *Cluster) setSRN(platform string) {
@@ -1328,6 +1328,9 @@ func (m *Cluster) setSRN(platform string) {
 type Node struct {
 	// ID: node ID.
 	ID string `json:"id"`
+
+	// Srn: the SRN of the node.
+	Srn string `json:"srn"`
 
 	// PoolID: pool ID of the node.
 	PoolID string `json:"pool_id"`
@@ -1365,9 +1368,6 @@ type Node struct {
 
 	// UpdatedAt: date on which the node was last updated.
 	UpdatedAt *time.Time `json:"updated_at"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *Node) setSRN(platform string) {
@@ -1480,11 +1480,11 @@ type Pool struct {
 	// MaxTerminationGracePeriod: maximum amount of time before the API forces the drain and deletion of a `deleting` node. It overrides pods `PodDisruptionBudget` and `terminationGracePeriodSeconds`. Defaults to 15 minutes, up to 1 hour.
 	MaxTerminationGracePeriod *scw.Duration `json:"max_termination_grace_period"`
 
+	// Srn: the SRN of the pool.
+	Srn string `json:"srn"`
+
 	// Region: cluster region of the pool.
 	Region scw.Region `json:"region"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *Pool) setSRN(platform string) {

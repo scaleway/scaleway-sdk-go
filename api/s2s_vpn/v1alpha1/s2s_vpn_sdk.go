@@ -667,6 +667,9 @@ type Connection struct {
 	// ID: unique identifier of the connection.
 	ID string `json:"id"`
 
+	// Srn: the SRN of the connection.
+	Srn string `json:"srn"`
+
 	// ProjectID: project ID.
 	ProjectID string `json:"project_id"`
 
@@ -745,9 +748,6 @@ type Connection struct {
 
 	// Region: region of the connection.
 	Region scw.Region `json:"region"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *Connection) setSRN(platform string) {
@@ -805,6 +805,9 @@ type CustomerGateway struct {
 	// ID: unique identifier of the customer gateway.
 	ID string `json:"id"`
 
+	// Srn: the SRN of the customer gateway.
+	Srn string `json:"srn"`
+
 	// ProjectID: project ID.
 	ProjectID string `json:"project_id"`
 
@@ -837,9 +840,6 @@ type CustomerGateway struct {
 
 	// Region: region of the customer gateway.
 	Region scw.Region `json:"region"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *CustomerGateway) setSRN(platform string) {
@@ -861,6 +861,9 @@ func (m *CustomerGateway) setSRN(platform string) {
 type RoutingPolicy struct {
 	// ID: unique identifier of the routing policy.
 	ID string `json:"id"`
+
+	// Srn: the SRN of the routing policy.
+	Srn string `json:"srn"`
 
 	// ProjectID: project ID.
 	ProjectID string `json:"project_id"`
@@ -891,9 +894,6 @@ type RoutingPolicy struct {
 
 	// Region: region of the routing policy.
 	Region scw.Region `json:"region"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *RoutingPolicy) setSRN(platform string) {
@@ -930,6 +930,9 @@ type VpnGateway struct {
 	// ID: unique identifier of the VPN gateway.
 	ID string `json:"id"`
 
+	// Srn: the SRN of the VPN gateway.
+	Srn string `json:"srn"`
+
 	// ProjectID: project ID.
 	ProjectID string `json:"project_id"`
 
@@ -959,11 +962,11 @@ type VpnGateway struct {
 	// Precisely one of PublicConfig, PrivateConfig must be set.
 	PublicConfig *VpnGatewayPublicConfig `json:"public_config,omitempty"`
 
-	// PrivateNetworkID: ID of the Private Network attached to the VPN gateway.
-	PrivateNetworkID string `json:"private_network_id"`
-
 	// Precisely one of PublicConfig, PrivateConfig must be set.
 	PrivateConfig *VpnGatewayPrivateConfig `json:"private_config,omitempty"`
+
+	// PrivateNetworkID: ID of the Private Network attached to the VPN gateway.
+	PrivateNetworkID string `json:"private_network_id"`
 
 	// IpamPrivateIPv4ID: ID of the IPAM private IPv4 address attached to the VPN gateway.
 	IpamPrivateIPv4ID string `json:"ipam_private_ipv4_id"`
@@ -982,9 +985,6 @@ type VpnGateway struct {
 
 	// Region: region of the VPN gateway.
 	Region scw.Region `json:"region"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *VpnGateway) setSRN(platform string) {
