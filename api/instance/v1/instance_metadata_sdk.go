@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"math/rand"
 	"net"
@@ -124,7 +125,12 @@ func (meta *MetadataAPI) GetMetadata() (m *Metadata, err error) {
 
 // GetMetadataWithContext returns the metadata available from the server
 func (meta *MetadataAPI) GetMetadataWithContext(ctx context.Context) (m *Metadata, err error) {
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, meta.getMetadataURLWithContext(ctx)+"/conf?format=json", bytes.NewBufferString(""))
+	req, err := http.NewRequestWithContext(
+		ctx,
+		http.MethodGet,
+		meta.getMetadataURLWithContext(ctx)+"/conf?format=json",
+		bytes.NewBufferString(""),
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -134,6 +140,14 @@ func (meta *MetadataAPI) GetMetadataWithContext(ctx context.Context) (m *Metadat
 		return nil, errors.Wrap(err, "error getting metadataURL")
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf(
+			"%w: %d",
+			errors.New("metadata service returned an unexpected status"),
+			resp.StatusCode,
+		)
+	}
 
 	metadata := &Metadata{}
 	err = json.NewDecoder(resp.Body).Decode(metadata)
@@ -305,13 +319,20 @@ func (meta *MetadataAPI) ListUserDataWithContext(ctx context.Context) (res *User
 		}
 		defer resp.Body.Close()
 
+		if resp.StatusCode != http.StatusOK {
+			retries++ // retry with a different source port
+			continue
+		}
+
 		userdata := &UserData{}
 		err = json.NewDecoder(resp.Body).Decode(userdata)
 		if err != nil {
 			return nil, errors.Wrap(err, "error decoding userdata")
 		}
+
 		return userdata, nil
 	}
+
 	return nil, errors.New("too many bind port retries for ListUserData")
 }
 
@@ -355,6 +376,11 @@ func (meta *MetadataAPI) GetUserDataWithContext(ctx context.Context, key string)
 		}
 		defer resp.Body.Close()
 
+		if resp.StatusCode != http.StatusOK {
+			retries++ // retry with a different source port
+			continue
+		}
+
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return make([]byte, 0), errors.Wrap(err, "error reading userdata body")
@@ -362,6 +388,7 @@ func (meta *MetadataAPI) GetUserDataWithContext(ctx context.Context, key string)
 
 		return body, nil
 	}
+
 	return make([]byte, 0), errors.New("too may bind port retries for GetUserData")
 }
 
@@ -396,7 +423,9 @@ func (meta *MetadataAPI) SetUserDataWithContext(ctx context.Context, key string,
 		if err != nil {
 			return errors.Wrap(err, "error creating patch userdata request")
 		}
+
 		request.Header.Set("Content-Type", "text/plain")
+
 		resp, err := userdataClient.Do(request)
 		if err != nil {
 			retries++ // retry with a different source port
@@ -404,8 +433,14 @@ func (meta *MetadataAPI) SetUserDataWithContext(ctx context.Context, key string,
 		}
 		defer resp.Body.Close()
 
+		if resp.StatusCode != http.StatusOK {
+			retries++ // retry with a different source port
+			continue
+		}
+
 		return nil
 	}
+
 	return errors.New("too may bind port retries for SetUserData")
 }
 
@@ -440,6 +475,7 @@ func (meta *MetadataAPI) DeleteUserDataWithContext(ctx context.Context, key stri
 		if err != nil {
 			return errors.Wrap(err, "error creating delete userdata request")
 		}
+
 		resp, err := userdataClient.Do(request)
 		if err != nil {
 			retries++ // retry with a different source port
@@ -447,8 +483,14 @@ func (meta *MetadataAPI) DeleteUserDataWithContext(ctx context.Context, key stri
 		}
 		defer resp.Body.Close()
 
+		if resp.StatusCode != http.StatusOK {
+			retries++ // retry with a different source port
+			continue
+		}
+
 		return nil
 	}
+
 	return errors.New("too may bind port retries for DeleteUserData")
 }
 
