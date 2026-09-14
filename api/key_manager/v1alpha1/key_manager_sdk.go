@@ -633,6 +633,9 @@ type Key struct {
 	// ID: ID of the key.
 	ID string `json:"id"`
 
+	// Srn: the SRN of the key.
+	Srn string `json:"srn"`
+
 	// ProjectID: ID of the Project containing the key.
 	ProjectID string `json:"project_id"`
 
@@ -682,9 +685,6 @@ type Key struct {
 
 	// Region: region where the key is stored.
 	Region scw.Region `json:"region"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *Key) setSRN(platform string) {

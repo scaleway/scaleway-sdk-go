@@ -409,6 +409,9 @@ type SecretVersion struct {
 	// Revision: the first version of the secret is numbered 1, and all subsequent revisions augment by 1.
 	Revision uint32 `json:"revision"`
 
+	// Srn: the SRN of the secret version.
+	Srn string `json:"srn"`
+
 	// SecretID: ID of the secret.
 	SecretID string `json:"secret_id"`
 
@@ -443,9 +446,6 @@ type SecretVersion struct {
 
 	// Region: region of the version.
 	Region scw.Region `json:"region"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *SecretVersion) setSRN(platform string) {
@@ -467,6 +467,9 @@ func (m *SecretVersion) setSRN(platform string) {
 type Secret struct {
 	// ID: ID of the secret.
 	ID string `json:"id"`
+
+	// Srn: the SRN of the secret.
+	Srn string `json:"srn"`
 
 	// ProjectID: ID of the Project containing the secret.
 	ProjectID string `json:"project_id"`
@@ -521,9 +524,6 @@ type Secret struct {
 
 	// Region: region of the secret.
 	Region scw.Region `json:"region"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *Secret) setSRN(platform string) {

@@ -198,8 +198,8 @@ type Attachment struct {
 	// Region: the region where the attachment is located.
 	Region scw.Region `json:"region"`
 
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
+	// Srn: the SRN of the attachment.
+	Srn string `json:"srn"`
 }
 
 func (m *Attachment) setSRN(platform string) {
@@ -268,8 +268,8 @@ type FileSystem struct {
 	// FilesystemTypeID: UUID of the filesystem type.
 	FilesystemTypeID string `json:"filesystem_type_id"`
 
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
+	// Srn: the SRN of the filesystem.
+	Srn string `json:"srn"`
 }
 
 func (m *FileSystem) setSRN(platform string) {
