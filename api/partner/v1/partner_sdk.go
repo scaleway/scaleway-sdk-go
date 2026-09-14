@@ -183,9 +183,6 @@ type Organization struct {
 	// PhoneNumber: organization owner's phone number.
 	PhoneNumber *string `json:"phone_number"`
 
-	// SirenNumber: siren number of the organization.
-	SirenNumber *string `json:"siren_number"`
-
 	// CustomerID: customer ID associated with this organization.
 	CustomerID string `json:"customer_id"`
 
@@ -228,9 +225,6 @@ type CreateOrganizationRequest struct {
 
 	// CustomerID: a custom ID for the customer in your own infrastructure.
 	CustomerID string `json:"customer_id"`
-
-	// SirenNumber: a SIREN number for the customer.
-	SirenNumber *string `json:"siren_number,omitempty"`
 }
 
 // GetOrganizationRequest: get organization request.
