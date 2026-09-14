@@ -87,7 +87,9 @@ func (meta *MetadataAPI) getMetadataURLWithContext(ctx context.Context) string {
 	}
 
 	for _, url := range []string{metadataAPIv4, metadataAPIv6} {
-		req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, bytes.NewBufferString(""))
+		req, err := http.NewRequestWithContext(
+			ctx, http.MethodGet, url, bytes.NewBufferString(""),
+		)
 		if err != nil {
 			logger.Warningf("Failed to create metadata URL %s: %v", url, err)
 			continue
@@ -154,6 +156,7 @@ func (meta *MetadataAPI) GetMetadataWithContext(ctx context.Context) (m *Metadat
 	if err != nil {
 		return nil, errors.Wrap(err, "error decoding metadata")
 	}
+
 	return metadata, nil
 }
 
@@ -308,10 +311,16 @@ func (meta *MetadataAPI) ListUserDataWithContext(ctx context.Context) (res *User
 
 		userdataClient := newUserDataHTTPClient(localTCPAddr)
 
-		req, err := http.NewRequestWithContext(ctx, http.MethodGet, meta.getMetadataURLWithContext(ctx)+"/user_data?format=json", bytes.NewBufferString(""))
+		req, err := http.NewRequestWithContext(
+			ctx,
+			http.MethodGet,
+			meta.getMetadataURLWithContext(ctx)+"/user_data?format=json",
+			bytes.NewBufferString(""),
+		)
 		if err != nil {
 			return nil, err
 		}
+
 		resp, err := userdataClient.Do(req)
 		if err != nil {
 			retries++ // retry with a different source port
@@ -364,7 +373,12 @@ func (meta *MetadataAPI) GetUserDataWithContext(ctx context.Context, key string)
 
 		userdataClient := newUserDataHTTPClient(localTCPAddr)
 
-		req, err := http.NewRequestWithContext(ctx, http.MethodGet, meta.getMetadataURLWithContext(ctx)+"/user_data/"+key, bytes.NewBufferString(""))
+		req, err := http.NewRequestWithContext(
+			ctx,
+			http.MethodGet,
+			meta.getMetadataURLWithContext(ctx)+"/user_data/"+key,
+			bytes.NewBufferString(""),
+		)
 		if err != nil {
 			return nil, err
 		}
@@ -471,7 +485,12 @@ func (meta *MetadataAPI) DeleteUserDataWithContext(ctx context.Context, key stri
 		}
 
 		userdataClient := newUserDataHTTPClient(localTCPAddr)
-		request, err := http.NewRequestWithContext(ctx, http.MethodDelete, meta.getMetadataURLWithContext(ctx)+"/user_data/"+key, bytes.NewBufferString(""))
+		request, err := http.NewRequestWithContext(
+			ctx,
+			http.MethodDelete,
+			meta.getMetadataURLWithContext(ctx)+"/user_data/"+key,
+			bytes.NewBufferString(""),
+		)
 		if err != nil {
 			return errors.Wrap(err, "error creating delete userdata request")
 		}
