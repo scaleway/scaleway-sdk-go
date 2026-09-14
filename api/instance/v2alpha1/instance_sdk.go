@@ -1561,6 +1561,9 @@ type SecurityGroup struct {
 	// ID: unique ID of the security group.
 	ID string `json:"id"`
 
+	// Srn: the SRN of the security group.
+	Srn string `json:"srn"`
+
 	// Name: name of the security group.
 	Name string `json:"name"`
 
@@ -1604,9 +1607,6 @@ type SecurityGroup struct {
 
 	// Zone: zone in which the security group is located.
 	Zone scw.Zone `json:"zone"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *SecurityGroup) setSRN(platform string) {
@@ -1653,6 +1653,9 @@ type PlacementGroup struct {
 	// ID: placement group unique ID.
 	ID string `json:"id"`
 
+	// Srn: the SRN of the placement group.
+	Srn string `json:"srn"`
+
 	// ProjectID: placement group Project ID.
 	ProjectID string `json:"project_id"`
 
@@ -1674,9 +1677,6 @@ type PlacementGroup struct {
 
 	// Zone: zone in which the placement group is located.
 	Zone scw.Zone `json:"zone"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *PlacementGroup) setSRN(platform string) {
@@ -1698,6 +1698,9 @@ func (m *PlacementGroup) setSRN(platform string) {
 type PrivateNetworkInterfaceSummary struct {
 	// ID: unique ID of the private network interface.
 	ID string `json:"id"`
+
+	// Srn: the SRN of the private network interface.
+	Srn string `json:"srn"`
 
 	// PrivateNetworkID: ID of the Private Network this interface is attached to.
 	PrivateNetworkID string `json:"private_network_id"`
@@ -1735,6 +1738,9 @@ type PrivateNetworkInterfaceSummary struct {
 type SecurityGroupSummary struct {
 	// ID: unique ID of the security group.
 	ID string `json:"id"`
+
+	// Srn: the SRN of the security group.
+	Srn string `json:"srn"`
 
 	// Name: name of the security group.
 	Name string `json:"name"`
@@ -1812,6 +1818,9 @@ type ServerSummary struct {
 	// ID: unique ID of the server.
 	ID string `json:"id"`
 
+	// Srn: the SRN of the server.
+	Srn string `json:"srn"`
+
 	// Name: name of the server.
 	Name string `json:"name"`
 
@@ -1853,6 +1862,9 @@ type Snapshot struct {
 	// ID: unique ID of the snapshot.
 	ID string `json:"id"`
 
+	// Srn: the SRN of the snapshot.
+	Srn string `json:"srn"`
+
 	// ProjectID: project ID of the snapshot.
 	ProjectID string `json:"project_id"`
 
@@ -1887,9 +1899,6 @@ type Snapshot struct {
 
 	// Public: whether the snapshot is public.
 	Public bool `json:"public"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *Snapshot) setSRN(platform string) {
@@ -1914,6 +1923,9 @@ type TemplateSummary struct {
 
 	// ID: unique ID of the template.
 	ID string `json:"id"`
+
+	// Srn: the SRN of the template.
+	Srn string `json:"srn"`
 
 	// Name: name of the template.
 	Name string `json:"name"`
@@ -1970,6 +1982,9 @@ type Volume struct {
 	// ID: unique ID of the volume.
 	ID string `json:"id"`
 
+	// Srn: the SRN of the volume.
+	Srn string `json:"srn"`
+
 	// ProjectID: project ID to which the volume belongs.
 	ProjectID string `json:"project_id"`
 
@@ -2004,9 +2019,6 @@ type Volume struct {
 
 	// Zone: zone in which the volume is located.
 	Zone scw.Zone `json:"zone"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *Volume) setSRN(platform string) {
@@ -3169,6 +3181,9 @@ type PrivateNetworkInterface struct {
 	// ID: unique ID of the private network interface.
 	ID string `json:"id"`
 
+	// Srn: the SRN of the private network interface.
+	Srn string `json:"srn"`
+
 	// PrivateNetworkID: ID of the Private Network this interface is attached to.
 	PrivateNetworkID string `json:"private_network_id"`
 
@@ -3199,9 +3214,6 @@ type PrivateNetworkInterface struct {
 
 	// Zone: zone in which the network interface is located.
 	Zone scw.Zone `json:"zone"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *PrivateNetworkInterface) setSRN(platform string) {
@@ -3281,6 +3293,9 @@ type Server struct {
 	// ID: unique ID of the server.
 	ID string `json:"id"`
 
+	// Srn: the SRN of the server.
+	Srn string `json:"srn"`
+
 	// Name: name of the server.
 	Name string `json:"name"`
 
@@ -3336,9 +3351,6 @@ type Server struct {
 
 	// Zone: zone in which the server is located.
 	Zone scw.Zone `json:"zone"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *Server) setSRN(platform string) {
@@ -3493,6 +3505,9 @@ type Template struct {
 	// ID: unique ID of the template.
 	ID string `json:"id"`
 
+	// Srn: the SRN of the template.
+	Srn string `json:"srn"`
+
 	// Name: name of the template.
 	Name string `json:"name"`
 
@@ -3537,9 +3552,6 @@ type Template struct {
 
 	// Zone: zone in which the template is located.
 	Zone scw.Zone `json:"zone"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *Template) setSRN(platform string) {

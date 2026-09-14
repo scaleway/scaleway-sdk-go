@@ -363,6 +363,9 @@ type GatewayNetwork struct {
 	// ID: ID of the Public Gateway-Private Network connection.
 	ID string `json:"id"`
 
+	// Srn: the SRN of the gateway network.
+	Srn string `json:"srn"`
+
 	// CreatedAt: connection creation date.
 	CreatedAt *time.Time `json:"created_at"`
 
@@ -393,9 +396,6 @@ type GatewayNetwork struct {
 
 	// Zone: zone of the GatewayNetwork connection.
 	Zone scw.Zone `json:"zone"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *GatewayNetwork) setSRN(platform string) {
@@ -417,6 +417,9 @@ func (m *GatewayNetwork) setSRN(platform string) {
 type IP struct {
 	// ID: IP address ID.
 	ID string `json:"id"`
+
+	// Srn: the SRN of the ip.
+	Srn string `json:"srn"`
 
 	// OrganizationID: owning Organization.
 	OrganizationID string `json:"organization_id"`
@@ -444,9 +447,6 @@ type IP struct {
 
 	// Zone: zone of the IP address.
 	Zone scw.Zone `json:"zone"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *IP) setSRN(platform string) {
@@ -480,6 +480,9 @@ type GatewayType struct {
 type Gateway struct {
 	// ID: ID of the gateway.
 	ID string `json:"id"`
+
+	// Srn: the SRN of the gateway.
+	Srn string `json:"srn"`
 
 	// OrganizationID: owning Organization.
 	OrganizationID string `json:"organization_id"`
@@ -538,9 +541,6 @@ type Gateway struct {
 
 	// Zone: zone of the gateway.
 	Zone scw.Zone `json:"zone"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *Gateway) setSRN(platform string) {
@@ -562,6 +562,9 @@ func (m *Gateway) setSRN(platform string) {
 type PatRule struct {
 	// ID: pAT rule ID.
 	ID string `json:"id"`
+
+	// Srn: the SRN of the PAT rule.
+	Srn string `json:"srn"`
 
 	// GatewayID: gateway the PAT rule applies to.
 	GatewayID string `json:"gateway_id"`
@@ -587,9 +590,6 @@ type PatRule struct {
 
 	// Zone: zone of the PAT rule.
 	Zone scw.Zone `json:"zone"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *PatRule) setSRN(platform string) {
