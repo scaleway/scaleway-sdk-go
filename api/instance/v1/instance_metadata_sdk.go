@@ -342,7 +342,7 @@ func (meta *MetadataAPI) SetUserDataWithContext(ctx context.Context, key string,
 	retries := 0
 	for retries <= metadataRetryBindPort {
 		port := rand.Intn(1024)
-		_, retry, err := meta.tryUserDataRequest(ctx, http.MethodPost, key, value, port)
+		_, retry, err := meta.tryUserDataRequest(ctx, http.MethodPatch, key, value, port)
 		if err != nil {
 			return err
 		}
