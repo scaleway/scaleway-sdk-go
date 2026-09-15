@@ -323,6 +323,10 @@ func (meta *MetadataAPI) ListUserDataWithContext(ctx context.Context) (res *User
 		}
 		defer resp.Body.Close()
 
+		if resp.StatusCode != http.StatusOK {
+			return nil, fmt.Errorf("%w: %d", ErrUnexpectedStatus, resp.StatusCode)
+		}
+
 		userdata := &UserData{}
 		err = json.NewDecoder(resp.Body).Decode(userdata)
 		if err != nil {
@@ -377,6 +381,10 @@ func (meta *MetadataAPI) GetUserDataWithContext(ctx context.Context, key string)
 		}
 		defer resp.Body.Close()
 
+		if resp.StatusCode != http.StatusOK {
+			return nil, fmt.Errorf("%w: %d", ErrUnexpectedStatus, resp.StatusCode)
+		}
+
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return make([]byte, 0), errors.Wrap(err, "error reading userdata body")
@@ -426,6 +434,10 @@ func (meta *MetadataAPI) SetUserDataWithContext(ctx context.Context, key string,
 		}
 		defer resp.Body.Close()
 
+		if resp.StatusCode != http.StatusOK {
+			return fmt.Errorf("%w: %d", ErrUnexpectedStatus, resp.StatusCode)
+		}
+
 		return nil
 	}
 
@@ -472,6 +484,10 @@ func (meta *MetadataAPI) DeleteUserDataWithContext(ctx context.Context, key stri
 			continue
 		}
 		defer resp.Body.Close()
+
+		if resp.StatusCode != http.StatusOK {
+			return fmt.Errorf("%w: %d", ErrUnexpectedStatus, resp.StatusCode)
+		}
 
 		return nil
 	}
