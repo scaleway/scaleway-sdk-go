@@ -1307,6 +1307,9 @@ type CreateContainerRequest struct {
 
 	// EnablePrivateEndpoint: when enabled, the container can receive traffic from other resources in the same Private Network.
 	EnablePrivateEndpoint *bool `json:"enable_private_endpoint,omitempty"`
+
+	// EnableDefaultPublicEndpoint: when not enabled (set to false), calling the Container through this endpoint will return a 404. Despite this, creating custom domains is still possible.
+	EnableDefaultPublicEndpoint *bool `json:"enable_default_public_endpoint,omitempty"`
 }
 
 // CreateDomainRequest: create domain request.
@@ -1746,6 +1749,9 @@ type UpdateContainerRequest struct {
 
 	// EnablePrivateEndpoint: when enabled, the container can receive traffic from other resources in the same Private Network.
 	EnablePrivateEndpoint *bool `json:"enable_private_endpoint,omitempty"`
+
+	// EnableDefaultPublicEndpoint: when not enabled (set to false), calling the Container through this endpoint will return a 404. Despite this, creating custom domains is still possible.
+	EnableDefaultPublicEndpoint *bool `json:"enable_default_public_endpoint,omitempty"`
 }
 
 // UpdateDomainRequest: update domain request.
