@@ -392,7 +392,7 @@ func (meta *MetadataAPI) GetUserDataWithContext(ctx context.Context, key string)
 		return body, nil
 	}
 
-	return make([]byte, 0), errors.New("too may bind port retries for GetUserData")
+	return make([]byte, 0), errors.New("too many bind port retries for GetUserData")
 }
 
 // SetUserData sets the userdata key with the given value
@@ -440,7 +440,7 @@ func (meta *MetadataAPI) SetUserDataWithContext(ctx context.Context, key string,
 		return nil
 	}
 
-	return errors.New("too may bind port retries for SetUserData")
+	return errors.New("too many bind port retries for SetUserData")
 }
 
 // DeleteUserData deletes the userdata key and the associated value
@@ -491,7 +491,7 @@ func (meta *MetadataAPI) DeleteUserDataWithContext(ctx context.Context, key stri
 		return nil
 	}
 
-	return errors.New("too may bind port retries for DeleteUserData")
+	return errors.New("too many bind port retries for DeleteUserData")
 }
 
 // UserData represents the user data
