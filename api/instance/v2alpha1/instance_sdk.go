@@ -164,6 +164,47 @@ func (enum *CreateVolumeRequestVolumeType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListDedicatedPoolsRequestOrderBy string
+
+const (
+	ListDedicatedPoolsRequestOrderByCreatedAtDesc = ListDedicatedPoolsRequestOrderBy("created_at_desc")
+	ListDedicatedPoolsRequestOrderByCreatedAtAsc  = ListDedicatedPoolsRequestOrderBy("created_at_asc")
+	ListDedicatedPoolsRequestOrderByUpdatedAtDesc = ListDedicatedPoolsRequestOrderBy("updated_at_desc")
+	ListDedicatedPoolsRequestOrderByUpdatedAtAsc  = ListDedicatedPoolsRequestOrderBy("updated_at_asc")
+)
+
+func (enum ListDedicatedPoolsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListDedicatedPoolsRequestOrderByCreatedAtDesc)
+	}
+	return string(enum)
+}
+
+func (enum ListDedicatedPoolsRequestOrderBy) Values() []ListDedicatedPoolsRequestOrderBy {
+	return []ListDedicatedPoolsRequestOrderBy{
+		"created_at_desc",
+		"created_at_asc",
+		"updated_at_desc",
+		"updated_at_asc",
+	}
+}
+
+func (enum ListDedicatedPoolsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListDedicatedPoolsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListDedicatedPoolsRequestOrderBy(ListDedicatedPoolsRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListPlacementGroupsRequestOrderBy string
 
 const (
@@ -1491,6 +1532,8 @@ type ServerIP struct {
 	Status ServerIPStatus `json:"status"`
 
 	Default bool `json:"default"`
+
+	ProvisionedAddress scw.IPNet `json:"provisioned_address"`
 }
 
 // CreateTemplateRequestPrivateNetworkTemplate: create template request private network template.
@@ -1646,6 +1689,65 @@ type CreateServerRequestServerVolume struct {
 	// NewVolume: configuration for a new volume to create.
 	// Precisely one of VolumeID, NewVolume must be set.
 	NewVolume *CreateServerRequestCreateVolume `json:"new_volume,omitempty"`
+}
+
+// DedicatedPoolServerType: dedicated pool server type.
+type DedicatedPoolServerType struct {
+	// Name: name of the server type.
+	Name string `json:"name"`
+
+	// VcpuCount: number of vCPUs.
+	VcpuCount uint32 `json:"vcpu_count"`
+
+	// GpuCount: number of GPUs.
+	GpuCount uint32 `json:"gpu_count"`
+
+	// Memory: amount of memory.
+	Memory scw.Size `json:"memory"`
+
+	// Architecture: architecture of the server type.
+	// Default value: unknown_architecture
+	Architecture ServerTypeArchitecture `json:"architecture"`
+
+	// Availability: availability status of the server type.
+	// Default value: unknown_availability
+	Availability ServerTypeAvailability `json:"availability"`
+
+	// Limits: limits for the server type.
+	Limits *ServerTypeLimits `json:"limits"`
+
+	// GpuInfo: gPU information for the server type.
+	GpuInfo *ServerTypeGpuInfo `json:"gpu_info"`
+
+	// EndOfService: whether the server type has reached end of service.
+	EndOfService bool `json:"end_of_service"`
+
+	// SlotsAvailable: number of additional Instances of this type that can currently be started in this Dedicated Pool.
+	SlotsAvailable uint32 `json:"slots_available"`
+}
+
+// DedicatedPoolSummary: dedicated pool summary.
+type DedicatedPoolSummary struct {
+	// ID: unique ID of the Dedicated Pool.
+	ID string `json:"id"`
+
+	// Srn: sRN of the Dedicated Pool.
+	Srn string `json:"srn"`
+
+	// OrganizationID: organization ID the Dedicated Pool belongs to.
+	OrganizationID string `json:"organization_id"`
+
+	// Name: name of the Dedicated Pool.
+	Name string `json:"name"`
+
+	// Tags: tags associated with the Dedicated Pool.
+	Tags []string `json:"tags"`
+
+	// CreatedAt: creation timestamp of the Dedicated Pool.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: last update timestamp of the Dedicated Pool.
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 // PlacementGroup: placement group.
@@ -2305,6 +2407,9 @@ type CreateServerRequest struct {
 	// PlacementGroupID: ID of the placement group the server belongs to.
 	PlacementGroupID *string `json:"placement_group_id,omitempty"`
 
+	// DedicatedPoolID: ID of the Dedicated Pool this server belongs to.
+	DedicatedPoolID *string `json:"dedicated_pool_id,omitempty"`
+
 	// Volumes: volumes to attach to the server.
 	Volumes []*CreateServerRequestServerVolume `json:"volumes"`
 
@@ -2358,6 +2463,30 @@ type CreateTemplateRequest struct {
 
 	// WindowsRdpSSHKeyID: iAM ID of the SSH key used to encrypt the Windows `Administrator` password for RDP use.
 	WindowsRdpSSHKeyID *string `json:"windows_rdp_ssh_key_id,omitempty"`
+}
+
+// DedicatedPool: dedicated pool.
+type DedicatedPool struct {
+	// ID: unique ID of the Dedicated Pool.
+	ID string `json:"id"`
+
+	// Srn: the SRN of the Dedicated Pool.
+	Srn string `json:"srn"`
+
+	// OrganizationID: organization ID the Dedicated Pool belongs to.
+	OrganizationID string `json:"organization_id"`
+
+	// Name: the name of the Dedicated Pool.
+	Name string `json:"name"`
+
+	// Tags: tags associated with the Dedicated Pool.
+	Tags []string `json:"tags"`
+
+	// CreatedAt: creation timestamp of the Dedicated Pool.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: last update timestamp of the Dedicated Pool.
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 // DeletePlacementGroupRequest: delete placement group request.
@@ -2519,6 +2648,15 @@ type DetachServerVolumeRequest struct {
 	VolumeID string `json:"volume_id"`
 }
 
+// GetDedicatedPoolRequest: get dedicated pool request.
+type GetDedicatedPoolRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// DedicatedPoolID: ID of the Dedicated Pool to retrieve.
+	DedicatedPoolID string `json:"-"`
+}
+
 // GetPlacementGroupRequest: get placement group request.
 type GetPlacementGroupRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
@@ -2618,6 +2756,102 @@ type GetUserDataRequest struct {
 
 	// Key: the key of the user data to retrieve.
 	Key string `json:"-"`
+}
+
+// ListDedicatedPoolServerTypesRequest: list dedicated pool server types request.
+type ListDedicatedPoolServerTypesRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// DedicatedPoolID: ID of the Dedicated Pool to list Instance types for.
+	DedicatedPoolID string `json:"-"`
+
+	// PageToken: token for pagination.
+	PageToken *string `json:"-"`
+
+	// PageSize: number of Instance types to return per page.
+	PageSize *uint32 `json:"-"`
+}
+
+// ListDedicatedPoolServerTypesResponse: list dedicated pool server types response.
+type ListDedicatedPoolServerTypesResponse struct {
+	// ServerTypes: list of Instance types.
+	ServerTypes []*DedicatedPoolServerType `json:"server_types"`
+
+	// NextPageToken: token for the next page.
+	NextPageToken *string `json:"next_page_token"`
+
+	// TotalCount: total number of Instance types.
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListDedicatedPoolServerTypesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListDedicatedPoolServerTypesResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListDedicatedPoolServerTypesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.ServerTypes = append(r.ServerTypes, results.ServerTypes...)
+	r.TotalCount += uint64(len(results.ServerTypes))
+	return uint64(len(results.ServerTypes)), nil
+}
+
+// ListDedicatedPoolsRequest: list dedicated pools request.
+type ListDedicatedPoolsRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// PageToken: token for pagination.
+	PageToken *string `json:"-"`
+
+	// PageSize: number of Dedicated Pools to return per page.
+	PageSize *uint32 `json:"-"`
+
+	// OrderBy: order in which to return Dedicated Pools.
+	// Default value: created_at_desc
+	OrderBy ListDedicatedPoolsRequestOrderBy `json:"-"`
+
+	// OrganizationID: organization ID to filter Dedicated Pools by.
+	OrganizationID string `json:"-"`
+}
+
+// ListDedicatedPoolsResponse: list dedicated pools response.
+type ListDedicatedPoolsResponse struct {
+	// DedicatedPools: list of Dedicated Pools.
+	DedicatedPools []*DedicatedPoolSummary `json:"dedicated_pools"`
+
+	// NextPageToken: token for the next page.
+	NextPageToken *string `json:"next_page_token"`
+
+	// TotalCount: total number of Dedicated Pools.
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListDedicatedPoolsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListDedicatedPoolsResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListDedicatedPoolsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.DedicatedPools = append(r.DedicatedPools, results.DedicatedPools...)
+	r.TotalCount += uint64(len(results.DedicatedPools))
+	return uint64(len(results.DedicatedPools)), nil
 }
 
 // ListPlacementGroupsRequest: list placement groups request.
@@ -2875,6 +3109,9 @@ type ListServersRequest struct {
 
 	// PlacementGroupIDs: placement group IDs to filter servers.
 	PlacementGroupIDs []string `json:"-"`
+
+	// DedicatedPoolIDs: filter servers associated with these Dedicated Pools.
+	DedicatedPoolIDs []string `json:"-"`
 
 	// PrivateNetworkIDs: private Network IDs to filter servers.
 	PrivateNetworkIDs []string `json:"-"`
@@ -3311,6 +3548,9 @@ type Server struct {
 	// PlacementGroupID: ID of the placement group the server belongs to.
 	PlacementGroupID *string `json:"placement_group_id"`
 
+	// DedicatedPoolID: ID of the Dedicated Pool the server belongs to.
+	DedicatedPoolID *string `json:"dedicated_pool_id"`
+
 	// Status: current status of the server.
 	// Default value: unknown_status
 	Status ServerStatus `json:"status"`
@@ -3569,6 +3809,21 @@ func (m *Template) setSRN(platform string) {
 	}
 }
 
+// UpdateDedicatedPoolRequest: update dedicated pool request.
+type UpdateDedicatedPoolRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// DedicatedPoolID: ID of the Dedicated Pool to update.
+	DedicatedPoolID string `json:"-"`
+
+	// Name: new name for the Dedicated Pool.
+	Name *string `json:"name,omitempty"`
+
+	// Tags: new tags for the Dedicated Pool.
+	Tags *[]string `json:"tags,omitempty"`
+}
+
 // UpdatePlacementGroupRequest: update placement group request.
 type UpdatePlacementGroupRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
@@ -3690,6 +3945,9 @@ type UpdateServerRequest struct {
 
 	// PlacementGroupID: new placement group ID.
 	PlacementGroupID *string `json:"placement_group_id,omitempty"`
+
+	// DedicatedPoolID: new Dedicated Pool ID.
+	DedicatedPoolID *string `json:"dedicated_pool_id,omitempty"`
 
 	// RescueMode: new rescue mode setting.
 	RescueMode *bool `json:"rescue_mode,omitempty"`
@@ -4085,6 +4343,7 @@ func (s *API) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*
 	parameter.AddToQuery(query, "tags", req.Tags)
 	parameter.AddToQuery(query, "security_group_ids", req.SecurityGroupIDs)
 	parameter.AddToQuery(query, "placement_group_ids", req.PlacementGroupIDs)
+	parameter.AddToQuery(query, "dedicated_pool_ids", req.DedicatedPoolIDs)
 	parameter.AddToQuery(query, "private_network_ids", req.PrivateNetworkIDs)
 	parameter.AddToQuery(query, "mac_addresses", req.MacAddresses)
 
@@ -6407,6 +6666,158 @@ func (s *API) CreateServerFromTemplate(req *CreateServerFromTemplateRequest, opt
 	apiMetadata, err := s.client.GetAPIMetadata()
 	if err == nil {
 		resp.setSRN(apiMetadata.Domain)
+	}
+	return &resp, nil
+}
+
+// ListDedicatedPools: List Dedicated Pools for an organization.
+func (s *API) ListDedicatedPools(req *ListDedicatedPoolsRequest, opts ...scw.RequestOption) (*ListDedicatedPoolsResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page_token", req.PageToken)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/instance/v2alpha1/zones/" + fmt.Sprint(req.Zone) + "/dedicated-pools",
+		Query:  query,
+	}
+
+	var resp ListDedicatedPoolsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetDedicatedPool: Get detailed information about a Dedicated Pool.
+func (s *API) GetDedicatedPool(req *GetDedicatedPoolRequest, opts ...scw.RequestOption) (*DedicatedPool, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.DedicatedPoolID) == "" {
+		return nil, errors.New("field DedicatedPoolID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/instance/v2alpha1/zones/" + fmt.Sprint(req.Zone) + "/dedicated-pools/" + fmt.Sprint(req.DedicatedPoolID) + "",
+	}
+
+	var resp DedicatedPool
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UpdateDedicatedPool: Update the name and tags of a Dedicated Pool.
+func (s *API) UpdateDedicatedPool(req *UpdateDedicatedPoolRequest, opts ...scw.RequestOption) (*DedicatedPool, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.DedicatedPoolID) == "" {
+		return nil, errors.New("field DedicatedPoolID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/instance/v2alpha1/zones/" + fmt.Sprint(req.Zone) + "/dedicated-pools/" + fmt.Sprint(req.DedicatedPoolID) + "",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp DedicatedPool
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListDedicatedPoolServerTypes: List Instance types available in a Dedicated Pool and their technical details.
+func (s *API) ListDedicatedPoolServerTypes(req *ListDedicatedPoolServerTypesRequest, opts ...scw.RequestOption) (*ListDedicatedPoolServerTypesResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page_token", req.PageToken)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.DedicatedPoolID) == "" {
+		return nil, errors.New("field DedicatedPoolID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/instance/v2alpha1/zones/" + fmt.Sprint(req.Zone) + "/dedicated-pools/" + fmt.Sprint(req.DedicatedPoolID) + "/server-types",
+		Query:  query,
+	}
+
+	var resp ListDedicatedPoolServerTypesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
 	}
 	return &resp, nil
 }
