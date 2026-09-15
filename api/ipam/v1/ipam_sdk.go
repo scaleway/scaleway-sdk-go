@@ -250,6 +250,9 @@ type IP struct {
 	// ID: IP ID.
 	ID string `json:"id"`
 
+	// Srn: the SRN of the IP.
+	Srn string `json:"srn"`
+
 	// Address: iPv4 or IPv6 address in CIDR notation.
 	Address scw.IPNet `json:"address"`
 
@@ -282,9 +285,6 @@ type IP struct {
 
 	// Zone: zone of the IP, if zonal.
 	Zone *scw.Zone `json:"zone"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *IP) setSRN(platform string) {

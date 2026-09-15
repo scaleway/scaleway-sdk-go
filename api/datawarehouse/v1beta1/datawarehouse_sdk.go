@@ -330,8 +330,8 @@ type Endpoint struct {
 	// Region: region of the deployment.
 	Region scw.Region `json:"region"`
 
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
+	// Srn: the SRN of the endpoint.
+	Srn string `json:"srn"`
 }
 
 func (m *Endpoint) setSRN(platform string) {
@@ -372,8 +372,8 @@ type Database struct {
 	// Region: region of the deployment.
 	Region scw.Region `json:"region"`
 
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
+	// Srn: the SRN of the database.
+	Srn string `json:"srn"`
 }
 
 func (m *Database) setSRN(platform string) {
@@ -445,8 +445,8 @@ type Deployment struct {
 	// Region: region of the deployment.
 	Region scw.Region `json:"region"`
 
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
+	// Srn: the SRN of the deployment.
+	Srn string `json:"srn"`
 }
 
 func (m *Deployment) setSRN(platform string) {
@@ -502,8 +502,8 @@ type User struct {
 	// Region: region of the deployment.
 	Region scw.Region `json:"region"`
 
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
+	// Srn: the SRN of the user.
+	Srn string `json:"srn"`
 }
 
 func (m *User) setSRN(platform string) {

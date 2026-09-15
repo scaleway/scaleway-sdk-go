@@ -491,6 +491,9 @@ type DedicatedConnection struct {
 	// ID: unique identifier of the dedicated connection.
 	ID string `json:"id"`
 
+	// Srn: the SRN of the dedicated connection.
+	Srn string `json:"srn"`
+
 	// ProjectID: project ID.
 	ProjectID string `json:"project_id"`
 
@@ -530,9 +533,6 @@ type DedicatedConnection struct {
 
 	// Region: region of the dedicated connection.
 	Region scw.Region `json:"region"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *DedicatedConnection) setSRN(platform string) {
@@ -554,6 +554,9 @@ func (m *DedicatedConnection) setSRN(platform string) {
 type Link struct {
 	// ID: unique identifier of the link.
 	ID string `json:"id"`
+
+	// Srn: the SRN of the link.
+	Srn string `json:"srn"`
 
 	// ProjectID: project ID.
 	ProjectID string `json:"project_id"`
@@ -625,9 +628,6 @@ type Link struct {
 
 	// Region: region of the link.
 	Region scw.Region `json:"region"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *Link) setSRN(platform string) {
@@ -649,6 +649,9 @@ func (m *Link) setSRN(platform string) {
 type Partner struct {
 	// ID: unique identifier of the partner.
 	ID string `json:"id"`
+
+	// Srn: the SRN of the partner.
+	Srn string `json:"srn"`
 
 	// Name: name of the partner.
 	Name string `json:"name"`
@@ -673,9 +676,6 @@ type Partner struct {
 
 	// Region: region of the partner.
 	Region scw.Region `json:"region"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *Partner) setSRN(platform string) {
@@ -697,6 +697,9 @@ func (m *Partner) setSRN(platform string) {
 type Pop struct {
 	// ID: unique identifier of the PoP.
 	ID string `json:"id"`
+
+	// Srn: the SRN of the pop.
+	Srn string `json:"srn"`
 
 	// Name: name of the PoP. It is the common reference of Hosting DC (ex: TH2).
 	Name string `json:"name"`
@@ -721,9 +724,6 @@ type Pop struct {
 
 	// Region: region of the PoP.
 	Region scw.Region `json:"region"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *Pop) setSRN(platform string) {
@@ -745,6 +745,9 @@ func (m *Pop) setSRN(platform string) {
 type RoutingPolicy struct {
 	// ID: unique identifier of the routing policy.
 	ID string `json:"id"`
+
+	// Srn: the SRN of the routing policy.
+	Srn string `json:"srn"`
 
 	// ProjectID: project ID.
 	ProjectID string `json:"project_id"`
@@ -775,9 +778,6 @@ type RoutingPolicy struct {
 
 	// Region: region of the routing policy.
 	Region scw.Region `json:"region"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *RoutingPolicy) setSRN(platform string) {
