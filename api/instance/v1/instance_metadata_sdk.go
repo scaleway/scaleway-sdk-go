@@ -25,6 +25,8 @@ const (
 	metadataFallbackDelay = time.Second * -1
 )
 
+var ErrUnexpectedStatus = errors.New("service returned an unexpected status")
+
 // metadataHTTPClient is the default HTTP client used to reach the metadata
 // service. Both metadata addresses (IPv4 link-local 169.254.42.42 and IPv6
 // fd00:42::42) are non globally routable, so we bypass proxy resolution
@@ -144,11 +146,7 @@ func (meta *MetadataAPI) GetMetadataWithContext(ctx context.Context) (m *Metadat
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf(
-			"%w: %d",
-			errors.New("metadata service returned an unexpected status"),
-			resp.StatusCode,
-		)
+		return nil, fmt.Errorf("%w: %d", ErrUnexpectedStatus, resp.StatusCode)
 	}
 
 	metadata := &Metadata{}
