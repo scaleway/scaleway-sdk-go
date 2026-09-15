@@ -413,34 +413,53 @@ func (meta *MetadataAPI) SetUserDataWithContext(ctx context.Context, key string,
 	retries := 0
 	for retries <= metadataRetryBindPort {
 		port := rand.Intn(1024)
-		localTCPAddr, err := net.ResolveTCPAddr("tcp", ":"+strconv.Itoa(port))
+		retry, err := meta.trySetUserData(ctx, key, value, port)
 		if err != nil {
-			return errors.Wrap(err, "error resolving tcp address")
+			return err
 		}
 
-		userdataClient := newUserDataHTTPClient(localTCPAddr)
-		request, err := http.NewRequestWithContext(ctx, http.MethodPatch, meta.getMetadataURLWithContext(ctx)+"/user_data/"+key, bytes.NewBuffer(value))
-		if err != nil {
-			return errors.Wrap(err, "error creating patch userdata request")
-		}
-
-		request.Header.Set("Content-Type", "text/plain")
-
-		resp, err := userdataClient.Do(request)
-		if err != nil {
-			retries++ // retry with a different source port
+		// Retriable error
+		if retry {
+			retries++
 			continue
 		}
-		defer resp.Body.Close()
 
-		if resp.StatusCode != http.StatusOK {
-			return errors.Wrap(ErrUnexpectedStatus, "%d", resp.StatusCode)
-		}
-
+		// Success
 		return nil
 	}
 
 	return errors.New("too many bind port retries for SetUserData")
+}
+
+func (meta *MetadataAPI) trySetUserData(ctx context.Context, key string, value []byte, port int) (retry bool, err error) {
+	localTCPAddr, err := net.ResolveTCPAddr("tcp", ":"+strconv.Itoa(port))
+	if err != nil {
+		return false, errors.Wrap(err, "error resolving tcp address")
+	}
+
+	userdataClient := newUserDataHTTPClient(localTCPAddr)
+	request, err := http.NewRequestWithContext(
+		ctx, http.MethodPatch, meta.getMetadataURLWithContext(ctx)+"/user_data/"+key, bytes.NewBuffer(value),
+	)
+	if err != nil {
+		return false, errors.Wrap(err, "error creating patch userdata request")
+	}
+
+	request.Header.Set("Content-Type", "text/plain")
+
+	resp, err := userdataClient.Do(request)
+	if err != nil {
+		// Retriable error
+		return true, nil
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return false, errors.Wrap(ErrUnexpectedStatus, "%d", resp.StatusCode)
+	}
+
+	// Success
+	return false, nil
 }
 
 // DeleteUserData deletes the userdata key and the associated value
