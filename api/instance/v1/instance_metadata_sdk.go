@@ -291,10 +291,7 @@ type Metadata struct {
 //
 //go:fix inline
 func (meta *MetadataAPI) ListUserData() (res *UserData, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), metadataTimeout)
-	defer cancel()
-
-	return meta.ListUserDataWithContext(ctx)
+	return meta.ListUserDataWithContext(context.Background())
 }
 
 // ListUserDataWithContext returns the metadata available from the server
@@ -344,10 +341,7 @@ func (meta *MetadataAPI) ListUserDataWithContext(ctx context.Context) (res *User
 //
 //go:fix inline
 func (meta *MetadataAPI) GetUserData(key string) ([]byte, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), metadataTimeout)
-	defer cancel()
-
-	return meta.GetUserDataWithContext(ctx, key)
+	return meta.GetUserDataWithContext(context.Background(), key)
 }
 
 // GetUserDataWithContext returns the value for the given metadata key
@@ -400,10 +394,7 @@ func (meta *MetadataAPI) GetUserDataWithContext(ctx context.Context, key string)
 //
 //go:fix inline
 func (meta *MetadataAPI) SetUserData(key string, value []byte) error {
-	ctx, cancel := context.WithTimeout(context.Background(), metadataTimeout)
-	defer cancel()
-
-	return meta.SetUserDataWithContext(ctx, key, value)
+	return meta.SetUserDataWithContext(context.Background(), key, value)
 }
 
 // SetUserDataWithContext sets the userdata key with the given value
@@ -447,10 +438,7 @@ func (meta *MetadataAPI) SetUserDataWithContext(ctx context.Context, key string,
 //
 //go:fix inline
 func (meta *MetadataAPI) DeleteUserData(key string) error {
-	ctx, cancel := context.WithTimeout(context.Background(), metadataTimeout)
-	defer cancel()
-
-	return meta.DeleteUserDataWithContext(ctx, key)
+	return meta.DeleteUserDataWithContext(context.Background(), key)
 }
 
 // DeleteUserDataWithContext deletes the userdata key and the associated value
