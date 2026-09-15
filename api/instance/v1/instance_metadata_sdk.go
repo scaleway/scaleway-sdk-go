@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"math/rand"
 	"net"
@@ -146,7 +145,7 @@ func (meta *MetadataAPI) GetMetadataWithContext(ctx context.Context) (m *Metadat
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("%w: %d", ErrUnexpectedStatus, resp.StatusCode)
+		return nil, errors.Wrap(ErrUnexpectedStatus, "%d", resp.StatusCode)
 	}
 
 	metadata := &Metadata{}
@@ -324,7 +323,7 @@ func (meta *MetadataAPI) ListUserDataWithContext(ctx context.Context) (res *User
 		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusOK {
-			return nil, fmt.Errorf("%w: %d", ErrUnexpectedStatus, resp.StatusCode)
+			return nil, errors.Wrap(ErrUnexpectedStatus, "%d", resp.StatusCode)
 		}
 
 		userdata := &UserData{}
@@ -382,7 +381,7 @@ func (meta *MetadataAPI) GetUserDataWithContext(ctx context.Context, key string)
 		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusOK {
-			return nil, fmt.Errorf("%w: %d", ErrUnexpectedStatus, resp.StatusCode)
+			return nil, errors.Wrap(ErrUnexpectedStatus, "%d", resp.StatusCode)
 		}
 
 		body, err := io.ReadAll(resp.Body)
@@ -435,7 +434,7 @@ func (meta *MetadataAPI) SetUserDataWithContext(ctx context.Context, key string,
 		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusOK {
-			return fmt.Errorf("%w: %d", ErrUnexpectedStatus, resp.StatusCode)
+			return errors.Wrap(ErrUnexpectedStatus, "%d", resp.StatusCode)
 		}
 
 		return nil
@@ -486,7 +485,7 @@ func (meta *MetadataAPI) DeleteUserDataWithContext(ctx context.Context, key stri
 		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusOK {
-			return fmt.Errorf("%w: %d", ErrUnexpectedStatus, resp.StatusCode)
+			return errors.Wrap(ErrUnexpectedStatus, "%d", resp.StatusCode)
 		}
 
 		return nil
