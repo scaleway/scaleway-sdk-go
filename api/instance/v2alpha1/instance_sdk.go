@@ -1491,6 +1491,8 @@ type ServerIP struct {
 	Status ServerIPStatus `json:"status"`
 
 	Default bool `json:"default"`
+
+	ProvisionedAddress scw.IPNet `json:"provisioned_address"`
 }
 
 // CreateTemplateRequestPrivateNetworkTemplate: create template request private network template.
