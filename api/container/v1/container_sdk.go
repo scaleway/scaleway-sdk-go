@@ -1020,6 +1020,9 @@ type Container struct {
 	// PrivateEndpoint: this endpoint is accessible from the Private Network the container is connected to, and can be used to access the container from other resources in the same Private Network.
 	PrivateEndpoint *string `json:"private_endpoint"`
 
+	// DefaultPublicEndpointEnabled: whether default public endpoint is enabled or not.
+	DefaultPublicEndpointEnabled bool `json:"default_public_endpoint_enabled"`
+
 	// Region: region in which the container exists.
 	Region scw.Region `json:"region"`
 }
