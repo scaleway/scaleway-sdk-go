@@ -1595,7 +1595,7 @@ type SecurityGroupRuleConfig struct {
 	// DestinationPorts: destination port range for the rule.
 	DestinationPorts *SecurityGroupRulePortRange `json:"destination_ports"`
 
-	// Position: position of the rule in the list.
+	// Position: position of this rule in the rule list, starting at 1.
 	Position int32 `json:"position"`
 }
 
