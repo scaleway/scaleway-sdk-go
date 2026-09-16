@@ -3031,6 +3031,46 @@ func (r *ListSecurityGroupsResponse) UnsafeAppend(res any) (uint64, error) {
 	return uint64(len(results.SecurityGroups)), nil
 }
 
+// ListServerCompatibleTypesRequest: list server compatible types request.
+type ListServerCompatibleTypesRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	ServerID string `json:"-"`
+
+	PageToken *string `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+}
+
+// ListServerCompatibleTypesResponse: list server compatible types response.
+type ListServerCompatibleTypesResponse struct {
+	ServerTypes []*ServerType `json:"server_types"`
+
+	NextPageToken *string `json:"next_page_token"`
+
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListServerCompatibleTypesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListServerCompatibleTypesResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListServerCompatibleTypesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.ServerTypes = append(r.ServerTypes, results.ServerTypes...)
+	r.TotalCount += uint64(len(results.ServerTypes))
+	return uint64(len(results.ServerTypes)), nil
+}
+
 // ListServerTypesRequest: list server types request.
 type ListServerTypesRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
@@ -4568,6 +4608,47 @@ func (s *API) DeleteServer(req *DeleteServerRequest, opts ...scw.RequestOption) 
 		return err
 	}
 	return nil
+}
+
+// ListServerCompatibleTypes:
+func (s *API) ListServerCompatibleTypes(req *ListServerCompatibleTypesRequest, opts ...scw.RequestOption) (*ListServerCompatibleTypesResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page_token", req.PageToken)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ServerID) == "" {
+		return nil, errors.New("field ServerID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/instance/v2alpha1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerID) + "/compatible-types",
+		Query:  query,
+	}
+
+	var resp ListServerCompatibleTypesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 // ListServerTypes: List available Instance types and their technical details.
