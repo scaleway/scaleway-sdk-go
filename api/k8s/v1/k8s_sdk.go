@@ -358,6 +358,45 @@ func (enum *CoreV1TaintEffect) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type GetClusterKubeConfigRequestEndpoint string
+
+const (
+	GetClusterKubeConfigRequestEndpointUnknownEndpoint = GetClusterKubeConfigRequestEndpoint("unknown_endpoint")
+	GetClusterKubeConfigRequestEndpointPublic          = GetClusterKubeConfigRequestEndpoint("public")
+	GetClusterKubeConfigRequestEndpointVpc             = GetClusterKubeConfigRequestEndpoint("vpc")
+)
+
+func (enum GetClusterKubeConfigRequestEndpoint) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(GetClusterKubeConfigRequestEndpointUnknownEndpoint)
+	}
+	return string(enum)
+}
+
+func (enum GetClusterKubeConfigRequestEndpoint) Values() []GetClusterKubeConfigRequestEndpoint {
+	return []GetClusterKubeConfigRequestEndpoint{
+		"unknown_endpoint",
+		"public",
+		"vpc",
+	}
+}
+
+func (enum GetClusterKubeConfigRequestEndpoint) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *GetClusterKubeConfigRequestEndpoint) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = GetClusterKubeConfigRequestEndpoint(GetClusterKubeConfigRequestEndpoint(tmp).String())
+	return nil
+}
+
 type ListClustersRequestOrderBy string
 
 const (
@@ -1834,7 +1873,11 @@ type GetClusterKubeConfigRequest struct {
 	ClusterID string `json:"-"`
 
 	// Redacted: hide the legacy token from the kubeconfig.
-	Redacted *bool `json:"redacted,omitempty"`
+	Redacted *bool `json:"-"`
+
+	// Endpoint: which endpoint to use to reach the APIServer (default: public).
+	// Default value: unknown_endpoint
+	Endpoint GetClusterKubeConfigRequestEndpoint `json:"-"`
 }
 
 // GetClusterRequest: get cluster request.
@@ -2904,6 +2947,7 @@ func (s *API) getClusterKubeConfig(req *GetClusterKubeConfigRequest, opts ...scw
 
 	query := url.Values{}
 	parameter.AddToQuery(query, "redacted", req.Redacted)
+	parameter.AddToQuery(query, "endpoint", req.Endpoint)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")

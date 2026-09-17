@@ -4610,7 +4610,7 @@ func (s *API) DeleteServer(req *DeleteServerRequest, opts ...scw.RequestOption) 
 	return nil
 }
 
-// ListServerCompatibleTypes:
+// ListServerCompatibleTypes: List the Instance types that a given instance could be converted to.
 func (s *API) ListServerCompatibleTypes(req *ListServerCompatibleTypesRequest, opts ...scw.RequestOption) (*ListServerCompatibleTypesResponse, error) {
 	var err error
 
