@@ -2456,6 +2456,30 @@ type SetEnabledCustomAlertRulesResponse struct {
 	CustomAlertRules []*CustomAlertRule `json:"custom_alert_rules"`
 }
 
+// TestCustomAlertRuleRequest: test custom alert rule request.
+type TestCustomAlertRuleRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// OrganizationID: ID of the Organization to target.
+	OrganizationID string `json:"organization_id"`
+
+	// Query: the Common Expression Language (CEL) string defining the logic for the alert rule.
+	Query string `json:"query"`
+
+	// EvaluationWindow: the duration of time over which to evaluate the rule (how far back to look for matching events).
+	EvaluationWindow *scw.Duration `json:"evaluation_window,omitempty"`
+
+	// Occurrences: the minimum number of matched occurrences required within the evaluation window to trigger the alert.
+	Occurrences uint32 `json:"occurrences"`
+}
+
+// TestCustomAlertRuleResponse: test custom alert rule response.
+type TestCustomAlertRuleResponse struct {
+	// Firing: a false return value does not mean the alert rule is incorrect, only that it is not currently firing.
+	Firing bool `json:"firing"`
+}
+
 // UpdateCustomAlertRuleRequest: update custom alert rule request.
 type UpdateCustomAlertRuleRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -3277,4 +3301,41 @@ func (s *API) DeleteCustomAlertRule(req *DeleteCustomAlertRuleRequest, opts ...s
 		return err
 	}
 	return nil
+}
+
+// TestCustomAlertRule: Test whether a custom alert rule's condition is currently satisfied, without needing to create or enable it.
+func (s *API) TestCustomAlertRule(req *TestCustomAlertRuleRequest, opts ...scw.RequestOption) (*TestCustomAlertRuleResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/audit-trail/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/test-custom-alert-rule",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp TestCustomAlertRuleResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
