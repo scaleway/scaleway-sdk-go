@@ -962,7 +962,7 @@ type ProjectAPIDeleteProjectWithResourcesRequest struct {
 	ProjectID string `json:"-"`
 
 	// ProjectName: name of the Project to delete. This is used as a safeguard confirmation.
-	ProjectName string `json:"-"`
+	ProjectName string `json:"project_name"`
 }
 
 // ProjectAPIGetProjectRequest: project api get project request.
@@ -1380,9 +1380,6 @@ func (s *ProjectAPI) DeleteProjectWithResources(req *ProjectAPIDeleteProjectWith
 		req.ProjectID = defaultProjectID
 	}
 
-	query := url.Values{}
-	parameter.AddToQuery(query, "project_name", req.ProjectName)
-
 	if fmt.Sprint(req.ProjectID) == "" {
 		return nil, errors.New("field ProjectID cannot be empty in request")
 	}
@@ -1390,7 +1387,11 @@ func (s *ProjectAPI) DeleteProjectWithResources(req *ProjectAPIDeleteProjectWith
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
 		Path:   "/account/v3/projects/" + fmt.Sprint(req.ProjectID) + "/delete-with-resources",
-		Query:  query,
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
 	}
 
 	var resp Project
