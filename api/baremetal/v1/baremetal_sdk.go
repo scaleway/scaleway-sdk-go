@@ -1478,6 +1478,9 @@ type Offer struct {
 
 	// Zone: zone in which is the offer is available.
 	Zone scw.Zone `json:"zone"`
+
+	// DualAttach: describe the network topology of the offer.
+	DualAttach *bool `json:"dual_attach"`
 }
 
 // Option: option.
