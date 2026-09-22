@@ -1628,11 +1628,6 @@ type CheckPEMChainRequestSecretChain struct {
 	SecretRegion string `json:"secret_region"`
 }
 
-// WafExclusionRules: waf exclusion rules.
-type WafExclusionRules struct {
-	Rules []*WafExclusionRule `json:"rules"`
-}
-
 // PlanDetails: plan details.
 type PlanDetails struct {
 	// PlanName: subscription plan name.
@@ -1996,7 +1991,7 @@ type CreateWafStageRequest struct {
 	ParanoiaLevel uint32 `json:"paranoia_level"`
 
 	// ExclusionRules: list of OWASP® CRS rule IDs excluded from WAF.
-	ExclusionRules *WafExclusionRules `json:"exclusion_rules,omitempty"`
+	ExclusionRules []*WafExclusionRule `json:"exclusion_rules"`
 
 	// BackendStageID: ID of the backend stage to forward requests to after the WAF stage.
 	// Precisely one of BackendStageID must be set.
@@ -3038,7 +3033,7 @@ type UpdateWafStageRequest struct {
 	ParanoiaLevel *uint32 `json:"paranoia_level,omitempty"`
 
 	// ExclusionRules: list of OWASP® CRS rule IDs excluded from WAF.
-	ExclusionRules *WafExclusionRules `json:"exclusion_rules,omitempty"`
+	ExclusionRules []*WafExclusionRule `json:"exclusion_rules"`
 
 	// BackendStageID: ID of the backend stage to forward requests to after the WAF stage.
 	// Precisely one of BackendStageID must be set.
