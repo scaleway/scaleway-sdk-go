@@ -43,7 +43,7 @@ func TestStandardErrors(t *testing.T) {
 	t.Run("quotas exceeded", func(t *testing.T) {
 		var humans []*test.Human
 
-		for i := 0; i < 10; i++ {
+		for range 10 {
 			human, err := client.CreateHuman(&test.CreateHumanRequest{})
 			testhelpers.AssertNoError(t, err)
 			humans = append(humans, human)
