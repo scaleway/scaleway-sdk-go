@@ -414,17 +414,17 @@ const (
 	// Default unspecified operator.
 	CustomAlertRuleFieldIntOperatorUnknownIntOperator = CustomAlertRuleFieldIntOperator("unknown_int_operator")
 	// Equal operator (`==`).
-	CustomAlertRuleFieldIntOperatorEqual = CustomAlertRuleFieldIntOperator("equal")
+	CustomAlertRuleFieldIntOperatorIntEqual = CustomAlertRuleFieldIntOperator("int_equal")
 	// Not equal operator (`!=`).
-	CustomAlertRuleFieldIntOperatorNotEqual = CustomAlertRuleFieldIntOperator("not_equal")
+	CustomAlertRuleFieldIntOperatorIntNotEqual = CustomAlertRuleFieldIntOperator("int_not_equal")
 	// Less than or equal operator (`<=`).
-	CustomAlertRuleFieldIntOperatorLessThanOrEqual = CustomAlertRuleFieldIntOperator("less_than_or_equal")
+	CustomAlertRuleFieldIntOperatorIntLessThanOrEqual = CustomAlertRuleFieldIntOperator("int_less_than_or_equal")
 	// Less than operator (`<`).
-	CustomAlertRuleFieldIntOperatorLessThan = CustomAlertRuleFieldIntOperator("less_than")
+	CustomAlertRuleFieldIntOperatorIntLessThan = CustomAlertRuleFieldIntOperator("int_less_than")
 	// Greater than or equal operator (`>=`).
-	CustomAlertRuleFieldIntOperatorGreaterThanOrEqual = CustomAlertRuleFieldIntOperator("greater_than_or_equal")
+	CustomAlertRuleFieldIntOperatorIntGreaterThanOrEqual = CustomAlertRuleFieldIntOperator("int_greater_than_or_equal")
 	// Greater than operator (`>`).
-	CustomAlertRuleFieldIntOperatorGreaterThan = CustomAlertRuleFieldIntOperator("greater_than")
+	CustomAlertRuleFieldIntOperatorIntGreaterThan = CustomAlertRuleFieldIntOperator("int_greater_than")
 )
 
 func (enum CustomAlertRuleFieldIntOperator) String() string {
@@ -438,12 +438,12 @@ func (enum CustomAlertRuleFieldIntOperator) String() string {
 func (enum CustomAlertRuleFieldIntOperator) Values() []CustomAlertRuleFieldIntOperator {
 	return []CustomAlertRuleFieldIntOperator{
 		"unknown_int_operator",
-		"equal",
-		"not_equal",
-		"less_than_or_equal",
-		"less_than",
-		"greater_than_or_equal",
-		"greater_than",
+		"int_equal",
+		"int_not_equal",
+		"int_less_than_or_equal",
+		"int_less_than",
+		"int_greater_than_or_equal",
+		"int_greater_than",
 	}
 }
 
@@ -467,10 +467,18 @@ type CustomAlertRuleFieldStringOperator string
 
 const (
 	CustomAlertRuleFieldStringOperatorUnknownStringOperator = CustomAlertRuleFieldStringOperator("unknown_string_operator")
-	CustomAlertRuleFieldStringOperatorContains              = CustomAlertRuleFieldStringOperator("contains")
-	CustomAlertRuleFieldStringOperatorMatches               = CustomAlertRuleFieldStringOperator("matches")
-	CustomAlertRuleFieldStringOperatorStartsWith            = CustomAlertRuleFieldStringOperator("starts_with")
-	CustomAlertRuleFieldStringOperatorEndsWith              = CustomAlertRuleFieldStringOperator("ends_with")
+	// String contains operator (`contains`).
+	CustomAlertRuleFieldStringOperatorStringContains = CustomAlertRuleFieldStringOperator("string_contains")
+	// String regex matches operator (`matches`).
+	CustomAlertRuleFieldStringOperatorStringMatches = CustomAlertRuleFieldStringOperator("string_matches")
+	// String starts with operator (`startsWith`).
+	CustomAlertRuleFieldStringOperatorStringStartsWith = CustomAlertRuleFieldStringOperator("string_starts_with")
+	// String ends with operator (`endsWith`).
+	CustomAlertRuleFieldStringOperatorStringEndsWith = CustomAlertRuleFieldStringOperator("string_ends_with")
+	// Equal operator (`==`).
+	CustomAlertRuleFieldStringOperatorStringEqual = CustomAlertRuleFieldStringOperator("string_equal")
+	// Not equal operator (`!=`).
+	CustomAlertRuleFieldStringOperatorStringNotEqual = CustomAlertRuleFieldStringOperator("string_not_equal")
 )
 
 func (enum CustomAlertRuleFieldStringOperator) String() string {
@@ -484,10 +492,12 @@ func (enum CustomAlertRuleFieldStringOperator) String() string {
 func (enum CustomAlertRuleFieldStringOperator) Values() []CustomAlertRuleFieldStringOperator {
 	return []CustomAlertRuleFieldStringOperator{
 		"unknown_string_operator",
-		"contains",
-		"matches",
-		"starts_with",
-		"ends_with",
+		"string_contains",
+		"string_matches",
+		"string_starts_with",
+		"string_ends_with",
+		"string_equal",
+		"string_not_equal",
 	}
 }
 
