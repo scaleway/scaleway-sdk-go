@@ -364,6 +364,148 @@ func (enum *AuthenticationEventResult) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// The supported CEL data types for alert rule fields.
+type CustomAlertRuleFieldFieldType string
+
+const (
+	// Unknown type.
+	CustomAlertRuleFieldFieldTypeUnknownFieldType = CustomAlertRuleFieldFieldType("unknown_field_type")
+	// Represents a CEL string type.
+	CustomAlertRuleFieldFieldTypeFieldTypeString = CustomAlertRuleFieldFieldType("field_type_string")
+	// Represents a CEL integer type.
+	CustomAlertRuleFieldFieldTypeFieldTypeInt = CustomAlertRuleFieldFieldType("field_type_int")
+)
+
+func (enum CustomAlertRuleFieldFieldType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(CustomAlertRuleFieldFieldTypeUnknownFieldType)
+	}
+	return string(enum)
+}
+
+func (enum CustomAlertRuleFieldFieldType) Values() []CustomAlertRuleFieldFieldType {
+	return []CustomAlertRuleFieldFieldType{
+		"unknown_field_type",
+		"field_type_string",
+		"field_type_int",
+	}
+}
+
+func (enum CustomAlertRuleFieldFieldType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *CustomAlertRuleFieldFieldType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = CustomAlertRuleFieldFieldType(CustomAlertRuleFieldFieldType(tmp).String())
+	return nil
+}
+
+// The supported int CEL operators for alert rule fields.
+type CustomAlertRuleFieldIntOperator string
+
+const (
+	// Default unspecified operator.
+	CustomAlertRuleFieldIntOperatorUnknownIntOperator = CustomAlertRuleFieldIntOperator("unknown_int_operator")
+	// Equal operator (`==`).
+	CustomAlertRuleFieldIntOperatorEqual = CustomAlertRuleFieldIntOperator("equal")
+	// Not equal operator (`!=`).
+	CustomAlertRuleFieldIntOperatorNotEqual = CustomAlertRuleFieldIntOperator("not_equal")
+	// Less than or equal operator (`<=`).
+	CustomAlertRuleFieldIntOperatorLessThanOrEqual = CustomAlertRuleFieldIntOperator("less_than_or_equal")
+	// Less than operator (`<`).
+	CustomAlertRuleFieldIntOperatorLessThan = CustomAlertRuleFieldIntOperator("less_than")
+	// Greater than or equal operator (`>=`).
+	CustomAlertRuleFieldIntOperatorGreaterThanOrEqual = CustomAlertRuleFieldIntOperator("greater_than_or_equal")
+	// Greater than operator (`>`).
+	CustomAlertRuleFieldIntOperatorGreaterThan = CustomAlertRuleFieldIntOperator("greater_than")
+)
+
+func (enum CustomAlertRuleFieldIntOperator) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(CustomAlertRuleFieldIntOperatorUnknownIntOperator)
+	}
+	return string(enum)
+}
+
+func (enum CustomAlertRuleFieldIntOperator) Values() []CustomAlertRuleFieldIntOperator {
+	return []CustomAlertRuleFieldIntOperator{
+		"unknown_int_operator",
+		"equal",
+		"not_equal",
+		"less_than_or_equal",
+		"less_than",
+		"greater_than_or_equal",
+		"greater_than",
+	}
+}
+
+func (enum CustomAlertRuleFieldIntOperator) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *CustomAlertRuleFieldIntOperator) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = CustomAlertRuleFieldIntOperator(CustomAlertRuleFieldIntOperator(tmp).String())
+	return nil
+}
+
+// The supported string CEL operators for alert rule fields.
+type CustomAlertRuleFieldStringOperator string
+
+const (
+	CustomAlertRuleFieldStringOperatorUnknownStringOperator = CustomAlertRuleFieldStringOperator("unknown_string_operator")
+	CustomAlertRuleFieldStringOperatorContains              = CustomAlertRuleFieldStringOperator("contains")
+	CustomAlertRuleFieldStringOperatorMatches               = CustomAlertRuleFieldStringOperator("matches")
+	CustomAlertRuleFieldStringOperatorStartsWith            = CustomAlertRuleFieldStringOperator("starts_with")
+	CustomAlertRuleFieldStringOperatorEndsWith              = CustomAlertRuleFieldStringOperator("ends_with")
+)
+
+func (enum CustomAlertRuleFieldStringOperator) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(CustomAlertRuleFieldStringOperatorUnknownStringOperator)
+	}
+	return string(enum)
+}
+
+func (enum CustomAlertRuleFieldStringOperator) Values() []CustomAlertRuleFieldStringOperator {
+	return []CustomAlertRuleFieldStringOperator{
+		"unknown_string_operator",
+		"contains",
+		"matches",
+		"starts_with",
+		"ends_with",
+	}
+}
+
+func (enum CustomAlertRuleFieldStringOperator) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *CustomAlertRuleFieldStringOperator) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = CustomAlertRuleFieldStringOperator(CustomAlertRuleFieldStringOperator(tmp).String())
+	return nil
+}
+
 type CustomAlertRuleSeverity string
 
 const (
@@ -1855,6 +1997,16 @@ type ProductService struct {
 	Methods []string `json:"methods"`
 }
 
+// CustomAlertRuleFieldIntOperators: custom alert rule field int operators.
+type CustomAlertRuleFieldIntOperators struct {
+	Operators []CustomAlertRuleFieldIntOperator `json:"operators"`
+}
+
+// CustomAlertRuleFieldStringOperators: custom alert rule field string operators.
+type CustomAlertRuleFieldStringOperators struct {
+	Operators []CustomAlertRuleFieldStringOperator `json:"operators"`
+}
+
 // AlertRule: alert rule.
 type AlertRule struct {
 	// ID: ID of the alert rule.
@@ -1956,6 +2108,24 @@ type Product struct {
 
 	// Services: specifies the API versions of the products integrated with Audit Trail. Each version defines the methods logged by Audit Trail.
 	Services []*ProductService `json:"services"`
+}
+
+// CustomAlertRuleField: custom alert rule field.
+type CustomAlertRuleField struct {
+	// Name: the field name to be used in the CEL expression (e.g., `productName`, `status`).
+	Name string `json:"name"`
+
+	// Type: the expected data type of the field within the CEL environment.
+	// Default value: unknown_field_type
+	Type CustomAlertRuleFieldFieldType `json:"type"`
+
+	// StringOperators: a list of string CEL operators that are supported and valid for this field.
+	// Precisely one of StringOperators, IntOperators must be set.
+	StringOperators *CustomAlertRuleFieldStringOperators `json:"string_operators,omitempty"`
+
+	// IntOperators: a list of int CEL operators that are supported and valid for this field.
+	// Precisely one of StringOperators, IntOperators must be set.
+	IntOperators *CustomAlertRuleFieldIntOperators `json:"int_operators,omitempty"`
 }
 
 // CreateCustomAlertRuleRequest: create custom alert rule request.
@@ -2432,6 +2602,43 @@ type ListSystemEventsResponse struct {
 
 	// NextPageToken: page token to use in following calls to keep listing.
 	NextPageToken *string `json:"next_page_token"`
+}
+
+// RetrieveAvailableFieldsForCustomAlertRulesRequest: retrieve available fields for custom alert rules request.
+type RetrieveAvailableFieldsForCustomAlertRulesRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// OrganizationID: region to target. If none is passed will use default region from the config.
+	OrganizationID string `json:"organization_id"`
+}
+
+// RetrieveAvailableFieldsForCustomAlertRulesResponse: retrieve available fields for custom alert rules response.
+type RetrieveAvailableFieldsForCustomAlertRulesResponse struct {
+	// Fields: a list of fields that are authorized to be used in a CEL expression.
+	Fields []*CustomAlertRuleField `json:"fields"`
+
+	// TotalCount: number of fields.
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *RetrieveAvailableFieldsForCustomAlertRulesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *RetrieveAvailableFieldsForCustomAlertRulesResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*RetrieveAvailableFieldsForCustomAlertRulesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Fields = append(r.Fields, results.Fields...)
+	r.TotalCount += uint64(len(results.Fields))
+	return uint64(len(results.Fields)), nil
 }
 
 // SetEnabledAlertRulesRequest: set enabled alert rules request.
@@ -3346,6 +3553,42 @@ func (s *API) TestCustomAlertRule(req *TestCustomAlertRuleRequest, opts ...scw.R
 	}
 
 	var resp TestCustomAlertRuleResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// RetrieveAvailableFieldsForCustomAlertRules: Retrieve all available fields that can be used to construct Common Expression Language (CEL) queries for custom alert rules.
+func (s *API) RetrieveAvailableFieldsForCustomAlertRules(req *RetrieveAvailableFieldsForCustomAlertRulesRequest, opts ...scw.RequestOption) (*RetrieveAvailableFieldsForCustomAlertRulesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/audit-trail/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/custom-alert-rule-fields",
+		Query:  query,
+	}
+
+	var resp RetrieveAvailableFieldsForCustomAlertRulesResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
