@@ -797,6 +797,9 @@ type Server struct {
 	// Zone: zone of the server.
 	Zone scw.Zone `json:"zone"`
 
+	// Srn: sRN of the server.
+	Srn string `json:"srn"`
+
 	// Delivered: set to true once the server has completed its provisioning steps and is ready to use. Some OS configurations might require a reinstallation of the server before delivery depending on the available stock. A reinstallation after the initial delivery will not change this flag and can be tracked using the server status.
 	Delivered bool `json:"delivered"`
 
@@ -823,6 +826,21 @@ type Server struct {
 	KextEnabled bool `json:"kext_enabled"`
 }
 
+func (m *Server) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://apple-silicon.%s/zones/%s/servers/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+		return
+	}
+}
+
 // ConnectivityDiagnosticServerHealth: connectivity diagnostic server health.
 type ConnectivityDiagnosticServerHealth struct {
 	LastCheckinDate *time.Time `json:"last_checkin_date"`
@@ -845,14 +863,39 @@ type AppliedRunnerConfigurations struct {
 
 // Runner: runner.
 type Runner struct {
+	// ID: UUID of the runner.
 	ID string `json:"id"`
 
+	// Configuration: configuration of the runner.
 	Configuration *RunnerConfigurationV2 `json:"configuration"`
 
-	// Status: default value: unknown_status
+	// Status: status of the runner.
+	// Default value: unknown_status
 	Status RunnerStatus `json:"status"`
 
+	// ErrorMessage: error message of the runner (if any).
 	ErrorMessage string `json:"error_message"`
+
+	// Zone: zone of the runner.
+	Zone scw.Zone `json:"zone"`
+
+	// Srn: sRN of the runner.
+	Srn string `json:"srn"`
+}
+
+func (m *Runner) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://apple-silicon.%s/zones/%s/runners/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // ServerPrivateNetwork: server private network.
@@ -977,6 +1020,26 @@ type ConnectivityDiagnostic struct {
 	SupportedActions []ConnectivityDiagnosticActionType `json:"supported_actions"`
 
 	ErrorMessage string `json:"error_message"`
+
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"zone"`
+
+	Srn string `json:"srn"`
+}
+
+func (m *ConnectivityDiagnostic) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://apple-silicon.%s/zones/%s/connectivity-diagnostics/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // CreateRunnerRequest: create runner request.
@@ -1570,6 +1633,10 @@ func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) 
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1646,6 +1713,12 @@ func (s *API) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Servers {
+			el.setSRN(apiMetadata.Domain)
+		}
 	}
 	return &resp, nil
 }
@@ -1748,6 +1821,10 @@ func (s *API) GetServer(req *GetServerRequest, opts ...scw.RequestOption) (*Serv
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1837,6 +1914,10 @@ func (s *API) UpdateServer(req *UpdateServerRequest, opts ...scw.RequestOption) 
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1902,6 +1983,10 @@ func (s *API) RebootServer(req *RebootServerRequest, opts ...scw.RequestOption) 
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1937,6 +2022,10 @@ func (s *API) ReinstallServer(req *ReinstallServerRequest, opts ...scw.RequestOp
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2001,6 +2090,10 @@ func (s *API) GetConnectivityDiagnostic(req *GetConnectivityDiagnosticRequest, o
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -2038,6 +2131,10 @@ func (s *API) CreateRunner(req *CreateRunnerRequest, opts ...scw.RequestOption) 
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -2068,6 +2165,10 @@ func (s *API) GetRunner(req *GetRunnerRequest, opts ...scw.RequestOption) (*Runn
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2156,6 +2257,12 @@ func (s *API) ListRunners(req *ListRunnersRequest, opts ...scw.RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Runners {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -2191,6 +2298,10 @@ func (s *API) UpdateRunner(req *UpdateRunnerRequest, opts ...scw.RequestOption) 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
