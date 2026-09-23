@@ -567,6 +567,7 @@ const (
 	ListKeysRequestUsageSymmetricEncryption  = ListKeysRequestUsage("symmetric_encryption")
 	ListKeysRequestUsageAsymmetricEncryption = ListKeysRequestUsage("asymmetric_encryption")
 	ListKeysRequestUsageAsymmetricSigning    = ListKeysRequestUsage("asymmetric_signing")
+	ListKeysRequestUsageKeyEncapsulation     = ListKeysRequestUsage("key_encapsulation")
 )
 
 func (enum ListKeysRequestUsage) String() string {
@@ -583,6 +584,7 @@ func (enum ListKeysRequestUsage) Values() []ListKeysRequestUsage {
 		"symmetric_encryption",
 		"asymmetric_encryption",
 		"asymmetric_signing",
+		"key_encapsulation",
 	}
 }
 
@@ -1025,7 +1027,7 @@ type ListKeysRequest struct {
 	// Name: (Optional) Filter by key name.
 	Name *string `json:"-"`
 
-	// Usage: select from symmetric encryption, asymmetric encryption, or asymmetric signing.
+	// Usage: select from symmetric encryption, asymmetric encryption, asymmetric signing or key_encapsulation.
 	// Default value: unknown_usage
 	Usage ListKeysRequestUsage `json:"-"`
 
