@@ -41,16 +41,11 @@ func cassetteRequestFilter(i *cassette.Interaction) error {
 
 	// URL substitutions
 	i.Request.URL = regexp.MustCompile(`(.+)organization_id=[0-9a-f-]{36}(.+)`).
-		ReplaceAllString(i.Request.URL,
-			"${1}organization_id=11111111-1111-1111-1111-111111111111${2}")
+		ReplaceAllString(i.Request.URL, "${1}organization_id=11111111-1111-1111-1111-111111111111${2}")
 	i.Request.URL = regexp.MustCompile(`^https://api\.scaleway\.com/account/v1/tokens/[0-9a-f-]{36}$`).
-		ReplaceAllString(
-			i.Request.URL,
-			"api.scaleway.com/account/v1/tokens/11111111-1111-1111-1111-111111111111")
+		ReplaceAllString(i.Request.URL, "api.scaleway.com/account/v1/tokens/11111111-1111-1111-1111-111111111111")
 	i.Request.URL = regexp.MustCompile(`(.+)?SCW[0-9A-Z]{17}(.+)?`).
-		ReplaceAllString(
-			i.Request.URL,
-			"${1}SCWXXXXXXXXXXXXXXXXX${2}")
+		ReplaceAllString(i.Request.URL, "${1}SCWXXXXXXXXXXXXXXXXX${2}")
 
 	// Buildpacks
 	i.Request.URL = regexp.MustCompile(`pack\.local%2Fbuilder%2F[0-9a-f]{20}`).
@@ -59,6 +54,15 @@ func cassetteRequestFilter(i *cassette.Interaction) error {
 		ReplaceAllString(i.Request.URL, "pack.local/builder/11111111111111111111")
 	i.Request.Body = regexp.MustCompile(`pack\.local/builder/[0-9a-f]{20}`).
 		ReplaceAllString(i.Request.Body, "pack.local/builder/11111111111111111111")
+
+	for _, vs := range i.Request.Form {
+		for idx, v := range vs {
+			vs[idx] = regexp.MustCompile(`(.+)organization_id=[0-9a-f-]{36}(.+)`).
+				ReplaceAllString(v, "${1}organization_id=11111111-1111-1111-1111-111111111111${2}")
+			vs[idx] = regexp.MustCompile(`(.+)?SCW[0-9A-Z]{17}(.+)?`).
+				ReplaceAllString(v, "${1}SCWXXXXXXXXXXXXXXXXX${2}")
+		}
+	}
 
 	return nil
 }
@@ -75,6 +79,10 @@ func cassetteResponseFilter(i *cassette.Interaction) error {
 	// Buildpacks
 	i.Response.Body = regexp.MustCompile(`pack\.local/builder/[0-9a-f]{20}`).
 		ReplaceAllString(i.Response.Body, "pack.local/builder/11111111111111111111")
+
+	// Some interactions like the instance snapshot download have API keys in their responses.
+	i.Response.Body = regexp.MustCompile(`(.+)?SCW[0-9A-Z]{17}(.+)?`).
+		ReplaceAllString(i.Response.Body, "${1}SCWXXXXXXXXXXXXXXXXX${2}")
 
 	return nil
 }
