@@ -21,6 +21,7 @@ var BodyMatcherIgnore = []string{
 	// Request related fields
 	"name",       // generated names will change every time
 	"expires_at", // is relative to the moment the cassette is replayed
+	"password",   // generated passwords will change every time
 	// MNQ related fields
 	"mnq_project_id",
 	"mnq_region",
