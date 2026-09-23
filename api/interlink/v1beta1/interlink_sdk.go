@@ -12,7 +12,6 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-	"text/template"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
@@ -492,6 +491,9 @@ type DedicatedConnection struct {
 	// ID: unique identifier of the dedicated connection.
 	ID string `json:"id"`
 
+	// Srn: the SRN of the dedicated connection.
+	Srn string `json:"srn"`
+
 	// ProjectID: project ID.
 	ProjectID string `json:"project_id"`
 
@@ -531,9 +533,6 @@ type DedicatedConnection struct {
 
 	// Region: region of the dedicated connection.
 	Region scw.Region `json:"region"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *DedicatedConnection) setSRN(platform string) {
@@ -541,37 +540,23 @@ func (m *DedicatedConnection) setSRN(platform string) {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		DedicatedConnection
-		Platform string
-	}{
-		DedicatedConnection: *m,
-		Platform:            platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://interlink.{{ notempty .Platform }}/regions/{{ notempty .Region }}/dedicated-connections/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://interlink.%s/regions/%s/dedicated-connections/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Link: link.
 type Link struct {
 	// ID: unique identifier of the link.
 	ID string `json:"id"`
+
+	// Srn: the SRN of the link.
+	Srn string `json:"srn"`
 
 	// ProjectID: project ID.
 	ProjectID string `json:"project_id"`
@@ -643,9 +628,6 @@ type Link struct {
 
 	// Region: region of the link.
 	Region scw.Region `json:"region"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *Link) setSRN(platform string) {
@@ -653,37 +635,23 @@ func (m *Link) setSRN(platform string) {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		Link
-		Platform string
-	}{
-		Link:     *m,
-		Platform: platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://interlink.{{ notempty .Platform }}/regions/{{ notempty .Region }}/links/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://interlink.%s/regions/%s/links/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Partner: partner.
 type Partner struct {
 	// ID: unique identifier of the partner.
 	ID string `json:"id"`
+
+	// Srn: the SRN of the partner.
+	Srn string `json:"srn"`
 
 	// Name: name of the partner.
 	Name string `json:"name"`
@@ -708,9 +676,6 @@ type Partner struct {
 
 	// Region: region of the partner.
 	Region scw.Region `json:"region"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *Partner) setSRN(platform string) {
@@ -718,37 +683,23 @@ func (m *Partner) setSRN(platform string) {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		Partner
-		Platform string
-	}{
-		Partner:  *m,
-		Platform: platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://interlink.{{ notempty .Platform }}/regions/{{ notempty .Region }}/partners/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://interlink.%s/regions/%s/partners/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Pop: pop.
 type Pop struct {
 	// ID: unique identifier of the PoP.
 	ID string `json:"id"`
+
+	// Srn: the SRN of the pop.
+	Srn string `json:"srn"`
 
 	// Name: name of the PoP. It is the common reference of Hosting DC (ex: TH2).
 	Name string `json:"name"`
@@ -773,9 +724,6 @@ type Pop struct {
 
 	// Region: region of the PoP.
 	Region scw.Region `json:"region"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *Pop) setSRN(platform string) {
@@ -783,37 +731,23 @@ func (m *Pop) setSRN(platform string) {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		Pop
-		Platform string
-	}{
-		Pop:      *m,
-		Platform: platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://interlink.{{ notempty .Platform }}/regions/{{ notempty .Region }}/pops/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://interlink.%s/regions/%s/pops/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // RoutingPolicy: routing policy.
 type RoutingPolicy struct {
 	// ID: unique identifier of the routing policy.
 	ID string `json:"id"`
+
+	// Srn: the SRN of the routing policy.
+	Srn string `json:"srn"`
 
 	// ProjectID: project ID.
 	ProjectID string `json:"project_id"`
@@ -844,9 +778,6 @@ type RoutingPolicy struct {
 
 	// Region: region of the routing policy.
 	Region scw.Region `json:"region"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *RoutingPolicy) setSRN(platform string) {
@@ -854,31 +785,14 @@ func (m *RoutingPolicy) setSRN(platform string) {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		RoutingPolicy
-		Platform string
-	}{
-		RoutingPolicy: *m,
-		Platform:      platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://interlink.{{ notempty .Platform }}/regions/{{ notempty .Region }}/routing-policies/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://interlink.%s/regions/%s/routing-policies/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // AttachRoutingPolicyRequest: attach routing policy request.

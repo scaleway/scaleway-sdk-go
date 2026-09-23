@@ -12,7 +12,6 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-	"text/template"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
@@ -88,8 +87,6 @@ const (
 	KeyAlgorithmAsymmetricEncryptionRsaOaep3072Sha256 = KeyAlgorithmAsymmetricEncryption("rsa_oaep_3072_sha256")
 	// RSA-OAEP (Optimal Asymmetric Encryption Padding) with a 4096-bit key and SHA-256 hash function.
 	KeyAlgorithmAsymmetricEncryptionRsaOaep4096Sha256 = KeyAlgorithmAsymmetricEncryption("rsa_oaep_4096_sha256")
-	KeyAlgorithmAsymmetricEncryptionMlKem768          = KeyAlgorithmAsymmetricEncryption("ml_kem_768")
-	KeyAlgorithmAsymmetricEncryptionMlKem1024         = KeyAlgorithmAsymmetricEncryption("ml_kem_1024")
 )
 
 func (enum KeyAlgorithmAsymmetricEncryption) String() string {
@@ -106,8 +103,6 @@ func (enum KeyAlgorithmAsymmetricEncryption) Values() []KeyAlgorithmAsymmetricEn
 		"rsa_oaep_2048_sha256",
 		"rsa_oaep_3072_sha256",
 		"rsa_oaep_4096_sha256",
-		"ml_kem_768",
-		"ml_kem_1024",
 	}
 }
 
@@ -151,7 +146,8 @@ const (
 	// ML-DSA (Module-Lattice Digital Signature Algorithm) FIPS 204 post-quantum signature scheme with security category 3.
 	KeyAlgorithmAsymmetricSigningMlDsa65 = KeyAlgorithmAsymmetricSigning("ml_dsa_65")
 	// ML-DSA (Module-Lattice Digital Signature Algorithm) FIPS 204 post-quantum signature scheme with security category 5.
-	KeyAlgorithmAsymmetricSigningMlDsa87 = KeyAlgorithmAsymmetricSigning("ml_dsa_87")
+	KeyAlgorithmAsymmetricSigningMlDsa87           = KeyAlgorithmAsymmetricSigning("ml_dsa_87")
+	KeyAlgorithmAsymmetricSigningEcSecp256k1Sha256 = KeyAlgorithmAsymmetricSigning("ec_secp256k1_sha256")
 )
 
 func (enum KeyAlgorithmAsymmetricSigning) String() string {
@@ -176,6 +172,7 @@ func (enum KeyAlgorithmAsymmetricSigning) Values() []KeyAlgorithmAsymmetricSigni
 		"ml_dsa_44",
 		"ml_dsa_65",
 		"ml_dsa_87",
+		"ec_secp256k1_sha256",
 	}
 }
 
@@ -191,6 +188,47 @@ func (enum *KeyAlgorithmAsymmetricSigning) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = KeyAlgorithmAsymmetricSigning(KeyAlgorithmAsymmetricSigning(tmp).String())
+	return nil
+}
+
+type KeyAlgorithmKeyEncapsulation string
+
+const (
+	KeyAlgorithmKeyEncapsulationUnknownKeyEncapsulation = KeyAlgorithmKeyEncapsulation("unknown_key_encapsulation")
+	// ML-KEM (Module-Lattice Key Encapsulation Mechanism) FIPS 203 post-quantum KEM with security category 3 (recommended).
+	KeyAlgorithmKeyEncapsulationMlKem768 = KeyAlgorithmKeyEncapsulation("ml_kem_768")
+	// ML-KEM (Module-Lattice Key Encapsulation Mechanism) FIPS 203 post-quantum KEM with security category 5.
+	KeyAlgorithmKeyEncapsulationMlKem1024 = KeyAlgorithmKeyEncapsulation("ml_kem_1024")
+)
+
+func (enum KeyAlgorithmKeyEncapsulation) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(KeyAlgorithmKeyEncapsulationUnknownKeyEncapsulation)
+	}
+	return string(enum)
+}
+
+func (enum KeyAlgorithmKeyEncapsulation) Values() []KeyAlgorithmKeyEncapsulation {
+	return []KeyAlgorithmKeyEncapsulation{
+		"unknown_key_encapsulation",
+		"ml_kem_768",
+		"ml_kem_1024",
+	}
+}
+
+func (enum KeyAlgorithmKeyEncapsulation) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *KeyAlgorithmKeyEncapsulation) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = KeyAlgorithmKeyEncapsulation(KeyAlgorithmKeyEncapsulation(tmp).String())
 	return nil
 }
 
@@ -273,6 +311,84 @@ func (enum *KeyOrigin) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type KeyProtectionLevel string
+
+const (
+	KeyProtectionLevelUnknownProtectionLevel = KeyProtectionLevel("unknown_protection_level")
+	KeyProtectionLevelSoftware               = KeyProtectionLevel("software")
+	KeyProtectionLevelHsm                    = KeyProtectionLevel("hsm")
+)
+
+func (enum KeyProtectionLevel) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(KeyProtectionLevelUnknownProtectionLevel)
+	}
+	return string(enum)
+}
+
+func (enum KeyProtectionLevel) Values() []KeyProtectionLevel {
+	return []KeyProtectionLevel{
+		"unknown_protection_level",
+		"software",
+		"hsm",
+	}
+}
+
+func (enum KeyProtectionLevel) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *KeyProtectionLevel) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = KeyProtectionLevel(KeyProtectionLevel(tmp).String())
+	return nil
+}
+
+type KeyRotationStatus string
+
+const (
+	KeyRotationStatusUnknownStatus = KeyRotationStatus("unknown_status")
+	KeyRotationStatusEnabled       = KeyRotationStatus("enabled")
+	KeyRotationStatusDeleted       = KeyRotationStatus("deleted")
+)
+
+func (enum KeyRotationStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(KeyRotationStatusUnknownStatus)
+	}
+	return string(enum)
+}
+
+func (enum KeyRotationStatus) Values() []KeyRotationStatus {
+	return []KeyRotationStatus{
+		"unknown_status",
+		"enabled",
+		"deleted",
+	}
+}
+
+func (enum KeyRotationStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *KeyRotationStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = KeyRotationStatus(KeyRotationStatus(tmp).String())
+	return nil
+}
+
 type KeyState string
 
 const (
@@ -326,6 +442,7 @@ const (
 	ListAlgorithmsRequestUsageSymmetricEncryption  = ListAlgorithmsRequestUsage("symmetric_encryption")
 	ListAlgorithmsRequestUsageAsymmetricEncryption = ListAlgorithmsRequestUsage("asymmetric_encryption")
 	ListAlgorithmsRequestUsageAsymmetricSigning    = ListAlgorithmsRequestUsage("asymmetric_signing")
+	ListAlgorithmsRequestUsageKeyEncapsulation     = ListAlgorithmsRequestUsage("key_encapsulation")
 )
 
 func (enum ListAlgorithmsRequestUsage) String() string {
@@ -342,6 +459,7 @@ func (enum ListAlgorithmsRequestUsage) Values() []ListAlgorithmsRequestUsage {
 		"symmetric_encryption",
 		"asymmetric_encryption",
 		"asymmetric_signing",
+		"key_encapsulation",
 	}
 }
 
@@ -357,6 +475,43 @@ func (enum *ListAlgorithmsRequestUsage) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = ListAlgorithmsRequestUsage(ListAlgorithmsRequestUsage(tmp).String())
+	return nil
+}
+
+type ListKeyRotationsRequestOrderBy string
+
+const (
+	ListKeyRotationsRequestOrderByCreatedAtAsc  = ListKeyRotationsRequestOrderBy("created_at_asc")
+	ListKeyRotationsRequestOrderByCreatedAtDesc = ListKeyRotationsRequestOrderBy("created_at_desc")
+)
+
+func (enum ListKeyRotationsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListKeyRotationsRequestOrderByCreatedAtAsc)
+	}
+	return string(enum)
+}
+
+func (enum ListKeyRotationsRequestOrderBy) Values() []ListKeyRotationsRequestOrderBy {
+	return []ListKeyRotationsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+	}
+}
+
+func (enum ListKeyRotationsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListKeyRotationsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListKeyRotationsRequestOrderBy(ListKeyRotationsRequestOrderBy(tmp).String())
 	return nil
 }
 
@@ -459,18 +614,23 @@ type KeyRotationPolicy struct {
 type KeyUsage struct {
 	// SymmetricEncryption: see the `Key.Algorithm.SymmetricEncryption` enum for a description of values.
 	// Default value: unknown_symmetric_encryption
-	// Precisely one of SymmetricEncryption, AsymmetricEncryption, AsymmetricSigning must be set.
+	// Precisely one of SymmetricEncryption, AsymmetricEncryption, AsymmetricSigning, KeyEncapsulation must be set.
 	SymmetricEncryption *KeyAlgorithmSymmetricEncryption `json:"symmetric_encryption,omitempty"`
 
 	// AsymmetricEncryption: see the `Key.Algorithm.AsymmetricEncryption` enum for a description of values.
 	// Default value: unknown_asymmetric_encryption
-	// Precisely one of SymmetricEncryption, AsymmetricEncryption, AsymmetricSigning must be set.
+	// Precisely one of SymmetricEncryption, AsymmetricEncryption, AsymmetricSigning, KeyEncapsulation must be set.
 	AsymmetricEncryption *KeyAlgorithmAsymmetricEncryption `json:"asymmetric_encryption,omitempty"`
 
 	// AsymmetricSigning: see the `Key.Algorithm.AsymmetricSigning` enum for a description of values.
 	// Default value: unknown_asymmetric_signing
-	// Precisely one of SymmetricEncryption, AsymmetricEncryption, AsymmetricSigning must be set.
+	// Precisely one of SymmetricEncryption, AsymmetricEncryption, AsymmetricSigning, KeyEncapsulation must be set.
 	AsymmetricSigning *KeyAlgorithmAsymmetricSigning `json:"asymmetric_signing,omitempty"`
+
+	// KeyEncapsulation: see the `Key.Algorithm.KeyEncapulation` enum for a description of values.
+	// Default value: unknown_key_encapsulation
+	// Precisely one of SymmetricEncryption, AsymmetricEncryption, AsymmetricSigning, KeyEncapsulation must be set.
+	KeyEncapsulation *KeyAlgorithmKeyEncapsulation `json:"key_encapsulation,omitempty"`
 }
 
 // ListAlgorithmsResponseAlgorithm: list algorithms response algorithm.
@@ -482,10 +642,38 @@ type ListAlgorithmsResponseAlgorithm struct {
 	Recommended bool `json:"recommended"`
 }
 
+// KeyRotation: key rotation.
+type KeyRotation struct {
+	// KeyID: ID of the associated key.
+	KeyID string `json:"key_id"`
+
+	// Index: the rotation index tracks the specific version of the key material.
+	Index uint32 `json:"index"`
+
+	// Status: see the `KeyRotation.Status` enum for a description of possible values.
+	// Default value: unknown_status
+	Status KeyRotationStatus `json:"status"`
+
+	// ManuallyRotated: returns `true` if the key was rotated manually, or `false` if it was rotated automatically by a rotation policy.
+	ManuallyRotated bool `json:"manually_rotated"`
+
+	// CreatedAt: key rotation creation date.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: key rotation last modification date.
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	// DeletedAt: key rotation deletion date.
+	DeletedAt *time.Time `json:"deleted_at"`
+}
+
 // Key: key.
 type Key struct {
 	// ID: ID of the key.
 	ID string `json:"id"`
+
+	// Srn: the SRN of the key.
+	Srn string `json:"srn"`
 
 	// ProjectID: ID of the Project containing the key.
 	ProjectID string `json:"project_id"`
@@ -534,11 +722,12 @@ type Key struct {
 	// DeletionRequestedAt: returns the time at which deletion was requested.
 	DeletionRequestedAt *time.Time `json:"deletion_requested_at"`
 
+	// ProtectionLevel: refer to the `Key.ProtectionLevel` enum for a description of values.
+	// Default value: unknown_protection_level
+	ProtectionLevel KeyProtectionLevel `json:"protection_level"`
+
 	// Region: region where the key is stored.
 	Region scw.Region `json:"region"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *Key) setSRN(platform string) {
@@ -546,31 +735,14 @@ func (m *Key) setSRN(platform string) {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		Key
-		Platform string
-	}{
-		Key:      *m,
-		Platform: platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://key-manager.{{ notempty .Platform }}/regions/{{ notempty .Region }}/keys/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://key-manager.%s/regions/%s/keys/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // CreateKeyRequest: create key request.
@@ -602,6 +774,10 @@ type CreateKeyRequest struct {
 	// Origin: refer to the `Key.Origin` enum for a description of values.
 	// Default value: unknown_origin
 	Origin KeyOrigin `json:"origin"`
+
+	// ProtectionLevel: refer to the `Key.Protection` enum for a description of values.
+	// Default value: unknown_protection_level
+	ProtectionLevel KeyProtectionLevel `json:"protection_level"`
 }
 
 // DataKey: data key.
@@ -657,6 +833,9 @@ type DeleteKeyMaterialRequest struct {
 
 	// KeyID: ID of the key of which to delete the key material.
 	KeyID string `json:"-"`
+
+	// KeyRotationIndex: default to latest rotation if not set.
+	KeyRotationIndex *uint32 `json:"key_rotation_index,omitempty"`
 }
 
 // DeleteKeyRequest: delete key request.
@@ -775,6 +954,53 @@ type ListAlgorithmsResponse struct {
 	Algorithms []*ListAlgorithmsResponseAlgorithm `json:"algorithms"`
 }
 
+// ListKeyRotationsRequest: list key rotations request.
+type ListKeyRotationsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// KeyID: ID of the key to list rotations for.
+	KeyID string `json:"-"`
+
+	// OrderBy: default value: created_at_asc
+	OrderBy ListKeyRotationsRequestOrderBy `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+
+	// Status: see the `KeyRotation.Status` enum for a description of possible values.
+	Status []KeyRotationStatus `json:"-"`
+}
+
+// ListKeyRotationsResponse: list key rotations response.
+type ListKeyRotationsResponse struct {
+	// Rotations: single page of key rotations matching the requested criteria.
+	Rotations []*KeyRotation `json:"rotations"`
+
+	// TotalCount: total count of key rotations matching the requested criteria.
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListKeyRotationsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListKeyRotationsResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListKeyRotationsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Rotations = append(r.Rotations, results.Rotations...)
+	r.TotalCount += uint64(len(results.Rotations))
+	return uint64(len(results.Rotations)), nil
+}
+
 // ListKeysRequest: list keys request.
 type ListKeysRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -805,6 +1031,10 @@ type ListKeysRequest struct {
 
 	// ScheduledForDeletion: filter keys based on their deletion status. By default, only keys not scheduled for deletion are returned in the output.
 	ScheduledForDeletion bool `json:"-"`
+
+	// ProtectionLevel: select from software or hsm.
+	// Default value: unknown_protection_level
+	ProtectionLevel KeyProtectionLevel `json:"-"`
 }
 
 // ListKeysResponse: list keys response.
@@ -1398,6 +1628,7 @@ func (s *API) ListKeys(req *ListKeysRequest, opts ...scw.RequestOption) (*ListKe
 	parameter.AddToQuery(query, "name", req.Name)
 	parameter.AddToQuery(query, "usage", req.Usage)
 	parameter.AddToQuery(query, "scheduled_for_deletion", req.ScheduledForDeletion)
+	parameter.AddToQuery(query, "protection_level", req.ProtectionLevel)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -1420,6 +1651,50 @@ func (s *API) ListKeys(req *ListKeysRequest, opts ...scw.RequestOption) (*ListKe
 		for _, el := range resp.Keys {
 			el.setSRN(apiMetadata.Domain)
 		}
+	}
+	return &resp, nil
+}
+
+// ListKeyRotations: Retrieve a list of all rotations associated with a specific key.
+// The `key_id` and `region` parameters in the path are required.
+func (s *API) ListKeyRotations(req *ListKeyRotationsRequest, opts ...scw.RequestOption) (*ListKeyRotationsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "status", req.Status)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.KeyID) == "" {
+		return nil, errors.New("field KeyID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/key-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/keys/" + fmt.Sprint(req.KeyID) + "/rotations",
+		Query:  query,
+	}
+
+	var resp ListKeyRotationsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
 	}
 	return &resp, nil
 }

@@ -32,7 +32,7 @@ jobs:
         run: go run github.com/boumenot/gocover-cobertura@latest < coverage.out > coverage.xml
       - name: Upload coverage artifact
         if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-report-go
           path: coverage.xml

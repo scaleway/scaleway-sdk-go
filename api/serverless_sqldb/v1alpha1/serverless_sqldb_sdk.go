@@ -211,10 +211,43 @@ func (enum *ListDatabasesRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// Version: version.
+type Version struct {
+	// Name: major number of the PostgreSQL engine.
+	Name string `json:"name"`
+
+	// Srn: the SRN of the version.
+	Srn string `json:"srn"`
+
+	// EndOfLifeAt: date of End Of Life.
+	EndOfLifeAt *time.Time `json:"end_of_life_at"`
+
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"region"`
+}
+
+func (m *Version) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.Name) != "" {
+		m.Srn = fmt.Sprintf("srn://serverless-db.%s/regions/%s/versions/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.Name))
+		return
+	}
+}
+
 // DatabaseBackup: database backup.
 type DatabaseBackup struct {
 	// ID: UUID that uniquely identifies a Serverless SQL Database backup.
 	ID string `json:"id"`
+
+	// Srn: the SRN of the database backup.
+	Srn string `json:"srn"`
 
 	// Status: status of the Serverless SQL Database backup. One of `unknown_status` | `error` | `ready` | `locked`.
 	// Default value: unknown_status
@@ -251,10 +284,28 @@ type DatabaseBackup struct {
 	Region scw.Region `json:"region"`
 }
 
+func (m *DatabaseBackup) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://serverless-db.%s/regions/%s/backups/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
+		return
+	}
+}
+
 // Database: database.
 type Database struct {
 	// ID: UUID that uniquely identifies your Serverless SQL DB Database.
 	ID string `json:"id"`
+
+	// Srn: the SRN of the database.
+	Srn string `json:"srn"`
 
 	// Name: name of the database.
 	Name string `json:"name"`
@@ -290,8 +341,26 @@ type Database struct {
 	// Started: whether your Serverless SQL Database is running or not.
 	Started bool `json:"started"`
 
-	// EngineMajorVersion: the major version of the underlying database engine.
-	EngineMajorVersion uint32 `json:"engine_major_version"`
+	// Deprecated: EngineMajorVersion: the major version of the underlying database engine. (deprecated in favor of `version`).
+	EngineMajorVersion *uint32 `json:"engine_major_version,omitempty"`
+
+	// Version: the major version of the underlying database engine.
+	Version *Version `json:"version"`
+}
+
+func (m *Database) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://serverless-db.%s/regions/%s/databases/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // CreateDatabaseRequest: create database request.
@@ -313,6 +382,9 @@ type CreateDatabaseRequest struct {
 
 	// FromBackupID: the ID of the backup to create the database from.
 	FromBackupID *string `json:"from_backup_id,omitempty"`
+
+	// Version: the major version of the postgreSQL requested.
+	Version string `json:"version"`
 }
 
 // DeleteDatabaseRequest: delete database request.
@@ -457,6 +529,46 @@ func (r *ListDatabasesResponse) UnsafeAppend(res any) (uint64, error) {
 	return uint64(len(results.Databases)), nil
 }
 
+// ListVersionsRequest: list versions request.
+type ListVersionsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	Version *string `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+}
+
+// ListVersionsResponse: list versions response.
+type ListVersionsResponse struct {
+	// Versions: available PostgreSQL versions.
+	Versions []*Version `json:"versions"`
+
+	// TotalCount: total count of versions available.
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListVersionsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListVersionsResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListVersionsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Versions = append(r.Versions, results.Versions...)
+	r.TotalCount += uint64(len(results.Versions))
+	return uint64(len(results.Versions)), nil
+}
+
 // RestoreDatabaseFromBackupRequest: restore database from backup request.
 type RestoreDatabaseFromBackupRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -534,6 +646,10 @@ func (s *API) CreateDatabase(req *CreateDatabaseRequest, opts ...scw.RequestOpti
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -564,6 +680,10 @@ func (s *API) GetDatabase(req *GetDatabaseRequest, opts ...scw.RequestOption) (*
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -645,6 +765,10 @@ func (s *API) DeleteDatabase(req *DeleteDatabaseRequest, opts ...scw.RequestOpti
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -691,6 +815,12 @@ func (s *API) ListDatabases(req *ListDatabasesRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Databases {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -726,6 +856,10 @@ func (s *API) UpdateDatabase(req *UpdateDatabaseRequest, opts ...scw.RequestOpti
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -763,6 +897,10 @@ func (s *API) RestoreDatabaseFromBackup(req *RestoreDatabaseFromBackupRequest, o
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -793,6 +931,10 @@ func (s *API) GetDatabaseBackup(req *GetDatabaseBackupRequest, opts ...scw.Reque
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -835,6 +977,12 @@ func (s *API) ListDatabaseBackups(req *ListDatabaseBackupsRequest, opts ...scw.R
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Backups {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -870,6 +1018,54 @@ func (s *API) ExportDatabaseBackup(req *ExportDatabaseBackupRequest, opts ...scw
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
+	return &resp, nil
+}
+
+// ListVersions: List available PostgreSQL major versions.
+func (s *API) ListVersions(req *ListVersionsRequest, opts ...scw.RequestOption) (*ListVersionsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "version", req.Version)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/serverless-sqldb/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/versions",
+		Query:  query,
+	}
+
+	var resp ListVersionsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Versions {
+			el.setSRN(apiMetadata.Domain)
+		}
 	}
 	return &resp, nil
 }

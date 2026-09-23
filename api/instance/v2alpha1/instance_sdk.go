@@ -164,6 +164,47 @@ func (enum *CreateVolumeRequestVolumeType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListDedicatedPoolsRequestOrderBy string
+
+const (
+	ListDedicatedPoolsRequestOrderByCreatedAtDesc = ListDedicatedPoolsRequestOrderBy("created_at_desc")
+	ListDedicatedPoolsRequestOrderByCreatedAtAsc  = ListDedicatedPoolsRequestOrderBy("created_at_asc")
+	ListDedicatedPoolsRequestOrderByUpdatedAtDesc = ListDedicatedPoolsRequestOrderBy("updated_at_desc")
+	ListDedicatedPoolsRequestOrderByUpdatedAtAsc  = ListDedicatedPoolsRequestOrderBy("updated_at_asc")
+)
+
+func (enum ListDedicatedPoolsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListDedicatedPoolsRequestOrderByCreatedAtDesc)
+	}
+	return string(enum)
+}
+
+func (enum ListDedicatedPoolsRequestOrderBy) Values() []ListDedicatedPoolsRequestOrderBy {
+	return []ListDedicatedPoolsRequestOrderBy{
+		"created_at_desc",
+		"created_at_asc",
+		"updated_at_desc",
+		"updated_at_asc",
+	}
+}
+
+func (enum ListDedicatedPoolsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListDedicatedPoolsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListDedicatedPoolsRequestOrderBy(ListDedicatedPoolsRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListPlacementGroupsRequestOrderBy string
 
 const (
@@ -518,6 +559,12 @@ const (
 	PrivateNetworkInterfaceStatusDetaching = PrivateNetworkInterfaceStatus("detaching")
 	// Attached, detached, or when the associated security-group rules are being updated on the interface.
 	PrivateNetworkInterfaceStatusSyncing = PrivateNetworkInterfaceStatus("syncing")
+	// Interface is being deleted.
+	PrivateNetworkInterfaceStatusDeleting = PrivateNetworkInterfaceStatus("deleting")
+	// Stop the server to fix the issue.
+	PrivateNetworkInterfaceStatusDetachError = PrivateNetworkInterfaceStatus("detach_error")
+	// Stop the server to fix the issue.
+	PrivateNetworkInterfaceStatusDeleteError = PrivateNetworkInterfaceStatus("delete_error")
 )
 
 func (enum PrivateNetworkInterfaceStatus) String() string {
@@ -535,6 +582,9 @@ func (enum PrivateNetworkInterfaceStatus) Values() []PrivateNetworkInterfaceStat
 		"attaching",
 		"detaching",
 		"syncing",
+		"deleting",
+		"detach_error",
+		"delete_error",
 	}
 }
 
@@ -874,6 +924,12 @@ const (
 	ServerPrivateNetworkInterfaceStatusDetaching = ServerPrivateNetworkInterfaceStatus("detaching")
 	// The associated security-group rules are being updated on the interface.
 	ServerPrivateNetworkInterfaceStatusSyncing = ServerPrivateNetworkInterfaceStatus("syncing")
+	// Interface is being deleted.
+	ServerPrivateNetworkInterfaceStatusDeleting = ServerPrivateNetworkInterfaceStatus("deleting")
+	// Stop the server to fix the issue.
+	ServerPrivateNetworkInterfaceStatusDetachError = ServerPrivateNetworkInterfaceStatus("detach_error")
+	// Stop the server to fix the issue.
+	ServerPrivateNetworkInterfaceStatusDeleteError = ServerPrivateNetworkInterfaceStatus("delete_error")
 )
 
 func (enum ServerPrivateNetworkInterfaceStatus) String() string {
@@ -891,6 +947,9 @@ func (enum ServerPrivateNetworkInterfaceStatus) Values() []ServerPrivateNetworkI
 		"attaching",
 		"detaching",
 		"syncing",
+		"deleting",
+		"detach_error",
+		"delete_error",
 	}
 }
 
@@ -1473,6 +1532,8 @@ type ServerIP struct {
 	Status ServerIPStatus `json:"status"`
 
 	Default bool `json:"default"`
+
+	ProvisionedAddress scw.IPNet `json:"provisioned_address"`
 }
 
 // CreateTemplateRequestPrivateNetworkTemplate: create template request private network template.
@@ -1534,7 +1595,7 @@ type SecurityGroupRuleConfig struct {
 	// DestinationPorts: destination port range for the rule.
 	DestinationPorts *SecurityGroupRulePortRange `json:"destination_ports"`
 
-	// Position: position of the rule in the list.
+	// Position: position of this rule in the rule list, starting at 1.
 	Position int32 `json:"position"`
 }
 
@@ -1542,6 +1603,9 @@ type SecurityGroupRuleConfig struct {
 type SecurityGroup struct {
 	// ID: unique ID of the security group.
 	ID string `json:"id"`
+
+	// Srn: the SRN of the security group.
+	Srn string `json:"srn"`
 
 	// Name: name of the security group.
 	Name string `json:"name"`
@@ -1588,6 +1652,21 @@ type SecurityGroup struct {
 	Zone scw.Zone `json:"zone"`
 }
 
+func (m *SecurityGroup) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://instance.%s/zones/%s/security-groups/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+		return
+	}
+}
+
 // CreateServerRequestPublicNetworkInterface: create server request public network interface.
 type CreateServerRequestPublicNetworkInterface struct {
 	// SecurityGroupID: ID of the security group for the interface.
@@ -1612,10 +1691,72 @@ type CreateServerRequestServerVolume struct {
 	NewVolume *CreateServerRequestCreateVolume `json:"new_volume,omitempty"`
 }
 
+// DedicatedPoolServerType: dedicated pool server type.
+type DedicatedPoolServerType struct {
+	// Name: name of the server type.
+	Name string `json:"name"`
+
+	// VcpuCount: number of vCPUs.
+	VcpuCount uint32 `json:"vcpu_count"`
+
+	// GpuCount: number of GPUs.
+	GpuCount uint32 `json:"gpu_count"`
+
+	// Memory: amount of memory.
+	Memory scw.Size `json:"memory"`
+
+	// Architecture: architecture of the server type.
+	// Default value: unknown_architecture
+	Architecture ServerTypeArchitecture `json:"architecture"`
+
+	// Availability: availability status of the server type.
+	// Default value: unknown_availability
+	Availability ServerTypeAvailability `json:"availability"`
+
+	// Limits: limits for the server type.
+	Limits *ServerTypeLimits `json:"limits"`
+
+	// GpuInfo: gPU information for the server type.
+	GpuInfo *ServerTypeGpuInfo `json:"gpu_info"`
+
+	// EndOfService: whether the server type has reached end of service.
+	EndOfService bool `json:"end_of_service"`
+
+	// SlotsAvailable: number of additional Instances of this type that can currently be started in this Dedicated Pool.
+	SlotsAvailable uint32 `json:"slots_available"`
+}
+
+// DedicatedPoolSummary: dedicated pool summary.
+type DedicatedPoolSummary struct {
+	// ID: unique ID of the Dedicated Pool.
+	ID string `json:"id"`
+
+	// Srn: sRN of the Dedicated Pool.
+	Srn string `json:"srn"`
+
+	// OrganizationID: organization ID the Dedicated Pool belongs to.
+	OrganizationID string `json:"organization_id"`
+
+	// Name: name of the Dedicated Pool.
+	Name string `json:"name"`
+
+	// Tags: tags associated with the Dedicated Pool.
+	Tags []string `json:"tags"`
+
+	// CreatedAt: creation timestamp of the Dedicated Pool.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: last update timestamp of the Dedicated Pool.
+	UpdatedAt *time.Time `json:"updated_at"`
+}
+
 // PlacementGroup: placement group.
 type PlacementGroup struct {
 	// ID: placement group unique ID.
 	ID string `json:"id"`
+
+	// Srn: the SRN of the placement group.
+	Srn string `json:"srn"`
 
 	// ProjectID: placement group Project ID.
 	ProjectID string `json:"project_id"`
@@ -1640,10 +1781,28 @@ type PlacementGroup struct {
 	Zone scw.Zone `json:"zone"`
 }
 
+func (m *PlacementGroup) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://instance.%s/zones/%s/placement-groups/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+		return
+	}
+}
+
 // PrivateNetworkInterfaceSummary: private network interface summary.
 type PrivateNetworkInterfaceSummary struct {
 	// ID: unique ID of the private network interface.
 	ID string `json:"id"`
+
+	// Srn: the SRN of the private network interface.
+	Srn string `json:"srn"`
 
 	// PrivateNetworkID: ID of the Private Network this interface is attached to.
 	PrivateNetworkID string `json:"private_network_id"`
@@ -1672,12 +1831,18 @@ type PrivateNetworkInterfaceSummary struct {
 
 	// UpdatedAt: last update timestamp of the private network interface.
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	// Zone: zone in which the network interface is located.
+	Zone scw.Zone `json:"zone"`
 }
 
 // SecurityGroupSummary: security group summary.
 type SecurityGroupSummary struct {
 	// ID: unique ID of the security group.
 	ID string `json:"id"`
+
+	// Srn: the SRN of the security group.
+	Srn string `json:"srn"`
 
 	// Name: name of the security group.
 	Name string `json:"name"`
@@ -1713,6 +1878,9 @@ type SecurityGroupSummary struct {
 
 	// UpdatedAt: last update timestamp of the security group.
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	// Zone: zone in which the security group is located.
+	Zone scw.Zone `json:"zone"`
 }
 
 // ServerType: server type.
@@ -1752,6 +1920,9 @@ type ServerSummary struct {
 	// ID: unique ID of the server.
 	ID string `json:"id"`
 
+	// Srn: the SRN of the server.
+	Srn string `json:"srn"`
+
 	// Name: name of the server.
 	Name string `json:"name"`
 
@@ -1783,12 +1954,18 @@ type ServerSummary struct {
 
 	// RescueMode: whether the server is in rescue mode.
 	RescueMode bool `json:"rescue_mode"`
+
+	// Zone: zone in which the server is located.
+	Zone scw.Zone `json:"zone"`
 }
 
 // Snapshot: snapshot.
 type Snapshot struct {
 	// ID: unique ID of the snapshot.
 	ID string `json:"id"`
+
+	// Srn: the SRN of the snapshot.
+	Srn string `json:"srn"`
 
 	// ProjectID: project ID of the snapshot.
 	ProjectID string `json:"project_id"`
@@ -1826,6 +2003,21 @@ type Snapshot struct {
 	Public bool `json:"public"`
 }
 
+func (m *Snapshot) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://instance.%s/zones/%s/snapshots/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+		return
+	}
+}
+
 // TemplateSummary: template summary.
 type TemplateSummary struct {
 	// ProjectID: project ID associated with the template.
@@ -1833,6 +2025,9 @@ type TemplateSummary struct {
 
 	// ID: unique ID of the template.
 	ID string `json:"id"`
+
+	// Srn: the SRN of the template.
+	Srn string `json:"srn"`
 
 	// Name: name of the template.
 	Name string `json:"name"`
@@ -1889,6 +2084,9 @@ type Volume struct {
 	// ID: unique ID of the volume.
 	ID string `json:"id"`
 
+	// Srn: the SRN of the volume.
+	Srn string `json:"srn"`
+
 	// ProjectID: project ID to which the volume belongs.
 	ProjectID string `json:"project_id"`
 
@@ -1923,6 +2121,21 @@ type Volume struct {
 
 	// Zone: zone in which the volume is located.
 	Zone scw.Zone `json:"zone"`
+}
+
+func (m *Volume) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://instance.%s/zones/%s/volumes/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // ServerFilesystem: server filesystem.
@@ -2194,6 +2407,9 @@ type CreateServerRequest struct {
 	// PlacementGroupID: ID of the placement group the server belongs to.
 	PlacementGroupID *string `json:"placement_group_id,omitempty"`
 
+	// DedicatedPoolID: ID of the Dedicated Pool this server belongs to.
+	DedicatedPoolID *string `json:"dedicated_pool_id,omitempty"`
+
 	// Volumes: volumes to attach to the server.
 	Volumes []*CreateServerRequestServerVolume `json:"volumes"`
 
@@ -2249,6 +2465,30 @@ type CreateTemplateRequest struct {
 	WindowsRdpSSHKeyID *string `json:"windows_rdp_ssh_key_id,omitempty"`
 }
 
+// DedicatedPool: dedicated pool.
+type DedicatedPool struct {
+	// ID: unique ID of the Dedicated Pool.
+	ID string `json:"id"`
+
+	// Srn: the SRN of the Dedicated Pool.
+	Srn string `json:"srn"`
+
+	// OrganizationID: organization ID the Dedicated Pool belongs to.
+	OrganizationID string `json:"organization_id"`
+
+	// Name: the name of the Dedicated Pool.
+	Name string `json:"name"`
+
+	// Tags: tags associated with the Dedicated Pool.
+	Tags []string `json:"tags"`
+
+	// CreatedAt: creation timestamp of the Dedicated Pool.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: last update timestamp of the Dedicated Pool.
+	UpdatedAt *time.Time `json:"updated_at"`
+}
+
 // DeletePlacementGroupRequest: delete placement group request.
 type DeletePlacementGroupRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
@@ -2301,11 +2541,11 @@ type DeleteServerRequest struct {
 	// Precisely one of DeleteAllIPs, DeleteIPIDs must be set.
 	DeleteIPIDs *[]string `json:"delete_ip_ids,omitempty"`
 
-	// DeleteAllVolumes: whether to delete all volumes attached to the server.
+	// DeleteAllVolumes: whether to delete all volumes attached to the server. Deletion of SBS volumes is not supported yet.
 	// Precisely one of DeleteAllVolumes, DeleteVolumeIDs must be set.
 	DeleteAllVolumes *bool `json:"delete_all_volumes,omitempty"`
 
-	// DeleteVolumeIDs: list of volume IDs to delete.
+	// DeleteVolumeIDs: list of volume IDs to delete. Deletion of SBS volumes is not supported yet.
 	// Precisely one of DeleteAllVolumes, DeleteVolumeIDs must be set.
 	DeleteVolumeIDs *[]string `json:"delete_volume_ids,omitempty"`
 
@@ -2349,6 +2589,15 @@ type DeleteUserDataRequest struct {
 
 	// Key: the key of the user data to delete.
 	Key string `json:"-"`
+}
+
+// DetachAndDeletePrivateNetworkInterfaceRequest: detach and delete private network interface request.
+type DetachAndDeletePrivateNetworkInterfaceRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// PrivateNetworkInterfaceID: ID of the private network interface to detach and delete.
+	PrivateNetworkInterfaceID string `json:"-"`
 }
 
 // DetachServerFileSystemRequest: detach server file system request.
@@ -2397,6 +2646,15 @@ type DetachServerVolumeRequest struct {
 
 	// VolumeID: ID of the volume to detach.
 	VolumeID string `json:"volume_id"`
+}
+
+// GetDedicatedPoolRequest: get dedicated pool request.
+type GetDedicatedPoolRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// DedicatedPoolID: ID of the Dedicated Pool to retrieve.
+	DedicatedPoolID string `json:"-"`
 }
 
 // GetPlacementGroupRequest: get placement group request.
@@ -2498,6 +2756,102 @@ type GetUserDataRequest struct {
 
 	// Key: the key of the user data to retrieve.
 	Key string `json:"-"`
+}
+
+// ListDedicatedPoolServerTypesRequest: list dedicated pool server types request.
+type ListDedicatedPoolServerTypesRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// DedicatedPoolID: ID of the Dedicated Pool to list Instance types for.
+	DedicatedPoolID string `json:"-"`
+
+	// PageToken: token for pagination.
+	PageToken *string `json:"-"`
+
+	// PageSize: number of Instance types to return per page.
+	PageSize *uint32 `json:"-"`
+}
+
+// ListDedicatedPoolServerTypesResponse: list dedicated pool server types response.
+type ListDedicatedPoolServerTypesResponse struct {
+	// ServerTypes: list of Instance types.
+	ServerTypes []*DedicatedPoolServerType `json:"server_types"`
+
+	// NextPageToken: token for the next page.
+	NextPageToken *string `json:"next_page_token"`
+
+	// TotalCount: total number of Instance types.
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListDedicatedPoolServerTypesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListDedicatedPoolServerTypesResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListDedicatedPoolServerTypesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.ServerTypes = append(r.ServerTypes, results.ServerTypes...)
+	r.TotalCount += uint64(len(results.ServerTypes))
+	return uint64(len(results.ServerTypes)), nil
+}
+
+// ListDedicatedPoolsRequest: list dedicated pools request.
+type ListDedicatedPoolsRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// PageToken: token for pagination.
+	PageToken *string `json:"-"`
+
+	// PageSize: number of Dedicated Pools to return per page.
+	PageSize *uint32 `json:"-"`
+
+	// OrderBy: order in which to return Dedicated Pools.
+	// Default value: created_at_desc
+	OrderBy ListDedicatedPoolsRequestOrderBy `json:"-"`
+
+	// OrganizationID: organization ID to filter Dedicated Pools by.
+	OrganizationID string `json:"-"`
+}
+
+// ListDedicatedPoolsResponse: list dedicated pools response.
+type ListDedicatedPoolsResponse struct {
+	// DedicatedPools: list of Dedicated Pools.
+	DedicatedPools []*DedicatedPoolSummary `json:"dedicated_pools"`
+
+	// NextPageToken: token for the next page.
+	NextPageToken *string `json:"next_page_token"`
+
+	// TotalCount: total number of Dedicated Pools.
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListDedicatedPoolsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListDedicatedPoolsResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListDedicatedPoolsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.DedicatedPools = append(r.DedicatedPools, results.DedicatedPools...)
+	r.TotalCount += uint64(len(results.DedicatedPools))
+	return uint64(len(results.DedicatedPools)), nil
 }
 
 // ListPlacementGroupsRequest: list placement groups request.
@@ -2677,6 +3031,46 @@ func (r *ListSecurityGroupsResponse) UnsafeAppend(res any) (uint64, error) {
 	return uint64(len(results.SecurityGroups)), nil
 }
 
+// ListServerCompatibleTypesRequest: list server compatible types request.
+type ListServerCompatibleTypesRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	ServerID string `json:"-"`
+
+	PageToken *string `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+}
+
+// ListServerCompatibleTypesResponse: list server compatible types response.
+type ListServerCompatibleTypesResponse struct {
+	ServerTypes []*ServerType `json:"server_types"`
+
+	NextPageToken *string `json:"next_page_token"`
+
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListServerCompatibleTypesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListServerCompatibleTypesResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListServerCompatibleTypesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.ServerTypes = append(r.ServerTypes, results.ServerTypes...)
+	r.TotalCount += uint64(len(results.ServerTypes))
+	return uint64(len(results.ServerTypes)), nil
+}
+
 // ListServerTypesRequest: list server types request.
 type ListServerTypesRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
@@ -2755,6 +3149,9 @@ type ListServersRequest struct {
 
 	// PlacementGroupIDs: placement group IDs to filter servers.
 	PlacementGroupIDs []string `json:"-"`
+
+	// DedicatedPoolIDs: filter servers associated with these Dedicated Pools.
+	DedicatedPoolIDs []string `json:"-"`
 
 	// PrivateNetworkIDs: private Network IDs to filter servers.
 	PrivateNetworkIDs []string `json:"-"`
@@ -3061,6 +3458,9 @@ type PrivateNetworkInterface struct {
 	// ID: unique ID of the private network interface.
 	ID string `json:"id"`
 
+	// Srn: the SRN of the private network interface.
+	Srn string `json:"srn"`
+
 	// PrivateNetworkID: ID of the Private Network this interface is attached to.
 	PrivateNetworkID string `json:"private_network_id"`
 
@@ -3088,6 +3488,24 @@ type PrivateNetworkInterface struct {
 
 	// UpdatedAt: last update timestamp of the private network interface.
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	// Zone: zone in which the network interface is located.
+	Zone scw.Zone `json:"zone"`
+}
+
+func (m *PrivateNetworkInterface) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://instance.%s/zones/%s/private-network-interfaces/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // RebootServerRequest: reboot server request.
@@ -3152,6 +3570,9 @@ type Server struct {
 	// ID: unique ID of the server.
 	ID string `json:"id"`
 
+	// Srn: the SRN of the server.
+	Srn string `json:"srn"`
+
 	// Name: name of the server.
 	Name string `json:"name"`
 
@@ -3166,6 +3587,9 @@ type Server struct {
 
 	// PlacementGroupID: ID of the placement group the server belongs to.
 	PlacementGroupID *string `json:"placement_group_id"`
+
+	// DedicatedPoolID: ID of the Dedicated Pool the server belongs to.
+	DedicatedPoolID *string `json:"dedicated_pool_id"`
 
 	// Status: current status of the server.
 	// Default value: unknown_status
@@ -3207,6 +3631,21 @@ type Server struct {
 
 	// Zone: zone in which the server is located.
 	Zone scw.Zone `json:"zone"`
+}
+
+func (m *Server) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://instance.%s/zones/%s/servers/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // SetSecurityGroupRulesRequest: set security group rules request.
@@ -3346,6 +3785,9 @@ type Template struct {
 	// ID: unique ID of the template.
 	ID string `json:"id"`
 
+	// Srn: the SRN of the template.
+	Srn string `json:"srn"`
+
 	// Name: name of the template.
 	Name string `json:"name"`
 
@@ -3390,6 +3832,36 @@ type Template struct {
 
 	// Zone: zone in which the template is located.
 	Zone scw.Zone `json:"zone"`
+}
+
+func (m *Template) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://instance.%s/zones/%s/templates/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+		return
+	}
+}
+
+// UpdateDedicatedPoolRequest: update dedicated pool request.
+type UpdateDedicatedPoolRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// DedicatedPoolID: ID of the Dedicated Pool to update.
+	DedicatedPoolID string `json:"-"`
+
+	// Name: new name for the Dedicated Pool.
+	Name *string `json:"name,omitempty"`
+
+	// Tags: new tags for the Dedicated Pool.
+	Tags *[]string `json:"tags,omitempty"`
 }
 
 // UpdatePlacementGroupRequest: update placement group request.
@@ -3513,6 +3985,9 @@ type UpdateServerRequest struct {
 
 	// PlacementGroupID: new placement group ID.
 	PlacementGroupID *string `json:"placement_group_id,omitempty"`
+
+	// DedicatedPoolID: new Dedicated Pool ID.
+	DedicatedPoolID *string `json:"dedicated_pool_id,omitempty"`
 
 	// RescueMode: new rescue mode setting.
 	RescueMode *bool `json:"rescue_mode,omitempty"`
@@ -3908,6 +4383,7 @@ func (s *API) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*
 	parameter.AddToQuery(query, "tags", req.Tags)
 	parameter.AddToQuery(query, "security_group_ids", req.SecurityGroupIDs)
 	parameter.AddToQuery(query, "placement_group_ids", req.PlacementGroupIDs)
+	parameter.AddToQuery(query, "dedicated_pool_ids", req.DedicatedPoolIDs)
 	parameter.AddToQuery(query, "private_network_ids", req.PrivateNetworkIDs)
 	parameter.AddToQuery(query, "mac_addresses", req.MacAddresses)
 
@@ -3964,6 +4440,10 @@ func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) 
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -3994,6 +4474,10 @@ func (s *API) GetServer(req *GetServerRequest, opts ...scw.RequestOption) (*Serv
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -4081,6 +4565,10 @@ func (s *API) UpdateServer(req *UpdateServerRequest, opts ...scw.RequestOption) 
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -4120,6 +4608,47 @@ func (s *API) DeleteServer(req *DeleteServerRequest, opts ...scw.RequestOption) 
 		return err
 	}
 	return nil
+}
+
+// ListServerCompatibleTypes: List the Instance types that a given instance could be converted to.
+func (s *API) ListServerCompatibleTypes(req *ListServerCompatibleTypesRequest, opts ...scw.RequestOption) (*ListServerCompatibleTypesResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page_token", req.PageToken)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ServerID) == "" {
+		return nil, errors.New("field ServerID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/instance/v2alpha1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerID) + "/compatible-types",
+		Query:  query,
+	}
+
+	var resp ListServerCompatibleTypesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 // ListServerTypes: List available Instance types and their technical details.
@@ -4192,6 +4721,10 @@ func (s *API) StartServer(req *StartServerRequest, opts ...scw.RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -4227,6 +4760,10 @@ func (s *API) RebootServer(req *RebootServerRequest, opts ...scw.RequestOption) 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -4264,6 +4801,10 @@ func (s *API) PauseServer(req *PauseServerRequest, opts ...scw.RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -4299,6 +4840,10 @@ func (s *API) StopServer(req *StopServerRequest, opts ...scw.RequestOption) (*Se
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -4336,6 +4881,10 @@ func (s *API) StopAndDeleteServer(req *StopAndDeleteServerRequest, opts ...scw.R
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -4371,6 +4920,10 @@ func (s *API) AttachServerVolume(req *AttachServerVolumeRequest, opts ...scw.Req
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -4408,6 +4961,10 @@ func (s *API) DetachServerVolume(req *DetachServerVolumeRequest, opts ...scw.Req
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -4443,6 +5000,10 @@ func (s *API) AttachServerFileSystem(req *AttachServerFileSystemRequest, opts ..
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -4480,6 +5041,10 @@ func (s *API) DetachServerFileSystem(req *DetachServerFileSystemRequest, opts ..
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -4515,6 +5080,10 @@ func (s *API) AttachServerIP(req *AttachServerIPRequest, opts ...scw.RequestOpti
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -4552,6 +5121,10 @@ func (s *API) DetachServerIP(req *DetachServerIPRequest, opts ...scw.RequestOpti
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -4587,6 +5160,10 @@ func (s *API) SetServerDefaultIP(req *SetServerDefaultIPRequest, opts ...scw.Req
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -4624,6 +5201,10 @@ func (s *API) AttachServerPrivateNetworkInterface(req *AttachServerPrivateNetwor
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -4659,6 +5240,10 @@ func (s *API) DetachServerPrivateNetworkInterface(req *DetachServerPrivateNetwor
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -4744,6 +5329,10 @@ func (s *API) CreatePrivateNetworkInterface(req *CreatePrivateNetworkInterfaceRe
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -4775,6 +5364,10 @@ func (s *API) GetPrivateNetworkInterface(req *GetPrivateNetworkInterfaceRequest,
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -4801,6 +5394,7 @@ func (s *API) WaitForPrivateNetworkInterface(req *WaitForPrivateNetworkInterface
 		PrivateNetworkInterfaceStatusAttaching: {},
 		PrivateNetworkInterfaceStatusDetaching: {},
 		PrivateNetworkInterfaceStatusSyncing:   {},
+		PrivateNetworkInterfaceStatusDeleting:  {},
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
@@ -4860,6 +5454,10 @@ func (s *API) UpdatePrivateNetworkInterface(req *UpdatePrivateNetworkInterfaceRe
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -4890,6 +5488,46 @@ func (s *API) DeletePrivateNetworkInterface(req *DeletePrivateNetworkInterfaceRe
 		return err
 	}
 	return nil
+}
+
+// DetachAndDeletePrivateNetworkInterface:
+func (s *API) DetachAndDeletePrivateNetworkInterface(req *DetachAndDeletePrivateNetworkInterfaceRequest, opts ...scw.RequestOption) (*PrivateNetworkInterface, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.PrivateNetworkInterfaceID) == "" {
+		return nil, errors.New("field PrivateNetworkInterfaceID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/instance/v2alpha1/zones/" + fmt.Sprint(req.Zone) + "/private-network-interfaces/" + fmt.Sprint(req.PrivateNetworkInterfaceID) + "/detach-and-delete",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp PrivateNetworkInterface
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
+	return &resp, nil
 }
 
 // ListPlacementGroups: List all placement groups.
@@ -4936,6 +5574,12 @@ func (s *API) ListPlacementGroups(req *ListPlacementGroupsRequest, opts ...scw.R
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.PlacementGroups {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -4973,6 +5617,10 @@ func (s *API) CreatePlacementGroup(req *CreatePlacementGroupRequest, opts ...scw
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -5003,6 +5651,10 @@ func (s *API) GetPlacementGroup(req *GetPlacementGroupRequest, opts ...scw.Reque
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -5039,6 +5691,10 @@ func (s *API) UpdatePlacementGroup(req *UpdatePlacementGroupRequest, opts ...scw
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -5153,6 +5809,10 @@ func (s *API) CreateSecurityGroup(req *CreateSecurityGroupRequest, opts ...scw.R
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -5183,6 +5843,10 @@ func (s *API) GetSecurityGroup(req *GetSecurityGroupRequest, opts ...scw.Request
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -5219,6 +5883,10 @@ func (s *API) UpdateSecurityGroup(req *UpdateSecurityGroupRequest, opts ...scw.R
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -5313,6 +5981,10 @@ func (s *API) SetSecurityGroupRules(req *SetSecurityGroupRulesRequest, opts ...s
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -5348,6 +6020,10 @@ func (s *API) UpdateSecurityGroupRule(req *UpdateSecurityGroupRuleRequest, opts 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -5678,6 +6354,10 @@ func (s *API) CreateTemplate(req *CreateTemplateRequest, opts ...scw.RequestOpti
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -5708,6 +6388,10 @@ func (s *API) GetTemplate(req *GetTemplateRequest, opts ...scw.RequestOption) (*
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -5744,6 +6428,10 @@ func (s *API) UpdateTemplate(req *UpdateTemplateRequest, opts ...scw.RequestOpti
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -6056,6 +6744,162 @@ func (s *API) CreateServerFromTemplate(req *CreateServerFromTemplateRequest, opt
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
+	return &resp, nil
+}
+
+// ListDedicatedPools: List Dedicated Pools for an organization.
+func (s *API) ListDedicatedPools(req *ListDedicatedPoolsRequest, opts ...scw.RequestOption) (*ListDedicatedPoolsResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page_token", req.PageToken)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/instance/v2alpha1/zones/" + fmt.Sprint(req.Zone) + "/dedicated-pools",
+		Query:  query,
+	}
+
+	var resp ListDedicatedPoolsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetDedicatedPool: Get detailed information about a Dedicated Pool.
+func (s *API) GetDedicatedPool(req *GetDedicatedPoolRequest, opts ...scw.RequestOption) (*DedicatedPool, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.DedicatedPoolID) == "" {
+		return nil, errors.New("field DedicatedPoolID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/instance/v2alpha1/zones/" + fmt.Sprint(req.Zone) + "/dedicated-pools/" + fmt.Sprint(req.DedicatedPoolID) + "",
+	}
+
+	var resp DedicatedPool
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UpdateDedicatedPool: Update the name and tags of a Dedicated Pool.
+func (s *API) UpdateDedicatedPool(req *UpdateDedicatedPoolRequest, opts ...scw.RequestOption) (*DedicatedPool, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.DedicatedPoolID) == "" {
+		return nil, errors.New("field DedicatedPoolID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/instance/v2alpha1/zones/" + fmt.Sprint(req.Zone) + "/dedicated-pools/" + fmt.Sprint(req.DedicatedPoolID) + "",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp DedicatedPool
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListDedicatedPoolServerTypes: List Instance types available in a Dedicated Pool and their technical details.
+func (s *API) ListDedicatedPoolServerTypes(req *ListDedicatedPoolServerTypesRequest, opts ...scw.RequestOption) (*ListDedicatedPoolServerTypesResponse, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page_token", req.PageToken)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.DedicatedPoolID) == "" {
+		return nil, errors.New("field DedicatedPoolID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/instance/v2alpha1/zones/" + fmt.Sprint(req.Zone) + "/dedicated-pools/" + fmt.Sprint(req.DedicatedPoolID) + "/server-types",
+		Query:  query,
+	}
+
+	var resp ListDedicatedPoolServerTypesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
 	return &resp, nil
 }
 
@@ -6157,6 +7001,12 @@ func (s *VolumeAPI) ListVolumes(req *VolumeAPIListVolumesRequest, opts ...scw.Re
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Volumes {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -6194,6 +7044,10 @@ func (s *VolumeAPI) CreateVolume(req *VolumeAPICreateVolumeRequest, opts ...scw.
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -6224,6 +7078,10 @@ func (s *VolumeAPI) GetVolume(req *VolumeAPIGetVolumeRequest, opts ...scw.Reques
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -6312,6 +7170,10 @@ func (s *VolumeAPI) UpdateVolume(req *VolumeAPIUpdateVolumeRequest, opts ...scw.
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -6389,6 +7251,12 @@ func (s *VolumeAPI) ListSnapshots(req *VolumeAPIListSnapshotsRequest, opts ...sc
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Snapshots {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -6426,6 +7294,10 @@ func (s *VolumeAPI) CreateSnapshot(req *VolumeAPICreateSnapshotRequest, opts ...
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -6456,6 +7328,10 @@ func (s *VolumeAPI) GetSnapshot(req *VolumeAPIGetSnapshotRequest, opts ...scw.Re
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -6541,6 +7417,10 @@ func (s *VolumeAPI) UpdateSnapshot(req *VolumeAPIUpdateSnapshotRequest, opts ...
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -6607,6 +7487,10 @@ func (s *VolumeAPI) ImportSnapshotFromObjectStorage(req *VolumeAPIImportSnapshot
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -6642,6 +7526,10 @@ func (s *VolumeAPI) ExportSnapshotToObjectStorage(req *VolumeAPIExportSnapshotTo
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }

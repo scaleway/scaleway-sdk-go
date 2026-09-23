@@ -12,7 +12,6 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-	"text/template"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
@@ -668,6 +667,9 @@ type Connection struct {
 	// ID: unique identifier of the connection.
 	ID string `json:"id"`
 
+	// Srn: the SRN of the connection.
+	Srn string `json:"srn"`
+
 	// ProjectID: project ID.
 	ProjectID string `json:"project_id"`
 
@@ -746,9 +748,6 @@ type Connection struct {
 
 	// Region: region of the connection.
 	Region scw.Region `json:"region"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *Connection) setSRN(platform string) {
@@ -756,31 +755,14 @@ func (m *Connection) setSRN(platform string) {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		Connection
-		Platform string
-	}{
-		Connection: *m,
-		Platform:   platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://s2s-vpn.{{ notempty .Platform }}/regions/{{ notempty .Region }}/connections/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://s2s-vpn.%s/regions/%s/connections/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // CreateConnectionRequestBgpConfig: create connection request bgp config.
@@ -823,6 +805,9 @@ type CustomerGateway struct {
 	// ID: unique identifier of the customer gateway.
 	ID string `json:"id"`
 
+	// Srn: the SRN of the customer gateway.
+	Srn string `json:"srn"`
+
 	// ProjectID: project ID.
 	ProjectID string `json:"project_id"`
 
@@ -855,9 +840,6 @@ type CustomerGateway struct {
 
 	// Region: region of the customer gateway.
 	Region scw.Region `json:"region"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *CustomerGateway) setSRN(platform string) {
@@ -865,37 +847,23 @@ func (m *CustomerGateway) setSRN(platform string) {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		CustomerGateway
-		Platform string
-	}{
-		CustomerGateway: *m,
-		Platform:        platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://s2s-vpn.{{ notempty .Platform }}/regions/{{ notempty .Region }}/customer-gateways/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://s2s-vpn.%s/regions/%s/customer-gateways/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // RoutingPolicy: routing policy.
 type RoutingPolicy struct {
 	// ID: unique identifier of the routing policy.
 	ID string `json:"id"`
+
+	// Srn: the SRN of the routing policy.
+	Srn string `json:"srn"`
 
 	// ProjectID: project ID.
 	ProjectID string `json:"project_id"`
@@ -926,9 +894,6 @@ type RoutingPolicy struct {
 
 	// Region: region of the routing policy.
 	Region scw.Region `json:"region"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *RoutingPolicy) setSRN(platform string) {
@@ -936,31 +901,14 @@ func (m *RoutingPolicy) setSRN(platform string) {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		RoutingPolicy
-		Platform string
-	}{
-		RoutingPolicy: *m,
-		Platform:      platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://s2s-vpn.{{ notempty .Platform }}/regions/{{ notempty .Region }}/routing-policies/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://s2s-vpn.%s/regions/%s/routing-policies/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // GatewayType: gateway type.
@@ -981,6 +929,9 @@ type GatewayType struct {
 type VpnGateway struct {
 	// ID: unique identifier of the VPN gateway.
 	ID string `json:"id"`
+
+	// Srn: the SRN of the VPN gateway.
+	Srn string `json:"srn"`
 
 	// ProjectID: project ID.
 	ProjectID string `json:"project_id"`
@@ -1011,11 +962,11 @@ type VpnGateway struct {
 	// Precisely one of PublicConfig, PrivateConfig must be set.
 	PublicConfig *VpnGatewayPublicConfig `json:"public_config,omitempty"`
 
-	// PrivateNetworkID: ID of the Private Network attached to the VPN gateway.
-	PrivateNetworkID string `json:"private_network_id"`
-
 	// Precisely one of PublicConfig, PrivateConfig must be set.
 	PrivateConfig *VpnGatewayPrivateConfig `json:"private_config,omitempty"`
+
+	// PrivateNetworkID: ID of the Private Network attached to the VPN gateway.
+	PrivateNetworkID string `json:"private_network_id"`
 
 	// IpamPrivateIPv4ID: ID of the IPAM private IPv4 address attached to the VPN gateway.
 	IpamPrivateIPv4ID string `json:"ipam_private_ipv4_id"`
@@ -1034,9 +985,6 @@ type VpnGateway struct {
 
 	// Region: region of the VPN gateway.
 	Region scw.Region `json:"region"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *VpnGateway) setSRN(platform string) {
@@ -1044,31 +992,14 @@ func (m *VpnGateway) setSRN(platform string) {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		VpnGateway
-		Platform string
-	}{
-		VpnGateway: *m,
-		Platform:   platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://s2s-vpn.{{ notempty .Platform }}/zones/{{ notempty .Zone }}/vpn-gateways/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://s2s-vpn.%s/zones/%s/vpn-gateways/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // ChangeConnectionPskRequest: change connection psk request.
@@ -1119,7 +1050,8 @@ type CreateConnectionRequest struct {
 	// EnableRoutePropagation: defines whether route propagation is enabled or not.
 	EnableRoutePropagation bool `json:"enable_route_propagation"`
 
-	// Secret: specifies the pre-shared key used for the IPsec tunnel.
+	// Secret: if no secret is given, S2S VPN will create one automatically in Secret Manager, reference its secret_id and version in the connection and use the generated PSK.
+	// Secret version is also optional and maybe used to refer to a previous version. If no version is given, "latest" is used.
 	Secret *CreateConnectionRequestSecret `json:"secret,omitempty"`
 
 	// VpnGatewayID: ID of the VPN gateway to attach to the connection.
@@ -1636,7 +1568,7 @@ type RenewConnectionPskRequest struct {
 	// ConnectionID: ID of the connection to renew the PSK.
 	ConnectionID string `json:"-"`
 
-	// GenerateRevision: generate a new revision or update to the latest existing one.
+	// GenerateRevision: generate a new version or update to the latest existing one.
 	GenerateRevision *bool `json:"generate_revision,omitempty"`
 }
 
@@ -1689,6 +1621,12 @@ type UpdateConnectionRequest struct {
 
 	// EspCiphers: list of ESP ciphers proposed for the IPsec tunnel.
 	EspCiphers []*ConnectionCipher `json:"esp_ciphers"`
+
+	// SecretID: secret ID in the client's project containing the PSK.
+	SecretID *string `json:"secret_id,omitempty"`
+
+	// SecretRevision: if not given it will not change. If secret_id is updated, secret_revision should be set accordingly.
+	SecretRevision *uint32 `json:"secret_revision,omitempty"`
 }
 
 // UpdateCustomerGatewayRequest: update customer gateway request.

@@ -12,7 +12,6 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-	"text/template"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
@@ -547,6 +546,9 @@ type Subnet struct {
 	// ID: ID of the subnet.
 	ID string `json:"id"`
 
+	// Srn: the SRN of the subnet.
+	Srn string `json:"srn"`
+
 	// CreatedAt: subnet creation date.
 	CreatedAt *time.Time `json:"created_at"`
 
@@ -567,9 +569,6 @@ type Subnet struct {
 
 	// Region: region in which the Subnet can be used.
 	Region scw.Region `json:"region"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *Subnet) setSRN(platform string) {
@@ -577,37 +576,23 @@ func (m *Subnet) setSRN(platform string) {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		Subnet
-		Platform string
-	}{
-		Subnet:   *m,
-		Platform: platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://vpc.{{ notempty .Platform }}/regions/{{ notempty .Region }}/subnets/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://vpc.%s/regions/%s/subnets/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // PrivateNetwork: private network.
 type PrivateNetwork struct {
 	// ID: private Network ID.
 	ID string `json:"id"`
+
+	// Srn: the SRN of the private network.
+	Srn string `json:"srn"`
 
 	// Name: private Network name.
 	Name string `json:"name"`
@@ -644,9 +629,6 @@ type PrivateNetwork struct {
 
 	// HasObjectStoragePrivateAccess: defines whether this Private Network is enabled for Object Storage private access.
 	HasObjectStoragePrivateAccess bool `json:"has_object_storage_private_access"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *PrivateNetwork) setSRN(platform string) {
@@ -654,37 +636,23 @@ func (m *PrivateNetwork) setSRN(platform string) {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		PrivateNetwork
-		Platform string
-	}{
-		PrivateNetwork: *m,
-		Platform:       platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://vpc.{{ notempty .Platform }}/regions/{{ notempty .Region }}/private-networks/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://vpc.%s/regions/%s/private-networks/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Route: route.
 type Route struct {
 	// ID: route ID.
 	ID string `json:"id"`
+
+	// Srn: the SRN of the route.
+	Srn string `json:"srn"`
 
 	// Description: route description.
 	Description string `json:"description"`
@@ -722,9 +690,6 @@ type Route struct {
 
 	// Region: region of the Route.
 	Region scw.Region `json:"region"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *Route) setSRN(platform string) {
@@ -732,31 +697,14 @@ func (m *Route) setSRN(platform string) {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		Route
-		Platform string
-	}{
-		Route:    *m,
-		Platform: platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://vpc.{{ notempty .Platform }}/regions/{{ notempty .Region }}/routes/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://vpc.%s/regions/%s/routes/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // VPCConnectorPeerInfo: vpc connector peer info.
@@ -805,6 +753,9 @@ type IngressRule struct {
 	// ID: ID of the ingress rule.
 	ID string `json:"id"`
 
+	// Srn: the SRN of the ingress rule.
+	Srn string `json:"srn"`
+
 	// VpcID: ID of the VPC this rule belongs to.
 	VpcID string `json:"vpc_id"`
 
@@ -840,9 +791,6 @@ type IngressRule struct {
 
 	// Region: region of the ingress rule.
 	Region scw.Region `json:"region"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *IngressRule) setSRN(platform string) {
@@ -850,31 +798,14 @@ func (m *IngressRule) setSRN(platform string) {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		IngressRule
-		Platform string
-	}{
-		IngressRule: *m,
-		Platform:    platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://vpc.{{ notempty .Platform }}/regions/{{ notempty .Region }}/ingress-rules/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://vpc.%s/regions/%s/ingress-rules/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // RouteWithNexthop: route with nexthop.
@@ -909,6 +840,9 @@ type VPCConnector struct {
 	// ID: vPC connector ID.
 	ID string `json:"id"`
 
+	// Srn: the SRN of the VPC connector.
+	Srn string `json:"srn"`
+
 	// Name: vPC connector name.
 	Name string `json:"name"`
 
@@ -942,9 +876,6 @@ type VPCConnector struct {
 
 	// UpdatedAt: date the VPC connector was last modified.
 	UpdatedAt *time.Time `json:"updated_at"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *VPCConnector) setSRN(platform string) {
@@ -952,37 +883,23 @@ func (m *VPCConnector) setSRN(platform string) {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		VPCConnector
-		Platform string
-	}{
-		VPCConnector: *m,
-		Platform:     platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://vpc.{{ notempty .Platform }}/regions/{{ notempty .Region }}/vpc-connectors/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://vpc.%s/regions/%s/vpc-connectors/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // VPC: vpc.
 type VPC struct {
 	// ID: vPC ID.
 	ID string `json:"id"`
+
+	// Srn: the SRN of the VPC.
+	Srn string `json:"srn"`
 
 	// Name: vPC name.
 	Name string `json:"name"`
@@ -1022,9 +939,6 @@ type VPC struct {
 
 	// ObjectStoragePrivateAccessEnabled: defines whether the Object Storage private access is enabled for the VPC.
 	ObjectStoragePrivateAccessEnabled bool `json:"object_storage_private_access_enabled"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *VPC) setSRN(platform string) {
@@ -1032,31 +946,14 @@ func (m *VPC) setSRN(platform string) {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		VPC
-		Platform string
-	}{
-		VPC:      *m,
-		Platform: platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://vpc.{{ notempty .Platform }}/regions/{{ notempty .Region }}/vpcs/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://vpc.%s/regions/%s/vpcs/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // AddPrivateNetworkObjectStoragePrivateAccessRequest: add private network object storage private access request.

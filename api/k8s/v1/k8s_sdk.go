@@ -12,7 +12,6 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-	"text/template"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
@@ -356,6 +355,45 @@ func (enum *CoreV1TaintEffect) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = CoreV1TaintEffect(CoreV1TaintEffect(tmp).String())
+	return nil
+}
+
+type GetClusterKubeConfigRequestEndpoint string
+
+const (
+	GetClusterKubeConfigRequestEndpointUnknownEndpoint = GetClusterKubeConfigRequestEndpoint("unknown_endpoint")
+	GetClusterKubeConfigRequestEndpointPublic          = GetClusterKubeConfigRequestEndpoint("public")
+	GetClusterKubeConfigRequestEndpointVpc             = GetClusterKubeConfigRequestEndpoint("vpc")
+)
+
+func (enum GetClusterKubeConfigRequestEndpoint) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(GetClusterKubeConfigRequestEndpointUnknownEndpoint)
+	}
+	return string(enum)
+}
+
+func (enum GetClusterKubeConfigRequestEndpoint) Values() []GetClusterKubeConfigRequestEndpoint {
+	return []GetClusterKubeConfigRequestEndpoint{
+		"unknown_endpoint",
+		"public",
+		"vpc",
+	}
+}
+
+func (enum GetClusterKubeConfigRequestEndpoint) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *GetClusterKubeConfigRequestEndpoint) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = GetClusterKubeConfigRequestEndpoint(GetClusterKubeConfigRequestEndpoint(tmp).String())
 	return nil
 }
 
@@ -909,6 +947,9 @@ type ACLRule struct {
 	// ID: ID of the ACL rule.
 	ID string `json:"id"`
 
+	// Srn: the SRN of the ACL rule.
+	Srn string `json:"srn"`
+
 	// IP: IP subnet to allow.
 	// Precisely one of IP, ScalewayRanges must be set.
 	IP *scw.IPNet `json:"ip,omitempty"`
@@ -922,9 +963,6 @@ type ACLRule struct {
 
 	// Region: region of the ACL rule.
 	Region scw.Region `json:"region"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *ACLRule) setSRN(platform string) {
@@ -932,31 +970,14 @@ func (m *ACLRule) setSRN(platform string) {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		ACLRule
-		Platform string
-	}{
-		ACLRule:  *m,
-		Platform: platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://k8s.{{ notempty .Platform }}/regions/{{ notempty .Region }}/acl-rules/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://k8s.%s/regions/%s/acl-rules/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // CreateClusterRequestAutoUpgrade: create cluster request auto upgrade.
@@ -1124,6 +1145,9 @@ type ClusterType struct {
 	// Name: cluster type name.
 	Name string `json:"name"`
 
+	// Srn: the SRN of the cluster type.
+	Srn string `json:"srn"`
+
 	// Availability: cluster type availability.
 	// Default value: available
 	Availability ClusterTypeAvailability `json:"availability"`
@@ -1155,9 +1179,6 @@ type ClusterType struct {
 
 	// Region: the region of the cluster type.
 	Region scw.Region `json:"region"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *ClusterType) setSRN(platform string) {
@@ -1165,37 +1186,23 @@ func (m *ClusterType) setSRN(platform string) {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		ClusterType
-		Platform string
-	}{
-		ClusterType: *m,
-		Platform:    platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://k8s.{{ notempty .Platform }}/regions/{{ notempty .Region }}/cluster-types/{{ notempty .Name }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.Name) != "" {
+		m.Srn = fmt.Sprintf("srn://k8s.%s/regions/%s/cluster-types/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.Name))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Version: version.
 type Version struct {
 	// Name: name of the Kubernetes version.
 	Name string `json:"name"`
+
+	// Srn: the SRN of the version.
+	Srn string `json:"srn"`
 
 	// Label: label of the Kubernetes version.
 	Label string `json:"label"`
@@ -1229,9 +1236,6 @@ type Version struct {
 
 	// AdditionalComponents: map containing every sub-component version shipped with this Kapsule version.
 	AdditionalComponents map[string]*ComponentInfo `json:"additional_components"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *Version) setSRN(platform string) {
@@ -1239,37 +1243,23 @@ func (m *Version) setSRN(platform string) {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		Version
-		Platform string
-	}{
-		Version:  *m,
-		Platform: platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://k8s.{{ notempty .Platform }}/regions/{{ notempty .Region }}/versions/{{ notempty .Name }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.Name) != "" {
+		m.Srn = fmt.Sprintf("srn://k8s.%s/regions/%s/versions/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.Name))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Cluster: cluster.
 type Cluster struct {
 	// ID: cluster ID.
 	ID string `json:"id"`
+
+	// Srn: the SRN of the cluster.
+	Srn string `json:"srn"`
 
 	// Type: cluster type.
 	Type string `json:"type"`
@@ -1356,9 +1346,6 @@ type Cluster struct {
 
 	// ServiceDNSIP: IP used for the DNS Service.
 	ServiceDNSIP net.IP `json:"service_dns_ip"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *Cluster) setSRN(platform string) {
@@ -1366,37 +1353,23 @@ func (m *Cluster) setSRN(platform string) {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		Cluster
-		Platform string
-	}{
-		Cluster:  *m,
-		Platform: platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://k8s.{{ notempty .Platform }}/regions/{{ notempty .Region }}/clusters/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://k8s.%s/regions/%s/clusters/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Node: node.
 type Node struct {
 	// ID: node ID.
 	ID string `json:"id"`
+
+	// Srn: the SRN of the node.
+	Srn string `json:"srn"`
 
 	// PoolID: pool ID of the node.
 	PoolID string `json:"pool_id"`
@@ -1434,9 +1407,6 @@ type Node struct {
 
 	// UpdatedAt: date on which the node was last updated.
 	UpdatedAt *time.Time `json:"updated_at"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *Node) setSRN(platform string) {
@@ -1444,31 +1414,14 @@ func (m *Node) setSRN(platform string) {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		Node
-		Platform string
-	}{
-		Node:     *m,
-		Platform: platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://k8s.{{ notempty .Platform }}/regions/{{ notempty .Region }}/nodes/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://k8s.%s/regions/%s/nodes/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Pool: pool.
@@ -1566,11 +1519,11 @@ type Pool struct {
 	// MaxTerminationGracePeriod: maximum amount of time before the API forces the drain and deletion of a `deleting` node. It overrides pods `PodDisruptionBudget` and `terminationGracePeriodSeconds`. Defaults to 15 minutes, up to 1 hour.
 	MaxTerminationGracePeriod *scw.Duration `json:"max_termination_grace_period"`
 
+	// Srn: the SRN of the pool.
+	Srn string `json:"srn"`
+
 	// Region: cluster region of the pool.
 	Region scw.Region `json:"region"`
-
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
 }
 
 func (m *Pool) setSRN(platform string) {
@@ -1578,31 +1531,14 @@ func (m *Pool) setSRN(platform string) {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		Pool
-		Platform string
-	}{
-		Pool:     *m,
-		Platform: platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://k8s.{{ notempty .Platform }}/regions/{{ notempty .Region }}/pools/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://k8s.%s/regions/%s/pools/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // UserDataSummary: user data summary.
@@ -1937,7 +1873,11 @@ type GetClusterKubeConfigRequest struct {
 	ClusterID string `json:"-"`
 
 	// Redacted: hide the legacy token from the kubeconfig.
-	Redacted *bool `json:"redacted,omitempty"`
+	Redacted *bool `json:"-"`
+
+	// Endpoint: which endpoint to use to reach the APIServer (default: public).
+	// Default value: unknown_endpoint
+	Endpoint GetClusterKubeConfigRequestEndpoint `json:"-"`
 }
 
 // GetClusterRequest: get cluster request.
@@ -3007,6 +2947,7 @@ func (s *API) getClusterKubeConfig(req *GetClusterKubeConfigRequest, opts ...scw
 
 	query := url.Values{}
 	parameter.AddToQuery(query, "redacted", req.Redacted)
+	parameter.AddToQuery(query, "endpoint", req.Endpoint)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")

@@ -41,10 +41,14 @@ var (
 type ObsDatasourceInfoDataType string
 
 const (
+	// Unknown data type.
 	ObsDatasourceInfoDataTypeUnknownDataType = ObsDatasourceInfoDataType("unknown_data_type")
-	ObsDatasourceInfoDataTypeMetrics         = ObsDatasourceInfoDataType("metrics")
-	ObsDatasourceInfoDataTypeLogs            = ObsDatasourceInfoDataType("logs")
-	ObsDatasourceInfoDataTypeTraces          = ObsDatasourceInfoDataType("traces")
+	// Metrics data.
+	ObsDatasourceInfoDataTypeMetrics = ObsDatasourceInfoDataType("metrics")
+	// Logs data.
+	ObsDatasourceInfoDataTypeLogs = ObsDatasourceInfoDataType("logs")
+	// Traces data.
+	ObsDatasourceInfoDataTypeTraces = ObsDatasourceInfoDataType("traces")
 )
 
 func (enum ObsDatasourceInfoDataType) String() string {
@@ -82,9 +86,12 @@ func (enum *ObsDatasourceInfoDataType) UnmarshalJSON(data []byte) error {
 type ObsExporterInfoDestinationType string
 
 const (
+	// Unknown destination type.
 	ObsExporterInfoDestinationTypeUnknownDestinationType = ObsExporterInfoDestinationType("unknown_destination_type")
-	ObsExporterInfoDestinationTypeDatadog                = ObsExporterInfoDestinationType("datadog")
-	ObsExporterInfoDestinationTypeOtlp                   = ObsExporterInfoDestinationType("otlp")
+	// Datadog destination.
+	ObsExporterInfoDestinationTypeDatadog = ObsExporterInfoDestinationType("datadog")
+	// OTLP destination.
+	ObsExporterInfoDestinationTypeOtlp = ObsExporterInfoDestinationType("otlp")
 )
 
 func (enum ObsExporterInfoDestinationType) String() string {
@@ -349,18 +356,21 @@ func (enum *SearchResourcesRequestOrderBy) UnmarshalJSON(data []byte) error {
 
 // BrmServerInfo: brm server info.
 type BrmServerInfo struct {
+	// IP: IP address of the Baremetal server.
 	IP string `json:"ip"`
 }
 
 // ObsDatasourceInfo: obs datasource info.
 type ObsDatasourceInfo struct {
-	// Type: default value: unknown_data_type
+	// Type: type of data handled by the OBS datasource.
+	// Default value: unknown_data_type
 	Type ObsDatasourceInfoDataType `json:"type"`
 }
 
 // ObsExporterInfo: obs exporter info.
 type ObsExporterInfo struct {
-	// DestinationType: default value: unknown_destination_type
+	// DestinationType: destination type of the OBS exporter.
+	// Default value: unknown_destination_type
 	DestinationType ObsExporterInfoDestinationType `json:"destination_type"`
 }
 
@@ -378,6 +388,7 @@ type ServerlessFunctionsFunctionInfo struct {
 
 // ServerlessSqldbBackupInfo: serverless sqldb backup info.
 type ServerlessSqldbBackupInfo struct {
+	// DatabaseID: ID of the Serverless SQL Database the backup belongs to.
 	DatabaseID string `json:"database_id"`
 }
 
@@ -418,34 +429,38 @@ type Resource struct {
 	Region *scw.Region `json:"region,omitempty"`
 
 	// VpcPrivateNetworkInfo: additional information for a VPC Private Network.
-	// Precisely one of VpcPrivateNetworkInfo, ServerlessFunctionsFunctionInfo, ServerlessContainersContainerInfo, BaremetalServerInfo, ServerlessSqldbBackupInfo, ObsDatasourceInfo, ObsExporterInfo must be set.
+	// Precisely one of VpcPrivateNetworkInfo, ServerlessFunctionsFunctionInfo, ServerlessContainersContainerInfo, ServerlessSqldbBackupInfo, BaremetalServerInfo, ObsDatasourceInfo, ObsExporterInfo must be set.
 	VpcPrivateNetworkInfo *VpcPrivateNetworkInfo `json:"vpc_private_network_info,omitempty"`
 
 	// ServerlessFunctionsFunctionInfo: additional information for a Serverless Function.
-	// Precisely one of VpcPrivateNetworkInfo, ServerlessFunctionsFunctionInfo, ServerlessContainersContainerInfo, BaremetalServerInfo, ServerlessSqldbBackupInfo, ObsDatasourceInfo, ObsExporterInfo must be set.
+	// Precisely one of VpcPrivateNetworkInfo, ServerlessFunctionsFunctionInfo, ServerlessContainersContainerInfo, ServerlessSqldbBackupInfo, BaremetalServerInfo, ObsDatasourceInfo, ObsExporterInfo must be set.
 	ServerlessFunctionsFunctionInfo *ServerlessFunctionsFunctionInfo `json:"serverless_functions_function_info,omitempty"`
 
 	// ServerlessContainersContainerInfo: additional information for a Serverless Container.
-	// Precisely one of VpcPrivateNetworkInfo, ServerlessFunctionsFunctionInfo, ServerlessContainersContainerInfo, BaremetalServerInfo, ServerlessSqldbBackupInfo, ObsDatasourceInfo, ObsExporterInfo must be set.
+	// Precisely one of VpcPrivateNetworkInfo, ServerlessFunctionsFunctionInfo, ServerlessContainersContainerInfo, ServerlessSqldbBackupInfo, BaremetalServerInfo, ObsDatasourceInfo, ObsExporterInfo must be set.
 	ServerlessContainersContainerInfo *ServerlessContainersContainerInfo `json:"serverless_containers_container_info,omitempty"`
+
+	// ServerlessSqldbBackupInfo: additional information for a Serverless SQL database backup.
+	// Precisely one of VpcPrivateNetworkInfo, ServerlessFunctionsFunctionInfo, ServerlessContainersContainerInfo, ServerlessSqldbBackupInfo, BaremetalServerInfo, ObsDatasourceInfo, ObsExporterInfo must be set.
+	ServerlessSqldbBackupInfo *ServerlessSqldbBackupInfo `json:"serverless_sqldb_backup_info,omitempty"`
+
+	// BaremetalServerInfo: additional information for a Baremetal server.
+	// Precisely one of VpcPrivateNetworkInfo, ServerlessFunctionsFunctionInfo, ServerlessContainersContainerInfo, ServerlessSqldbBackupInfo, BaremetalServerInfo, ObsDatasourceInfo, ObsExporterInfo must be set.
+	BaremetalServerInfo *BrmServerInfo `json:"baremetal_server_info,omitempty"`
+
+	// ObsDatasourceInfo: additional information for an OBS datasource.
+	// Precisely one of VpcPrivateNetworkInfo, ServerlessFunctionsFunctionInfo, ServerlessContainersContainerInfo, ServerlessSqldbBackupInfo, BaremetalServerInfo, ObsDatasourceInfo, ObsExporterInfo must be set.
+	ObsDatasourceInfo *ObsDatasourceInfo `json:"obs_datasource_info,omitempty"`
+
+	// ObsExporterInfo: additional information for an OBS exporter.
+	// Precisely one of VpcPrivateNetworkInfo, ServerlessFunctionsFunctionInfo, ServerlessContainersContainerInfo, ServerlessSqldbBackupInfo, BaremetalServerInfo, ObsDatasourceInfo, ObsExporterInfo must be set.
+	ObsExporterInfo *ObsExporterInfo `json:"obs_exporter_info,omitempty"`
 
 	// CreatedAt: creation date.
 	CreatedAt *time.Time `json:"created_at"`
 
 	// UpdatedAt: last update date.
 	UpdatedAt *time.Time `json:"updated_at"`
-
-	// Precisely one of VpcPrivateNetworkInfo, ServerlessFunctionsFunctionInfo, ServerlessContainersContainerInfo, BaremetalServerInfo, ServerlessSqldbBackupInfo, ObsDatasourceInfo, ObsExporterInfo must be set.
-	BaremetalServerInfo *BrmServerInfo `json:"baremetal_server_info,omitempty"`
-
-	// Precisely one of VpcPrivateNetworkInfo, ServerlessFunctionsFunctionInfo, ServerlessContainersContainerInfo, BaremetalServerInfo, ServerlessSqldbBackupInfo, ObsDatasourceInfo, ObsExporterInfo must be set.
-	ServerlessSqldbBackupInfo *ServerlessSqldbBackupInfo `json:"serverless_sqldb_backup_info,omitempty"`
-
-	// Precisely one of VpcPrivateNetworkInfo, ServerlessFunctionsFunctionInfo, ServerlessContainersContainerInfo, BaremetalServerInfo, ServerlessSqldbBackupInfo, ObsDatasourceInfo, ObsExporterInfo must be set.
-	ObsDatasourceInfo *ObsDatasourceInfo `json:"obs_datasource_info,omitempty"`
-
-	// Precisely one of VpcPrivateNetworkInfo, ServerlessFunctionsFunctionInfo, ServerlessContainersContainerInfo, BaremetalServerInfo, ServerlessSqldbBackupInfo, ObsDatasourceInfo, ObsExporterInfo must be set.
-	ObsExporterInfo *ObsExporterInfo `json:"obs_exporter_info,omitempty"`
 }
 
 // SearchResourcesRequest: search resources request.
