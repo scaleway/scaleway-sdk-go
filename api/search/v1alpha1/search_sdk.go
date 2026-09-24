@@ -174,6 +174,9 @@ const (
 	ResourceTypeServerlessFunctionsFunction = ResourceType("serverless_functions_function")
 	// Serverless containers container.
 	ResourceTypeServerlessContainersContainer = ResourceType("serverless_containers_container")
+	ResourceTypeServerlessContainersNamespace = ResourceType("serverless_containers_namespace")
+	ResourceTypeServerlessContainersDomain    = ResourceType("serverless_containers_domain")
+	ResourceTypeServerlessContainersTrigger   = ResourceType("serverless_containers_trigger")
 	// Web Hosting.
 	ResourceTypeWbhHosting = ResourceType("wbh_hosting")
 	// Redis cluster.
@@ -250,6 +253,9 @@ func (enum ResourceType) Values() []ResourceType {
 		"lb_server",
 		"serverless_functions_function",
 		"serverless_containers_container",
+		"serverless_containers_namespace",
+		"serverless_containers_domain",
+		"serverless_containers_trigger",
 		"wbh_hosting",
 		"redis_cluster",
 		"sm_secret",
