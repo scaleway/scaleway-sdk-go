@@ -225,6 +225,9 @@ type CreateOrganizationRequest struct {
 
 	// CustomerID: a custom ID for the customer in your own infrastructure.
 	CustomerID string `json:"customer_id"`
+
+	// Comment: a comment about the organization.
+	Comment *string `json:"comment,omitempty"`
 }
 
 // GetOrganizationRequest: get organization request.
