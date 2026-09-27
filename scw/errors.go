@@ -541,6 +541,8 @@ func (r DeniedAuthenticationError) IsScwSdkError() {}
 
 // PreconditionFailedError implements the SdkError interface
 type PreconditionFailedError struct {
+	// Message is the fallback diagnostic when the API omits a known precondition.
+	Message      string `json:"message,omitempty"`
 	Precondition string `json:"precondition"`
 	HelpMessage  string `json:"help_message"`
 
@@ -548,7 +550,7 @@ type PreconditionFailedError struct {
 }
 
 func (r PreconditionFailedError) Error() string {
-	var msg string
+	msg := r.Message
 	switch r.Precondition {
 	case "unknown_precondition":
 		msg = "unknown precondition"

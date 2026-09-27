@@ -205,3 +205,52 @@ func TestHasResponseErrorWithValidError(t *testing.T) {
 	testhelpers.Assert(t, newErr != nil, "Should have error")
 	testhelpers.Equals(t, testErrorReponse, newErr)
 }
+
+func TestPreconditionFailedErrorMessage(t *testing.T) {
+	for _, tc := range []struct {
+		name    string
+		body    string
+		message string
+	}{
+		{
+			name:    "instance message",
+			body:    `{"type":"precondition_failed","message":"Cannot create a volume of type sbs_volume from a base of type l_ssd"}`,
+			message: "Cannot create a volume of type sbs_volume from a base of type l_ssd",
+		},
+		{
+			name:    "message and help",
+			body:    `{"type":"precondition_failed","message":"Cannot create volume","help_message":"Choose a compatible image"}`,
+			message: "Cannot create volume, Choose a compatible image",
+		},
+		{
+			name:    "unknown precondition value",
+			body:    `{"type":"precondition_failed","precondition":"new_condition","message":"Volume is not ready"}`,
+			message: "Volume is not ready",
+		},
+		{
+			name:    "known precondition keeps existing description",
+			body:    `{"type":"precondition_failed","precondition":"resource_still_in_use","message":"generic message","help_message":"Delete the server first"}`,
+			message: "resource is still in use, Delete the server first",
+		},
+		{
+			name:    "standard response without message",
+			body:    `{"type":"precondition_failed","precondition":"attribute_must_be_set"}`,
+			message: "attribute must be set",
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			res := &http.Response{
+				StatusCode: http.StatusPreconditionFailed,
+				Header:     http.Header{"Content-Type": {"application/json"}},
+				Body:       io.NopCloser(strings.NewReader(tc.body)),
+			}
+			err := hasResponseError(res)
+			preconditionErr, ok := err.(*PreconditionFailedError)
+			if !ok {
+				t.Fatalf("expected PreconditionFailedError, got %T: %v", err, err)
+			}
+			testhelpers.Equals(t, "scaleway-sdk-go: precondition failed: "+tc.message, err.Error())
+			testhelpers.Equals(t, tc.body, string(preconditionErr.RawBody))
+		})
+	}
+}
