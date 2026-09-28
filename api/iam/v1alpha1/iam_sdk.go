@@ -2252,6 +2252,11 @@ type GetSamlCertificateRequest struct {
 	CertificateID string `json:"-"`
 }
 
+// GetScimTokenRequest: get scim token request.
+type GetScimTokenRequest struct {
+	ScimTokenID string `json:"-"`
+}
+
 // GetUserConnectionsRequest: get user connections request.
 type GetUserConnectionsRequest struct {
 	// UserID: ID of the user to list connections for.
@@ -5723,6 +5728,28 @@ func (s *API) DeleteScimToken(req *DeleteScimTokenRequest, opts ...scw.RequestOp
 		return err
 	}
 	return nil
+}
+
+// GetScimToken:
+func (s *API) GetScimToken(req *GetScimTokenRequest, opts ...scw.RequestOption) (*ScimToken, error) {
+	var err error
+
+	if fmt.Sprint(req.ScimTokenID) == "" {
+		return nil, errors.New("field ScimTokenID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/iam/v1alpha1/scim-tokens/" + fmt.Sprint(req.ScimTokenID) + "",
+	}
+
+	var resp ScimToken
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 // StartUserWebAuthnRegistration: Start registering a WebAuthn authenticator.
