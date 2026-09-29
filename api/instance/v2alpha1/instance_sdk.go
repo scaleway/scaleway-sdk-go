@@ -1123,6 +1123,8 @@ const (
 	ServerTypeAvailabilityLowStock = ServerTypeAvailability("low_stock")
 	// Server type is out of stock.
 	ServerTypeAvailabilityOutOfStock = ServerTypeAvailability("out_of_stock")
+	// Server type is not available.
+	ServerTypeAvailabilityUnavailable = ServerTypeAvailability("unavailable")
 )
 
 func (enum ServerTypeAvailability) String() string {
@@ -1139,6 +1141,7 @@ func (enum ServerTypeAvailability) Values() []ServerTypeAvailability {
 		"available",
 		"low_stock",
 		"out_of_stock",
+		"unavailable",
 	}
 }
 
@@ -1520,6 +1523,12 @@ type ServerTypeLimits struct {
 
 	// VolumeCount: maximum number of volumes.
 	VolumeCount uint32 `json:"volume_count"`
+}
+
+// ServerTypeSpotInfo: server type spot info.
+type ServerTypeSpotInfo struct {
+	// Availability: default value: unknown_availability
+	Availability ServerTypeAvailability `json:"availability"`
 }
 
 // ServerIP: server ip.
@@ -1913,6 +1922,9 @@ type ServerType struct {
 
 	// EndOfService: whether the server type has reached end of service.
 	EndOfService bool `json:"end_of_service"`
+
+	// SpotInfo: availability status of the server type as a spot instance.
+	SpotInfo *ServerTypeSpotInfo `json:"spot_info"`
 }
 
 // ServerSummary: server summary.
@@ -2181,6 +2193,12 @@ type ServerRDPPassword struct {
 	EncryptedPassword string `json:"encrypted_password"`
 
 	RdpSSHKeyID string `json:"rdp_ssh_key_id"`
+}
+
+// ServerRuntimeInfo: server runtime info.
+type ServerRuntimeInfo struct {
+	// Spot: true if the Instance is running as Spot.
+	Spot bool `json:"spot"`
 }
 
 // ServerVolume: server volume.
@@ -3631,6 +3649,9 @@ type Server struct {
 
 	// Zone: zone in which the server is located.
 	Zone scw.Zone `json:"zone"`
+
+	// RuntimeInfo: runtime information of this server, only available only when it is running.
+	RuntimeInfo *ServerRuntimeInfo `json:"runtime_info"`
 }
 
 func (m *Server) setSRN(platform string) {
@@ -3732,6 +3753,15 @@ type StartServerRequest struct {
 	Zone scw.Zone `json:"-"`
 
 	// ServerID: ID of the server to start.
+	ServerID string `json:"-"`
+}
+
+// StartSpotServerRequest: start spot server request.
+type StartSpotServerRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// ServerID: ID of the server to start as spot instance.
 	ServerID string `json:"-"`
 }
 
@@ -4708,6 +4738,47 @@ func (s *API) StartServer(req *StartServerRequest, opts ...scw.RequestOption) (*
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
 		Path:   "/instance/v2alpha1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerID) + "/start",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Server
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
+	return &resp, nil
+}
+
+// StartSpotServer: Spot instances are billed at a discount compared to regular instances. However, they can be interrupted
+// at any time.
+func (s *API) StartSpotServer(req *StartSpotServerRequest, opts ...scw.RequestOption) (*Server, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ServerID) == "" {
+		return nil, errors.New("field ServerID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/instance/v2alpha1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerID) + "/start-spot",
 	}
 
 	err = scwReq.SetBody(req)
