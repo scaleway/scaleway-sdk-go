@@ -1335,6 +1335,9 @@ type Cluster struct {
 	// IamNodesGroupID: iAM group that nodes are members of (this field might be empty during early stage of cluster creation).
 	IamNodesGroupID string `json:"iam_nodes_group_id"`
 
+	// IamControlPlaneApplicationID: iAM application ID for the control plane (this field might be empty during early stage of cluster creation).
+	IamControlPlaneApplicationID string `json:"iam_control_plane_application_id"`
+
 	// PodCidr: subnet used for the Pod CIDR.
 	PodCidr scw.IPNet `json:"pod_cidr"`
 
