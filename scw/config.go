@@ -230,6 +230,13 @@ func LoadConfig() (*Config, error) {
 	return cfg, err
 }
 
+// stdoutIsTerminal reports whether os.Stdout is attached to a terminal.
+// It is a variable so that tests can override it.
+var stdoutIsTerminal = func() bool {
+	info, err := os.Stdout.Stat()
+	return err == nil && info.Mode()&os.ModeCharDevice != 0
+}
+
 // LoadConfigFromPath read the config from the given path.
 func LoadConfigFromPath(path string) (*Config, error) {
 	fileInfo, err := os.Stat(path)
@@ -241,9 +248,14 @@ func LoadConfigFromPath(path string) (*Config, error) {
 	}
 
 	if fileInfo.Mode().Perm() != defaultConfigPermission {
-		fmt.Printf("WARNING: Scaleway configuration file permissions are too "+
-			"permissive. That is insecure.\nYou can fix it with the command "+
-			"'chmod 0600 %s'\n", path)
+		// Only print the warning if stdout is a terminal. Otherwise it would break
+		// programmatic consumers that parse stdout (e.g. the CLI used as a kubectl
+		// exec-credential plugin).
+		if stdoutIsTerminal() {
+			fmt.Printf("WARNING: Scaleway configuration file permissions are too "+
+				"permissive. That is insecure.\nYou can fix it with the command "+
+				"'chmod 0600 %s'\n", path)
+		}
 	}
 
 	file, err := os.ReadFile(path)
