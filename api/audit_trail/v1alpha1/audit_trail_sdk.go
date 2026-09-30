@@ -2038,6 +2038,9 @@ type CustomAlertRule struct {
 	// ID: ID of the alert rule.
 	ID string `json:"id"`
 
+	// Srn: the SRN of the alert rule.
+	Srn string `json:"srn"`
+
 	// Name: name of the alert rule.
 	Name string `json:"name"`
 
@@ -2066,6 +2069,24 @@ type CustomAlertRule struct {
 
 	// UpdatedAt: custom alert rule last modification date.
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	// Region: region of the alert rule.
+	Region scw.Region `json:"region"`
+}
+
+func (m *CustomAlertRule) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://audit-trail.%s/regions/%s/custom-alert-rules/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // ListCombinedEventsResponseCombinedEvent: list combined events response combined event.
@@ -2084,6 +2105,9 @@ type ListCombinedEventsResponseCombinedEvent struct {
 type ExportJob struct {
 	// ID: ID of the export job.
 	ID string `json:"id"`
+
+	// Srn: the SRN of the export job.
+	Srn string `json:"srn"`
 
 	// OrganizationID: ID of the targeted Organization.
 	OrganizationID string `json:"organization_id"`
@@ -2106,6 +2130,24 @@ type ExportJob struct {
 
 	// LastStatus: status of last export job.
 	LastStatus *ExportJobStatus `json:"last_status"`
+
+	// Region: region of the export job.
+	Region scw.Region `json:"region"`
+}
+
+func (m *ExportJob) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://audit-trail.%s/regions/%s/export-jobs/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // Product: product.
@@ -3044,6 +3086,10 @@ func (s *API) CreateExportJob(req *CreateExportJobRequest, opts ...scw.RequestOp
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -3118,6 +3164,12 @@ func (s *API) ListExportJobs(req *ListExportJobsRequest, opts ...scw.RequestOpti
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.ExportJobs {
+			el.setSRN(apiMetadata.Domain)
+		}
 	}
 	return &resp, nil
 }
@@ -3206,6 +3258,12 @@ func (s *API) ListCustomAlertRules(req *ListCustomAlertRulesRequest, opts ...scw
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.CustomAlertRules {
+			el.setSRN(apiMetadata.Domain)
+		}
 	}
 	return &resp, nil
 }
@@ -3466,6 +3524,10 @@ func (s *API) CreateCustomAlertRule(req *CreateCustomAlertRuleRequest, opts ...s
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -3501,6 +3563,10 @@ func (s *API) UpdateCustomAlertRule(req *UpdateCustomAlertRuleRequest, opts ...s
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
