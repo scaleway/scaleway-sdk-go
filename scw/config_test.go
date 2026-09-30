@@ -478,7 +478,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
 			// stdout is captured through a pipe (not a terminal), so the warning is not printed.
-			expectedOutput:                "",
+			expectedOutput: "",
 		},
 
 		{
@@ -496,7 +496,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
 			// stdout is captured through a pipe (not a terminal), so the warning is not printed.
-			expectedOutput:                "",
+			expectedOutput: "",
 		},
 
 		{
@@ -514,7 +514,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
 			// stdout is captured through a pipe (not a terminal), so the warning is not printed.
-			expectedOutput:                "",
+			expectedOutput: "",
 		},
 
 		{
@@ -532,7 +532,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
 			// stdout is captured through a pipe (not a terminal), so the warning is not printed.
-			expectedOutput:                "",
+			expectedOutput: "",
 		},
 
 		{
