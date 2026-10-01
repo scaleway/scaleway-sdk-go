@@ -2205,6 +2205,9 @@ type ServerType struct {
 
 	// EndOfService: true if this Instance type has reached end of service.
 	EndOfService bool `json:"end_of_service"`
+
+	// Sku: the billing SKU for this server type.
+	Sku string `json:"sku"`
 }
 
 // VolumeType: volume type.

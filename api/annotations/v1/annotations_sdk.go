@@ -44,6 +44,9 @@ type ListAllKeysAndValuesResponseValue struct {
 	// ID: ID of the value.
 	ID string `json:"id"`
 
+	// Srn: sRN of the value.
+	Srn string `json:"srn"`
+
 	// Name: name of the value.
 	Name string `json:"name"`
 
@@ -56,6 +59,9 @@ type BindingKey struct {
 	// ID: ID of the key.
 	ID string `json:"id"`
 
+	// Srn: sRN of the key.
+	Srn string `json:"srn"`
+
 	// Name: name of the key.
 	Name string `json:"name"`
 }
@@ -65,6 +71,9 @@ type BindingValue struct {
 	// ID: ID of the value.
 	ID string `json:"id"`
 
+	// Srn: sRN of the value.
+	Srn string `json:"srn"`
+
 	// Name: name of the value.
 	Name string `json:"name"`
 }
@@ -73,6 +82,9 @@ type BindingValue struct {
 type ListAllKeysAndValuesResponseKey struct {
 	// ID: ID of the key.
 	ID string `json:"id"`
+
+	// Srn: sRN of the key.
+	Srn string `json:"srn"`
 
 	// Name: name of the key.
 	Name string `json:"name"`
@@ -89,8 +101,11 @@ type Binding struct {
 	// ID: ID of the binding.
 	ID string `json:"id"`
 
-	// Srn: scaleway Resource Name associated to the binding.
+	// Srn: sRN of the binding.
 	Srn string `json:"srn"`
+
+	// TargetSrn: sRN of the resource the binding is attached to.
+	TargetSrn string `json:"target_srn"`
 
 	// Key: key associated to the binding.
 	Key *BindingKey `json:"key"`
@@ -99,10 +114,28 @@ type Binding struct {
 	Value *BindingValue `json:"value"`
 }
 
+func (m *Binding) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://annotations.%s/bindings/%s", platform, fmt.Sprint(m.ID))
+		return
+	}
+}
+
 // Key: key.
 type Key struct {
 	// ID: ID of the annotation key.
 	ID string `json:"id"`
+
+	// Srn: sRN of the annotation key.
+	Srn string `json:"srn"`
 
 	// Name: name of the annotation key.
 	Name string `json:"name"`
@@ -111,10 +144,28 @@ type Key struct {
 	Description string `json:"description"`
 }
 
+func (m *Key) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://annotations.%s/keys/%s", platform, fmt.Sprint(m.ID))
+		return
+	}
+}
+
 // Value: value.
 type Value struct {
 	// ID: ID of the value.
 	ID string `json:"id"`
+
+	// Srn: sRN of the annotation value.
+	Srn string `json:"srn"`
 
 	// KeyID: ID of the key the value is associated to.
 	KeyID string `json:"key_id"`
@@ -126,10 +177,25 @@ type Value struct {
 	Description string `json:"description"`
 }
 
+func (m *Value) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://annotations.%s/values/%s", platform, fmt.Sprint(m.ID))
+		return
+	}
+}
+
 // CreateBindingRequest: create binding request.
 type CreateBindingRequest struct {
-	// Srn: scaleway Resource Name to associate.
-	Srn string `json:"srn"`
+	// TargetSrn: sRN of the resource to attach the value to.
+	TargetSrn string `json:"target_srn"`
 
 	// ValueID: ID of the value to associate.
 	ValueID string `json:"value_id"`
@@ -161,8 +227,8 @@ type CreateValueRequest struct {
 
 // DeleteAllBindingsMatchingSRNRequest: delete all bindings matching srn request.
 type DeleteAllBindingsMatchingSRNRequest struct {
-	// Srn: scaleway Resource Name for which all bindings should be deleted.
-	Srn string `json:"-"`
+	// TargetSrn: sRN of the resource for which all bindings should be deleted.
+	TargetSrn string `json:"-"`
 
 	// OrganizationID: ID of the organization.
 	OrganizationID string `json:"-"`
@@ -251,8 +317,8 @@ type ListBindingsRequest struct {
 	// OrganizationID: ID of the organization.
 	OrganizationID string `json:"-"`
 
-	// Srn: scaleway Resource Name for which to list all bindings.
-	Srn *string `json:"-"`
+	// TargetSrn: sRN of the resource for which to list all bindings.
+	TargetSrn *string `json:"-"`
 
 	// ValueID: value ID for which to list all bindings.
 	ValueID *string `json:"-"`
@@ -429,6 +495,10 @@ func (s *API) CreateKey(req *CreateKeyRequest, opts ...scw.RequestOption) (*Key,
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -463,6 +533,12 @@ func (s *API) ListKeys(req *ListKeysRequest, opts ...scw.RequestOption) (*ListKe
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Keys {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -484,6 +560,10 @@ func (s *API) GetKey(req *GetKeyRequest, opts ...scw.RequestOption) (*Key, error
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -511,6 +591,10 @@ func (s *API) UpdateKey(req *UpdateKeyRequest, opts ...scw.RequestOption) (*Key,
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -555,6 +639,10 @@ func (s *API) CreateValue(req *CreateValueRequest, opts ...scw.RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -590,6 +678,12 @@ func (s *API) ListValues(req *ListValuesRequest, opts ...scw.RequestOption) (*Li
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Values {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -611,6 +705,10 @@ func (s *API) GetValue(req *GetValueRequest, opts ...scw.RequestOption) (*Value,
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -638,6 +736,10 @@ func (s *API) UpdateValue(req *UpdateValueRequest, opts ...scw.RequestOption) (*
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -731,6 +833,10 @@ func (s *API) CreateBinding(req *CreateBindingRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -752,7 +858,7 @@ func (s *API) ListBindings(req *ListBindingsRequest, opts ...scw.RequestOption) 
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
-	parameter.AddToQuery(query, "srn", req.Srn)
+	parameter.AddToQuery(query, "target_srn", req.TargetSrn)
 	parameter.AddToQuery(query, "value_id", req.ValueID)
 
 	scwReq := &scw.ScalewayRequest{
@@ -766,6 +872,12 @@ func (s *API) ListBindings(req *ListBindingsRequest, opts ...scw.RequestOption) 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Bindings {
+			el.setSRN(apiMetadata.Domain)
+		}
 	}
 	return &resp, nil
 }
@@ -822,7 +934,7 @@ func (s *API) DeleteAllBindingsMatchingSRN(req *DeleteAllBindingsMatchingSRNRequ
 	}
 
 	query := url.Values{}
-	parameter.AddToQuery(query, "srn", req.Srn)
+	parameter.AddToQuery(query, "target_srn", req.TargetSrn)
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 
 	scwReq := &scw.ScalewayRequest{
