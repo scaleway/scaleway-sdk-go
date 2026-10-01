@@ -215,6 +215,8 @@ const (
 	ResourceTypeKafkCluster         = ResourceType("kafk_cluster")
 	ResourceTypeSedbCluster         = ResourceType("sedb_cluster")
 	ResourceTypeAutoscalingGroup    = ResourceType("autoscaling_group")
+	ResourceTypeWoflDefinition      = ResourceType("wofl_definition")
+	ResourceTypeWoflRun             = ResourceType("wofl_run")
 )
 
 func (enum ResourceType) String() string {
@@ -283,6 +285,8 @@ func (enum ResourceType) Values() []ResourceType {
 		"kafk_cluster",
 		"sedb_cluster",
 		"autoscaling_group",
+		"wofl_definition",
+		"wofl_run",
 	}
 }
 
