@@ -1124,7 +1124,7 @@ type CreateClusterRequestPoolConfig struct {
 	// PrivateNetworkID: private network where the nodes are attached. Should be member of the same VPC as the API Server.
 	PrivateNetworkID *string `json:"private_network_id"`
 
-	// MaxTerminationGracePeriod: maximum amount of time before the API forces the drain and deletion of a `deleting` node. It overrides pods `PodDisruptionBudget` and `terminationGracePeriodSeconds`. Defaults to 15 minutes, up to 1 hour.
+	// MaxTerminationGracePeriod: maximum amount of time in seconds before the API forces the drain and deletion of a `deleting` node. It overrides pods `PodDisruptionBudget` and `terminationGracePeriodSeconds`. Defaults to 15 minutes, up to 1 hour.
 	MaxTerminationGracePeriod *scw.Duration `json:"max_termination_grace_period"`
 
 	// UserData: user data applied and reconciled with the pool.
@@ -1516,7 +1516,7 @@ type Pool struct {
 	// ErrorMessage: details of the error, if any occurred when managing the pool.
 	ErrorMessage *string `json:"error_message"`
 
-	// MaxTerminationGracePeriod: maximum amount of time before the API forces the drain and deletion of a `deleting` node. It overrides pods `PodDisruptionBudget` and `terminationGracePeriodSeconds`. Defaults to 15 minutes, up to 1 hour.
+	// MaxTerminationGracePeriod: maximum amount of time in seconds before the API forces the drain and deletion of a `deleting` node. It overrides pods `PodDisruptionBudget` and `terminationGracePeriodSeconds`. Defaults to 15 minutes, up to 1 hour.
 	MaxTerminationGracePeriod *scw.Duration `json:"max_termination_grace_period"`
 
 	// Srn: the SRN of the pool.
@@ -1811,7 +1811,7 @@ type CreatePoolRequest struct {
 	// UserData: user data applied and reconciled with the pool.
 	UserData map[string][]byte `json:"user_data"`
 
-	// MaxTerminationGracePeriod: maximum amount of time before the API forces the drain and deletion of a `deleting` node. It overrides pods `PodDisruptionBudget` and `terminationGracePeriodSeconds`. Defaults to 15 minutes, up to 1 hour.
+	// MaxTerminationGracePeriod: maximum amount of time in seconds before the API forces the drain and deletion of a `deleting` node. It overrides pods `PodDisruptionBudget` and `terminationGracePeriodSeconds`. Defaults to 15 minutes, up to 1 hour.
 	MaxTerminationGracePeriod *scw.Duration `json:"max_termination_grace_period,omitempty"`
 }
 
@@ -2476,7 +2476,7 @@ type UpdatePoolRequest struct {
 	// SecurityGroupID: security group ID in which all the nodes of the pool will be moved.
 	SecurityGroupID *string `json:"security_group_id,omitempty"`
 
-	// MaxTerminationGracePeriod: new maximum amount of time before the API forces the drain and deletion of a `deleting` node.
+	// MaxTerminationGracePeriod: new maximum amount of time in seconds before the API forces the drain and deletion of a `deleting` node.
 	MaxTerminationGracePeriod *scw.Duration `json:"max_termination_grace_period,omitempty"`
 }
 
