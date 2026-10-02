@@ -709,6 +709,24 @@ type Contract struct {
 
 	// UpdatedAt: the last modification date of the contract.
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	// Srn: the SRN of the contract.
+	Srn string `json:"srn"`
+}
+
+func (m *Contract) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://account.%s/contracts/%s", platform, fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // Qualification: qualification.
@@ -793,7 +811,7 @@ type Project struct {
 	// Default value: unknown_status
 	Status ProjectStatus `json:"status"`
 
-	// Srn: the SRN of the project.
+	// Srn: the SRN of the Project.
 	Srn string `json:"srn"`
 }
 
