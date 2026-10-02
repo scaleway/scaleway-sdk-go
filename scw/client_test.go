@@ -2,7 +2,10 @@ package scw
 
 import (
 	"bytes"
+	"context"
+	"crypto/tls"
 	"net/http"
+	"net/http/httptest"
 	"os"
 	"strings"
 	"testing"
@@ -249,13 +252,23 @@ func TestNewClientWithOptions(t *testing.T) {
 		testhelpers.Equals(t, auth.NewToken(testAccessKey, testSecretKey), client.auth)
 		testhelpers.Equals(t, testAPIURL, client.apiURL)
 
-		clientTransport, ok := client.httpClient.(*http.Client).Transport.(*http.Transport)
-		if loggerTransport, isLogger := client.httpClient.(*http.Client).Transport.(*requestLoggerTransport); !ok && isLogger {
-			clientTransport, ok = loggerTransport.rt.(*http.Transport)
+		var tlsConfig *tls.Config
+		switch t := client.httpClient.(*http.Client).Transport.(type) {
+		case *http.Transport:
+			tlsConfig = t.TLSClientConfig
+		case *RateLimitTransport:
+			tlsConfig = t.base().(*http.Transport).TLSClientConfig
+		case *requestLoggerTransport:
+			switch rt := t.rt.(type) {
+			case *http.Transport:
+				tlsConfig = rt.TLSClientConfig
+			case *RateLimitTransport:
+				tlsConfig = rt.base().(*http.Transport).TLSClientConfig
+			}
 		}
-		testhelpers.Assert(t, ok, "clientTransport must be not nil")
-		testhelpers.Assert(t, clientTransport.TLSClientConfig != nil, "TLSClientConfig must be not nil")
-		testhelpers.Equals(t, testInsecure, clientTransport.TLSClientConfig.InsecureSkipVerify)
+
+		testhelpers.Assert(t, tlsConfig != nil, "TLSClientConfig must be not nil")
+		testhelpers.Equals(t, testInsecure, tlsConfig.InsecureSkipVerify)
 
 		s3Endpoint, exist := client.GetS3Endpoint()
 		testhelpers.Equals(t, testS3Endpoint, s3Endpoint)
@@ -347,6 +360,29 @@ func TestSetInsecureMode(t *testing.T) {
 	logger.DefaultLogger.Init(os.Stderr, logger.LogLevelWarning)
 }
 
+// TestSetInsecureModeRateLimitTransport verifies that insecure mode actually
+// disables certificate verification on the transport used by RoundTrip.
+func TestSetInsecureModeRateLimitTransport(t *testing.T) {
+	// Use a self-signed certificate
+	server := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer server.Close()
+
+	// Build the SDK HTTP client and enable insecure mode
+	httpClient := newHTTPClient()
+	setInsecureMode(httpClient)
+
+	// A request must succeed despite the self-signed cert
+	req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL, nil)
+	testhelpers.AssertNoError(t, err)
+
+	resp, err := httpClient.Do(req)
+	testhelpers.AssertNoError(t, err)
+	testhelpers.Equals(t, http.StatusOK, resp.StatusCode)
+	_ = resp.Body.Close()
+}
+
 func TestNewVariableFromType(t *testing.T) {
 	type fakeType struct {
 		plop int
@@ -375,4 +411,156 @@ func TestClientGetAPIMetadata(t *testing.T) {
 		testhelpers.Equals(t, "scw", metadata.Partition)
 		testhelpers.Equals(t, "external", metadata.Platform)
 	})
+}
+
+type rateLimitResponse struct {
+	code    int
+	headers http.Header
+}
+
+func TestRateLimit(t *testing.T) {
+	cases := []struct {
+		name             string
+		responses        []rateLimitResponse
+		maxRetries       int
+		expectedStatus   string
+		expectedHeader   http.Header
+		expectedHitCount int32
+	}{
+		{
+			name: "basic 200 with rate-limit headers",
+			responses: []rateLimitResponse{
+				{
+					code:    http.StatusOK,
+					headers: http.Header{"X-Ratelimit-Limit": {"50, 50;w=1"}, "X-Ratelimit-Remaining": {"49"}, "X-Ratelimit-Reset": {"2"}},
+				},
+			},
+			maxRetries:       1,
+			expectedStatus:   "200 OK",
+			expectedHeader:   http.Header{"X-Ratelimit-Limit": {"50, 50;w=1"}, "X-Ratelimit-Remaining": {"49"}, "X-Ratelimit-Reset": {"2"}},
+			expectedHitCount: 1,
+		},
+		{
+			name: "429 then success on retry",
+			responses: []rateLimitResponse{
+				{
+					code:    http.StatusTooManyRequests,
+					headers: http.Header{"X-Ratelimit-Remaining": {"0"}, "X-Ratelimit-Reset": {"0"}, "Retry-After": {"0"}},
+				},
+				{
+					code:    http.StatusOK,
+					headers: http.Header{"X-Ratelimit-Remaining": {"49"}, "X-Ratelimit-Reset": {"2"}},
+				},
+			},
+			maxRetries:       1,
+			expectedStatus:   "200 OK",
+			expectedHeader:   http.Header{"X-Ratelimit-Remaining": {"49"}, "X-Ratelimit-Reset": {"2"}},
+			expectedHitCount: 2,
+		},
+		{
+			name: "429 with no Retry-After does not retry",
+			responses: []rateLimitResponse{
+				{
+					code:    http.StatusTooManyRequests,
+					headers: http.Header{"X-Ratelimit-Remaining": {"0"}, "X-Ratelimit-Reset": {"2"}},
+				},
+			},
+			maxRetries:       5,
+			expectedStatus:   "429 Too Many Requests",
+			expectedHeader:   http.Header{"X-Ratelimit-Remaining": {"0"}, "X-Ratelimit-Reset": {"2"}},
+			expectedHitCount: 1,
+		},
+		{
+			name: "429 with malformed Retry-After does not retry",
+			responses: []rateLimitResponse{
+				{
+					code:    http.StatusTooManyRequests,
+					headers: http.Header{"X-Ratelimit-Remaining": {"0"}, "X-Ratelimit-Reset": {"0"}, "Retry-After": {"not-a-number"}},
+				},
+			},
+			maxRetries:       5,
+			expectedStatus:   "429 Too Many Requests",
+			expectedHeader:   http.Header{"X-Ratelimit-Remaining": {"0"}, "X-Ratelimit-Reset": {"0"}, "Retry-After": {"not-a-number"}},
+			expectedHitCount: 1,
+		},
+		{
+			name: "429 retry exhaustion returns last 429",
+			responses: []rateLimitResponse{
+				{
+					code:    http.StatusTooManyRequests,
+					headers: http.Header{"X-Ratelimit-Remaining": {"0"}, "X-Ratelimit-Reset": {"0"}, "Retry-After": {"0"}},
+				},
+				{
+					code:    http.StatusTooManyRequests,
+					headers: http.Header{"X-Ratelimit-Remaining": {"0"}, "X-Ratelimit-Reset": {"0"}, "Retry-After": {"0"}},
+				},
+			},
+			maxRetries:       1,
+			expectedStatus:   "429 Too Many Requests",
+			expectedHeader:   http.Header{"X-Ratelimit-Remaining": {"0"}, "X-Ratelimit-Reset": {"0"}, "Retry-After": {"0"}},
+			expectedHitCount: 2,
+		},
+		{
+			name: "malformed rate-limit headers do not crash",
+			responses: []rateLimitResponse{
+				{
+					code:    http.StatusOK,
+					headers: http.Header{"X-Ratelimit-Limit": {"not-a-number"}, "X-Ratelimit-Remaining": {"abc"}, "X-Ratelimit-Reset": {"xyz"}},
+				},
+			},
+			maxRetries:       1,
+			expectedStatus:   "200 OK",
+			expectedHeader:   http.Header{"X-Ratelimit-Limit": {"not-a-number"}, "X-Ratelimit-Remaining": {"abc"}, "X-Ratelimit-Reset": {"xyz"}},
+			expectedHitCount: 1,
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			var hitCount int32
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				hitCount++
+				idx := hitCount - 1
+				if int(idx) >= len(c.responses) {
+					idx = int32(len(c.responses)) - 1
+				}
+
+				resp := c.responses[idx]
+
+				for k, v := range resp.headers {
+					for _, val := range v {
+						w.Header().Set(k, val)
+					}
+				}
+
+				w.WriteHeader(resp.code)
+			}))
+			defer server.Close()
+
+			client := newHTTPClient()
+			tp := client.Transport.(*RateLimitTransport)
+			tp.MaxRetries = c.maxRetries
+
+			req, err := http.NewRequestWithContext(
+				context.Background(), http.MethodPost, server.URL, bytes.NewBufferString("{}"),
+			)
+			testhelpers.AssertNoError(t, err)
+
+			req.Header.Set("Content-Type", "application/json; charset=UTF-8")
+
+			resp, err := client.Do(req)
+			defer func() {
+				err := resp.Body.Close()
+				if err != nil {
+					t.Fatalf("could not close http response: %v\n", err)
+				}
+			}()
+
+			testhelpers.AssertNoError(t, err)
+
+			testhelpers.Equals(t, c.expectedStatus, resp.Status)
+			testhelpers.HeaderContains(t, c.expectedHeader, resp.Header)
+			testhelpers.Equals(t, c.expectedHitCount, hitCount)
+		})
+	}
 }
