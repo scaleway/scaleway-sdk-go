@@ -684,27 +684,6 @@ type Maintenance struct {
 
 	// Reason: reason of the maintenance.
 	Reason string `json:"reason"`
-
-	// Region: region of the maintenance.
-	Region scw.Region `json:"region"`
-
-	// Srn: sRN of the maintenance.
-	Srn string `json:"srn"`
-}
-
-func (m *Maintenance) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://mongodb.%s/region/%s/maintenances/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
-		return
-	}
 }
 
 // Volume: volume.
@@ -818,24 +797,6 @@ type Instance struct {
 
 	// UpgradableVersions: list of MongoDB® versions the Database Instance can be upgraded to.
 	UpgradableVersions []string `json:"upgradable_versions"`
-
-	// Srn: scaleway Resource Name of the Database Instance.
-	Srn string `json:"srn"`
-}
-
-func (m *Instance) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://mongodb.%s/region/%s/instances/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
-		return
-	}
 }
 
 // NodeType: node type.
@@ -908,24 +869,6 @@ type Snapshot struct {
 
 	// Region: region of the snapshot.
 	Region scw.Region `json:"region"`
-
-	// Srn: scaleway Resource Name of the snapshot.
-	Srn string `json:"srn"`
-}
-
-func (m *Snapshot) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://mongodb.%s/region/%s/snapshots/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
-		return
-	}
 }
 
 // User: user.
@@ -1681,12 +1624,6 @@ func (s *API) ListInstances(req *ListInstancesRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.Instances {
-			el.setSRN(apiMetadata.Domain)
-		}
-	}
 	return &resp, nil
 }
 
@@ -1717,10 +1654,6 @@ func (s *API) GetInstance(req *GetInstanceRequest, opts ...scw.RequestOption) (*
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1814,10 +1747,6 @@ func (s *API) CreateInstance(req *CreateInstanceRequest, opts ...scw.RequestOpti
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -1854,10 +1783,6 @@ func (s *API) UpdateInstance(req *UpdateInstanceRequest, opts ...scw.RequestOpti
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -1888,10 +1813,6 @@ func (s *API) DeleteInstance(req *DeleteInstanceRequest, opts ...scw.RequestOpti
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1928,10 +1849,6 @@ func (s *API) UpgradeInstance(req *UpgradeInstanceRequest, opts ...scw.RequestOp
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1996,10 +1913,6 @@ func (s *API) CreateSnapshot(req *CreateSnapshotRequest, opts ...scw.RequestOpti
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -2030,10 +1943,6 @@ func (s *API) GetSnapshot(req *GetSnapshotRequest, opts ...scw.RequestOption) (*
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2071,10 +1980,6 @@ func (s *API) UpdateSnapshot(req *UpdateSnapshotRequest, opts ...scw.RequestOpti
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -2110,10 +2015,6 @@ func (s *API) RestoreSnapshot(req *RestoreSnapshotRequest, opts ...scw.RequestOp
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2157,12 +2058,6 @@ func (s *API) ListSnapshots(req *ListSnapshotsRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.Snapshots {
-			el.setSRN(apiMetadata.Domain)
-		}
-	}
 	return &resp, nil
 }
 
@@ -2193,10 +2088,6 @@ func (s *API) DeleteSnapshot(req *DeleteSnapshotRequest, opts ...scw.RequestOpti
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2528,12 +2419,6 @@ func (s *API) ListMaintenances(req *ListMaintenancesRequest, opts ...scw.Request
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.Maintenances {
-			el.setSRN(apiMetadata.Domain)
-		}
-	}
 	return &resp, nil
 }
 
@@ -2564,10 +2449,6 @@ func (s *API) GetMaintenance(req *GetMaintenanceRequest, opts ...scw.RequestOpti
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2651,10 +2532,6 @@ func (s *API) ApplyMaintenance(req *ApplyMaintenanceRequest, opts ...scw.Request
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
