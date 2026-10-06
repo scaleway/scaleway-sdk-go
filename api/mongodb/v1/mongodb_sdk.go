@@ -702,7 +702,7 @@ func (m *Maintenance) setSRN(platform string) {
 	// optional value in an SRN where the value set to the empty string makes sense.
 
 	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://mongodb.%s/regions/%s/maintenances/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
+		m.Srn = fmt.Sprintf("srn://mongodb.%s/region/%s/maintenances/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
 		return
 	}
 }
@@ -833,7 +833,7 @@ func (m *Instance) setSRN(platform string) {
 	// optional value in an SRN where the value set to the empty string makes sense.
 
 	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://mongodb.%s/regions/%s/instances/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
+		m.Srn = fmt.Sprintf("srn://mongodb.%s/region/%s/instances/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
 		return
 	}
 }
@@ -923,7 +923,7 @@ func (m *Snapshot) setSRN(platform string) {
 	// optional value in an SRN where the value set to the empty string makes sense.
 
 	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://mongodb.%s/regions/%s/snapshots/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
+		m.Srn = fmt.Sprintf("srn://mongodb.%s/region/%s/snapshots/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
 		return
 	}
 }
