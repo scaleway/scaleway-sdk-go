@@ -714,21 +714,6 @@ type Contract struct {
 	Srn string `json:"srn"`
 }
 
-func (m *Contract) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://account.%s/contracts/%s", platform, fmt.Sprint(m.ID))
-		return
-	}
-}
-
 // Qualification: qualification.
 type Qualification struct {
 	// ArchitectureType: architecture type of the qualification.

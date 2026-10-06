@@ -315,10 +315,8 @@ type KeyProtectionLevel string
 
 const (
 	KeyProtectionLevelUnknownProtectionLevel = KeyProtectionLevel("unknown_protection_level")
-	// Cryptographic operations are performed in software.
-	KeyProtectionLevelSoftware = KeyProtectionLevel("software")
-	// Cryptographic operations are performed within a dedicated Hardware Security Module (HSM).
-	KeyProtectionLevelHsm = KeyProtectionLevel("hsm")
+	KeyProtectionLevelSoftware               = KeyProtectionLevel("software")
+	KeyProtectionLevelHsm                    = KeyProtectionLevel("hsm")
 )
 
 func (enum KeyProtectionLevel) String() string {
