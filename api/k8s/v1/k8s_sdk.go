@@ -965,6 +965,7 @@ type ACLRule struct {
 	Region scw.Region `json:"region"`
 }
 
+//nolint:unused
 func (m *ACLRule) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -1181,6 +1182,7 @@ type ClusterType struct {
 	Region scw.Region `json:"region"`
 }
 
+//nolint:unused
 func (m *ClusterType) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -1235,6 +1237,7 @@ type Version struct {
 	AdditionalComponents map[string]*ComponentInfo `json:"additional_components"`
 }
 
+//nolint:unused
 func (m *Version) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -1348,6 +1351,7 @@ type Cluster struct {
 	ServiceDNSIP net.IP `json:"service_dns_ip"`
 }
 
+//nolint:unused
 func (m *Cluster) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -1409,6 +1413,7 @@ type Node struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 }
 
+//nolint:unused
 func (m *Node) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -1526,6 +1531,7 @@ type Pool struct {
 	Region scw.Region `json:"region"`
 }
 
+//nolint:unused
 func (m *Pool) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server

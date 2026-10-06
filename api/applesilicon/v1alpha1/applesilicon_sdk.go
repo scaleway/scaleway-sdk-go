@@ -655,6 +655,9 @@ type OS struct {
 
 	// SupportedServerTypes: list of server types which supports the OS configuration. Also gives information about immediate stock availability.
 	SupportedServerTypes []*OSSupportedServerType `json:"supported_server_types"`
+
+	// Zone: zone of OS.
+	Zone scw.Zone `json:"zone"`
 }
 
 // RunnerConfiguration: runner configuration.
@@ -826,6 +829,7 @@ type Server struct {
 	KextEnabled bool `json:"kext_enabled"`
 }
 
+//nolint:unused
 func (m *Server) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -883,6 +887,7 @@ type Runner struct {
 	Srn string `json:"srn"`
 }
 
+//nolint:unused
 func (m *Runner) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -961,6 +966,9 @@ type ServerType struct {
 
 	// Npu: nPU description.
 	Npu *ServerTypeNPU `json:"npu"`
+
+	// Zone: zone of the server type.
+	Zone scw.Zone `json:"zone"`
 }
 
 // CommitmentTypeValue: commitment type value.
@@ -1027,6 +1035,7 @@ type ConnectivityDiagnostic struct {
 	Srn string `json:"srn"`
 }
 
+//nolint:unused
 func (m *ConnectivityDiagnostic) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server

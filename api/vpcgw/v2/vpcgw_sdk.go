@@ -398,6 +398,7 @@ type GatewayNetwork struct {
 	Zone scw.Zone `json:"zone"`
 }
 
+//nolint:unused
 func (m *GatewayNetwork) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -449,6 +450,7 @@ type IP struct {
 	Zone scw.Zone `json:"zone"`
 }
 
+//nolint:unused
 func (m *IP) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -543,6 +545,7 @@ type Gateway struct {
 	Zone scw.Zone `json:"zone"`
 }
 
+//nolint:unused
 func (m *Gateway) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -592,6 +595,7 @@ type PatRule struct {
 	Zone scw.Zone `json:"zone"`
 }
 
+//nolint:unused
 func (m *PatRule) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server

@@ -692,6 +692,7 @@ type Maintenance struct {
 	Srn string `json:"srn"`
 }
 
+//nolint:unused
 func (m *Maintenance) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -823,6 +824,7 @@ type Instance struct {
 	Srn string `json:"srn"`
 }
 
+//nolint:unused
 func (m *Instance) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -913,6 +915,7 @@ type Snapshot struct {
 	Srn string `json:"srn"`
 }
 
+//nolint:unused
 func (m *Snapshot) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server

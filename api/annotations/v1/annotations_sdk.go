@@ -114,6 +114,7 @@ type Binding struct {
 	Value *BindingValue `json:"value"`
 }
 
+//nolint:unused
 func (m *Binding) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -144,6 +145,7 @@ type Key struct {
 	Description string `json:"description"`
 }
 
+//nolint:unused
 func (m *Key) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -177,6 +179,7 @@ type Value struct {
 	Description string `json:"description"`
 }
 
+//nolint:unused
 func (m *Value) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
