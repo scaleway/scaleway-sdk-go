@@ -3065,9 +3065,6 @@ func (s *API) EnableObjectStoragePrivateAccess(req *EnableObjectStoragePrivateAc
 		req.Region = defaultRegion
 	}
 
-	query := url.Values{}
-	parameter.AddToQuery(query, "private_network_ids", req.PrivateNetworkIDs)
-
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
 	}
@@ -3079,7 +3076,11 @@ func (s *API) EnableObjectStoragePrivateAccess(req *EnableObjectStoragePrivateAc
 	scwReq := &scw.ScalewayRequest{
 		Method: "POST",
 		Path:   "/vpc/v2/regions/" + fmt.Sprint(req.Region) + "/object-storage-private-access/" + fmt.Sprint(req.VpcID) + "/enable",
-		Query:  query,
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
 	}
 
 	var resp VPC
