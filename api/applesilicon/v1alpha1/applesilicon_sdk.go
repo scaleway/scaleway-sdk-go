@@ -655,6 +655,9 @@ type OS struct {
 
 	// SupportedServerTypes: list of server types which supports the OS configuration. Also gives information about immediate stock availability.
 	SupportedServerTypes []*OSSupportedServerType `json:"supported_server_types"`
+
+	// Zone: zone of OS.
+	Zone scw.Zone `json:"zone"`
 }
 
 // RunnerConfiguration: runner configuration.
@@ -961,6 +964,9 @@ type ServerType struct {
 
 	// Npu: nPU description.
 	Npu *ServerTypeNPU `json:"npu"`
+
+	// Zone: zone of the server type.
+	Zone scw.Zone `json:"zone"`
 }
 
 // CommitmentTypeValue: commitment type value.
