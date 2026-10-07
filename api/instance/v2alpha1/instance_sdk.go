@@ -1925,9 +1925,6 @@ type ServerType struct {
 
 	// SpotInfo: availability status of the server type as a spot instance.
 	SpotInfo *ServerTypeSpotInfo `json:"spot_info"`
-
-	// Sku: the billing SKU for this server type.
-	Sku string `json:"sku"`
 }
 
 // ServerSummary: server summary.
