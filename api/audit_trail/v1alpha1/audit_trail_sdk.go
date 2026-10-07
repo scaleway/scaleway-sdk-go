@@ -2074,6 +2074,7 @@ type CustomAlertRule struct {
 	Region scw.Region `json:"region"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *CustomAlertRule) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -2135,6 +2136,7 @@ type ExportJob struct {
 	Region scw.Region `json:"region"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *ExportJob) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
