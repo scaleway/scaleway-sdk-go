@@ -535,6 +535,7 @@ type DedicatedConnection struct {
 	Region scw.Region `json:"region"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *DedicatedConnection) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -630,6 +631,7 @@ type Link struct {
 	Region scw.Region `json:"region"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *Link) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -678,6 +680,7 @@ type Partner struct {
 	Region scw.Region `json:"region"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *Partner) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -726,6 +729,7 @@ type Pop struct {
 	Region scw.Region `json:"region"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *Pop) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -780,6 +784,7 @@ type RoutingPolicy struct {
 	Region scw.Region `json:"region"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *RoutingPolicy) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
