@@ -463,6 +463,7 @@ type Cluster struct {
 	Srn string `json:"srn"`
 }
 
+//nolint:unused
 func (m *Cluster) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server

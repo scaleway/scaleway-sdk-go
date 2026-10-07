@@ -750,6 +750,7 @@ type Connection struct {
 	Region scw.Region `json:"region"`
 }
 
+//nolint:unused
 func (m *Connection) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -842,6 +843,7 @@ type CustomerGateway struct {
 	Region scw.Region `json:"region"`
 }
 
+//nolint:unused
 func (m *CustomerGateway) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -896,6 +898,7 @@ type RoutingPolicy struct {
 	Region scw.Region `json:"region"`
 }
 
+//nolint:unused
 func (m *RoutingPolicy) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -987,6 +990,7 @@ type VpnGateway struct {
 	Region scw.Region `json:"region"`
 }
 
+//nolint:unused
 func (m *VpnGateway) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server

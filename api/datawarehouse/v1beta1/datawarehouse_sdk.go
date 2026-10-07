@@ -334,6 +334,7 @@ type Endpoint struct {
 	Srn string `json:"srn"`
 }
 
+//nolint:unused
 func (m *Endpoint) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -376,6 +377,7 @@ type Database struct {
 	Srn string `json:"srn"`
 }
 
+//nolint:unused
 func (m *Database) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -449,6 +451,7 @@ type Deployment struct {
 	Srn string `json:"srn"`
 }
 
+//nolint:unused
 func (m *Deployment) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -506,6 +509,7 @@ type User struct {
 	Srn string `json:"srn"`
 }
 
+//nolint:unused
 func (m *User) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server

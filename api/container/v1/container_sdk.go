@@ -1030,6 +1030,7 @@ type Container struct {
 	Region scw.Region `json:"region"`
 }
 
+//nolint:unused
 func (m *Container) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -1079,6 +1080,7 @@ type Domain struct {
 	Region scw.Region `json:"region"`
 }
 
+//nolint:unused
 func (m *Domain) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -1140,6 +1142,7 @@ type Namespace struct {
 	Region scw.Region `json:"region"`
 }
 
+//nolint:unused
 func (m *Namespace) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -1211,6 +1214,7 @@ type Trigger struct {
 	Region scw.Region `json:"region"`
 }
 
+//nolint:unused
 func (m *Trigger) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
