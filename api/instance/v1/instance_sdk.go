@@ -1327,6 +1327,7 @@ type Volume struct {
 	Srn string `json:"srn,omitempty"`
 }
 
+//nolint:unused
 func (m *Volume) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -1445,6 +1446,7 @@ type PlacementGroup struct {
 	Srn string `json:"srn,omitempty"`
 }
 
+//nolint:unused
 func (m *PlacementGroup) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -1494,6 +1496,7 @@ type PrivateNIC struct {
 	Srn string `json:"srn,omitempty"`
 }
 
+//nolint:unused
 func (m *PrivateNIC) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -1808,6 +1811,7 @@ type Server struct {
 	Srn string `json:"srn,omitempty"`
 }
 
+//nolint:unused
 func (m *Server) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -1938,6 +1942,7 @@ type SecurityGroup struct {
 	Srn string `json:"srn,omitempty"`
 }
 
+//nolint:unused
 func (m *SecurityGroup) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -2055,6 +2060,7 @@ type Snapshot struct {
 	Srn string `json:"srn,omitempty"`
 }
 
+//nolint:unused
 func (m *Snapshot) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server

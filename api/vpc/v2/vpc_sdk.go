@@ -571,6 +571,7 @@ type Subnet struct {
 	Region scw.Region `json:"region"`
 }
 
+//nolint:unused
 func (m *Subnet) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -631,6 +632,7 @@ type PrivateNetwork struct {
 	HasObjectStoragePrivateAccess bool `json:"has_object_storage_private_access"`
 }
 
+//nolint:unused
 func (m *PrivateNetwork) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -692,6 +694,7 @@ type Route struct {
 	Region scw.Region `json:"region"`
 }
 
+//nolint:unused
 func (m *Route) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -793,6 +796,7 @@ type IngressRule struct {
 	Region scw.Region `json:"region"`
 }
 
+//nolint:unused
 func (m *IngressRule) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -878,6 +882,7 @@ type VPCConnector struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 }
 
+//nolint:unused
 func (m *VPCConnector) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -941,6 +946,7 @@ type VPC struct {
 	ObjectStoragePrivateAccessEnabled bool `json:"object_storage_private_access_enabled"`
 }
 
+//nolint:unused
 func (m *VPC) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
