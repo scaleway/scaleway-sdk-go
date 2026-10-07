@@ -77,6 +77,53 @@ func (enum *DataKeyAlgorithmSymmetricEncryption) UnmarshalJSON(data []byte) erro
 	return nil
 }
 
+type GenerateKeyMaterialImportParametersRequestWrappingAlgorithm string
+
+const (
+	GenerateKeyMaterialImportParametersRequestWrappingAlgorithmUnknownWrappingAlgorithm = GenerateKeyMaterialImportParametersRequestWrappingAlgorithm("unknown_wrapping_algorithm")
+	GenerateKeyMaterialImportParametersRequestWrappingAlgorithmRsaOaep2048Sha256        = GenerateKeyMaterialImportParametersRequestWrappingAlgorithm("rsa_oaep_2048_sha256")
+	GenerateKeyMaterialImportParametersRequestWrappingAlgorithmRsaOaep3072Sha256        = GenerateKeyMaterialImportParametersRequestWrappingAlgorithm("rsa_oaep_3072_sha256")
+	GenerateKeyMaterialImportParametersRequestWrappingAlgorithmRsaOaep4096Sha256        = GenerateKeyMaterialImportParametersRequestWrappingAlgorithm("rsa_oaep_4096_sha256")
+	GenerateKeyMaterialImportParametersRequestWrappingAlgorithmRsaAesKeyWrap2048Sha256  = GenerateKeyMaterialImportParametersRequestWrappingAlgorithm("rsa_aes_key_wrap_2048_sha256")
+	GenerateKeyMaterialImportParametersRequestWrappingAlgorithmRsaAesKeyWrap3072Sha256  = GenerateKeyMaterialImportParametersRequestWrappingAlgorithm("rsa_aes_key_wrap_3072_sha256")
+	GenerateKeyMaterialImportParametersRequestWrappingAlgorithmRsaAesKeyWrap4096Sha256  = GenerateKeyMaterialImportParametersRequestWrappingAlgorithm("rsa_aes_key_wrap_4096_sha256")
+)
+
+func (enum GenerateKeyMaterialImportParametersRequestWrappingAlgorithm) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(GenerateKeyMaterialImportParametersRequestWrappingAlgorithmUnknownWrappingAlgorithm)
+	}
+	return string(enum)
+}
+
+func (enum GenerateKeyMaterialImportParametersRequestWrappingAlgorithm) Values() []GenerateKeyMaterialImportParametersRequestWrappingAlgorithm {
+	return []GenerateKeyMaterialImportParametersRequestWrappingAlgorithm{
+		"unknown_wrapping_algorithm",
+		"rsa_oaep_2048_sha256",
+		"rsa_oaep_3072_sha256",
+		"rsa_oaep_4096_sha256",
+		"rsa_aes_key_wrap_2048_sha256",
+		"rsa_aes_key_wrap_3072_sha256",
+		"rsa_aes_key_wrap_4096_sha256",
+	}
+}
+
+func (enum GenerateKeyMaterialImportParametersRequestWrappingAlgorithm) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *GenerateKeyMaterialImportParametersRequestWrappingAlgorithm) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = GenerateKeyMaterialImportParametersRequestWrappingAlgorithm(GenerateKeyMaterialImportParametersRequestWrappingAlgorithm(tmp).String())
+	return nil
+}
+
 type KeyAlgorithmAsymmetricEncryption string
 
 const (
@@ -908,6 +955,32 @@ type GenerateDataKeyRequest struct {
 	// WithoutPlaintext: default value is `false`, meaning that the plaintext is returned.
 	// Set it to `true` if you do not wish the plaintext to be returned in the response object.
 	WithoutPlaintext bool `json:"without_plaintext"`
+}
+
+// GenerateKeyMaterialImportParametersRequest: generate key material import parameters request.
+type GenerateKeyMaterialImportParametersRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// KeyID: ID of the key into which to import the key material.
+	KeyID string `json:"-"`
+
+	// WrappingAlgorithm: supported values for direct RSA wrapping are: `rsa_oaep_2048_sha256`, `rsa_oaep_3072_sha256`, `rsa_oaep_4096_sha256`.
+	// Supported values for hybrid wrapping (RSA + AES Key Wrap) are: `rsa_aes_key_wrap_2048_sha256`, `rsa_aes_key_wrap_3072_sha256`, `rsa_aes_key_wrap_4096_sha256`.
+	// Default value: unknown_wrapping_algorithm
+	WrappingAlgorithm GenerateKeyMaterialImportParametersRequestWrappingAlgorithm `json:"wrapping_algorithm"`
+}
+
+// GenerateKeyMaterialImportParametersResponse: generate key material import parameters response.
+type GenerateKeyMaterialImportParametersResponse struct {
+	// KeyID: ID of the target key.
+	KeyID string `json:"key_id"`
+
+	// PublicKey: the public key to wrap the key material.
+	PublicKey []byte `json:"public_key"`
+
+	// ImportToken: the token generated to authorize the import operation.
+	ImportToken []byte `json:"import_token"`
 }
 
 // GetKeyRequest: get key request.
@@ -1957,6 +2030,42 @@ func (s *API) DeleteKeyMaterial(req *DeleteKeyMaterialRequest, opts ...scw.Reque
 		return err
 	}
 	return nil
+}
+
+// GenerateKeyMaterialImportParameters: Retrieve the cryptographic parameters (public key and import token) required to securely import key material into an existing key. The key's origin must be `external`.
+func (s *API) GenerateKeyMaterialImportParameters(req *GenerateKeyMaterialImportParametersRequest, opts ...scw.RequestOption) (*GenerateKeyMaterialImportParametersResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.KeyID) == "" {
+		return nil, errors.New("field KeyID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/key-manager/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/keys/" + fmt.Sprint(req.KeyID) + "/import-parameters",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp GenerateKeyMaterialImportParametersResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 // RestoreKey: Restore a key and all its rotations scheduled for deletion specified by the `region` and `key_id` parameters.
