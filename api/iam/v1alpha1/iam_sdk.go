@@ -1145,6 +1145,7 @@ type JWT struct {
 	Srn string `json:"srn"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *JWT) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -1274,6 +1275,7 @@ type APIKey struct {
 	Srn string `json:"srn"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *APIKey) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -1328,6 +1330,7 @@ type Application struct {
 	Srn string `json:"srn"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *Application) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -1404,6 +1407,7 @@ type Group struct {
 	Srn string `json:"srn"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *Group) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -1454,6 +1458,7 @@ type Log struct {
 	Srn string `json:"srn"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *Log) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -1549,6 +1554,7 @@ type Policy struct {
 	Srn string `json:"srn"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *Policy) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -1597,6 +1603,7 @@ type Quotum struct {
 	Srn string `json:"srn"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *Quotum) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -1643,6 +1650,7 @@ type Rule struct {
 	Srn string `json:"srn"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *Rule) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -1691,6 +1699,7 @@ type SSHKey struct {
 	Srn string `json:"srn"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *SSHKey) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -1729,6 +1738,7 @@ type SamlCertificate struct {
 	Srn string `json:"srn"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *SamlCertificate) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -1824,6 +1834,7 @@ type User struct {
 	Srn string `json:"srn"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *User) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -3124,6 +3135,7 @@ type Saml struct {
 	Srn string `json:"srn"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *Saml) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server

@@ -781,6 +781,7 @@ type Key struct {
 	Region scw.Region `json:"region"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *Key) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
