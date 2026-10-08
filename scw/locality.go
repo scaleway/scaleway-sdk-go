@@ -39,6 +39,8 @@ const (
 	ZoneItMil1 = Zone("it-mil-1")
 	// ZoneItMil2 represents the it-mil-2 zone
 	ZoneItMil2 = Zone("it-mil-2")
+	// ZoneItMil3 represents the it-mil-3 zone
+	ZoneItMil3 = Zone("it-mil-3")
 )
 
 // AllZones is an array that list all zones
@@ -54,6 +56,7 @@ var AllZones = []Zone{
 	ZonePlWaw3,
 	ZoneItMil1,
 	ZoneItMil2,
+	ZoneItMil3,
 }
 
 // Exists checks whether a zone exists
