@@ -226,6 +226,7 @@ type Version struct {
 	Region scw.Region `json:"region"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *Version) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -284,6 +285,7 @@ type DatabaseBackup struct {
 	Region scw.Region `json:"region"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *DatabaseBackup) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -348,6 +350,7 @@ type Database struct {
 	Version *Version `json:"version"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *Database) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server

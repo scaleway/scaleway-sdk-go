@@ -829,6 +829,7 @@ type Server struct {
 	KextEnabled bool `json:"kext_enabled"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *Server) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -886,6 +887,7 @@ type Runner struct {
 	Srn string `json:"srn"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *Runner) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -1033,6 +1035,7 @@ type ConnectivityDiagnostic struct {
 	Srn string `json:"srn"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *ConnectivityDiagnostic) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
