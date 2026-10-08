@@ -196,7 +196,7 @@ const (
 	ResourceTypeServerlessSqldbDatabase = ResourceType("serverless_sqldb_database")
 	ResourceTypeServerlessSqldbBackup   = ResourceType("serverless_sqldb_backup")
 	// Distributed Data Lab.
-	ResourceTypeDatalab      = ResourceType("datalab")
+	ResourceTypeDdlDatalab   = ResourceType("ddl_datalab")
 	ResourceTypeMgdbInstance = ResourceType("mgdb_instance")
 	ResourceTypeMgdbSnapshot = ResourceType("mgdb_snapshot")
 	// Managed inference deployment.
@@ -269,7 +269,7 @@ func (enum ResourceType) Values() []ResourceType {
 		"serverless_job_definition",
 		"serverless_sqldb_database",
 		"serverless_sqldb_backup",
-		"datalab",
+		"ddl_datalab",
 		"mgdb_instance",
 		"mgdb_snapshot",
 		"ifr_deployment",
