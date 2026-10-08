@@ -43,6 +43,10 @@ func TestParseZone(t *testing.T) {
 			expected: ZoneItMil1,
 		},
 		{
+			input:    "it-mil-2",
+			expected: ZoneItMil2,
+		},
+		{
 			input:    "par1",
 			expected: ZoneFrPar1,
 		},
@@ -57,17 +61,17 @@ func TestParseZone(t *testing.T) {
 		{
 			input:    "fr-par",
 			expected: "",
-			err:      errors.New("bad zone format, available zones are: fr-par-1, fr-par-2, fr-par-3, nl-ams-1, nl-ams-2, nl-ams-3, pl-waw-1, pl-waw-2, pl-waw-3, it-mil-1"),
+			err:      errors.New("bad zone format, available zones are: fr-par-1, fr-par-2, fr-par-3, nl-ams-1, nl-ams-2, nl-ams-3, pl-waw-1, pl-waw-2, pl-waw-3, it-mil-1, it-mil-2"),
 		},
 		{
 			input:    "fr-par-n",
 			expected: "",
-			err:      errors.New("bad zone format, available zones are: fr-par-1, fr-par-2, fr-par-3, nl-ams-1, nl-ams-2, nl-ams-3, pl-waw-1, pl-waw-2, pl-waw-3, it-mil-1"),
+			err:      errors.New("bad zone format, available zones are: fr-par-1, fr-par-2, fr-par-3, nl-ams-1, nl-ams-2, nl-ams-3, pl-waw-1, pl-waw-2, pl-waw-3, it-mil-1, it-mil-2"),
 		},
 		{
 			input:    "fr-par-200",
 			expected: "",
-			err:      errors.New("bad zone format, available zones are: fr-par-1, fr-par-2, fr-par-3, nl-ams-1, nl-ams-2, nl-ams-3, pl-waw-1, pl-waw-2, pl-waw-3, it-mil-1"),
+			err:      errors.New("bad zone format, available zones are: fr-par-1, fr-par-2, fr-par-3, nl-ams-1, nl-ams-2, nl-ams-3, pl-waw-1, pl-waw-2, pl-waw-3, it-mil-1, it-nil-2"),
 		},
 	}
 
