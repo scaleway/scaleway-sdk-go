@@ -48,7 +48,7 @@ func TestParseZone(t *testing.T) {
 		},
 		{
 			input:    "it-mil-3",
-			expected: ZoneItMil2,
+			expected: ZoneItMil3,
 		},
 		{
 			input:    "par1",
