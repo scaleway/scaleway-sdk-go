@@ -1661,7 +1661,6 @@ type SecurityGroup struct {
 	Zone scw.Zone `json:"zone"`
 }
 
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *SecurityGroup) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -1791,7 +1790,6 @@ type PlacementGroup struct {
 	Zone scw.Zone `json:"zone"`
 }
 
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *PlacementGroup) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -1927,9 +1925,6 @@ type ServerType struct {
 
 	// SpotInfo: availability status of the server type as a spot instance.
 	SpotInfo *ServerTypeSpotInfo `json:"spot_info"`
-
-	// Sku: the billing SKU for this server type.
-	Sku string `json:"sku"`
 }
 
 // ServerSummary: server summary.
@@ -2020,7 +2015,6 @@ type Snapshot struct {
 	Public bool `json:"public"`
 }
 
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *Snapshot) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -2141,7 +2135,6 @@ type Volume struct {
 	Zone scw.Zone `json:"zone"`
 }
 
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *Volume) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -3518,7 +3511,6 @@ type PrivateNetworkInterface struct {
 	Zone scw.Zone `json:"zone"`
 }
 
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *PrivateNetworkInterface) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -3662,7 +3654,6 @@ type Server struct {
 	RuntimeInfo *ServerRuntimeInfo `json:"runtime_info"`
 }
 
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *Server) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
@@ -3873,7 +3864,6 @@ type Template struct {
 	Zone scw.Zone `json:"zone"`
 }
 
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *Template) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
