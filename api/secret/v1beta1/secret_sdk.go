@@ -1140,6 +1140,10 @@ func (s *API) CreateSecret(req *CreateSecretRequest, opts ...scw.RequestOption) 
 		req.ProjectID = defaultProjectID
 	}
 
+	if req.Name == "" {
+		req.Name = namegenerator.GetRandomName("secret")
+	}
+
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
 	}
