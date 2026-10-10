@@ -684,6 +684,15 @@ type KeyUsage struct {
 	KeyEncapsulation *KeyAlgorithmKeyEncapsulation `json:"key_encapsulation,omitempty"`
 }
 
+// ImportKeyMaterialRequestEncryptedKeyMaterial: import key material request encrypted key material.
+type ImportKeyMaterialRequestEncryptedKeyMaterial struct {
+	// Data: this material must be encrypted using the public key and the exact wrapping algorithm returned by the `GetKeyMaterialImportParameters` method.
+	Data []byte `json:"data"`
+
+	// ImportToken: the secure import token returned by the `GetKeyMaterialImportParameters` method.
+	ImportToken []byte `json:"import_token"`
+}
+
 // ListAlgorithmsResponseAlgorithm: list algorithms response algorithm.
 type ListAlgorithmsResponseAlgorithm struct {
 	Usage string `json:"usage"`
@@ -1010,11 +1019,16 @@ type ImportKeyMaterialRequest struct {
 	// KeyID: the key's origin must be `external`.
 	KeyID string `json:"-"`
 
-	// KeyMaterial: the key material is a random sequence of bytes used to derive a cryptographic key.
-	KeyMaterial []byte `json:"key_material"`
+	// Deprecated: KeyMaterial: deprecated. Use `encrypted_key_material` instead. The key material is a random sequence of bytes used to derive a cryptographic key.
+	// Precisely one of KeyMaterial, EncryptedKeyMaterial must be set.
+	KeyMaterial *[]byte `json:"key_material,omitempty"`
 
 	// Salt: a salt is random data added to key material to ensure unique derived keys, even if the input is similar. It helps strengthen security when the key material has low randomness (low entropy).
 	Salt *[]byte `json:"salt,omitempty"`
+
+	// EncryptedKeyMaterial: this material must be encrypted using the public key and the exact wrapping algorithm returned by the `GetKeyMaterialImportParameters` method.
+	// Precisely one of KeyMaterial, EncryptedKeyMaterial must be set.
+	EncryptedKeyMaterial *ImportKeyMaterialRequestEncryptedKeyMaterial `json:"encrypted_key_material,omitempty"`
 }
 
 // ListAlgorithmsRequest: list algorithms request.
