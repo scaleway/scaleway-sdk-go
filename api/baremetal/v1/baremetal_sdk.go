@@ -1000,6 +1000,12 @@ type CreateServerRequestInstall struct {
 
 	// PartitioningSchema: partitioning schema.
 	PartitioningSchema *Schema `json:"partitioning_schema"`
+
+	// NetworkBootURL: URL of the network service to which the server should forward its boot request.
+	NetworkBootURL *string `json:"network_boot_url"`
+
+	// NetworkBootPersistent: defines whether the network boot forwarding should be applied at every reboot or only once.
+	NetworkBootPersistent *bool `json:"network_boot_persistent"`
 }
 
 // IP: ip.
@@ -1051,6 +1057,12 @@ type ServerInstall struct {
 
 	// PartitioningSchema: partitioning schema.
 	PartitioningSchema *Schema `json:"partitioning_schema"`
+
+	// NetworkBootURL: URL of the network service to which the server should forward its boot request.
+	NetworkBootURL string `json:"network_boot_url"`
+
+	// NetworkBootPersistent: defines whether the network boot forwarding should be applied at every reboot or only once.
+	NetworkBootPersistent bool `json:"network_boot_persistent"`
 }
 
 // ServerOption: server option.
@@ -1392,6 +1404,12 @@ type OS struct {
 
 	// CloudInitVersion: defines the cloud-init API version used by this OS.
 	CloudInitVersion *string `json:"cloud_init_version"`
+
+	// NetworkBoot: object defining the network boot requirements for booting server.
+	NetworkBoot *OSOSField `json:"network_boot"`
+
+	// NetworkBootPersistentEditable: defines if the network boot can be persisted or not.
+	NetworkBootPersistentEditable bool `json:"network_boot_persistent_editable"`
 
 	// Zone: zone in which is the OS is available.
 	Zone scw.Zone `json:"zone"`
@@ -1748,6 +1766,12 @@ type InstallServerRequest struct {
 
 	// Deprecated: UserData: configuration data to pass to cloud-init such as a YAML cloud config data or a user-data script.
 	UserData *scw.File `json:"user_data,omitempty"`
+
+	// NetworkBootURL: URL of the network service to which the server should forward its boot request.
+	NetworkBootURL *string `json:"network_boot_url,omitempty"`
+
+	// NetworkBootPersistent: defines whether the network boot forwarding should be applied at every reboot or only once.
+	NetworkBootPersistent *bool `json:"network_boot_persistent,omitempty"`
 }
 
 // ListOSRequest: list os request.
