@@ -1274,6 +1274,9 @@ type ListNodeTypesRequest struct {
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
+
+	// ProjectID: ID of a project to get a personalized view of the stock.
+	ProjectID *string `json:"-"`
 }
 
 // ListNodeTypesResponse: list node types response.
@@ -1588,6 +1591,7 @@ func (s *API) ListNodeTypes(req *ListNodeTypesRequest, opts ...scw.RequestOption
 	parameter.AddToQuery(query, "include_disabled", req.IncludeDisabled)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
