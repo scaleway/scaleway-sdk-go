@@ -351,6 +351,7 @@ const (
 	PublicCatalogProductPropertiesGenerativeAPIsTaskVision             = PublicCatalogProductPropertiesGenerativeAPIsTask("vision")
 	PublicCatalogProductPropertiesGenerativeAPIsTaskAudioTranscription = PublicCatalogProductPropertiesGenerativeAPIsTask("audio_transcription")
 	PublicCatalogProductPropertiesGenerativeAPIsTaskCode               = PublicCatalogProductPropertiesGenerativeAPIsTask("code")
+	PublicCatalogProductPropertiesGenerativeAPIsTaskOcr                = PublicCatalogProductPropertiesGenerativeAPIsTask("ocr")
 )
 
 func (enum PublicCatalogProductPropertiesGenerativeAPIsTask) String() string {
@@ -369,6 +370,7 @@ func (enum PublicCatalogProductPropertiesGenerativeAPIsTask) Values() []PublicCa
 		"vision",
 		"audio_transcription",
 		"code",
+		"ocr",
 	}
 }
 
@@ -393,7 +395,6 @@ const (
 	PublicCatalogProductPropertiesGenerativeAPIsTokenTypeUnknownTokenType = PublicCatalogProductPropertiesGenerativeAPIsTokenType("unknown_token_type")
 	PublicCatalogProductPropertiesGenerativeAPIsTokenTypeInputToken       = PublicCatalogProductPropertiesGenerativeAPIsTokenType("input_token")
 	PublicCatalogProductPropertiesGenerativeAPIsTokenTypeOutputToken      = PublicCatalogProductPropertiesGenerativeAPIsTokenType("output_token")
-	PublicCatalogProductPropertiesGenerativeAPIsTokenTypeInputDuration    = PublicCatalogProductPropertiesGenerativeAPIsTokenType("input_duration")
 	PublicCatalogProductPropertiesGenerativeAPIsTokenTypeInputCachedToken = PublicCatalogProductPropertiesGenerativeAPIsTokenType("input_cached_token")
 	PublicCatalogProductPropertiesGenerativeAPIsTokenTypeInputAudio       = PublicCatalogProductPropertiesGenerativeAPIsTokenType("input_audio")
 )
@@ -411,7 +412,6 @@ func (enum PublicCatalogProductPropertiesGenerativeAPIsTokenType) Values() []Pub
 		"unknown_token_type",
 		"input_token",
 		"output_token",
-		"input_duration",
 		"input_cached_token",
 		"input_audio",
 	}
