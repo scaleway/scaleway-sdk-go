@@ -754,9 +754,11 @@ type UserRole struct {
 
 // EndpointSpec: endpoint spec.
 type EndpointSpec struct {
+	// PublicNetwork: expose the Database Instance publicly (empty object).
 	// Precisely one of PublicNetwork, PrivateNetwork must be set.
 	PublicNetwork *EndpointSpecPublicNetworkDetails `json:"public_network,omitempty"`
 
+	// PrivateNetwork: attach the Database Instance to a Private Network.
 	// Precisely one of PublicNetwork, PrivateNetwork must be set.
 	PrivateNetwork *EndpointSpecPrivateNetworkDetails `json:"private_network,omitempty"`
 }
