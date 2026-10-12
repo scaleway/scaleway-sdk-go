@@ -351,6 +351,7 @@ const (
 	PublicCatalogProductPropertiesGenerativeAPIsTaskVision             = PublicCatalogProductPropertiesGenerativeAPIsTask("vision")
 	PublicCatalogProductPropertiesGenerativeAPIsTaskAudioTranscription = PublicCatalogProductPropertiesGenerativeAPIsTask("audio_transcription")
 	PublicCatalogProductPropertiesGenerativeAPIsTaskCode               = PublicCatalogProductPropertiesGenerativeAPIsTask("code")
+	PublicCatalogProductPropertiesGenerativeAPIsTaskOcr                = PublicCatalogProductPropertiesGenerativeAPIsTask("ocr")
 )
 
 func (enum PublicCatalogProductPropertiesGenerativeAPIsTask) String() string {
@@ -369,6 +370,7 @@ func (enum PublicCatalogProductPropertiesGenerativeAPIsTask) Values() []PublicCa
 		"vision",
 		"audio_transcription",
 		"code",
+		"ocr",
 	}
 }
 
