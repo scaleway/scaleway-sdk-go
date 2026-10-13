@@ -2716,6 +2716,24 @@ type OfferBandwidthInfo struct {
 	Speed uint32 `json:"speed"`
 }
 
+// OfferCommitment: offer commitment.
+type OfferCommitment struct {
+	// Unit: unit used for discount.
+	Unit string `json:"unit"`
+
+	// Value: value of the discount.
+	Value uint32 `json:"value"`
+
+	// FreeSetupFees: is it free setup fees.
+	FreeSetupFees bool `json:"free_setup_fees"`
+
+	// Duration: commitment's required duration.
+	Duration string `json:"duration"`
+
+	// DiscountedPrice: discounted price of the commitment.
+	DiscountedPrice *scw.Money `json:"discounted_price"`
+}
+
 // OfferLicenseInfo: offer license info.
 type OfferLicenseInfo struct {
 	BoundToIP bool `json:"bound_to_ip"`
@@ -2848,6 +2866,9 @@ type Offer struct {
 	// BandwidthInfo: bandwidth info if it is a bandwidth offer.
 	// Precisely one of ServerInfo, ServiceLevelInfo, RpnInfo, SanInfo, AntidosInfo, BackupInfo, UsbStorageInfo, StorageInfo, LicenseInfo, FailoverIPInfo, FailoverBlockInfo, BandwidthInfo must be set.
 	BandwidthInfo *OfferBandwidthInfo `json:"bandwidth_info,omitempty"`
+
+	// Commitments: commitment info if it is a commitment offer.
+	Commitments []*OfferCommitment `json:"commitments"`
 }
 
 // NetworkInterface: network interface.
@@ -2935,6 +2956,15 @@ type OS struct {
 
 	// ReleasedAt: oS release date.
 	ReleasedAt *time.Time `json:"released_at"`
+
+	// Beta: is it a beta OS.
+	Beta string `json:"beta"`
+
+	// Description: description of the OS.
+	Description string `json:"description"`
+
+	// OfficialWebsite: URL to OS official website.
+	OfficialWebsite string `json:"official_website"`
 }
 
 // ServerLocation: server location.
@@ -3705,6 +3735,9 @@ type CPU struct {
 
 	// Frequency: frequency of the CPU.
 	Frequency uint32 `json:"frequency"`
+
+	// Bench: bench of the CPU.
+	Bench uint32 `json:"bench"`
 }
 
 // Disk: disk.
@@ -3731,6 +3764,14 @@ type Memory struct {
 
 	// IsEcc: true if the memory is an error-correcting code memory.
 	IsEcc bool `json:"is_ecc"`
+}
+
+// OfferServerInfoAvailability: offer server info availability.
+type OfferServerInfoAvailability struct {
+	// Stock: default value: empty
+	Stock OfferServerInfoStock `json:"stock"`
+
+	Quantity uint32 `json:"quantity"`
 }
 
 // PersistentMemory: persistent memory.
@@ -5255,6 +5296,10 @@ type OfferServerInfo struct {
 	OnetimeFees *Offer `json:"onetime_fees"`
 
 	StockByDatacenter map[string]OfferServerInfoStock `json:"stock_by_datacenter"`
+
+	AvailabilityByDatacenter map[string]*OfferServerInfoAvailability `json:"availability_by_datacenter"`
+
+	RpnSpeed uint32 `json:"rpn_speed"`
 }
 
 // OfferServiceLevelInfo: offer service level info.
