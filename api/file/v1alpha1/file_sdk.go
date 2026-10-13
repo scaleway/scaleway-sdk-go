@@ -96,6 +96,8 @@ const (
 	FileSystemStatusCreating = FileSystemStatus("creating")
 	// The filesystem is being updated (transient).
 	FileSystemStatusUpdating = FileSystemStatus("updating")
+	// The filesystem is undergoing snapshotting operation (transient).
+	FileSystemStatusSnapshotting = FileSystemStatus("snapshotting")
 )
 
 func (enum FileSystemStatus) String() string {
@@ -113,6 +115,7 @@ func (enum FileSystemStatus) Values() []FileSystemStatus {
 		"error",
 		"creating",
 		"updating",
+		"snapshotting",
 	}
 }
 
@@ -175,6 +178,119 @@ func (enum *ListFileSystemsRequestOrderBy) UnmarshalJSON(data []byte) error {
 
 	*enum = ListFileSystemsRequestOrderBy(ListFileSystemsRequestOrderBy(tmp).String())
 	return nil
+}
+
+// Sorting options for snapshot listing.
+type ListSnapshotsRequestOrderBy string
+
+const (
+	// Order by creation date (ascending).
+	ListSnapshotsRequestOrderByCreatedAtAsc = ListSnapshotsRequestOrderBy("created_at_asc")
+	// Order by creation date (descending).
+	ListSnapshotsRequestOrderByCreatedAtDesc = ListSnapshotsRequestOrderBy("created_at_desc")
+	// Order by name (ascending).
+	ListSnapshotsRequestOrderByNameAsc = ListSnapshotsRequestOrderBy("name_asc")
+	// Order by name (descending).
+	ListSnapshotsRequestOrderByNameDesc = ListSnapshotsRequestOrderBy("name_desc")
+)
+
+func (enum ListSnapshotsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListSnapshotsRequestOrderByCreatedAtAsc)
+	}
+	return string(enum)
+}
+
+func (enum ListSnapshotsRequestOrderBy) Values() []ListSnapshotsRequestOrderBy {
+	return []ListSnapshotsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"name_asc",
+		"name_desc",
+	}
+}
+
+func (enum ListSnapshotsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListSnapshotsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListSnapshotsRequestOrderBy(ListSnapshotsRequestOrderBy(tmp).String())
+	return nil
+}
+
+// Status of the snapshot.
+type SnapshotStatus string
+
+const (
+	// If unspecified, the snapshot status is unknown by default.
+	SnapshotStatusUnknownStatus = SnapshotStatus("unknown_status")
+	// The snapshot is created and available.
+	SnapshotStatusAvailable = SnapshotStatus("available")
+	// The snapshot is in error state.
+	SnapshotStatusError = SnapshotStatus("error")
+	// The snapshot is under creation (transient).
+	SnapshotStatusCreating = SnapshotStatus("creating")
+	// The snapshot is being deleted (transient).
+	SnapshotStatusDeleting = SnapshotStatus("deleting")
+	// The snapshot was deleted.
+	SnapshotStatusDeleted = SnapshotStatus("deleted")
+	// The snapshot is locked.
+	SnapshotStatusLocked = SnapshotStatus("locked")
+	// The snapshot is being cloned (transient).
+	SnapshotStatusCloning = SnapshotStatus("cloning")
+)
+
+func (enum SnapshotStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(SnapshotStatusUnknownStatus)
+	}
+	return string(enum)
+}
+
+func (enum SnapshotStatus) Values() []SnapshotStatus {
+	return []SnapshotStatus{
+		"unknown_status",
+		"available",
+		"error",
+		"creating",
+		"deleting",
+		"deleted",
+		"locked",
+		"cloning",
+	}
+}
+
+func (enum SnapshotStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *SnapshotStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = SnapshotStatus(SnapshotStatus(tmp).String())
+	return nil
+}
+
+// SnapshotParentFilesystem: snapshot parent filesystem.
+type SnapshotParentFilesystem struct {
+	// ID: parent filesystem UUID (filesystem from which the snapshot originates).
+	ID string `json:"id"`
+
+	// Name: name of the parent filesystem.
+	Name string `json:"name"`
 }
 
 // Attachment: Represents an attachment between a filesystem and a resource.
@@ -289,6 +405,62 @@ func (m *FileSystem) setSRN(platform string) {
 	}
 }
 
+// Snapshot: Represents a snapshot of a filesystem and its properties.
+type Snapshot struct {
+	// ID: UUID of the snapshot.
+	ID string `json:"id"`
+
+	// Name: name of the snapshot.
+	Name string `json:"name"`
+
+	// ParentFilesystem: if the parent filesystem was deleted, value is null.
+	ParentFilesystem *SnapshotParentFilesystem `json:"parent_filesystem"`
+
+	// Size: snapshot size in bytes.
+	Size scw.Size `json:"size"`
+
+	// Status: current status of the snapshot (e.g. creating, available, ...).
+	// Default value: unknown_status
+	Status SnapshotStatus `json:"status"`
+
+	// ProjectID: UUID of the project to which the snapshot belongs.
+	ProjectID string `json:"project_id"`
+
+	// OrganizationID: UUID of the organization to which the snapshot belongs.
+	OrganizationID string `json:"organization_id"`
+
+	// Tags: list of tags assigned to the snapshot.
+	Tags []string `json:"tags"`
+
+	// CreatedAt: creation date of the snapshot.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: last update date of the properties of the snapshot.
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	// Region: region where the snapshot is located.
+	Region scw.Region `json:"region"`
+
+	// Srn: the SRN of the snapshot.
+	Srn string `json:"srn"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *Snapshot) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://file.%s/regions/%s/snapshots/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
+		return
+	}
+}
+
 // CreateFileSystemRequest: Request to create a new filesystem.
 type CreateFileSystemRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -310,6 +482,24 @@ type CreateFileSystemRequest struct {
 	Tags []string `json:"tags"`
 }
 
+// CreateSnapshotRequest: Request to create a new snapshot of a filesystem.
+type CreateSnapshotRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// FilesystemID: UUID of the filesystem to snapshot.
+	FilesystemID string `json:"filesystem_id"`
+
+	// Name: name of the snapshot.
+	Name string `json:"name"`
+
+	// ProjectID: UUID of the project to which the filesystem and the snapshot belong.
+	ProjectID string `json:"project_id"`
+
+	// Tags: list of tags assigned to the snapshot.
+	Tags []string `json:"tags"`
+}
+
 // DeleteFileSystemRequest: Request to delete a specific filesystem.
 type DeleteFileSystemRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -319,6 +509,15 @@ type DeleteFileSystemRequest struct {
 	FilesystemID string `json:"-"`
 }
 
+// DeleteSnapshotRequest: Request to delete a specific snapshot.
+type DeleteSnapshotRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// SnapshotID: UUID of the snapshot.
+	SnapshotID string `json:"-"`
+}
+
 // GetFileSystemRequest: Request to retrieve a specific filesystem.
 type GetFileSystemRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -326,6 +525,15 @@ type GetFileSystemRequest struct {
 
 	// FilesystemID: UUID of the filesystem.
 	FilesystemID string `json:"-"`
+}
+
+// GetSnapshotRequest: Request to retrieve a specific snapshot.
+type GetSnapshotRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// SnapshotID: UUID of the snapshot.
+	SnapshotID string `json:"-"`
 }
 
 // ListAttachmentsRequest: Request to list filesystem attachments with filtering and pagination options.
@@ -483,6 +691,70 @@ func (r *ListFileSystemsResponse) UnsafeAppend(res any) (uint64, error) {
 	return uint64(len(results.Filesystems)), nil
 }
 
+// ListSnapshotsRequest: Request to list snapshots with filtering and pagination options.
+type ListSnapshotsRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// OrderBy: criteria to use when ordering the list.
+	// Default value: created_at_asc
+	OrderBy ListSnapshotsRequestOrderBy `json:"-"`
+
+	// ProjectID: filter by project ID.
+	// Precisely one of ProjectID, OrganizationID must be set.
+	ProjectID *string `json:"project_id,omitempty"`
+
+	// OrganizationID: filter by organization ID.
+	// Precisely one of ProjectID, OrganizationID must be set.
+	OrganizationID *string `json:"organization_id,omitempty"`
+
+	// Page: page number (starting at 1).
+	Page *int32 `json:"-"`
+
+	// PageSize: number of entries per page (default: 20, max: 100).
+	PageSize *uint32 `json:"-"`
+
+	// Name: filter the returned snapshots by their names.
+	Name *string `json:"-"`
+
+	// Tags: filter by tags. Only snapshots with one or more matching tags will be returned.
+	Tags []string `json:"-"`
+
+	// FilesystemID: filter the returned snapshots by the ID of the original filesystem.
+	FilesystemID *string `json:"-"`
+
+	// SnapshotIDs: filter by snapshot IDs. Only snapshots with one or more matching IDs will be returned.
+	SnapshotIDs []string `json:"-"`
+}
+
+// ListSnapshotsResponse: Response containing a list of snapshots and total count.
+type ListSnapshotsResponse struct {
+	// Snapshots: list of snapshots matching the request criteria.
+	Snapshots []*Snapshot `json:"snapshots"`
+
+	// TotalCount: total number of snapshots matching the criteria.
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListSnapshotsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListSnapshotsResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListSnapshotsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Snapshots = append(r.Snapshots, results.Snapshots...)
+	r.TotalCount += uint64(len(results.Snapshots))
+	return uint64(len(results.Snapshots)), nil
+}
+
 // UpdateFileSystemRequest: Request to update a specific filesystem.
 type UpdateFileSystemRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -499,6 +771,21 @@ type UpdateFileSystemRequest struct {
 	Size *uint64 `json:"size,omitempty"`
 
 	// Tags: list of tags assigned to the filesystem.
+	Tags *[]string `json:"tags,omitempty"`
+}
+
+// UpdateSnapshotRequest: Request to update a specific snapshot.
+type UpdateSnapshotRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// SnapshotID: UUID of the snapshot.
+	SnapshotID string `json:"-"`
+
+	// Name: when defined, is the new name of the snapshot.
+	Name *string `json:"name,omitempty"`
+
+	// Tags: list of tags assigned to the snapshot.
 	Tags *[]string `json:"tags,omitempty"`
 }
 
@@ -610,8 +897,9 @@ func (s *API) WaitForFileSystem(req *WaitForFileSystemRequest, opts ...scw.Reque
 		retryInterval = *req.RetryInterval
 	}
 	transientStatuses := map[FileSystemStatus]struct{}{
-		FileSystemStatusCreating: {},
-		FileSystemStatusUpdating: {},
+		FileSystemStatusCreating:     {},
+		FileSystemStatusUpdating:     {},
+		FileSystemStatusSnapshotting: {},
 	}
 
 	res, err := async.WaitSync(&async.WaitSyncConfig{
@@ -839,6 +1127,267 @@ func (s *API) UpdateFileSystem(req *UpdateFileSystemRequest, opts ...scw.Request
 	}
 
 	var resp FileSystem
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
+	return &resp, nil
+}
+
+// GetSnapshot: Retrieve all properties and current status of a specific snapshot identified by its ID.
+func (s *API) GetSnapshot(req *GetSnapshotRequest, opts ...scw.RequestOption) (*Snapshot, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SnapshotID) == "" {
+		return nil, errors.New("field SnapshotID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/file/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/snapshots/" + fmt.Sprint(req.SnapshotID) + "",
+	}
+
+	var resp Snapshot
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
+	return &resp, nil
+}
+
+// WaitForSnapshotRequest is used by WaitForSnapshot method.
+type WaitForSnapshotRequest struct {
+	Region        scw.Region
+	SnapshotID    string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForSnapshot waits for the Snapshot to reach a terminal state.
+func (s *API) WaitForSnapshot(req *WaitForSnapshotRequest, opts ...scw.RequestOption) (*Snapshot, error) {
+	timeout := defaultFileTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultFileRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[SnapshotStatus]struct{}{
+		SnapshotStatusCreating: {},
+		SnapshotStatusDeleting: {},
+		SnapshotStatusCloning:  {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetSnapshot(&GetSnapshotRequest{
+				Region:     req.Region,
+				SnapshotID: req.SnapshotID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Snapshot failed")
+	}
+
+	return res.(*Snapshot), nil
+}
+
+// ListSnapshots: Retrieve all snapshots in the specified region. By default, the snapshots listed are ordered by creation date in ascending order. This can be modified using the `order_by` field.
+func (s *API) ListSnapshots(req *ListSnapshotsRequest, opts ...scw.RequestOption) (*ListSnapshotsResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	defaultProjectID, exist := s.client.GetDefaultProjectID()
+	if exist && req.ProjectID == nil && req.OrganizationID == nil {
+		req.ProjectID = &defaultProjectID
+	}
+
+	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.ProjectID == nil && req.OrganizationID == nil {
+		req.OrganizationID = &defaultOrganizationID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "name", req.Name)
+	parameter.AddToQuery(query, "tags", req.Tags)
+	parameter.AddToQuery(query, "filesystem_id", req.FilesystemID)
+	parameter.AddToQuery(query, "snapshot_ids", req.SnapshotIDs)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/file/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/snapshots",
+		Query:  query,
+	}
+
+	var resp ListSnapshotsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Snapshots {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
+	return &resp, nil
+}
+
+// CreateSnapshot: To create a snapshot, the filesystem must be in the `available` status.
+// If your filesystem is in a transient state, you need to wait until the end of the current operation.
+func (s *API) CreateSnapshot(req *CreateSnapshotRequest, opts ...scw.RequestOption) (*Snapshot, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/file/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/snapshots",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Snapshot
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
+	return &resp, nil
+}
+
+// DeleteSnapshot: You must specify the `snapshot_id` of the snapshot you want to delete.
+func (s *API) DeleteSnapshot(req *DeleteSnapshotRequest, opts ...scw.RequestOption) (*Snapshot, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SnapshotID) == "" {
+		return nil, errors.New("field SnapshotID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/file/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/snapshots/" + fmt.Sprint(req.SnapshotID) + "",
+	}
+
+	var resp Snapshot
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
+	return &resp, nil
+}
+
+// UpdateSnapshot: Update the name or tags of a snapshot.
+func (s *API) UpdateSnapshot(req *UpdateSnapshotRequest, opts ...scw.RequestOption) (*Snapshot, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.SnapshotID) == "" {
+		return nil, errors.New("field SnapshotID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/file/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/snapshots/" + fmt.Sprint(req.SnapshotID) + "",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Snapshot
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
