@@ -366,6 +366,7 @@ const (
 	MaintenanceStatusCancelled = MaintenanceStatus("cancelled")
 	// Ongoing status.
 	MaintenanceStatusOngoing = MaintenanceStatus("ongoing")
+	MaintenanceStatusError   = MaintenanceStatus("error")
 )
 
 func (enum MaintenanceStatus) String() string {
@@ -383,6 +384,7 @@ func (enum MaintenanceStatus) Values() []MaintenanceStatus {
 		"done",
 		"cancelled",
 		"ongoing",
+		"error",
 	}
 }
 
@@ -576,6 +578,11 @@ type EngineUpgrade struct {
 	NewVersionID string `json:"new_version_id"`
 }
 
+// InfrastructureUpdate: infrastructure update.
+type InfrastructureUpdate struct {
+	KubernetesVersionName string `json:"kubernetes_version_name"`
+}
+
 // ServiceUpdate: service update.
 type ServiceUpdate struct {
 	ServiceName string `json:"service_name"`
@@ -592,11 +599,14 @@ type EndpointPublicNetworkDetails struct{}
 
 // Workflow: workflow.
 type Workflow struct {
-	// Precisely one of EngineUpgrade, ServiceUpdate must be set.
+	// Precisely one of EngineUpgrade, ServiceUpdate, InfrastructureUpdate must be set.
 	EngineUpgrade *EngineUpgrade `json:"engine_upgrade,omitempty"`
 
-	// Precisely one of EngineUpgrade, ServiceUpdate must be set.
+	// Precisely one of EngineUpgrade, ServiceUpdate, InfrastructureUpdate must be set.
 	ServiceUpdate *ServiceUpdate `json:"service_update,omitempty"`
+
+	// Precisely one of EngineUpgrade, ServiceUpdate, InfrastructureUpdate must be set.
+	InfrastructureUpdate *InfrastructureUpdate `json:"infrastructure_update,omitempty"`
 }
 
 // EndpointSpecPrivateNetworkDetails: endpoint spec private network details.
