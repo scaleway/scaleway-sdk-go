@@ -859,6 +859,7 @@ const (
 	ResourceTypeAccountOrganization             = ResourceType("account_organization")
 	ResourceTypeAccountProject                  = ResourceType("account_project")
 	ResourceTypeAccountContractSignature        = ResourceType("account_contract_signature")
+	ResourceTypeInstanceDedicatedPool           = ResourceType("instance_dedicated_pool")
 	ResourceTypeInstanceServer                  = ResourceType("instance_server")
 	ResourceTypeInstancePlacementGroup          = ResourceType("instance_placement_group")
 	ResourceTypeInstanceSecurityGroup           = ResourceType("instance_security_group")
@@ -988,6 +989,7 @@ func (enum ResourceType) Values() []ResourceType {
 		"account_organization",
 		"account_project",
 		"account_contract_signature",
+		"instance_dedicated_pool",
 		"instance_server",
 		"instance_placement_group",
 		"instance_security_group",
