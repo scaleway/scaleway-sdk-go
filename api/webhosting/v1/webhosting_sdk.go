@@ -1719,6 +1719,9 @@ type HostingSummary struct {
 	// ID: ID of the Web Hosting plan.
 	ID string `json:"id"`
 
+	// Srn: sRN of the Web Hosting plan.
+	Srn string `json:"srn"`
+
 	// ProjectID: ID of the Scaleway Project the Web Hosting plan belongs to.
 	ProjectID string `json:"project_id"`
 
@@ -2313,6 +2316,9 @@ type Hosting struct {
 	// ID: ID of the Web Hosting plan.
 	ID string `json:"id"`
 
+	// Srn: sRN of the Web Hosting plan.
+	Srn string `json:"srn"`
+
 	// ProjectID: ID of the Scaleway Project the Web Hosting plan belongs to.
 	ProjectID string `json:"project_id"`
 
@@ -2367,6 +2373,22 @@ type Hosting struct {
 	// Provider: provider where the Web Hosting plan is managed (elements, dedibox).
 	// Default value: unknown_provider
 	Provider *HostingProvider `json:"provider"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *Hosting) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://webhosting.%s/regions/%s/hostings/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // HostingAPIAddCustomDomainRequest: hosting api add custom domain request.
@@ -4281,6 +4303,10 @@ func (s *HostingAPI) CreateHosting(req *HostingAPICreateHostingRequest, opts ...
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -4356,6 +4382,10 @@ func (s *HostingAPI) GetHosting(req *HostingAPIGetHostingRequest, opts ...scw.Re
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -4444,6 +4474,10 @@ func (s *HostingAPI) UpdateHosting(req *HostingAPIUpdateHostingRequest, opts ...
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -4474,6 +4508,10 @@ func (s *HostingAPI) DeleteHosting(req *HostingAPIDeleteHostingRequest, opts ...
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -4722,6 +4760,10 @@ func (s *HostingAPI) ResetHosting(req *HostingAPIResetHostingRequest, opts ...sc
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -4758,6 +4800,10 @@ func (s *HostingAPI) DeleteHostingDomains(req *HostingAPIDeleteHostingDomainsReq
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -4793,6 +4839,10 @@ func (s *HostingAPI) UpdateHostingFreeDomain(req *HostingAPIUpdateHostingFreeDom
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
