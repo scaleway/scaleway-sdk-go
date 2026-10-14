@@ -21,6 +21,7 @@ type RateLimitTransport struct {
 
 	// MaxRetries is the maximum number of 429 retries before returning
 	// the response to the caller. Defaults to 5 if zero.
+	// This avoids looping forever.
 	MaxRetries int
 }
 
@@ -82,12 +83,7 @@ func (t *RateLimitTransport) RoundTrip(req *http.Request) (*http.Response, error
 					return nil, err
 				}
 
-				retryWait := time.Duration(retryAfterSec) * time.Second
-				if err := sleepWithContext(req.Context(), retryWait); err != nil {
-					return nil, err
-				}
-
-				continue
+				t.State.Update(0, retryAfterSec)
 			}
 		}
 
