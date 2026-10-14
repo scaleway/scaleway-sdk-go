@@ -8,7 +8,10 @@ import (
 	"time"
 )
 
-const defaultMaxRetries = 5
+const (
+	defaultMaxRetries     = 5
+	defaultAttemptTimeout = 30 * time.Second
+)
 
 // RateLimitTransport implements http.RoundTripper
 type RateLimitTransport struct {
@@ -23,6 +26,11 @@ type RateLimitTransport struct {
 	// the response to the caller. Defaults to 5 if zero.
 	// This avoids looping forever.
 	MaxRetries int
+
+	// AttemptTimeout is the per-HTTP-attempt timeout. Defaults to 30s if
+	// zero. Retry sleeps use the caller's context, not this budget, so a
+	// long Retry-After does not starve the actual HTTP call.
+	AttemptTimeout time.Duration
 }
 
 // base returns the transport : safety net in case RateLimitTransport was
@@ -42,17 +50,29 @@ func (t *RateLimitTransport) RoundTrip(req *http.Request) (*http.Response, error
 		maxRetries = defaultMaxRetries
 	}
 
+	attemptTimeout := t.AttemptTimeout
+	if attemptTimeout == 0 {
+		attemptTimeout = defaultAttemptTimeout
+	}
+
+	// The caller's context owns the total time cancellation and is not consumed
+	// by the sleeps.
+	parentCtx := req.Context()
+
 	for retry := 0; ; retry++ {
-		// Proactive strategy: check if we should wait
-		wait := t.State.GetWaitDuration()
-		if wait > 0 {
-			if err := sleepWithContext(req.Context(), wait); err != nil {
+		// Proactive strategy: check if we should wait. Uses parentCtx so
+		// the wait respects caller cancellation but not the per-attempt
+		// deadline.
+		if wait := t.State.GetWaitDuration(); wait > 0 {
+			if err := sleepWithContext(parentCtx, wait); err != nil {
 				return nil, err
 			}
 		}
 
-		// Run the request
-		resp, err := t.base().RoundTrip(req)
+		// Run the request with a fresh per-attempt deadline.
+		attemptCtx, cancel := context.WithTimeout(parentCtx, attemptTimeout)
+		resp, err := t.base().RoundTrip(req.WithContext(attemptCtx))
+		cancel()
 		if err != nil {
 			return resp, err
 		}

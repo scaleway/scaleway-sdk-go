@@ -12,7 +12,6 @@ import (
 	"strconv"
 	"strings"
 	"sync"
-	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
@@ -613,13 +612,17 @@ func newHTTPClient() *http.Client {
 	}
 
 	rlTransport := &RateLimitTransport{
-		Base:       http.DefaultTransport.(*http.Transport).Clone(),
-		State:      rlState,
-		MaxRetries: defaultMaxRetries,
+		Base:           http.DefaultTransport.(*http.Transport).Clone(),
+		State:          rlState,
+		MaxRetries:     defaultMaxRetries,
+		AttemptTimeout: defaultAttemptTimeout,
 	}
 
 	return &http.Client{
-		Timeout:   30 * time.Second,
+		// No whole-call Timeout: a single deadline would cover retry sleeps
+		// and every attempt, killing legitimate Retry-After waits. Per-attempt
+		// timeouts live in RateLimitTransport; callers set an overall bound
+		// per call via scw.WithContext(context.WithTimeout(...)).
 		Transport: rlTransport,
 	}
 }
