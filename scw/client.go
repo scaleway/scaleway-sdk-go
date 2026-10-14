@@ -91,7 +91,7 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 		setRequestLogging(s.httpClient)
 	}
 
-	logger.Debugf("client: using sdk version " + getVersion() + "\n")
+	logger.Debugf("client: using sdk version %s\n", getVersion())
 
 	return &Client{
 		auth:                  s.token,

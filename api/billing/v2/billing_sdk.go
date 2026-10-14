@@ -176,7 +176,7 @@ type Budget struct {
 	// Enabled: whether the budget is enabled or not.
 	Enabled bool `json:"enabled"`
 
-	// ConsumptionLimit: cost limit for this budget.
+	// ConsumptionLimit: cost limit for this budget expressed in the embedded currency code.
 	ConsumptionLimit *scw.Money `json:"consumption_limit"`
 
 	// Alerts: alerts defined for this budget.
@@ -239,7 +239,7 @@ type CreateBudgetRequest struct {
 	// OrganizationID: the Organization ID of the budget.
 	OrganizationID string `json:"organization_id"`
 
-	// ConsumptionLimit: cost limit for the budget.
+	// ConsumptionLimit: cost limit for the budget expressed in the invoiced currency (no cents allowed).
 	ConsumptionLimit uint32 `json:"consumption_limit"`
 
 	// Enabled: whether the budget is enabled or not.
@@ -431,7 +431,7 @@ type UpdateBudgetRequest struct {
 	// BudgetID: the ID of the budget to update.
 	BudgetID string `json:"-"`
 
-	// ConsumptionLimit: cost limit for the budget.
+	// ConsumptionLimit: cost limit for the budget expressed in the invoiced currency (no cents allowed).
 	ConsumptionLimit *uint32 `json:"consumption_limit,omitempty"`
 
 	// Enabled: whether the budget will be enabled or not.

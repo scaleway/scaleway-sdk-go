@@ -479,6 +479,9 @@ type GroupScalingPolicy struct {
 
 // GroupSummary: group summary.
 type GroupSummary struct {
+	// Srn: sRN of the Autoscaling Group.
+	Srn string `json:"srn"`
+
 	// ProjectID: project ID owning this group.
 	ProjectID string `json:"project_id"`
 
@@ -590,6 +593,9 @@ type GetGroupRequest struct {
 
 // Group: group.
 type Group struct {
+	// Srn: sRN of the Autoscaling Group.
+	Srn string `json:"srn"`
+
 	// ID: unique identifier of the autoscaling group.
 	ID string `json:"id"`
 
@@ -635,6 +641,25 @@ type Group struct {
 
 	// LoadBalancerConfiguration: optional load balancer configuration.
 	LoadBalancerConfiguration *GroupLoadBalancerConfiguration `json:"load_balancer_configuration"`
+
+	// Zone: zone of the Autoscaling Group.
+	Zone scw.Zone `json:"zone"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *Group) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://autoscaling.%s/zones/%s/groups/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // ListAlertsRequest: list alerts request.
@@ -830,6 +855,14 @@ func (r *ListServersResponse) UnsafeAppend(res any) (uint64, error) {
 	return uint64(len(results.Servers)), nil
 }
 
+// RefreshGroupRequest: refresh group request.
+type RefreshGroupRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	GroupID string `json:"-"`
+}
+
 // UpdateGroupRequest: update group request.
 type UpdateGroupRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
@@ -866,7 +899,7 @@ func NewAPI(client *scw.Client) *API {
 }
 
 func (s *API) Zones() []scw.Zone {
-	return []scw.Zone{scw.ZoneFrPar1, scw.ZoneFrPar2, scw.ZoneFrPar3}
+	return []scw.Zone{scw.ZoneFrPar1, scw.ZoneFrPar2, scw.ZoneFrPar3, scw.ZoneNlAms1, scw.ZoneNlAms2, scw.ZoneNlAms3, scw.ZonePlWaw1, scw.ZonePlWaw2, scw.ZonePlWaw3}
 }
 
 // ListGroups: List all autoscaling groups in a project.
@@ -943,6 +976,10 @@ func (s *API) GetGroup(req *GetGroupRequest, opts ...scw.RequestOption) (*Group,
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1034,6 +1071,51 @@ func (s *API) CreateGroup(req *CreateGroupRequest, opts ...scw.RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
+	return &resp, nil
+}
+
+// RefreshGroup: This will replace all the instances of the group.
+// Its main use case is applying changes if the instance template has been updated.
+func (s *API) RefreshGroup(req *RefreshGroupRequest, opts ...scw.RequestOption) (*Group, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.GroupID) == "" {
+		return nil, errors.New("field GroupID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/autoscaling/v1alpha2/zones/" + fmt.Sprint(req.Zone) + "/groups/" + fmt.Sprint(req.GroupID) + "/refresh",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Group
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1071,6 +1153,10 @@ func (s *API) UpdateGroup(req *UpdateGroupRequest, opts ...scw.RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1102,6 +1188,10 @@ func (s *API) DeleteGroup(req *DeleteGroupRequest, opts ...scw.RequestOption) (*
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }

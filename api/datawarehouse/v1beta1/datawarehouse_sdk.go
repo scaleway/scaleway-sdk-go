@@ -12,7 +12,6 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-	"text/template"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
@@ -331,40 +330,24 @@ type Endpoint struct {
 	// Region: region of the deployment.
 	Region scw.Region `json:"region"`
 
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
+	// Srn: the SRN of the endpoint.
+	Srn string `json:"srn"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *Endpoint) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		Endpoint
-		Platform string
-	}{
-		Endpoint: *m,
-		Platform: platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://datawarehouse.{{ notempty .Platform }}/regions/{{ notempty .Region }}/endpoints/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://datawarehouse.%s/regions/%s/endpoints/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // EndpointSpec: endpoint spec.
@@ -390,40 +373,24 @@ type Database struct {
 	// Region: region of the deployment.
 	Region scw.Region `json:"region"`
 
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
+	// Srn: the SRN of the database.
+	Srn string `json:"srn"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *Database) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		Database
-		Platform string
-	}{
-		Database: *m,
-		Platform: platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://datawarehouse.{{ notempty .Platform }}/regions/{{ notempty .Region }}/deployments/{{ notempty .DeploymentID }}/databases/{{ notempty .Name }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.DeploymentID) != "" && fmt.Sprint(m.Name) != "" {
+		m.Srn = fmt.Sprintf("srn://datawarehouse.%s/regions/%s/deployments/%s/databases/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.DeploymentID), fmt.Sprint(m.Name))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Deployment: deployment.
@@ -480,40 +447,24 @@ type Deployment struct {
 	// Region: region of the deployment.
 	Region scw.Region `json:"region"`
 
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
+	// Srn: the SRN of the deployment.
+	Srn string `json:"srn"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *Deployment) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		Deployment
-		Platform string
-	}{
-		Deployment: *m,
-		Platform:   platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://datawarehouse.{{ notempty .Platform }}/regions/{{ notempty .Region }}/deployments/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://datawarehouse.%s/regions/%s/deployments/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Preset: preset.
@@ -554,40 +505,24 @@ type User struct {
 	// Region: region of the deployment.
 	Region scw.Region `json:"region"`
 
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
+	// Srn: the SRN of the user.
+	Srn string `json:"srn"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *User) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		User
-		Platform string
-	}{
-		User:     *m,
-		Platform: platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://datawarehouse.{{ notempty .Platform }}/regions/{{ notempty .Region }}/deployments/{{ notempty .DeploymentID }}/users/{{ notempty .Name }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.DeploymentID) != "" && fmt.Sprint(m.Name) != "" {
+		m.Srn = fmt.Sprintf("srn://datawarehouse.%s/regions/%s/deployments/%s/users/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.DeploymentID), fmt.Sprint(m.Name))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Version: version.

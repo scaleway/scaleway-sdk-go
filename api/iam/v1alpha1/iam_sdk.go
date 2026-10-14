@@ -12,7 +12,6 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-	"text/template"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
@@ -1142,40 +1141,24 @@ type JWT struct {
 	// UserAgent: user-agent used during the creation of the JWT.
 	UserAgent string `json:"user_agent"`
 
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
+	// Srn: the SRN of the JWT.
+	Srn string `json:"srn"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *JWT) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		JWT
-		Platform string
-	}{
-		JWT:      *m,
-		Platform: platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://iam.{{ notempty .Platform }}/jwts/{{ notempty .Jti }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Jti) != "" {
+		m.Srn = fmt.Sprintf("srn://iam.%s/jwts/%s", platform, fmt.Sprint(m.Jti))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // RuleSpecs: rule specs.
@@ -1288,40 +1271,24 @@ type APIKey struct {
 	// CreationIP: IP address of the device that created the API key.
 	CreationIP string `json:"creation_ip"`
 
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
+	// Srn: the SRN of the API key.
+	Srn string `json:"srn"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *APIKey) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		APIKey
-		Platform string
-	}{
-		APIKey:   *m,
-		Platform: platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://iam.{{ notempty .Platform }}/api-keys/{{ notempty .AccessKey }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.AccessKey) != "" {
+		m.Srn = fmt.Sprintf("srn://iam.%s/api-keys/%s", platform, fmt.Sprint(m.AccessKey))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Application: application.
@@ -1359,40 +1326,24 @@ type Application struct {
 	// Tags: tags associated with the user.
 	Tags []string `json:"tags"`
 
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
+	// Srn: sRN of the application.
+	Srn string `json:"srn"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *Application) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		Application
-		Platform string
-	}{
-		Application: *m,
-		Platform:    platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://iam.{{ notempty .Platform }}/applications/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://iam.%s/applications/%s", platform, fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // GracePeriod: grace period.
@@ -1452,40 +1403,24 @@ type Group struct {
 	// AllApplications: indicates if the group is the special "All Applications" group that contains all non-managed applications of the organization.
 	AllApplications bool `json:"all_applications"`
 
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
+	// Srn: the SRN of the group.
+	Srn string `json:"srn"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *Group) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		Group
-		Platform string
-	}{
-		Group:    *m,
-		Platform: platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://iam.{{ notempty .Platform }}/groups/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://iam.%s/groups/%s", platform, fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Log: log.
@@ -1519,40 +1454,24 @@ type Log struct {
 	// ResourceID: ID of the resource linked to the log.
 	ResourceID string `json:"resource_id"`
 
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
+	// Srn: the SRN of the log.
+	Srn string `json:"srn"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *Log) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		Log
-		Platform string
-	}{
-		Log:      *m,
-		Platform: platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://iam.{{ notempty .Platform }}/logs/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://iam.%s/logs/%s", platform, fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // PermissionSet: permission set.
@@ -1631,40 +1550,24 @@ type Policy struct {
 	// Precisely one of UserID, GroupID, ApplicationID, NoPrincipal must be set.
 	NoPrincipal *bool `json:"no_principal,omitempty"`
 
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
+	// Srn: the SRN of the policy.
+	Srn string `json:"srn"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *Policy) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		Policy
-		Platform string
-	}{
-		Policy:   *m,
-		Platform: platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://iam.{{ notempty .Platform }}/policies/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://iam.%s/policies/%s", platform, fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Quotum: quotum.
@@ -1696,40 +1599,24 @@ type Quotum struct {
 	// Limits: limits per locality.
 	Limits []*QuotumLimit `json:"limits"`
 
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
+	// Srn: the SRN of the quotum.
+	Srn string `json:"srn"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *Quotum) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		Quotum
-		Platform string
-	}{
-		Quotum:   *m,
-		Platform: platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://iam.{{ notempty .Platform }}/quota/{{ notempty .Name }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Name) != "" {
+		m.Srn = fmt.Sprintf("srn://iam.%s/quota/%s", platform, fmt.Sprint(m.Name))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Rule: rule.
@@ -1759,40 +1646,24 @@ type Rule struct {
 	// Precisely one of ProjectIDs, OrganizationID, AccountRootUserID must be set.
 	AccountRootUserID *string `json:"account_root_user_id,omitempty"`
 
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
+	// Srn: the SRN of the rule.
+	Srn string `json:"srn"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *Rule) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		Rule
-		Platform string
-	}{
-		Rule:     *m,
-		Platform: platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://iam.{{ notempty .Platform }}/rules/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://iam.%s/rules/%s", platform, fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // SSHKey: ssh key.
@@ -1824,40 +1695,24 @@ type SSHKey struct {
 	// Disabled: SSH key status.
 	Disabled bool `json:"disabled"`
 
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
+	// Srn: the SRN of the SSH key.
+	Srn string `json:"srn"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *SSHKey) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		SSHKey
-		Platform string
-	}{
-		SSHKey:   *m,
-		Platform: platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://iam.{{ notempty .Platform }}/ssh-keys/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://iam.%s/ssh-keys/%s", platform, fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // SamlCertificate: saml certificate.
@@ -1879,40 +1734,24 @@ type SamlCertificate struct {
 	// ExpiresAt: date and time of the SAML certificate expiration.
 	ExpiresAt *time.Time `json:"expires_at"`
 
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
+	// Srn: the SRN of the SAML certificate.
+	Srn string `json:"srn"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *SamlCertificate) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		SamlCertificate
-		Platform string
-	}{
-		SamlCertificate: *m,
-		Platform:        platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://iam.{{ notempty .Platform }}/saml-certificates/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://iam.%s/saml-certificates/%s", platform, fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // WebAuthnAuthenticator: web authn authenticator.
@@ -1991,40 +1830,24 @@ type User struct {
 	// Locked: defines whether the user is locked.
 	Locked bool `json:"locked"`
 
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
+	// Srn: the SRN of the user.
+	Srn string `json:"srn"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *User) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		User
-		Platform string
-	}{
-		User:     *m,
-		Platform: platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://iam.{{ notempty .Platform }}/users/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://iam.%s/users/%s", platform, fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // SamlServiceProvider: saml service provider.
@@ -2438,6 +2261,11 @@ type GetSSHKeyRequest struct {
 type GetSamlCertificateRequest struct {
 	// CertificateID: ID of the certificate to get.
 	CertificateID string `json:"-"`
+}
+
+// GetScimTokenRequest: get scim token request.
+type GetScimTokenRequest struct {
+	ScimTokenID string `json:"-"`
 }
 
 // GetUserConnectionsRequest: get user connections request.
@@ -3303,40 +3131,24 @@ type Saml struct {
 	// SingleSignOnURL: single Sign-On URL of the SAML Identity Provider.
 	SingleSignOnURL string `json:"single_sign_on_url"`
 
-	// This field is automatically generated, do not edit it
-	Srn string `json:"srn,omitempty"`
+	// Srn: the SRN of the SAML.
+	Srn string `json:"srn"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
 func (m *Saml) setSRN(platform string) {
 	if m.Srn != "" {
 		// if the field is set server-side, trust the server
 		return
 	}
-	data := struct {
-		Saml
-		Platform string
-	}{
-		Saml:     *m,
-		Platform: platform,
-	}
 
-	notEmpty := func(a any) (string, error) {
-		s := fmt.Sprint(a)
-		if s == "" {
-			return "", errors.New("value is empty")
-		}
-		return s, nil
-	}
-	templ := "srn://iam.{{ notempty .Platform }}/saml/{{ notempty .ID }}"
-	t, err := template.New("srn").Funcs(template.FuncMap{"notempty": notEmpty}).Parse(templ)
-	if err != nil {
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://iam.%s/saml/%s", platform, fmt.Sprint(m.ID))
 		return
 	}
-	var out bytes.Buffer
-	if err := t.Execute(&out, data); err == nil {
-		m.Srn = out.String()
-	}
-	// note: if the error was not nil, we simply don't set the SRN
 }
 
 // Scim: scim.
@@ -5928,6 +5740,28 @@ func (s *API) DeleteScimToken(req *DeleteScimTokenRequest, opts ...scw.RequestOp
 		return err
 	}
 	return nil
+}
+
+// GetScimToken:
+func (s *API) GetScimToken(req *GetScimTokenRequest, opts ...scw.RequestOption) (*ScimToken, error) {
+	var err error
+
+	if fmt.Sprint(req.ScimTokenID) == "" {
+		return nil, errors.New("field ScimTokenID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/iam/v1alpha1/scim-tokens/" + fmt.Sprint(req.ScimTokenID) + "",
+	}
+
+	var resp ScimToken
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 // StartUserWebAuthnRegistration: Start registering a WebAuthn authenticator.

@@ -287,6 +287,54 @@ func (enum *DomainStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ForwardingStatus string
+
+const (
+	// If unspecified, the status is unknown by default.
+	ForwardingStatusUnknownStatus = ForwardingStatus("unknown_status")
+	// The forwarding rule is being provisioned.
+	ForwardingStatusProvisioning = ForwardingStatus("provisioning")
+	// The forwarding rule is ready to use.
+	ForwardingStatusReady = ForwardingStatus("ready")
+	// The forwarding rule is being updated.
+	ForwardingStatusUpdating = ForwardingStatus("updating")
+	// The forwarding rule is being deleted.
+	ForwardingStatusDeleting = ForwardingStatus("deleting")
+)
+
+func (enum ForwardingStatus) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ForwardingStatusUnknownStatus)
+	}
+	return string(enum)
+}
+
+func (enum ForwardingStatus) Values() []ForwardingStatus {
+	return []ForwardingStatus{
+		"unknown_status",
+		"provisioning",
+		"ready",
+		"updating",
+		"deleting",
+	}
+}
+
+func (enum ForwardingStatus) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ForwardingStatus) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ForwardingStatus(ForwardingStatus(tmp).String())
+	return nil
+}
+
 type ListAliasesRequestOrderBy string
 
 const (
@@ -392,6 +440,57 @@ func (enum *ListDomainsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = ListDomainsRequestOrderBy(ListDomainsRequestOrderBy(tmp).String())
+	return nil
+}
+
+type ListForwardingsRequestOrderBy string
+
+const (
+	// Order by creation date (descending chronological order).
+	ListForwardingsRequestOrderByCreatedAtDesc = ListForwardingsRequestOrderBy("created_at_desc")
+	// Order by creation date (ascending chronological order).
+	ListForwardingsRequestOrderByCreatedAtAsc = ListForwardingsRequestOrderBy("created_at_asc")
+	// Order by last update date (descending chronological order).
+	ListForwardingsRequestOrderByUpdatedAtDesc = ListForwardingsRequestOrderBy("updated_at_desc")
+	// Order by last update date (ascending chronological order).
+	ListForwardingsRequestOrderByUpdatedAtAsc = ListForwardingsRequestOrderBy("updated_at_asc")
+	// Order by destination email address (descending alphabetical order).
+	ListForwardingsRequestOrderByEmailDesc = ListForwardingsRequestOrderBy("email_desc")
+	// Order by destination email address (ascending alphabetical order).
+	ListForwardingsRequestOrderByEmailAsc = ListForwardingsRequestOrderBy("email_asc")
+)
+
+func (enum ListForwardingsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListForwardingsRequestOrderByCreatedAtDesc)
+	}
+	return string(enum)
+}
+
+func (enum ListForwardingsRequestOrderBy) Values() []ListForwardingsRequestOrderBy {
+	return []ListForwardingsRequestOrderBy{
+		"created_at_desc",
+		"created_at_asc",
+		"updated_at_desc",
+		"updated_at_asc",
+		"email_desc",
+		"email_asc",
+	}
+}
+
+func (enum ListForwardingsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListForwardingsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListForwardingsRequestOrderBy(ListForwardingsRequestOrderBy(tmp).String())
 	return nil
 }
 
@@ -702,6 +801,28 @@ type Domain struct {
 	SMTPURL string `json:"smtp_url"`
 }
 
+// Forwarding: forwarding.
+type Forwarding struct {
+	// ID: unique identifier of the forwarding rule.
+	ID string `json:"id"`
+
+	// CreatedAt: date and time of forwarding rule creation.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: date and time when the forwarding rule was last updated.
+	UpdatedAt *time.Time `json:"updated_at"`
+
+	// MailboxID: ID of the mailbox to which the forwarding rule belongs.
+	MailboxID string `json:"mailbox_id"`
+
+	// Email: destination email address to which incoming emails are forwarded.
+	Email string `json:"email"`
+
+	// Status: status of the forwarding rule.
+	// Default value: unknown_status
+	Status ForwardingStatus `json:"status"`
+}
+
 // BatchCreateMailboxesRequest: batch create mailboxes request.
 type BatchCreateMailboxesRequest struct {
 	// Mailboxes: parameters for the mailboxes to create.
@@ -742,6 +863,15 @@ type CreateDomainRequest struct {
 	Name string `json:"name"`
 }
 
+// CreateForwardingRequest: create forwarding request.
+type CreateForwardingRequest struct {
+	// MailboxID: ID of the mailbox for which to create the forwarding rule.
+	MailboxID string `json:"mailbox_id"`
+
+	// Email: destination email address to which incoming emails will be forwarded. Must not be the same as the mailbox's own email address.
+	Email string `json:"email"`
+}
+
 // DeleteAliasRequest: delete alias request.
 type DeleteAliasRequest struct {
 	// AliasID: ID of the alias to delete.
@@ -752,6 +882,12 @@ type DeleteAliasRequest struct {
 type DeleteDomainRequest struct {
 	// DomainID: ID of the domain to delete.
 	DomainID string `json:"-"`
+}
+
+// DeleteForwardingRequest: delete forwarding request.
+type DeleteForwardingRequest struct {
+	// ForwardingID: ID of the forwarding rule to delete.
+	ForwardingID string `json:"-"`
 }
 
 // DeleteMailboxRequest: delete mailbox request.
@@ -815,6 +951,18 @@ type GetDomainRecordsResponse struct {
 type GetDomainRequest struct {
 	// DomainID: ID of the domain to get.
 	DomainID string `json:"-"`
+}
+
+// GetForwardingRequest: get forwarding request.
+type GetForwardingRequest struct {
+	// ForwardingID: ID of the forwarding rule to get.
+	ForwardingID string `json:"-"`
+}
+
+// GetMailboxForwardingRequest: get mailbox forwarding request.
+type GetMailboxForwardingRequest struct {
+	// MailboxID: ID of the mailbox to get the forwarding settings for.
+	MailboxID string `json:"-"`
 }
 
 // GetMailboxRequest: get mailbox request.
@@ -918,6 +1066,62 @@ func (r *ListDomainsResponse) UnsafeAppend(res any) (uint64, error) {
 	return uint64(len(results.Domains)), nil
 }
 
+// ListForwardingsRequest: list forwardings request.
+type ListForwardingsRequest struct {
+	// OrderBy: order forwardings by specific criteria.
+	// Default value: created_at_desc
+	OrderBy ListForwardingsRequestOrderBy `json:"-"`
+
+	// Page: requested page number. Value must be greater or equal to 1.
+	Page *int32 `json:"-"`
+
+	// PageSize: requested page size. Value must be between 1 and 100.
+	PageSize *uint32 `json:"-"`
+
+	// MailboxID: (Optional) ID of the mailbox for which to list forwarding rules.
+	MailboxID *string `json:"-"`
+
+	// Status: (Optional) Filter forwarding rules by their status.
+	// Default value: unknown_status
+	Status ForwardingStatus `json:"-"`
+
+	// ProjectID: ID of the Project to filter on.
+	// Precisely one of ProjectID, OrganizationID must be set.
+	ProjectID *string `json:"project_id,omitempty"`
+
+	// OrganizationID: ID of the Organization to filter on.
+	// Precisely one of ProjectID, OrganizationID must be set.
+	OrganizationID *string `json:"organization_id,omitempty"`
+}
+
+// ListForwardingsResponse: list forwardings response.
+type ListForwardingsResponse struct {
+	// TotalCount: number of forwarding rules that match the request (without pagination).
+	TotalCount uint64 `json:"total_count"`
+
+	// Forwardings: single page of forwarding rules matching the requested criteria.
+	Forwardings []*Forwarding `json:"forwardings"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListForwardingsResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListForwardingsResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListForwardingsResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Forwardings = append(r.Forwardings, results.Forwardings...)
+	r.TotalCount += uint64(len(results.Forwardings))
+	return uint64(len(results.Forwardings)), nil
+}
+
 // ListMailboxesRequest: list mailboxes request.
 type ListMailboxesRequest struct {
 	// OrderBy: order matching mailbox by different criteria.
@@ -971,6 +1175,24 @@ func (r *ListMailboxesResponse) UnsafeAppend(res any) (uint64, error) {
 	return uint64(len(results.Mailboxes)), nil
 }
 
+// MailboxForwarding: mailbox forwarding.
+type MailboxForwarding struct {
+	// MailboxID: ID of the mailbox to which the forwarding settings belong.
+	MailboxID string `json:"mailbox_id"`
+
+	// KeepCopy: whether to keep a copy of forwarded emails in the local mailbox.
+	KeepCopy bool `json:"keep_copy"`
+
+	// Enabled: whether forwarding is enabled for the mailbox. When disabled, no emails are forwarded.
+	Enabled bool `json:"enabled"`
+
+	// CreatedAt: date and time of the forwarding settings creation.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: date and time when the forwarding settings were last updated.
+	UpdatedAt *time.Time `json:"updated_at"`
+}
+
 // RestoreMailboxRequest: restore mailbox request.
 type RestoreMailboxRequest struct {
 	// MailboxID: ID of the mailbox to restore.
@@ -984,6 +1206,27 @@ type UpdateAliasRequest struct {
 
 	// Description: (Optional) Description of the alias.
 	Description *string `json:"description,omitempty"`
+}
+
+// UpdateForwardingRequest: update forwarding request.
+type UpdateForwardingRequest struct {
+	// ForwardingID: ID of the forwarding rule to update.
+	ForwardingID string `json:"-"`
+
+	// Email: (Optional) New destination email address for the forwarding rule. Must not be the same as the mailbox's own email address.
+	Email *string `json:"email,omitempty"`
+}
+
+// UpdateMailboxForwardingRequest: update mailbox forwarding request.
+type UpdateMailboxForwardingRequest struct {
+	// MailboxID: ID of the mailbox to update the forwarding settings for.
+	MailboxID string `json:"-"`
+
+	// KeepCopy: (Optional) Whether to keep a copy of forwarded emails in the local mailbox.
+	KeepCopy *bool `json:"keep_copy,omitempty"`
+
+	// Enabled: (Optional) Enable or disable forwarding for the mailbox.
+	Enabled *bool `json:"enabled,omitempty"`
 }
 
 // UpdateMailboxRequest: update mailbox request.
@@ -1589,6 +1832,240 @@ func (s *API) DeleteAlias(req *DeleteAliasRequest, opts ...scw.RequestOption) (*
 	}
 
 	var resp Alias
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// CreateForwarding: All incoming emails to the mailbox will be redirected to the specified destination email address.
+// A mailbox can have up to 5 forwarding rules. Forwarding to the mailbox's own email address is not allowed.
+func (s *API) CreateForwarding(req *CreateForwardingRequest, opts ...scw.RequestOption) (*Forwarding, error) {
+	var err error
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/mailbox/v1alpha1/forwardings",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Forwarding
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListForwardings: The return list can be filtered with request parameters.
+func (s *API) ListForwardings(req *ListForwardingsRequest, opts ...scw.RequestOption) (*ListForwardingsResponse, error) {
+	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	defaultProjectID, exist := s.client.GetDefaultProjectID()
+	if exist && req.ProjectID == nil && req.OrganizationID == nil {
+		req.ProjectID = &defaultProjectID
+	}
+
+	defaultOrganizationID, exist := s.client.GetDefaultOrganizationID()
+	if exist && req.ProjectID == nil && req.OrganizationID == nil {
+		req.OrganizationID = &defaultOrganizationID
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "mailbox_id", req.MailboxID)
+	parameter.AddToQuery(query, "status", req.Status)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
+	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/mailbox/v1alpha1/forwardings",
+		Query:  query,
+	}
+
+	var resp ListForwardingsResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetForwarding: Get a forwarding rule by its ID.
+func (s *API) GetForwarding(req *GetForwardingRequest, opts ...scw.RequestOption) (*Forwarding, error) {
+	var err error
+
+	if fmt.Sprint(req.ForwardingID) == "" {
+		return nil, errors.New("field ForwardingID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/mailbox/v1alpha1/forwardings/" + fmt.Sprint(req.ForwardingID) + "",
+	}
+
+	var resp Forwarding
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// WaitForForwardingRequest is used by WaitForForwarding method.
+type WaitForForwardingRequest struct {
+	ForwardingID  string
+	Timeout       *time.Duration
+	RetryInterval *time.Duration
+}
+
+// WaitForForwarding waits for the Forwarding to reach a terminal state.
+func (s *API) WaitForForwarding(req *WaitForForwardingRequest, opts ...scw.RequestOption) (*Forwarding, error) {
+	timeout := defaultMailboxTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultMailboxRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[ForwardingStatus]struct{}{
+		ForwardingStatusProvisioning: {},
+		ForwardingStatusUpdating:     {},
+		ForwardingStatusDeleting:     {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetForwarding(&GetForwardingRequest{
+				ForwardingID: req.ForwardingID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for Forwarding failed")
+	}
+
+	return res.(*Forwarding), nil
+}
+
+// UpdateForwarding: Update a forwarding rule's destination email address by its ID.
+func (s *API) UpdateForwarding(req *UpdateForwardingRequest, opts ...scw.RequestOption) (*Forwarding, error) {
+	var err error
+
+	if fmt.Sprint(req.ForwardingID) == "" {
+		return nil, errors.New("field ForwardingID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/mailbox/v1alpha1/forwardings/" + fmt.Sprint(req.ForwardingID) + "",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Forwarding
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// DeleteForwarding: Delete a forwarding rule by its ID.
+func (s *API) DeleteForwarding(req *DeleteForwardingRequest, opts ...scw.RequestOption) (*Forwarding, error) {
+	var err error
+
+	if fmt.Sprint(req.ForwardingID) == "" {
+		return nil, errors.New("field ForwardingID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/mailbox/v1alpha1/forwardings/" + fmt.Sprint(req.ForwardingID) + "",
+	}
+
+	var resp Forwarding
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetMailboxForwarding:
+func (s *API) GetMailboxForwarding(req *GetMailboxForwardingRequest, opts ...scw.RequestOption) (*MailboxForwarding, error) {
+	var err error
+
+	if fmt.Sprint(req.MailboxID) == "" {
+		return nil, errors.New("field MailboxID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/mailbox/v1alpha1/mailboxes/" + fmt.Sprint(req.MailboxID) + "/forwarding",
+	}
+
+	var resp MailboxForwarding
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UpdateMailboxForwarding:
+func (s *API) UpdateMailboxForwarding(req *UpdateMailboxForwardingRequest, opts ...scw.RequestOption) (*MailboxForwarding, error) {
+	var err error
+
+	if fmt.Sprint(req.MailboxID) == "" {
+		return nil, errors.New("field MailboxID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/mailbox/v1alpha1/mailboxes/" + fmt.Sprint(req.MailboxID) + "/forwarding",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp MailboxForwarding
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {

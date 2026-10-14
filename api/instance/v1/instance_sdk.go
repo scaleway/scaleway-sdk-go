@@ -1322,6 +1322,25 @@ type Volume struct {
 
 	// Zone: zone in which the volume is located.
 	Zone scw.Zone `json:"zone"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *Volume) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://instance.%s/zones/%s/volumes/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // VolumeSummary: volume summary.
@@ -1422,6 +1441,25 @@ type PlacementGroup struct {
 
 	// Zone: zone in which the placement group is located.
 	Zone scw.Zone `json:"zone"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *PlacementGroup) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://instance.%s/zones/%s/placement-groups/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // PrivateNIC: private nic.
@@ -1453,6 +1491,25 @@ type PrivateNIC struct {
 
 	// IpamIPIDs: the list of IPAM IPs associated with this private NIC.
 	IpamIPIDs []string `json:"ipam_ip_ids"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *PrivateNIC) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://instance.%s/zones/%s/private-network-interfaces/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // SecurityGroupSummary: security group summary.
@@ -1749,6 +1806,25 @@ type Server struct {
 
 	// DNS: public DNS of the server.
 	DNS *string `json:"dns"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *Server) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://instance.%s/zones/%s/servers/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // IP: ip.
@@ -1861,6 +1937,25 @@ type SecurityGroup struct {
 
 	// Zone: zone in which the security group is located.
 	Zone scw.Zone `json:"zone"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *SecurityGroup) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://instance.%s/zones/%s/security-groups/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // SecurityGroupRule: security group rule.
@@ -1960,6 +2055,25 @@ type Snapshot struct {
 
 	// ErrorReason: reason for the failed snapshot import.
 	ErrorReason *string `json:"error_reason"`
+
+	// This field is automatically generated, do not edit it
+	Srn string `json:"srn,omitempty"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *Snapshot) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://instance.%s/zones/%s/snapshots/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // Task: task.
@@ -2097,6 +2211,9 @@ type ServerType struct {
 
 	// EndOfService: true if this Instance type has reached end of service.
 	EndOfService bool `json:"end_of_service"`
+
+	// Sku: the billing SKU for this server type.
+	Sku string `json:"sku"`
 }
 
 // VolumeType: volume type.
@@ -4435,6 +4552,12 @@ func (s *API) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Servers {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -5213,6 +5336,12 @@ func (s *API) ListSnapshots(req *ListSnapshotsRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Snapshots {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -5476,6 +5605,12 @@ func (s *API) ListVolumes(req *ListVolumesRequest, opts ...scw.RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Volumes {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -5656,6 +5791,12 @@ func (s *API) ListSecurityGroups(req *ListSecurityGroupsRequest, opts ...scw.Req
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.SecurityGroups {
+			el.setSRN(apiMetadata.Domain)
+		}
 	}
 	return &resp, nil
 }
@@ -6166,6 +6307,12 @@ func (s *API) ListPlacementGroups(req *ListPlacementGroupsRequest, opts ...scw.R
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.PlacementGroups {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -6638,6 +6785,8 @@ func (s *API) DeleteIP(req *DeleteIPRequest, opts ...scw.RequestOption) error {
 }
 
 // ListPrivateNICs: List all private NICs of a specified Instance.
+// Some private NICs, such as those in deleting, detaching, or in error state are
+// not listed. We strongly recommend migrating to v2alpha1 to retrieve all private NICs.
 func (s *API) ListPrivateNICs(req *ListPrivateNICsRequest, opts ...scw.RequestOption) (*ListPrivateNICsResponse, error) {
 	var err error
 
@@ -6673,10 +6822,21 @@ func (s *API) ListPrivateNICs(req *ListPrivateNICsRequest, opts ...scw.RequestOp
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.PrivateNics {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
 // CreatePrivateNIC: Create a private NIC connecting an Instance to a Private Network.
+// Some private NICs, such as those in deleting, detaching, or in error state are
+// not listed in v1.
+// Therefore, you may encounter quota limits errors when creating a new private NIC, even if your visible
+// count is below the threshold.
+// We strongly recommend migrating to v2alpha1 to see all private NICs.
 func (s *API) CreatePrivateNIC(req *CreatePrivateNICRequest, opts ...scw.RequestOption) (*CreatePrivateNICResponse, error) {
 	var err error
 
@@ -6783,6 +6943,10 @@ func (s *API) UpdatePrivateNIC(req *UpdatePrivateNICRequest, opts ...scw.Request
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }

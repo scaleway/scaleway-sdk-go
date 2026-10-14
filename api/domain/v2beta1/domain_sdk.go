@@ -2985,6 +2985,9 @@ type RegistrarAPIBuyDomainsRequest struct {
 
 	// Precisely one of TechnicalContactID, TechnicalContact must be set.
 	TechnicalContact *NewContact `json:"technical_contact,omitempty"`
+
+	// AutoRenew: enable the `auto renew` feature for all the requested domains. This means the domain will be automatically renewed before its expiry date.
+	AutoRenew bool `json:"auto_renew"`
 }
 
 // RegistrarAPICheckContactsCompatibilityRequest: registrar api check contacts compatibility request.
