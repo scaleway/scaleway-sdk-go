@@ -781,6 +781,9 @@ type Server struct {
 	// Os: initially installed OS, this does not necessarily reflect the current OS version.
 	Os *OS `json:"os"`
 
+	// FullOsVersion: initially installed OS, this does not necessarily reflect the current OS version.
+	FullOsVersion string `json:"full_os_version"`
+
 	// Status: current status of the server.
 	// Default value: unknown_status
 	Status ServerStatus `json:"status"`
