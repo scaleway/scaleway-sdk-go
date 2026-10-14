@@ -84,9 +84,6 @@ const (
 	GenerateKeyMaterialImportParametersRequestWrappingAlgorithmRsaOaep2048Sha256        = GenerateKeyMaterialImportParametersRequestWrappingAlgorithm("rsa_oaep_2048_sha256")
 	GenerateKeyMaterialImportParametersRequestWrappingAlgorithmRsaOaep3072Sha256        = GenerateKeyMaterialImportParametersRequestWrappingAlgorithm("rsa_oaep_3072_sha256")
 	GenerateKeyMaterialImportParametersRequestWrappingAlgorithmRsaOaep4096Sha256        = GenerateKeyMaterialImportParametersRequestWrappingAlgorithm("rsa_oaep_4096_sha256")
-	GenerateKeyMaterialImportParametersRequestWrappingAlgorithmRsaAesKeyWrap2048Sha256  = GenerateKeyMaterialImportParametersRequestWrappingAlgorithm("rsa_aes_key_wrap_2048_sha256")
-	GenerateKeyMaterialImportParametersRequestWrappingAlgorithmRsaAesKeyWrap3072Sha256  = GenerateKeyMaterialImportParametersRequestWrappingAlgorithm("rsa_aes_key_wrap_3072_sha256")
-	GenerateKeyMaterialImportParametersRequestWrappingAlgorithmRsaAesKeyWrap4096Sha256  = GenerateKeyMaterialImportParametersRequestWrappingAlgorithm("rsa_aes_key_wrap_4096_sha256")
 )
 
 func (enum GenerateKeyMaterialImportParametersRequestWrappingAlgorithm) String() string {
@@ -103,9 +100,6 @@ func (enum GenerateKeyMaterialImportParametersRequestWrappingAlgorithm) Values()
 		"rsa_oaep_2048_sha256",
 		"rsa_oaep_3072_sha256",
 		"rsa_oaep_4096_sha256",
-		"rsa_aes_key_wrap_2048_sha256",
-		"rsa_aes_key_wrap_3072_sha256",
-		"rsa_aes_key_wrap_4096_sha256",
 	}
 }
 
@@ -975,8 +969,7 @@ type GenerateKeyMaterialImportParametersRequest struct {
 	// KeyID: ID of the key into which to import the key material.
 	KeyID string `json:"-"`
 
-	// WrappingAlgorithm: supported values for direct RSA wrapping are: `rsa_oaep_2048_sha256`, `rsa_oaep_3072_sha256`, `rsa_oaep_4096_sha256`.
-	// Supported values for hybrid wrapping (RSA + AES Key Wrap) are: `rsa_aes_key_wrap_2048_sha256`, `rsa_aes_key_wrap_3072_sha256`, `rsa_aes_key_wrap_4096_sha256`.
+	// WrappingAlgorithm: supported values are: `rsa_oaep_2048_sha256`, `rsa_oaep_3072_sha256`, `rsa_oaep_4096_sha256`.
 	// Default value: unknown_wrapping_algorithm
 	WrappingAlgorithm GenerateKeyMaterialImportParametersRequestWrappingAlgorithm `json:"wrapping_algorithm"`
 }
