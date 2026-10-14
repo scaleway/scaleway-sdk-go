@@ -51,6 +51,7 @@ func (t *RateLimitTransport) RoundTrip(req *http.Request) (*http.Response, error
 			}
 		}
 
+		// Run the request
 		resp, err := t.base().RoundTrip(req)
 		if err != nil {
 			return resp, err
@@ -83,7 +84,10 @@ func (t *RateLimitTransport) RoundTrip(req *http.Request) (*http.Response, error
 					return nil, err
 				}
 
+				// Update state to proactively wait in the next loop iteration
 				t.State.Update(0, retryAfterSec)
+
+				continue
 			}
 		}
 
