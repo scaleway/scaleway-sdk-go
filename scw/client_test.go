@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"crypto/tls"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -563,4 +564,56 @@ func TestRateLimit(t *testing.T) {
 			testhelpers.Equals(t, c.expectedHitCount, hitCount)
 		})
 	}
+}
+
+// TestRateLimitNonReplayableBody verifies that a 429 retry does NOT re-send a
+// request whose body cannot be safely replayed.
+func TestRateLimitNonReplayableBody(t *testing.T) {
+	const payload = `{"name":"non-replayable-upload"}`
+
+	var bodies []string
+	var hitCount int32
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		hitCount++
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			t.Errorf("read body: %v", err)
+			return
+		}
+		bodies = append(bodies, string(body))
+
+		if hitCount == 1 {
+			w.Header().Set("Retry-After", "0")
+			w.WriteHeader(http.StatusTooManyRequests)
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer server.Close()
+
+	client := newHTTPClient()
+	tp := client.Transport.(*RateLimitTransport)
+	tp.MaxRetries = 1
+
+	// io.NopCloser wraps a *bytes.Reader so that http.NewRequestWithContext
+	// cannot detect it as one of the known replayable types and therefore
+	// leaves req.GetBody == nil. This mimics the io.Reader / *File upload path
+	// from ScalewayRequest.SetBody.
+	req, err := http.NewRequestWithContext(
+		context.Background(), http.MethodPost, server.URL,
+		io.NopCloser(bytes.NewReader([]byte(payload))),
+	)
+	testhelpers.AssertNoError(t, err)
+	req.Header.Set("Content-Type", "application/json; charset=UTF-8")
+
+	resp, err := client.Do(req)
+	testhelpers.AssertNoError(t, err)
+
+	// The body is not safely replayable (GetBody == nil), so the transport must
+	// NOT retry: the caller receives the 429 and the server is hit exactly once
+	// with the full, intact payload.
+	testhelpers.Equals(t, 1, len(bodies))
+	testhelpers.Equals(t, payload, bodies[0])
+	testhelpers.Equals(t, "429 Too Many Requests", resp.Status)
+	_ = resp.Body.Close()
 }
