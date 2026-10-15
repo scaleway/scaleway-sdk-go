@@ -82,8 +82,14 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 
 	// apply user-provided rate-limit retry override
 	if s.maxRetries != nil {
-		if rlTransport, ok := s.httpClient.(*http.Client).Transport.(*RateLimitTransport); ok {
+		rlTransport, ok := s.httpClient.(*http.Client).Transport.(*RateLimitTransport)
+		if ok {
 			rlTransport.MaxRetries = *s.maxRetries
+		} else {
+			logger.Warningf(
+				"client: cannot apply WithMaxRetries with Transport client of type %T",
+				s.httpClient.(*http.Client).Transport,
+			)
 		}
 	}
 
