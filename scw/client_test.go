@@ -361,6 +361,35 @@ func TestSetInsecureMode(t *testing.T) {
 	logger.DefaultLogger.Init(os.Stderr, logger.LogLevelWarning)
 }
 
+func TestNewClientWithMaxRetries(t *testing.T) {
+	t.Run("default", func(t *testing.T) {
+		client, err := NewClient(WithoutAuth(), WithAPIURL(testAPIURL))
+		testhelpers.AssertNoError(t, err)
+
+		rlTransport, ok := client.httpClient.(*http.Client).Transport.(*RateLimitTransport)
+		testhelpers.Assert(t, ok, "transport must be *RateLimitTransport")
+		testhelpers.Equals(t, defaultMaxRetries, rlTransport.MaxRetries)
+	})
+
+	t.Run("custom", func(t *testing.T) {
+		client, err := NewClient(WithoutAuth(), WithAPIURL(testAPIURL), WithMaxRetries(0))
+		testhelpers.AssertNoError(t, err)
+
+		rlTransport, ok := client.httpClient.(*http.Client).Transport.(*RateLimitTransport)
+		testhelpers.Assert(t, ok, "transport must be *RateLimitTransport")
+		testhelpers.Equals(t, 0, rlTransport.MaxRetries)
+	})
+
+	t.Run("custom non-zero", func(t *testing.T) {
+		client, err := NewClient(WithoutAuth(), WithAPIURL(testAPIURL), WithMaxRetries(3))
+		testhelpers.AssertNoError(t, err)
+
+		rlTransport, ok := client.httpClient.(*http.Client).Transport.(*RateLimitTransport)
+		testhelpers.Assert(t, ok, "transport must be *RateLimitTransport")
+		testhelpers.Equals(t, 3, rlTransport.MaxRetries)
+	})
+}
+
 // TestSetInsecureModeRateLimitTransport verifies that insecure mode actually
 // disables certificate verification on the transport used by RoundTrip.
 func TestSetInsecureModeRateLimitTransport(t *testing.T) {

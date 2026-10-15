@@ -29,8 +29,9 @@ type RateLimitTransport struct {
 	State *RateLimitState
 
 	// MaxRetries is the maximum number of 429 retries before returning
-	// the response to the caller. Defaults to 5 if zero.
-	// This avoids looping forever.
+	// the response to the caller. Set to 0 to disable retries entirely.
+	// The SDK default is 5 (set in newHTTPClient); callers can override it
+	// by accessing the transport via client.Transport.(*RateLimitTransport).
 	MaxRetries int
 
 	// AttemptTimeout is the per-HTTP-attempt timeout. Defaults to 30s if
@@ -52,9 +53,6 @@ func (t *RateLimitTransport) base() http.RoundTripper {
 // RoundTrip intercepts each SDK request
 func (t *RateLimitTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	maxRetries := t.MaxRetries
-	if maxRetries == 0 {
-		maxRetries = defaultMaxRetries
-	}
 
 	attemptTimeout := t.AttemptTimeout
 	if attemptTimeout == 0 {
@@ -107,6 +105,8 @@ func (t *RateLimitTransport) RoundTrip(req *http.Request) (*http.Response, error
 				}
 			}
 
+			// Per RFC 9110, Retry-After may also be an HTTP-date, but Scaleway's API
+			// only specified integers.
 			retryAfterStr := resp.Header.Get("Retry-After")
 			if retryAfterSec, err := strconv.Atoi(retryAfterStr); err == nil {
 				err = resp.Body.Close()

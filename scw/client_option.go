@@ -197,6 +197,15 @@ func WithDefaultPageSize(pageSize uint32) ClientOption {
 	}
 }
 
+// WithMaxRetries client option overrides the maximum number of 429 retries
+// performed by the rate-limit transport. Set to 0 to disable retries entirely;
+// the SDK defaults to 5.
+func WithMaxRetries(maxRetries int) ClientOption {
+	return func(s *settings) {
+		s.maxRetries = &maxRetries
+	}
+}
+
 // settings hold the values of all client options
 type settings struct {
 	apiURL                string
@@ -211,6 +220,7 @@ type settings struct {
 	defaultRegion         *Region
 	defaultZone           *Zone
 	defaultPageSize       *uint32
+	maxRetries            *int
 }
 
 func newSettings() *settings {
