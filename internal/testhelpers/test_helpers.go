@@ -45,15 +45,8 @@ func HeaderContains(tb testing.TB, exp, act http.Header) {
 	for k, v := range exp {
 		if !reflect.DeepEqual(act[k], v) {
 			_, file, line, _ := runtime.Caller(1)
-			fmt.Printf(
-				"\033%s:%d:\n\n\texp: %#v\n\n\tto contain: %#v\033\n\n",
-				filepath.Base(file), line, act, exp,
-			)
-
-			fmt.Printf(
-				"\033%s:%d:\n\n\tfailed for key '%#v'\033\n\n",
-				filepath.Base(file), line, k,
-			)
+			fmt.Printf("\033[31m%s:%d:\n\n\texp: %#v\n\n\tto contain: %#v\n\n\tfailed for key %#v\033[39m\n\n",
+				filepath.Base(file), line, act, exp, k)
 			tb.FailNow()
 		}
 	}
