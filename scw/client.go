@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"math"
+	"net"
 	"net/http"
 	"reflect"
 	"strconv"
@@ -614,22 +615,27 @@ func newVariableFromType(t any) any {
 }
 
 func newHTTPClient() *http.Client {
-	rlState := &RateLimitState{
-		remaining: 1,
-	}
+	base := http.DefaultTransport.(*http.Transport).Clone()
+	// Per-attempt phase timeouts. Bound the connection phases (dial, TLS,
+	// time-to-first-header) so a stuck server can't hang an attempt forever,
+	// without wrapping the request in a context whose cancellation would
+	// tear down resp.Body before the caller reads it.
+	base.DialContext = (&net.Dialer{Timeout: dialTimeout}).DialContext
+	base.TLSHandshakeTimeout = tlsHandshakeTimeout
+	base.ResponseHeaderTimeout = responseHeaderTimeout
+	base.ExpectContinueTimeout = expectContinueTimeout
 
 	rlTransport := &RateLimitTransport{
-		Base:           http.DefaultTransport.(*http.Transport).Clone(),
-		State:          rlState,
-		MaxRetries:     defaultMaxRetries,
-		AttemptTimeout: defaultAttemptTimeout,
+		Base:       base,
+		State:      &RateLimitState{remaining: 1},
+		MaxRetries: defaultMaxRetries,
 	}
 
 	return &http.Client{
 		// No whole-call Timeout: a single deadline would cover retry sleeps
 		// and every attempt, killing legitimate Retry-After waits. Per-attempt
-		// timeouts live in RateLimitTransport; callers set an overall bound
-		// per call via scw.WithContext(context.WithTimeout(...)).
+		// phase timeouts live on the base transport; callers set an overall
+		// bound per call via scw.WithContext(context.WithTimeout(...)).
 		Transport: rlTransport,
 	}
 }
