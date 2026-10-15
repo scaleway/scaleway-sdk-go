@@ -79,6 +79,13 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 		s.httpClient = newHTTPClient()
 	}
 
+	// apply user-provided rate-limit retry override
+	if s.maxRetries != nil {
+		if rlTransport, ok := s.httpClient.(*http.Client).Transport.(*RateLimitTransport); ok {
+			rlTransport.MaxRetries = *s.maxRetries
+		}
+	}
+
 	// insecure mode
 	if s.insecure {
 		logger.Debugf("client: using insecure mode\n")
