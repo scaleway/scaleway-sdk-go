@@ -2700,6 +2700,83 @@ func (enum *ServiceType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// OS: os.
+type OS struct {
+	// ID: ID of the OS.
+	ID uint64 `json:"id"`
+
+	// Name: name of the OS.
+	Name string `json:"name"`
+
+	// Type: type of the OS.
+	// Default value: unknown_type
+	Type OSType `json:"type"`
+
+	// Version: version of the OS.
+	Version string `json:"version"`
+
+	// Arch: architecture of the OS.
+	// Default value: unknown_arch
+	Arch OSArch `json:"arch"`
+
+	// AllowCustomPartitioning: true if the OS allow custom partitioning.
+	AllowCustomPartitioning bool `json:"allow_custom_partitioning"`
+
+	// AllowSSHKeys: true if the OS allow SSH Keys.
+	AllowSSHKeys bool `json:"allow_ssh_keys"`
+
+	// RequiresUser: true if the OS requires user.
+	RequiresUser bool `json:"requires_user"`
+
+	// RequiresAdminPassword: true if the OS requires admin password.
+	RequiresAdminPassword bool `json:"requires_admin_password"`
+
+	// RequiresPanelPassword: true if the OS requires panel password.
+	RequiresPanelPassword bool `json:"requires_panel_password"`
+
+	// AllowedFilesystems: true if the OS allow file systems.
+	AllowedFilesystems []PartitionFileSystem `json:"allowed_filesystems"`
+
+	// RequiresLicense: true if the OS requires license.
+	RequiresLicense bool `json:"requires_license"`
+
+	// LicenseOffers: license offers available with the OS.
+	LicenseOffers []*Offer `json:"license_offers"`
+
+	// MaxPartitions: maximum number of partitions which can be created.
+	MaxPartitions *uint32 `json:"max_partitions"`
+
+	// DisplayName: display name of the OS.
+	DisplayName string `json:"display_name"`
+
+	// PasswordRegex: regex used to validate the installation passwords.
+	PasswordRegex string `json:"password_regex"`
+
+	// PanelPasswordRegex: regex used to validate the panel installation password.
+	PanelPasswordRegex *string `json:"panel_password_regex"`
+
+	// RequiresValidHostname: if both requires_valid_hostname & hostname_regex are set, it means that at least one of the criteria must be valid.
+	RequiresValidHostname *bool `json:"requires_valid_hostname"`
+
+	// HostnameRegex: if both requires_valid_hostname & hostname_regex are set, it means that at least one of the criteria must be valid.
+	HostnameRegex *string `json:"hostname_regex"`
+
+	// HostnameMaxLength: hostname max length.
+	HostnameMaxLength uint32 `json:"hostname_max_length"`
+
+	// ReleasedAt: oS release date.
+	ReleasedAt *time.Time `json:"released_at"`
+
+	// Beta: is it a beta OS.
+	Beta string `json:"beta"`
+
+	// Description: description of the OS.
+	Description string `json:"description"`
+
+	// OfficialWebsite: URL to OS official website.
+	OfficialWebsite string `json:"official_website"`
+}
+
 // OfferAntiDosInfo: offer anti dos info.
 type OfferAntiDosInfo struct {
 	// Type: default value: minimal
@@ -2869,6 +2946,9 @@ type Offer struct {
 
 	// Commitments: commitment info if it is a commitment offer.
 	Commitments []*OfferCommitment `json:"commitments"`
+
+	// AvailableOs: available OS info if it is a available OS offer.
+	AvailableOs []*OS `json:"available_os"`
 }
 
 // NetworkInterface: network interface.
@@ -2888,83 +2968,6 @@ type NetworkInterface struct {
 
 	// IPs: iPs of the network interface.
 	IPs []*IP `json:"ips"`
-}
-
-// OS: os.
-type OS struct {
-	// ID: ID of the OS.
-	ID uint64 `json:"id"`
-
-	// Name: name of the OS.
-	Name string `json:"name"`
-
-	// Type: type of the OS.
-	// Default value: unknown_type
-	Type OSType `json:"type"`
-
-	// Version: version of the OS.
-	Version string `json:"version"`
-
-	// Arch: architecture of the OS.
-	// Default value: unknown_arch
-	Arch OSArch `json:"arch"`
-
-	// AllowCustomPartitioning: true if the OS allow custom partitioning.
-	AllowCustomPartitioning bool `json:"allow_custom_partitioning"`
-
-	// AllowSSHKeys: true if the OS allow SSH Keys.
-	AllowSSHKeys bool `json:"allow_ssh_keys"`
-
-	// RequiresUser: true if the OS requires user.
-	RequiresUser bool `json:"requires_user"`
-
-	// RequiresAdminPassword: true if the OS requires admin password.
-	RequiresAdminPassword bool `json:"requires_admin_password"`
-
-	// RequiresPanelPassword: true if the OS requires panel password.
-	RequiresPanelPassword bool `json:"requires_panel_password"`
-
-	// AllowedFilesystems: true if the OS allow file systems.
-	AllowedFilesystems []PartitionFileSystem `json:"allowed_filesystems"`
-
-	// RequiresLicense: true if the OS requires license.
-	RequiresLicense bool `json:"requires_license"`
-
-	// LicenseOffers: license offers available with the OS.
-	LicenseOffers []*Offer `json:"license_offers"`
-
-	// MaxPartitions: maximum number of partitions which can be created.
-	MaxPartitions *uint32 `json:"max_partitions"`
-
-	// DisplayName: display name of the OS.
-	DisplayName string `json:"display_name"`
-
-	// PasswordRegex: regex used to validate the installation passwords.
-	PasswordRegex string `json:"password_regex"`
-
-	// PanelPasswordRegex: regex used to validate the panel installation password.
-	PanelPasswordRegex *string `json:"panel_password_regex"`
-
-	// RequiresValidHostname: if both requires_valid_hostname & hostname_regex are set, it means that at least one of the criteria must be valid.
-	RequiresValidHostname *bool `json:"requires_valid_hostname"`
-
-	// HostnameRegex: if both requires_valid_hostname & hostname_regex are set, it means that at least one of the criteria must be valid.
-	HostnameRegex *string `json:"hostname_regex"`
-
-	// HostnameMaxLength: hostname max length.
-	HostnameMaxLength uint32 `json:"hostname_max_length"`
-
-	// ReleasedAt: oS release date.
-	ReleasedAt *time.Time `json:"released_at"`
-
-	// Beta: is it a beta OS.
-	Beta string `json:"beta"`
-
-	// Description: description of the OS.
-	Description string `json:"description"`
-
-	// OfficialWebsite: URL to OS official website.
-	OfficialWebsite string `json:"official_website"`
 }
 
 // ServerLocation: server location.
