@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/scaleway/scaleway-sdk-go/logger"
 )
 
 const (
@@ -105,6 +107,11 @@ func (t *RateLimitTransport) RoundTrip(req *http.Request) (*http.Response, error
 			// only specified integers.
 			retryAfterStr := resp.Header.Get("Retry-After")
 			if retryAfterSec, err := strconv.Atoi(retryAfterStr); err == nil {
+				logger.Debugf(
+					"client: got 429 Too Many Requests, retrying (attempt %d/%d) in %ds\n",
+					retry+1, maxRetries, retryAfterSec,
+				)
+
 				err = resp.Body.Close()
 				if err != nil {
 					return nil, err
