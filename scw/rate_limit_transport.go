@@ -11,6 +11,12 @@ import (
 const (
 	defaultMaxRetries     = 5
 	defaultAttemptTimeout = 30 * time.Second
+
+	// minBackoffSeconds is the minimum time to wait after a 429, independently
+	// from the RetryAfter header
+	minBackoffSeconds = 1
+	// maxBackoffSeconds is the maximum time to wait after a 429
+	maxBackoffSeconds = 30
 )
 
 // RateLimitTransport implements http.RoundTripper
@@ -108,6 +114,11 @@ func (t *RateLimitTransport) RoundTrip(req *http.Request) (*http.Response, error
 					return nil, err
 				}
 
+				// In case Retry-After: 0, we still want to backoff the next try a bit
+				if floor := minRetryBackoffSeconds(retry); retryAfterSec < floor {
+					retryAfterSec = floor
+				}
+
 				// Update state to proactively wait in the next loop iteration
 				t.State.Update(0, retryAfterSec)
 
@@ -147,4 +158,15 @@ func sleepWithContext(ctx context.Context, d time.Duration) error {
 		// Request was cancelled
 		return ctx.Err()
 	}
+}
+
+// minRetryBackoffSeconds returns the minimum backoff in seconds for a given
+// retry attempt. Grows exponentially (1, 2, 4, 8, 16, capped at 30) so repeated
+// 429s with Retry-After: 0 don't hammer the endpoint.
+func minRetryBackoffSeconds(retry int) int {
+	s := minBackoffSeconds << retry
+	if s > maxBackoffSeconds {
+		s = maxBackoffSeconds
+	}
+	return s
 }
