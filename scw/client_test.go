@@ -579,14 +579,14 @@ func TestRateLimit(t *testing.T) {
 			req.Header.Set("Content-Type", "application/json; charset=UTF-8")
 
 			resp, err := client.Do(req)
+			testhelpers.AssertNoError(t, err)
+
 			defer func() {
 				err := resp.Body.Close()
 				if err != nil {
 					t.Fatalf("could not close http response: %v\n", err)
 				}
 			}()
-
-			testhelpers.AssertNoError(t, err)
 
 			testhelpers.Equals(t, c.expectedStatus, resp.Status)
 			testhelpers.HeaderContains(t, c.expectedHeader, resp.Header)
