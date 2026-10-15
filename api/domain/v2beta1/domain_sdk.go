@@ -820,6 +820,51 @@ func (enum *LinkedProduct) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListContactsRequestOrderBy string
+
+const (
+	// Order by creation date (ascending).
+	ListContactsRequestOrderByCreatedAtAsc = ListContactsRequestOrderBy("created_at_asc")
+	// Order by creation date (descending).
+	ListContactsRequestOrderByCreatedAtDesc = ListContactsRequestOrderBy("created_at_desc")
+	// Order by email (ascending).
+	ListContactsRequestOrderByEmailAsc = ListContactsRequestOrderBy("email_asc")
+	// Order by email (descending).
+	ListContactsRequestOrderByEmailDesc = ListContactsRequestOrderBy("email_desc")
+)
+
+func (enum ListContactsRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListContactsRequestOrderByCreatedAtAsc)
+	}
+	return string(enum)
+}
+
+func (enum ListContactsRequestOrderBy) Values() []ListContactsRequestOrderBy {
+	return []ListContactsRequestOrderBy{
+		"created_at_asc",
+		"created_at_desc",
+		"email_asc",
+		"email_desc",
+	}
+}
+
+func (enum ListContactsRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListContactsRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListContactsRequestOrderBy(ListContactsRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListContactsRequestRole string
 
 const (
@@ -3269,6 +3314,24 @@ type RegistrarAPIListContactsRequest struct {
 	// EmailStatus: filter contacts by email validation status.
 	// Default value: email_status_unknown
 	EmailStatus ContactEmailStatus `json:"-"`
+
+	// OrderBy: sort order of the returned contacts.
+	// Default value: created_at_asc
+	OrderBy ListContactsRequestOrderBy `json:"-"`
+
+	// Status: filter by contact status.
+	// Default value: status_unknown
+	Status ContactStatus `json:"-"`
+
+	// LegalForm: filter by legal form.
+	// Default value: legal_form_unknown
+	LegalForm ContactLegalForm `json:"-"`
+
+	// Email: filter by email address.
+	Email *string `json:"-"`
+
+	// Search: fuzzy search in firstname, lastname, email, and company_name.
+	Search *string `json:"-"`
 }
 
 // RegistrarAPIListDomainHostsRequest: registrar api list domain hosts request.
@@ -4749,6 +4812,11 @@ func (s *RegistrarAPI) ListContacts(req *RegistrarAPIListContactsRequest, opts .
 	parameter.AddToQuery(query, "organization_id", req.OrganizationID)
 	parameter.AddToQuery(query, "role", req.Role)
 	parameter.AddToQuery(query, "email_status", req.EmailStatus)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "status", req.Status)
+	parameter.AddToQuery(query, "legal_form", req.LegalForm)
+	parameter.AddToQuery(query, "email", req.Email)
+	parameter.AddToQuery(query, "search", req.Search)
 
 	scwReq := &scw.ScalewayRequest{
 		Method: "GET",
