@@ -2,7 +2,6 @@ package scw
 
 import (
 	"context"
-	"crypto/tls"
 	"net/http"
 	"strconv"
 	"time"
@@ -133,10 +132,7 @@ func (t *RateLimitTransport) SetInsecureTransport() {
 		return
 	}
 
-	if transport.TLSClientConfig == nil {
-		transport.TLSClientConfig = &tls.Config{}
-	}
-	transport.TLSClientConfig.InsecureSkipVerify = true
+	setInsecureSkipVerify(transport)
 }
 
 // sleepWithContext pauses the goroutine, while still listening to context's cancellation.

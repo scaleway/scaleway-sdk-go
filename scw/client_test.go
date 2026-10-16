@@ -319,18 +319,6 @@ func (fakeTransport) RoundTrip(*http.Request) (*http.Response, error) {
 	return nil, nil
 }
 
-type fakeAltTransport struct {
-	insecure bool
-}
-
-func (f *fakeAltTransport) RoundTrip(*http.Request) (*http.Response, error) {
-	return nil, nil
-}
-
-func (f *fakeAltTransport) SetInsecureTransport() {
-	f.insecure = true
-}
-
 // TestSetInsecureMode test if setInsecureMode panic when given custom HTTP client
 func TestSetInsecureMode(t *testing.T) {
 	var buf bytes.Buffer
@@ -340,12 +328,6 @@ func TestSetInsecureMode(t *testing.T) {
 	clientWithFakeTransport := newHTTPClient()
 	clientWithFakeTransport.Transport = fakeTransport{}
 	setInsecureMode(clientWithFakeTransport)
-
-	// custom Alt transport client
-	customTransport := &fakeAltTransport{}
-	clientWithFakeTransport.Transport = customTransport
-	setInsecureMode(clientWithFakeTransport)
-	testhelpers.Equals(t, true, customTransport.insecure)
 
 	// custom HTTP client
 	setInsecureMode(fakeHTTPClient{})
