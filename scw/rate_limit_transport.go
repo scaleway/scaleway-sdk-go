@@ -154,9 +154,5 @@ func sleepWithContext(ctx context.Context, d time.Duration) error {
 // retry attempt. Grows exponentially (1, 2, 4, 8, 16, capped at 30) so repeated
 // 429s with Retry-After: 0 don't hammer the endpoint.
 func minRetryBackoffSeconds(retry int) int {
-	s := minBackoffSeconds << retry
-	if s > maxBackoffSeconds {
-		s = maxBackoffSeconds
-	}
-	return s
+	return min(minBackoffSeconds<<retry, maxBackoffSeconds)
 }
