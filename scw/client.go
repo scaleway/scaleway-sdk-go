@@ -653,11 +653,8 @@ func setInsecureMode(c httpClient) {
 		return
 	}
 
-	altTransport, ok := standardHTTPClient.Transport.(interface {
-		SetInsecureTransport()
-	})
-	if ok {
-		altTransport.SetInsecureTransport()
+	if rlTransport, ok := standardHTTPClient.Transport.(*RateLimitTransport); ok {
+		rlTransport.SetInsecureTransport()
 		return
 	}
 
@@ -670,11 +667,17 @@ func setInsecureMode(c httpClient) {
 		return
 	}
 
-	if transportClient.TLSClientConfig == nil {
-		transportClient.TLSClientConfig = &tls.Config{}
+	setInsecureSkipVerify(transportClient)
+}
+
+// setInsecureSkipVerify enables InsecureSkipVerify on t, allocating a
+// tls.Config if none is set.
+func setInsecureSkipVerify(t *http.Transport) {
+	if t.TLSClientConfig == nil {
+		t.TLSClientConfig = &tls.Config{}
 	}
 
-	transportClient.TLSClientConfig.InsecureSkipVerify = true
+	t.TLSClientConfig.InsecureSkipVerify = true
 }
 
 func setRequestLogging(c httpClient) {
