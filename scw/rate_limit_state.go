@@ -9,7 +9,7 @@ import (
 type RateLimitState struct {
 	// mu protects RateLimitState from concurrent edits by different
 	// goroutines
-	mu sync.RWMutex
+	mu sync.Mutex
 
 	// remaining is the number of requests still available for this time window
 	remaining int
@@ -28,8 +28,8 @@ func (s *RateLimitState) Update(remaining int, resetInSeconds int) {
 
 // GetWaitDuration computes the time to wait before the next request
 func (s *RateLimitState) GetWaitDuration() time.Duration {
-	s.mu.RLock()
-	defer s.mu.RUnlock()
+	s.mu.Lock()
+	defer s.mu.Unlock()
 
 	if s.remaining > 0 {
 		return 0
