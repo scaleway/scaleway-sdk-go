@@ -116,6 +116,7 @@ const (
 	ResourceTypeAppleSiliconPrivateNic = ResourceType("apple_silicon_private_nic")
 	ResourceTypeServerlessContainer    = ResourceType("serverless_container")
 	ResourceTypeServerlessFunction     = ResourceType("serverless_function")
+	ResourceTypeServerlessJob          = ResourceType("serverless_job")
 	ResourceTypeVpnGateway             = ResourceType("vpn_gateway")
 	ResourceTypeDdlDatalab             = ResourceType("ddl_datalab")
 	ResourceTypeKafkaCluster           = ResourceType("kafka_cluster")
@@ -160,6 +161,7 @@ func (enum ResourceType) Values() []ResourceType {
 		"apple_silicon_private_nic",
 		"serverless_container",
 		"serverless_function",
+		"serverless_job",
 		"vpn_gateway",
 		"ddl_datalab",
 		"kafka_cluster",
