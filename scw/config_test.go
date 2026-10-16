@@ -477,9 +477,8 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
-			expectedOutput: "WARNING: Scaleway configuration file permissions are too " +
-				"permissive. That is insecure.\nYou can fix it with the command 'chmod 0600 " +
-				"{HOME}/.config/scw/config.yml'",
+			// stdout is captured through a pipe (not a terminal), so the warning is not printed.
+			expectedOutput: "",
 		},
 
 		{
@@ -496,9 +495,8 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
-			expectedOutput: "WARNING: Scaleway configuration file permissions are too " +
-				"permissive. That is insecure.\nYou can fix it with the command 'chmod 0600 " +
-				"{HOME}/.config/scw/config.yml'",
+			// stdout is captured through a pipe (not a terminal), so the warning is not printed.
+			expectedOutput: "",
 		},
 
 		{
@@ -515,9 +513,8 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
-			expectedOutput: "WARNING: Scaleway configuration file permissions are too " +
-				"permissive. That is insecure.\nYou can fix it with the command 'chmod 0600 " +
-				"{HOME}/.config/scw/config.yml'",
+			// stdout is captured through a pipe (not a terminal), so the warning is not printed.
+			expectedOutput: "",
 		},
 
 		{
@@ -534,9 +531,8 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
-			expectedOutput: "WARNING: Scaleway configuration file permissions are too " +
-				"permissive. That is insecure.\nYou can fix it with the command 'chmod 0600 " +
-				"{HOME}/.config/scw/config.yml'",
+			// stdout is captured through a pipe (not a terminal), so the warning is not printed.
+			expectedOutput: "",
 		},
 
 		{
@@ -620,6 +616,69 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			}
 
 			// In both cases, read captured stdout
+			var buf bytes.Buffer
+			_, err = io.Copy(&buf, r)
+			testhelpers.AssertNoError(t, err)
+			testhelpers.Assert(
+				t,
+				strings.Contains(buf.String(), test.expectedOutput),
+				fmt.Sprintf("expected\n%s\nto contain\n%s", buf.String(), test.expectedOutput),
+			)
+		})
+	}
+}
+
+// TestLoadConfigFromPathPermissiveWarning verifies that the warning about
+// permissive config file permissions is only printed when stdout is a terminal.
+// This keeps stdout clean for programmatic consumers, e.g. the CLI used as a
+// kubectl exec-credential plugin.
+func TestLoadConfigFromPathPermissiveWarning(t *testing.T) {
+	for _, test := range []struct {
+		name           string
+		stdoutTerminal bool
+		expectedOutput string
+	}{
+		{
+			name:           "stdout is terminal",
+			stdoutTerminal: true,
+			expectedOutput: "WARNING: Scaleway configuration file permissions are too " +
+				"permissive. That is insecure.\nYou can fix it with the command 'chmod 0600 ",
+		},
+		{
+			name:           "stdout is not terminal",
+			stdoutTerminal: false,
+			expectedOutput: "",
+		},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			origStdoutIsTerminal := stdoutIsTerminal
+			stdoutIsTerminal = func() bool { return test.stdoutTerminal }
+			defer func() { stdoutIsTerminal = origStdoutIsTerminal }()
+
+			dir := initEnv(t)
+			defer resetEnv(t, os.Environ(), dir)
+
+			files := map[string]string{".config/scw/config.yml": v2SimpleValidConfigFile}
+			setEnvWithPerms(t, map[string]string{"HOME": "{HOME}"}, files, 0o777, dir)
+			defer cleanEnv(t, files, dir)
+
+			// Capture stdout
+			originalStdout := os.Stdout
+			r, w, _ := os.Pipe()
+			os.Stdout = w
+
+			config, err := LoadConfig()
+
+			err2 := w.Close()
+			if err2 != nil {
+				t.Fatal(err2)
+			}
+			os.Stdout = originalStdout
+
+			testhelpers.AssertNoError(t, err)
+			_, err = config.GetActiveProfile()
+			testhelpers.AssertNoError(t, err)
+
 			var buf bytes.Buffer
 			_, err = io.Copy(&buf, r)
 			testhelpers.AssertNoError(t, err)
