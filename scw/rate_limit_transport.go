@@ -45,16 +45,6 @@ type RateLimitTransport struct {
 	MaxRetries int
 }
 
-// base returns the transport : safety net in case RateLimitTransport was
-// created manually without a Base.
-func (t *RateLimitTransport) base() http.RoundTripper {
-	if t.Base != nil {
-		return t.Base
-	}
-
-	return http.DefaultTransport
-}
-
 // RoundTrip intercepts each SDK request
 func (t *RateLimitTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	maxRetries := t.MaxRetries
@@ -74,7 +64,7 @@ func (t *RateLimitTransport) RoundTrip(req *http.Request) (*http.Response, error
 			}
 		}
 
-		resp, err := t.base().RoundTrip(req)
+		resp, err := t.Base.RoundTrip(req)
 		if err != nil {
 			return resp, err
 		}

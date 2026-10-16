@@ -258,13 +258,13 @@ func TestNewClientWithOptions(t *testing.T) {
 		case *http.Transport:
 			tlsConfig = t.TLSClientConfig
 		case *RateLimitTransport:
-			tlsConfig = t.base().(*http.Transport).TLSClientConfig
+			tlsConfig = t.Base.(*http.Transport).TLSClientConfig
 		case *requestLoggerTransport:
 			switch rt := t.rt.(type) {
 			case *http.Transport:
 				tlsConfig = rt.TLSClientConfig
 			case *RateLimitTransport:
-				tlsConfig = rt.base().(*http.Transport).TLSClientConfig
+				tlsConfig = rt.Base.(*http.Transport).TLSClientConfig
 			}
 		}
 
