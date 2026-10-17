@@ -1706,7 +1706,7 @@ type DSRecordDigest struct {
 	// Digest: the digest string of the DS record.
 	Digest string `json:"digest"`
 
-	// PublicKey: the public key associated with the digest.
+	// PublicKey: the DNSKEY the digest is derived from. Optional.
 	PublicKey *DSRecordPublicKey `json:"public_key"`
 }
 
@@ -1817,7 +1817,7 @@ type TldOffer struct {
 	// Action: the action of the offer (create, renew, transfer, etc.).
 	Action string `json:"action"`
 
-	// OperationPath: the operation path of the offer.
+	// OperationPath: the billing SKU path of the offer (e.g. /network/domain/domains/fr/register).
 	OperationPath string `json:"operation_path"`
 
 	// Price: the price of the offer.
@@ -1829,7 +1829,7 @@ type DSRecord struct {
 	// KeyID: the key tag of the DS record.
 	KeyID uint32 `json:"key_id"`
 
-	// Algorithm: the cryptographic algorithm used for the DS record.
+	// Algorithm: the cryptographic algorithm of the DNSKEY used for the DS record.
 	// Default value: rsamd5
 	Algorithm DSRecordAlgorithm `json:"algorithm"`
 
@@ -1903,10 +1903,10 @@ type Contact struct {
 	// EmailAlt: alternative email address of the contact.
 	EmailAlt string `json:"email_alt"`
 
-	// PhoneNumber: phone number of the contact.
+	// PhoneNumber: phone number of the contact, normalized to +CC.NationalNumber format.
 	PhoneNumber string `json:"phone_number"`
 
-	// FaxNumber: fax number of the contact.
+	// FaxNumber: fax number of the contact, normalized to +CC.NationalNumber format.
 	FaxNumber string `json:"fax_number"`
 
 	// AddressLine1: first line of the contact's address.
@@ -1927,7 +1927,7 @@ type Contact struct {
 	// VatIDentificationCode: vAT identification code of the contact.
 	VatIDentificationCode string `json:"vat_identification_code"`
 
-	// CompanyIDentificationCode: company identification code (e.g. SIRET/SIREN) of the contact.
+	// CompanyIDentificationCode: company identification code of the contact (SIRET/SIREN for French contacts, any format for others).
 	CompanyIDentificationCode string `json:"company_identification_code"`
 
 	// Lang: preferred language of the contact.
@@ -1937,10 +1937,10 @@ type Contact struct {
 	// Resale: indicates whether the contact's information can be resold.
 	Resale bool `json:"resale"`
 
-	// ExtensionFr: additional information required for .fr domains.
+	// ExtensionFr: additional information required for AFNIC-managed TLDs (.fr, .re, .pm, .yt, .wf, .tf).
 	ExtensionFr *ContactExtensionFR `json:"extension_fr"`
 
-	// ExtensionEu: additional information required for .eu domains.
+	// ExtensionEu: additional information required for .eu domains. Conditionally required.
 	ExtensionEu *ContactExtensionEU `json:"extension_eu"`
 
 	// WhoisOptIn: indicates whether the contact's information is published in the WHOIS database.
@@ -1953,14 +1953,14 @@ type Contact struct {
 	// State: state or region of the contact.
 	State string `json:"state"`
 
-	// ExtensionNl: additional information required for .nl domains.
+	// ExtensionNl: additional information required for .nl domains. Auto-populated for individuals.
 	ExtensionNl *ContactExtensionNL `json:"extension_nl"`
 
 	// Status: status of the contact.
 	// Default value: status_unknown
 	Status ContactStatus `json:"status"`
 
-	// ExtensionIt: additional information required for .it domains.
+	// ExtensionIt: additional information required for .it domains. Contains a PIN.
 	ExtensionIt *ContactExtensionIT `json:"extension_it"`
 
 	// Deprecated
@@ -2015,7 +2015,7 @@ type Tld struct {
 	// IDnSupport: indicates whether the TLD supports internationalized domain names (IDN).
 	IDnSupport bool `json:"idn_support"`
 
-	// Offers: available offers (create, renew, transfer, etc.) for the TLD.
+	// Offers: map of available offers for the TLD, keyed by action string (create, renew, transfer, etc.).
 	Offers map[string]*TldOffer `json:"offers"`
 
 	// Specifications: additional specifications of the TLD.
@@ -2043,10 +2043,10 @@ type NewContact struct {
 	// EmailAlt: alternative email address of the contact.
 	EmailAlt *string `json:"email_alt"`
 
-	// PhoneNumber: phone number of the contact.
+	// PhoneNumber: phone number of the contact, normalized to +CC.NationalNumber format.
 	PhoneNumber string `json:"phone_number"`
 
-	// FaxNumber: fax number of the contact.
+	// FaxNumber: fax number of the contact, normalized to +CC.NationalNumber format.
 	FaxNumber *string `json:"fax_number"`
 
 	// AddressLine1: first line of the contact's address.
@@ -2067,7 +2067,7 @@ type NewContact struct {
 	// VatIDentificationCode: vAT identification code of the contact.
 	VatIDentificationCode *string `json:"vat_identification_code"`
 
-	// CompanyIDentificationCode: company identification code (e.g. SIRET/SIREN) of the contact.
+	// CompanyIDentificationCode: company identification code of the contact (SIRET/SIREN for French contacts, any format for others).
 	CompanyIDentificationCode *string `json:"company_identification_code"`
 
 	// Lang: preferred language of the contact.
@@ -2077,10 +2077,10 @@ type NewContact struct {
 	// Resale: indicates whether the contact's information can be resold.
 	Resale bool `json:"resale"`
 
-	// ExtensionFr: additional information required for .fr domains.
+	// ExtensionFr: additional information required for AFNIC-managed TLDs (.fr, .re, .pm, .yt, .wf, .tf).
 	ExtensionFr *ContactExtensionFR `json:"extension_fr"`
 
-	// ExtensionEu: additional information required for .eu domains.
+	// ExtensionEu: additional information required for .eu domains. Conditionally required.
 	ExtensionEu *ContactExtensionEU `json:"extension_eu"`
 
 	// WhoisOptIn: indicates whether the contact's information is published in the WHOIS database.
@@ -2089,10 +2089,10 @@ type NewContact struct {
 	// State: state or region of the contact.
 	State *string `json:"state"`
 
-	// ExtensionNl: additional information required for .nl domains.
+	// ExtensionNl: additional information required for .nl domains. Auto-populated for individuals.
 	ExtensionNl *ContactExtensionNL `json:"extension_nl"`
 
-	// ExtensionIt: additional information required for .it domains.
+	// ExtensionIt: additional information required for .it domains. Contains a PIN.
 	ExtensionIt *ContactExtensionIT `json:"extension_it"`
 
 	// Deprecated
@@ -2200,7 +2200,7 @@ type Host struct {
 	// Domain: the domain name associated with the hostname.
 	Domain string `json:"domain"`
 
-	// Name: the hostname.
+	// Name: the hostname (FQDN, e.g. ns1.example.com).
 	Name string `json:"name"`
 
 	// IPs: list of glue IP addresses associated with the hostname.
@@ -2222,15 +2222,15 @@ type DomainSummary struct {
 	// OrganizationID: the organization ID associated with the domain.
 	OrganizationID string `json:"organization_id"`
 
-	// AutoRenewStatus: status of the automatic renewal of the domain.
+	// AutoRenewStatus: status of the automatic renewal of the domain (enabling, enabled, disabling, disabled).
 	// Default value: feature_status_unknown
 	AutoRenewStatus DomainFeatureStatus `json:"auto_renew_status"`
 
-	// DnssecStatus: status of the DNSSEC configuration of the domain.
+	// DnssecStatus: status of the DNSSEC configuration of the domain (enabling, enabled, disabling, disabled).
 	// Default value: feature_status_unknown
 	DnssecStatus DomainFeatureStatus `json:"dnssec_status"`
 
-	// EppCode: list of the domain's EPP codes.
+	// EppCode: list of the domain's EPP status codes (e.g. clientTransferProhibited, serverHold).
 	EppCode []string `json:"epp_code"`
 
 	// ExpiredAt: date of expiration of the domain.
@@ -2245,7 +2245,7 @@ type DomainSummary struct {
 	// Registrar: the registrar managing the domain.
 	Registrar string `json:"registrar"`
 
-	// IsExternal: indicates whether Scaleway is the domain's registrar.
+	// IsExternal: indicates whether the domain is external (not managed by Scaleway as registrar).
 	IsExternal bool `json:"is_external"`
 
 	// Status: status of the domain.
@@ -2256,7 +2256,7 @@ type DomainSummary struct {
 	// Precisely one of ExternalDomainRegistrationStatus, TransferRegistrationStatus must be set.
 	ExternalDomainRegistrationStatus *DomainRegistrationStatusExternalDomain `json:"external_domain_registration_status,omitempty"`
 
-	// TransferRegistrationStatus: status of a domain, when available for transfer.
+	// TransferRegistrationStatus: status of an in-progress domain transfer.
 	// Precisely one of ExternalDomainRegistrationStatus, TransferRegistrationStatus must be set.
 	TransferRegistrationStatus *DomainRegistrationStatusTransfer `json:"transfer_registration_status,omitempty"`
 
@@ -2502,14 +2502,14 @@ type Domain struct {
 	// ProjectID: the project ID associated with the domain.
 	ProjectID string `json:"project_id"`
 
-	// AutoRenewStatus: status of the automatic renewal of the domain.
+	// AutoRenewStatus: status of the automatic renewal of the domain (enabling, enabled, disabling, disabled).
 	// Default value: feature_status_unknown
 	AutoRenewStatus DomainFeatureStatus `json:"auto_renew_status"`
 
 	// Dnssec: status of the DNSSEC configuration of the domain.
 	Dnssec *DomainDNSSEC `json:"dnssec"`
 
-	// EppCode: list of the domain's EPP codes.
+	// EppCode: list of the domain's EPP status codes (e.g. clientTransferProhibited, serverHold).
 	EppCode []string `json:"epp_code"`
 
 	// ExpiredAt: date of expiration of the domain.
@@ -2521,7 +2521,7 @@ type Domain struct {
 	// Registrar: the registrar managing the domain.
 	Registrar string `json:"registrar"`
 
-	// IsExternal: indicates whether Scaleway is the domain's registrar.
+	// IsExternal: indicates whether the domain is external (not managed by Scaleway as registrar).
 	IsExternal bool `json:"is_external"`
 
 	// Status: status of the domain.
@@ -2544,14 +2544,14 @@ type Domain struct {
 	// Precisely one of ExternalDomainRegistrationStatus, TransferRegistrationStatus must be set.
 	ExternalDomainRegistrationStatus *DomainRegistrationStatusExternalDomain `json:"external_domain_registration_status,omitempty"`
 
-	// TransferRegistrationStatus: status of a domain, when available for transfer.
+	// TransferRegistrationStatus: status of an in-progress domain transfer.
 	// Precisely one of ExternalDomainRegistrationStatus, TransferRegistrationStatus must be set.
 	TransferRegistrationStatus *DomainRegistrationStatusTransfer `json:"transfer_registration_status,omitempty"`
 
 	// Tld: domain's TLD information.
 	Tld *Tld `json:"tld"`
 
-	// LinkedProducts: list of Scaleway resources linked to the domain.
+	// LinkedProducts: list of Scaleway product types linked to the domain (e.g. vpc).
 	LinkedProducts []LinkedProduct `json:"linked_products"`
 
 	// PendingTrade: indicates if a trade is ongoing.
@@ -2892,7 +2892,7 @@ type ListDomainHostsResponse struct {
 	// TotalCount: total count of hostnames matching the request.
 	TotalCount uint32 `json:"total_count"`
 
-	// Hosts: list of hostnames matching the request.
+	// Hosts: list of host objects matching the request.
 	Hosts []*Host `json:"hosts"`
 }
 
@@ -2920,7 +2920,7 @@ type ListDomainsResponse struct {
 	// TotalCount: total count of domains matching the request.
 	TotalCount uint32 `json:"total_count"`
 
-	// Domains: list of domains matching the request.
+	// Domains: list of domain summaries matching the request.
 	Domains []*DomainSummary `json:"domains"`
 }
 
@@ -3139,7 +3139,7 @@ type RegisterExternalDomainResponse struct {
 	// ProjectID: the project ID associated with the external domain.
 	ProjectID string `json:"project_id"`
 
-	// ValidationToken: the validation token to use to validate the external domain.
+	// ValidationToken: the validation token to set as a DNS TXT record at _scaleway-challenge.<domain> to validate the external domain.
 	ValidationToken string `json:"validation_token"`
 
 	// CreatedAt: the creation date of the external domain registration.
@@ -3151,7 +3151,7 @@ type RegistrarAPIBuyDomainsRequest struct {
 	// Domains: list of domains to purchase.
 	Domains []string `json:"domains"`
 
-	// DurationInYears: duration in years for the domain registration.
+	// DurationInYears: duration in years for the domain registration. Subject to TLD-specific minimum and maximum constraints.
 	DurationInYears uint32 `json:"duration_in_years"`
 
 	// ProjectID: project ID to create the domains in.
@@ -3165,19 +3165,19 @@ type RegistrarAPIBuyDomainsRequest struct {
 	// Precisely one of OwnerContactID, OwnerContact must be set.
 	OwnerContact *NewContact `json:"owner_contact,omitempty"`
 
-	// AdministrativeContactID: ID of the existing contact to use as the domain's administrative contact.
+	// AdministrativeContactID: ID of the existing contact to use as the domain's administrative contact. Optional; falls back to the owner contact if omitted.
 	// Precisely one of AdministrativeContactID, AdministrativeContact must be set.
 	AdministrativeContactID *string `json:"administrative_contact_id,omitempty"`
 
-	// AdministrativeContact: new contact to create and use as the domain's administrative contact.
+	// AdministrativeContact: new contact to create and use as the domain's administrative contact. Optional; falls back to the owner contact if omitted.
 	// Precisely one of AdministrativeContactID, AdministrativeContact must be set.
 	AdministrativeContact *NewContact `json:"administrative_contact,omitempty"`
 
-	// TechnicalContactID: ID of the existing contact to use as the domain's technical contact.
+	// TechnicalContactID: ID of the existing contact to use as the domain's technical contact. Optional; falls back to the owner contact if omitted.
 	// Precisely one of TechnicalContactID, TechnicalContact must be set.
 	TechnicalContactID *string `json:"technical_contact_id,omitempty"`
 
-	// TechnicalContact: new contact to create and use as the domain's technical contact.
+	// TechnicalContact: new contact to create and use as the domain's technical contact. Optional; falls back to the owner contact if omitted.
 	// Precisely one of TechnicalContactID, TechnicalContact must be set.
 	TechnicalContact *NewContact `json:"technical_contact,omitempty"`
 
@@ -3268,7 +3268,7 @@ type RegistrarAPIEnableDomainDNSSECRequest struct {
 	// Domain: the domain name to enable DNSSEC for.
 	Domain string `json:"-"`
 
-	// DsRecord: the DS record to configure for DNSSEC. If omitted, the DS record will be automatically generated.
+	// DsRecord: the DS record to configure for DNSSEC. Required for domains using non-Scaleway nameservers. For Scaleway nameservers, auto-generated and must be omitted.
 	DsRecord *DSRecord `json:"ds_record,omitempty"`
 }
 
@@ -3371,7 +3371,7 @@ type RegistrarAPIListDomainsRequest struct {
 	// OrganizationID: filter domains by organization ID.
 	OrganizationID *string `json:"-"`
 
-	// IsExternal: filter domains by external status.
+	// IsExternal: filter domains by whether they are external (not managed by Scaleway as registrar).
 	IsExternal *bool `json:"-"`
 
 	// Domain: filter domains by domain name.
@@ -3479,10 +3479,10 @@ type RegistrarAPIRenewDomainsRequest struct {
 	// Domains: list of domains to renew.
 	Domains []string `json:"domains"`
 
-	// DurationInYears: duration in years for the domain renewal.
+	// DurationInYears: duration in years for the domain renewal. Subject to TLD-specific minimum and maximum constraints.
 	DurationInYears uint32 `json:"duration_in_years"`
 
-	// ForceLateRenewal: force the renewal to be a late renewal.
+	// ForceLateRenewal: confirm the late renewal (incurs extra fees).
 	ForceLateRenewal *bool `json:"force_late_renewal,omitempty"`
 }
 
@@ -3515,10 +3515,10 @@ type RegistrarAPISearchAvailableDomainsRequest struct {
 
 // RegistrarAPITradeDomainRequest: registrar api trade domain request.
 type RegistrarAPITradeDomainRequest struct {
-	// Domain: the domain name to trade.
+	// Domain: the domain name to trade (change of owner/registrant).
 	Domain string `json:"-"`
 
-	// ProjectID: project ID to associate with the domain after the trade.
+	// ProjectID: project ID to associate with the domain after the trade. Also used to filter the new owner's contacts.
 	ProjectID *string `json:"project_id,omitempty"`
 
 	// NewOwnerContactID: ID of the existing contact to use as the domain's new owner.
@@ -3532,7 +3532,7 @@ type RegistrarAPITradeDomainRequest struct {
 
 // RegistrarAPITransferInDomainRequest: registrar api transfer in domain request.
 type RegistrarAPITransferInDomainRequest struct {
-	// Domains: list of domains to transfer in, each with its auth code.
+	// Domains: list of domains to transfer in, each with its optional auth code.
 	Domains []*TransferInDomainRequestTransferRequest `json:"domains"`
 
 	// ProjectID: project ID to transfer the domains into.
@@ -3580,10 +3580,10 @@ type RegistrarAPIUpdateContactRequest struct {
 	// EmailAlt: alternative email address of the contact.
 	EmailAlt *string `json:"email_alt,omitempty"`
 
-	// PhoneNumber: phone number of the contact.
+	// PhoneNumber: phone number of the contact, normalized to +CC.NationalNumber format.
 	PhoneNumber *string `json:"phone_number,omitempty"`
 
-	// FaxNumber: fax number of the contact.
+	// FaxNumber: fax number of the contact, normalized to +CC.NationalNumber format.
 	FaxNumber *string `json:"fax_number,omitempty"`
 
 	// AddressLine1: first line of the contact's address.
@@ -3598,13 +3598,13 @@ type RegistrarAPIUpdateContactRequest struct {
 	// City: city of the contact.
 	City *string `json:"city,omitempty"`
 
-	// Country: country code of the contact (ISO 3166-1 alpha-2 format).
+	// Country: country code of the contact (ISO 3166-1 alpha-2 format). Not updatable; returns an error if changed.
 	Country *string `json:"country,omitempty"`
 
 	// VatIDentificationCode: vAT identification code of the contact.
 	VatIDentificationCode *string `json:"vat_identification_code,omitempty"`
 
-	// CompanyIDentificationCode: company identification code (e.g. SIRET/SIREN) of the contact.
+	// CompanyIDentificationCode: company identification code of the contact (SIRET/SIREN for French contacts, any format for others).
 	CompanyIDentificationCode *string `json:"company_identification_code,omitempty"`
 
 	// Lang: preferred language of the contact.
@@ -3614,16 +3614,16 @@ type RegistrarAPIUpdateContactRequest struct {
 	// Resale: indicates whether the contact's information can be resold.
 	Resale *bool `json:"resale,omitempty"`
 
-	// ExtensionFr: additional information required for .fr domains.
+	// ExtensionFr: additional information required for AFNIC-managed TLDs (.fr, .re, .pm, .yt, .wf, .tf).
 	ExtensionFr *ContactExtensionFR `json:"extension_fr,omitempty"`
 
-	// ExtensionEu: additional information required for .eu domains.
+	// ExtensionEu: additional information required for .eu domains. Conditionally required.
 	ExtensionEu *ContactExtensionEU `json:"extension_eu,omitempty"`
 
-	// ExtensionNl: additional information required for .nl domains.
+	// ExtensionNl: additional information required for .nl domains. Auto-populated for individuals.
 	ExtensionNl *ContactExtensionNL `json:"extension_nl,omitempty"`
 
-	// ExtensionIt: additional information required for .it domains.
+	// ExtensionIt: additional information required for .it domains. Contains a PIN.
 	ExtensionIt *ContactExtensionIT `json:"extension_it,omitempty"`
 
 	// WhoisOptIn: indicates whether the contact's information is published in the WHOIS database.
@@ -3644,7 +3644,7 @@ type RegistrarAPIUpdateDomainHostRequest struct {
 	// Name: the hostname to update.
 	Name string `json:"-"`
 
-	// IPs: new list of glue IP addresses associated with the hostname.
+	// IPs: new list of glue IP addresses associated with the hostname. Optional.
 	IPs *[]string `json:"ips,omitempty"`
 }
 
