@@ -152,6 +152,18 @@ func (m Money) ToFloat() float64 {
 	return float64(m.Units) + float64(m.Nanos)/1e9
 }
 
+func MoneyToNanos(m *Money) int64 {
+	return m.Units*1e9 + int64(m.Nanos)
+}
+
+func NewMoneyFromNanos(value int64, currencyCode string) *Money {
+	return &Money{
+		CurrencyCode: currencyCode,
+		Units:        value / 1e9,
+		Nanos:        int32(value % 1e9),
+	}
+}
+
 // Size represents a size in bytes.
 type Size uint64
 
