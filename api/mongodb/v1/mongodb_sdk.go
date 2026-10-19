@@ -366,6 +366,7 @@ const (
 	MaintenanceStatusCancelled = MaintenanceStatus("cancelled")
 	// Ongoing status.
 	MaintenanceStatusOngoing = MaintenanceStatus("ongoing")
+	MaintenanceStatusError   = MaintenanceStatus("error")
 )
 
 func (enum MaintenanceStatus) String() string {
@@ -383,6 +384,7 @@ func (enum MaintenanceStatus) Values() []MaintenanceStatus {
 		"done",
 		"cancelled",
 		"ongoing",
+		"error",
 	}
 }
 
@@ -576,6 +578,11 @@ type EngineUpgrade struct {
 	NewVersionID string `json:"new_version_id"`
 }
 
+// InfrastructureUpdate: infrastructure update.
+type InfrastructureUpdate struct {
+	KubernetesVersionName string `json:"kubernetes_version_name"`
+}
+
 // ServiceUpdate: service update.
 type ServiceUpdate struct {
 	ServiceName string `json:"service_name"`
@@ -592,11 +599,14 @@ type EndpointPublicNetworkDetails struct{}
 
 // Workflow: workflow.
 type Workflow struct {
-	// Precisely one of EngineUpgrade, ServiceUpdate must be set.
+	// Precisely one of EngineUpgrade, ServiceUpdate, InfrastructureUpdate must be set.
 	EngineUpgrade *EngineUpgrade `json:"engine_upgrade,omitempty"`
 
-	// Precisely one of EngineUpgrade, ServiceUpdate must be set.
+	// Precisely one of EngineUpgrade, ServiceUpdate, InfrastructureUpdate must be set.
 	ServiceUpdate *ServiceUpdate `json:"service_update,omitempty"`
+
+	// Precisely one of EngineUpgrade, ServiceUpdate, InfrastructureUpdate must be set.
+	InfrastructureUpdate *InfrastructureUpdate `json:"infrastructure_update,omitempty"`
 }
 
 // EndpointSpecPrivateNetworkDetails: endpoint spec private network details.
@@ -754,9 +764,11 @@ type UserRole struct {
 
 // EndpointSpec: endpoint spec.
 type EndpointSpec struct {
+	// PublicNetwork: expose the Database Instance publicly (empty object).
 	// Precisely one of PublicNetwork, PrivateNetwork must be set.
 	PublicNetwork *EndpointSpecPublicNetworkDetails `json:"public_network,omitempty"`
 
+	// PrivateNetwork: attach the Database Instance to a Private Network.
 	// Precisely one of PublicNetwork, PrivateNetwork must be set.
 	PrivateNetwork *EndpointSpecPrivateNetworkDetails `json:"private_network,omitempty"`
 }
@@ -1272,6 +1284,9 @@ type ListNodeTypesRequest struct {
 	Page *int32 `json:"-"`
 
 	PageSize *uint32 `json:"-"`
+
+	// ProjectID: ID of a project to get a personalized view of the stock.
+	ProjectID *string `json:"-"`
 }
 
 // ListNodeTypesResponse: list node types response.
@@ -1586,6 +1601,7 @@ func (s *API) ListNodeTypes(req *ListNodeTypesRequest, opts ...scw.RequestOption
 	parameter.AddToQuery(query, "include_disabled", req.IncludeDisabled)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "project_id", req.ProjectID)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")

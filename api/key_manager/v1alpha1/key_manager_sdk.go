@@ -84,9 +84,6 @@ const (
 	GenerateKeyMaterialImportParametersRequestWrappingAlgorithmRsaOaep2048Sha256        = GenerateKeyMaterialImportParametersRequestWrappingAlgorithm("rsa_oaep_2048_sha256")
 	GenerateKeyMaterialImportParametersRequestWrappingAlgorithmRsaOaep3072Sha256        = GenerateKeyMaterialImportParametersRequestWrappingAlgorithm("rsa_oaep_3072_sha256")
 	GenerateKeyMaterialImportParametersRequestWrappingAlgorithmRsaOaep4096Sha256        = GenerateKeyMaterialImportParametersRequestWrappingAlgorithm("rsa_oaep_4096_sha256")
-	GenerateKeyMaterialImportParametersRequestWrappingAlgorithmRsaAesKeyWrap2048Sha256  = GenerateKeyMaterialImportParametersRequestWrappingAlgorithm("rsa_aes_key_wrap_2048_sha256")
-	GenerateKeyMaterialImportParametersRequestWrappingAlgorithmRsaAesKeyWrap3072Sha256  = GenerateKeyMaterialImportParametersRequestWrappingAlgorithm("rsa_aes_key_wrap_3072_sha256")
-	GenerateKeyMaterialImportParametersRequestWrappingAlgorithmRsaAesKeyWrap4096Sha256  = GenerateKeyMaterialImportParametersRequestWrappingAlgorithm("rsa_aes_key_wrap_4096_sha256")
 )
 
 func (enum GenerateKeyMaterialImportParametersRequestWrappingAlgorithm) String() string {
@@ -103,9 +100,6 @@ func (enum GenerateKeyMaterialImportParametersRequestWrappingAlgorithm) Values()
 		"rsa_oaep_2048_sha256",
 		"rsa_oaep_3072_sha256",
 		"rsa_oaep_4096_sha256",
-		"rsa_aes_key_wrap_2048_sha256",
-		"rsa_aes_key_wrap_3072_sha256",
-		"rsa_aes_key_wrap_4096_sha256",
 	}
 }
 
@@ -684,6 +678,15 @@ type KeyUsage struct {
 	KeyEncapsulation *KeyAlgorithmKeyEncapsulation `json:"key_encapsulation,omitempty"`
 }
 
+// ImportKeyMaterialRequestEncryptedKeyMaterial: import key material request encrypted key material.
+type ImportKeyMaterialRequestEncryptedKeyMaterial struct {
+	// Data: this material must be encrypted using the public key and the exact wrapping algorithm returned by the `GetKeyMaterialImportParameters` method.
+	Data []byte `json:"data"`
+
+	// ImportToken: the secure import token returned by the `GetKeyMaterialImportParameters` method.
+	ImportToken []byte `json:"import_token"`
+}
+
 // ListAlgorithmsResponseAlgorithm: list algorithms response algorithm.
 type ListAlgorithmsResponseAlgorithm struct {
 	Usage string `json:"usage"`
@@ -966,8 +969,7 @@ type GenerateKeyMaterialImportParametersRequest struct {
 	// KeyID: ID of the key into which to import the key material.
 	KeyID string `json:"-"`
 
-	// WrappingAlgorithm: supported values for direct RSA wrapping are: `rsa_oaep_2048_sha256`, `rsa_oaep_3072_sha256`, `rsa_oaep_4096_sha256`.
-	// Supported values for hybrid wrapping (RSA + AES Key Wrap) are: `rsa_aes_key_wrap_2048_sha256`, `rsa_aes_key_wrap_3072_sha256`, `rsa_aes_key_wrap_4096_sha256`.
+	// WrappingAlgorithm: supported values are: `rsa_oaep_2048_sha256`, `rsa_oaep_3072_sha256`, `rsa_oaep_4096_sha256`.
 	// Default value: unknown_wrapping_algorithm
 	WrappingAlgorithm GenerateKeyMaterialImportParametersRequestWrappingAlgorithm `json:"wrapping_algorithm"`
 }
@@ -1010,11 +1012,16 @@ type ImportKeyMaterialRequest struct {
 	// KeyID: the key's origin must be `external`.
 	KeyID string `json:"-"`
 
-	// KeyMaterial: the key material is a random sequence of bytes used to derive a cryptographic key.
-	KeyMaterial []byte `json:"key_material"`
+	// Deprecated: KeyMaterial: deprecated. Use `encrypted_key_material` instead. The key material is a random sequence of bytes used to derive a cryptographic key.
+	// Precisely one of KeyMaterial, EncryptedKeyMaterial must be set.
+	KeyMaterial *[]byte `json:"key_material,omitempty"`
 
 	// Salt: a salt is random data added to key material to ensure unique derived keys, even if the input is similar. It helps strengthen security when the key material has low randomness (low entropy).
 	Salt *[]byte `json:"salt,omitempty"`
+
+	// EncryptedKeyMaterial: this material must be encrypted using the public key and the exact wrapping algorithm returned by the `GetKeyMaterialImportParameters` method.
+	// Precisely one of KeyMaterial, EncryptedKeyMaterial must be set.
+	EncryptedKeyMaterial *ImportKeyMaterialRequestEncryptedKeyMaterial `json:"encrypted_key_material,omitempty"`
 }
 
 // ListAlgorithmsRequest: list algorithms request.
@@ -1182,8 +1189,19 @@ type SignRequest struct {
 	// KeyID: ID of the key to use for signing.
 	KeyID string `json:"-"`
 
-	// Digest: the digest must be generated using the same algorithm defined in the key’s algorithm settings.
-	Digest []byte `json:"digest"`
+	// Digest: for ECDSA and RSA keys, the digest generated using the key's hashing algorithm: 32 bytes (SHA-256) or 48 bytes (SHA-384).
+	// The 64-byte bound only exists for the ML-DSA backward-compatibility case below.
+	// Also accepted for ML-DSA for backward compatibility only; signatures may not conform to the ML-DSA spec, not recommended for new usage. Prefer `message` or `external_mu` for ML-DSA.
+	// Precisely one of Digest, Msg, ExternalMu must be set.
+	Digest *[]byte `json:"digest,omitempty"`
+
+	// Msg: only supported for ML-DSA keys (`raw` signing): the server computes the μ message representative internally before signing. Between 1 and 4096 bytes.
+	// Precisely one of Digest, Msg, ExternalMu must be set.
+	Msg *[]byte `json:"msg,omitempty"`
+
+	// ExternalMu: must equal SHAKE256(tr ‖ 0x00 ‖ 0x00 ‖ message), where `tr` is the SHAKE256 of the key's public key. Signatures produced from other pre-hash computations (e.g. HashML-DSA) cannot be verified through this API.
+	// Precisely one of Digest, Msg, ExternalMu must be set.
+	ExternalMu *[]byte `json:"external_mu,omitempty"`
 }
 
 // SignResponse: sign response.
@@ -1252,8 +1270,13 @@ type VerifyRequest struct {
 	// KeyID: ID of the key to use for signature verification.
 	KeyID string `json:"-"`
 
-	// Digest: must be generated using the same algorithm specified in the key’s configuration.
-	Digest []byte `json:"digest"`
+	// Digest: for ECDSA and RSA keys, the digest of the original message, generated using the key's hashing algorithm.
+	// Precisely one of Digest, Msg must be set.
+	Digest *[]byte `json:"digest,omitempty"`
+
+	// Msg: for ML-DSA keys, the full original message. This also verifies signatures made with `raw` or `external_mu`: send the message whose μ was signed, not the μ itself (a μ payload always fails). Messages over 4096 bytes cannot be verified through this endpoint.
+	// Precisely one of Digest, Msg must be set.
+	Msg *[]byte `json:"msg,omitempty"`
 
 	// Signature: the message signature to verify.
 	Signature []byte `json:"signature"`
