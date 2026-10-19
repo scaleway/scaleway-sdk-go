@@ -849,6 +849,25 @@ type DataSource struct {
 
 	// CurrentMonthUsage: usage of the month in bytes.
 	CurrentMonthUsage *scw.Size `json:"current_month_usage"`
+
+	// Srn: the SRN of the data-source.
+	Srn string `json:"srn"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *DataSource) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://cockpit.%s/regions/%s/data-sources/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // Exporter: Data exporter.
@@ -888,6 +907,25 @@ type Exporter struct {
 
 	// Region: the region in which the export is located.
 	Region scw.Region `json:"region"`
+
+	// Srn: the SRN of the exporter.
+	Srn string `json:"srn"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *Exporter) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://cockpit.%s/regions/%s/exporters/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // GrafanaProductDashboard: Grafana dashboard.
@@ -1022,6 +1060,9 @@ type Usage struct {
 
 // AlertManager: Alert manager information.
 type AlertManager struct {
+	// ID: alert manager id.
+	ID string `json:"id"`
+
 	// AlertManagerURL: alert manager URL.
 	AlertManagerURL *string `json:"alert_manager_url"`
 
@@ -1033,6 +1074,25 @@ type AlertManager struct {
 
 	// Region: regions where the Alert manager is enabled.
 	Region scw.Region `json:"region"`
+
+	// Srn: the SRN of the alert-manager.
+	Srn string `json:"srn"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *AlertManager) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://cockpit.%s/regions/%s/alert-managers/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // DisableAlertRulesResponse: Output returned when alert rules are disabled.
@@ -2315,6 +2375,10 @@ func (s *RegionalAPI) CreateExporter(req *RegionalAPICreateExporterRequest, opts
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -2361,6 +2425,12 @@ func (s *RegionalAPI) ListExporters(req *RegionalAPIListExportersRequest, opts .
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Exporters {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -2391,6 +2461,10 @@ func (s *RegionalAPI) GetExporter(req *RegionalAPIGetExporterRequest, opts ...sc
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2506,6 +2580,10 @@ func (s *RegionalAPI) UpdateExporter(req *RegionalAPIUpdateExporterRequest, opts
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -2544,6 +2622,10 @@ func (s *RegionalAPI) CreateDataSource(req *RegionalAPICreateDataSourceRequest, 
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -2574,6 +2656,10 @@ func (s *RegionalAPI) GetDataSource(req *RegionalAPIGetDataSourceRequest, opts .
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2650,6 +2736,12 @@ func (s *RegionalAPI) ListDataSources(req *RegionalAPIListDataSourcesRequest, op
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.DataSources {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -2685,6 +2777,10 @@ func (s *RegionalAPI) UpdateDataSource(req *RegionalAPIUpdateDataSourceRequest, 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2944,6 +3040,10 @@ func (s *RegionalAPI) GetAlertManager(req *RegionalAPIGetAlertManagerRequest, op
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -2981,6 +3081,10 @@ func (s *RegionalAPI) EnableAlertManager(req *RegionalAPIEnableAlertManagerReque
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -3017,6 +3121,10 @@ func (s *RegionalAPI) DisableAlertManager(req *RegionalAPIDisableAlertManagerReq
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -3285,6 +3393,10 @@ func (s *RegionalAPI) EnableManagedAlerts(req *RegionalAPIEnableManagedAlertsReq
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -3321,6 +3433,10 @@ func (s *RegionalAPI) DisableManagedAlerts(req *RegionalAPIDisableManagedAlertsR
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
