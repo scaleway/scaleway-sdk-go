@@ -840,6 +840,9 @@ type UpdateClusterRequest struct {
 
 	// Version: version of Kafka.
 	Version *string `json:"version,omitempty"`
+
+	// VolumeSizeBytes: new volume size for each broker, can only increase.
+	VolumeSizeBytes *scw.Size `json:"volume_size_bytes,omitempty"`
 }
 
 // UpdateUserRequest: Update a user of a Kafka cluster.
