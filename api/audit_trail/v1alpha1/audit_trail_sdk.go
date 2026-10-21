@@ -16,10 +16,16 @@ import (
 
 	std "github.com/scaleway/scaleway-sdk-go/api/std"
 	"github.com/scaleway/scaleway-sdk-go/errors"
+	"github.com/scaleway/scaleway-sdk-go/internal/async"
 	"github.com/scaleway/scaleway-sdk-go/marshaler"
 	"github.com/scaleway/scaleway-sdk-go/namegenerator"
 	"github.com/scaleway/scaleway-sdk-go/parameter"
 	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+const (
+	defaultAuditTrailRetryInterval = 15 * time.Second
+	defaultAuditTrailTimeout       = 5 * time.Minute
 )
 
 // always import dependencies
@@ -2326,6 +2332,15 @@ type EventsOverview struct {
 	LastEvents []*Event `json:"last_events"`
 }
 
+// GetCustomAlertRuleRequest: get custom alert rule request.
+type GetCustomAlertRuleRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// CustomAlertRuleID: ID of the custom alert rule to retrieve.
+	CustomAlertRuleID string `json:"-"`
+}
+
 // GetLastEventsOverviewRequest: get last events overview request.
 type GetLastEventsOverviewRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -3270,6 +3285,89 @@ func (s *API) ListCustomAlertRules(req *ListCustomAlertRulesRequest, opts ...scw
 		}
 	}
 	return &resp, nil
+}
+
+// GetCustomAlertRule: Retrieve metadata for a specified custom alert rule using the `region` and `custom_alert_rule_id` parameters.
+func (s *API) GetCustomAlertRule(req *GetCustomAlertRuleRequest, opts ...scw.RequestOption) (*CustomAlertRule, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.CustomAlertRuleID) == "" {
+		return nil, errors.New("field CustomAlertRuleID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/audit-trail/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/custom-alert-rules/" + fmt.Sprint(req.CustomAlertRuleID) + "",
+	}
+
+	var resp CustomAlertRule
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
+	return &resp, nil
+}
+
+// WaitForCustomAlertRuleRequest is used by WaitForCustomAlertRule method.
+type WaitForCustomAlertRuleRequest struct {
+	Region            scw.Region
+	CustomAlertRuleID string
+	Timeout           *time.Duration
+	RetryInterval     *time.Duration
+}
+
+// WaitForCustomAlertRule waits for the CustomAlertRule to reach a terminal state.
+func (s *API) WaitForCustomAlertRule(req *WaitForCustomAlertRuleRequest, opts ...scw.RequestOption) (*CustomAlertRule, error) {
+	timeout := defaultAuditTrailTimeout
+	if req.Timeout != nil {
+		timeout = *req.Timeout
+	}
+
+	retryInterval := defaultAuditTrailRetryInterval
+	if req.RetryInterval != nil {
+		retryInterval = *req.RetryInterval
+	}
+	transientStatuses := map[CustomAlertRuleStatus]struct{}{
+		CustomAlertRuleStatusEnabling:  {},
+		CustomAlertRuleStatusDisabling: {},
+	}
+
+	res, err := async.WaitSync(&async.WaitSyncConfig{
+		Get: func() (any, bool, error) {
+			res, err := s.GetCustomAlertRule(&GetCustomAlertRuleRequest{
+				Region:            req.Region,
+				CustomAlertRuleID: req.CustomAlertRuleID,
+			}, opts...)
+			if err != nil {
+				return nil, false, err
+			}
+
+			_, isTransient := transientStatuses[res.Status]
+
+			return res, !isTransient, nil
+		},
+		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),
+		Timeout:          timeout,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "waiting for CustomAlertRule failed")
+	}
+
+	return res.(*CustomAlertRule), nil
 }
 
 // EnableAlertRules: Enable alert rules for a specified organization. Enabled rules will trigger alerts when matching events occur.
