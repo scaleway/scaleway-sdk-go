@@ -201,25 +201,6 @@ type Organization struct {
 
 	// Comment: a comment about the organization.
 	Comment string `json:"comment"`
-
-	// Srn: the SRN of the organization.
-	Srn string `json:"srn"`
-}
-
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *Organization) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://account.%s/organizations/%s", platform, fmt.Sprint(m.ID))
-		return
-	}
 }
 
 // CreateOrganizationRequest: create organization request.
@@ -426,10 +407,6 @@ func (s *API) CreateOrganization(req *CreateOrganizationRequest, opts ...scw.Req
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -456,10 +433,6 @@ func (s *API) GetOrganization(req *GetOrganizationRequest, opts ...scw.RequestOp
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -494,12 +467,6 @@ func (s *API) ListOrganizations(req *ListOrganizationsRequest, opts ...scw.Reque
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.Organizations {
-			el.setSRN(apiMetadata.Domain)
-		}
-	}
 	return &resp, nil
 }
 
@@ -531,10 +498,6 @@ func (s *API) LockOrganization(req *LockOrganizationRequest, opts ...scw.Request
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -568,10 +531,6 @@ func (s *API) UnlockOrganization(req *UnlockOrganizationRequest, opts ...scw.Req
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -603,10 +562,6 @@ func (s *API) UpdateOrganization(req *UpdateOrganizationRequest, opts ...scw.Req
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }

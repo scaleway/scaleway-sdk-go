@@ -1176,9 +1176,6 @@ type RuleSpecs struct {
 	// OrganizationID: ID of Organization the rule is scoped to.
 	// Precisely one of ProjectIDs, OrganizationID must be set.
 	OrganizationID *string `json:"organization_id,omitempty"`
-
-	// Deny: select whether the rule should remove the permissions instead of granting them.
-	Deny bool `json:"deny"`
 }
 
 // ScimToken: scim token.
@@ -1627,9 +1624,6 @@ type Rule struct {
 	// ID: id of rule.
 	ID string `json:"id"`
 
-	// Srn: the SRN of the rule.
-	Srn string `json:"srn"`
-
 	// PermissionSetNames: names of permission sets bound to the rule.
 	PermissionSetNames *[]string `json:"permission_set_names"`
 
@@ -1652,8 +1646,8 @@ type Rule struct {
 	// Precisely one of ProjectIDs, OrganizationID, AccountRootUserID must be set.
 	AccountRootUserID *string `json:"account_root_user_id,omitempty"`
 
-	// Deny: select whether the rule should remove the permissions instead of granting them.
-	Deny bool `json:"deny"`
+	// Srn: the SRN of the rule.
+	Srn string `json:"srn"`
 }
 
 //nolint:unused,nolintlint // generated, no check on whether it's used or not
