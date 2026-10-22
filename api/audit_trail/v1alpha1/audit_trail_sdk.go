@@ -2422,6 +2422,12 @@ type ListAuthenticationEventsResponse struct {
 	NextPageToken *string `json:"next_page_token"`
 }
 
+// UnsafeNextPageToken should not be used
+// Internal usage only
+func (r *ListAuthenticationEventsResponse) UnsafeNextPageToken() *string {
+	return r.NextPageToken
+}
+
 // ListCombinedEventsRequest: list combined events request.
 type ListCombinedEventsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -2451,6 +2457,12 @@ type ListCombinedEventsResponse struct {
 	Events []*ListCombinedEventsResponseCombinedEvent `json:"events"`
 
 	NextPageToken *string `json:"next_page_token"`
+}
+
+// UnsafeNextPageToken should not be used
+// Internal usage only
+func (r *ListCombinedEventsResponse) UnsafeNextPageToken() *string {
+	return r.NextPageToken
 }
 
 // ListCustomAlertRulesRequest: list custom alert rules request.
@@ -2555,6 +2567,12 @@ type ListEventsResponse struct {
 
 	// NextPageToken: page token to use in following calls to keep listing.
 	NextPageToken *string `json:"next_page_token"`
+}
+
+// UnsafeNextPageToken should not be used
+// Internal usage only
+func (r *ListEventsResponse) UnsafeNextPageToken() *string {
+	return r.NextPageToken
 }
 
 // ListExportJobsRequest: list export jobs request.
@@ -2673,6 +2691,12 @@ type ListSystemEventsResponse struct {
 
 	// NextPageToken: page token to use in following calls to keep listing.
 	NextPageToken *string `json:"next_page_token"`
+}
+
+// UnsafeNextPageToken should not be used
+// Internal usage only
+func (r *ListSystemEventsResponse) UnsafeNextPageToken() *string {
+	return r.NextPageToken
 }
 
 // RetrieveAvailableFieldsForCustomAlertRulesRequest: retrieve available fields for custom alert rules request.
