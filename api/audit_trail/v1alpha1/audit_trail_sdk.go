@@ -2030,6 +2030,9 @@ type AlertRule struct {
 	// ID: ID of the alert rule.
 	ID string `json:"id"`
 
+	// Srn: the SRN of the alert rule.
+	Srn string `json:"srn"`
+
 	// Name: name of the alert rule.
 	Name string `json:"name"`
 
@@ -2039,6 +2042,25 @@ type AlertRule struct {
 	// Status: current status of the alert rule.
 	// Default value: unknown_status
 	Status AlertRuleStatus `json:"status"`
+
+	// Region: region of the alert rule.
+	Region scw.Region `json:"region"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *AlertRule) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://audit-trail.%s/regions/%s/alert-rules/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // CustomAlertRule: custom alert rule.
@@ -2422,6 +2444,12 @@ type ListAuthenticationEventsResponse struct {
 	NextPageToken *string `json:"next_page_token"`
 }
 
+// UnsafeNextPageToken should not be used
+// Internal usage only
+func (r *ListAuthenticationEventsResponse) UnsafeNextPageToken() *string {
+	return r.NextPageToken
+}
+
 // ListCombinedEventsRequest: list combined events request.
 type ListCombinedEventsRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -2451,6 +2479,12 @@ type ListCombinedEventsResponse struct {
 	Events []*ListCombinedEventsResponseCombinedEvent `json:"events"`
 
 	NextPageToken *string `json:"next_page_token"`
+}
+
+// UnsafeNextPageToken should not be used
+// Internal usage only
+func (r *ListCombinedEventsResponse) UnsafeNextPageToken() *string {
+	return r.NextPageToken
 }
 
 // ListCustomAlertRulesRequest: list custom alert rules request.
@@ -2555,6 +2589,12 @@ type ListEventsResponse struct {
 
 	// NextPageToken: page token to use in following calls to keep listing.
 	NextPageToken *string `json:"next_page_token"`
+}
+
+// UnsafeNextPageToken should not be used
+// Internal usage only
+func (r *ListEventsResponse) UnsafeNextPageToken() *string {
+	return r.NextPageToken
 }
 
 // ListExportJobsRequest: list export jobs request.
@@ -2673,6 +2713,12 @@ type ListSystemEventsResponse struct {
 
 	// NextPageToken: page token to use in following calls to keep listing.
 	NextPageToken *string `json:"next_page_token"`
+}
+
+// UnsafeNextPageToken should not be used
+// Internal usage only
+func (r *ListSystemEventsResponse) UnsafeNextPageToken() *string {
+	return r.NextPageToken
 }
 
 // RetrieveAvailableFieldsForCustomAlertRulesRequest: retrieve available fields for custom alert rules request.
@@ -3233,6 +3279,12 @@ func (s *API) ListAlertRules(req *ListAlertRulesRequest, opts ...scw.RequestOpti
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.AlertRules {
+			el.setSRN(apiMetadata.Domain)
+		}
 	}
 	return &resp, nil
 }

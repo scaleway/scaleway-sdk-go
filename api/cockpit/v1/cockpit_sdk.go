@@ -1060,8 +1060,8 @@ type Usage struct {
 
 // AlertManager: Alert manager information.
 type AlertManager struct {
-	// ID: alert manager id.
-	ID string `json:"id"`
+	// ProjectID: ID of the project.
+	ProjectID string `json:"project_id"`
 
 	// AlertManagerURL: alert manager URL.
 	AlertManagerURL *string `json:"alert_manager_url"`
@@ -1089,8 +1089,8 @@ func (m *AlertManager) setSRN(platform string) {
 	// We do not check that *m.XYZ != "", as there are currently no use cases for an
 	// optional value in an SRN where the value set to the empty string makes sense.
 
-	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://cockpit.%s/regions/%s/alert-managers/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ProjectID) != "" {
+		m.Srn = fmt.Sprintf("srn://cockpit.%s/regions/%s/projects/%s/alert-manager", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ProjectID))
 		return
 	}
 }
@@ -1252,6 +1252,28 @@ type GlobalAPISyncGrafanaDataSourcesRequest struct {
 type Grafana struct {
 	// GrafanaURL: URL to access your Cockpit's Grafana.
 	GrafanaURL string `json:"grafana_url"`
+
+	// ProjectID: ID of the project.
+	ProjectID string `json:"project_id"`
+
+	// Srn: the SRN of the grafana.
+	Srn string `json:"srn"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *Grafana) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.ProjectID) != "" {
+		m.Srn = fmt.Sprintf("srn://cockpit.%s/projects/%s/grafana", platform, fmt.Sprint(m.ProjectID))
+		return
+	}
 }
 
 // ListAlertsResponse: Retrieve a list of alerts matching the request.
@@ -1988,6 +2010,10 @@ func (s *GlobalAPI) GetGrafana(req *GlobalAPIGetGrafanaRequest, opts ...scw.Requ
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }

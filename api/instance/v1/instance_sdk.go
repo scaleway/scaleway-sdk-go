@@ -3098,6 +3098,12 @@ type ListIPsRequest struct {
 
 	// Type: filter on the IP Mobility IP type (whose value should be either 'routed_ipv4' or 'routed_ipv6').
 	Type *string `json:"-"`
+
+	// Precisely one of Server, Detached must be set.
+	Server *string `json:"server,omitempty"`
+
+	// Precisely one of Server, Detached must be set.
+	Detached *bool `json:"detached,omitempty"`
 }
 
 // ListIPsResponse: list i ps response.
@@ -6626,6 +6632,8 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsR
 	parameter.AddToQuery(query, "per_page", req.PerPage)
 	parameter.AddToQuery(query, "page", req.Page)
 	parameter.AddToQuery(query, "type", req.Type)
+	parameter.AddToQuery(query, "server", req.Server)
+	parameter.AddToQuery(query, "detached", req.Detached)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")

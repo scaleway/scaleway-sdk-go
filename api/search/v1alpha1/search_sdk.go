@@ -522,6 +522,12 @@ type SearchResourcesResponse struct {
 	NextPageToken string `json:"next_page_token"`
 }
 
+// UnsafeNextPageToken should not be used
+// Internal usage only
+func (r *SearchResourcesResponse) UnsafeNextPageToken() string {
+	return r.NextPageToken
+}
+
 type API struct {
 	client *scw.Client
 }
