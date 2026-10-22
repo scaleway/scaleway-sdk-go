@@ -16,7 +16,7 @@ import (
 func getTestFilePath(t *testing.T, pkgFolder string, suffix string) string {
 	t.Helper()
 
-	specialChars := regexp.MustCompile(`[\\?%*:|"<>. ]`)
+	specialChars := regexp.MustCompile(`[\\?%*:|"'<>. ]`)
 
 	// Replace nested tests separators.
 	fileName := strings.ReplaceAll(t.Name(), "/", "-")
