@@ -177,7 +177,7 @@ func UntitleFirstWord(s string) string {
 
 	r := []rune(s)
 
-	firstWord := strings.Split(s, " ")[0]
+	firstWord, _, _ := strings.Cut(s, " ")
 	_, isCommonInitialism := commonInitialisms[firstWord]
 	_, isCustomInitialism := customInitialisms[firstWord]
 	if !isCommonInitialism && !isCustomInitialism {
