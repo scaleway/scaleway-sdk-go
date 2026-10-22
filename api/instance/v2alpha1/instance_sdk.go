@@ -2835,6 +2835,12 @@ type ListDedicatedPoolServerTypesResponse struct {
 	TotalCount uint64 `json:"total_count"`
 }
 
+// UnsafeNextPageToken should not be used
+// Internal usage only
+func (r *ListDedicatedPoolServerTypesResponse) UnsafeNextPageToken() *string {
+	return r.NextPageToken
+}
+
 // UnsafeGetTotalCount should not be used
 // Internal usage only
 func (r *ListDedicatedPoolServerTypesResponse) UnsafeGetTotalCount() uint64 {
@@ -2883,6 +2889,12 @@ type ListDedicatedPoolsResponse struct {
 
 	// TotalCount: total number of Dedicated Pools.
 	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeNextPageToken should not be used
+// Internal usage only
+func (r *ListDedicatedPoolsResponse) UnsafeNextPageToken() *string {
+	return r.NextPageToken
 }
 
 // UnsafeGetTotalCount should not be used
@@ -2944,6 +2956,12 @@ type ListPlacementGroupsResponse struct {
 	TotalCount uint64 `json:"total_count"`
 }
 
+// UnsafeNextPageToken should not be used
+// Internal usage only
+func (r *ListPlacementGroupsResponse) UnsafeNextPageToken() *string {
+	return r.NextPageToken
+}
+
 // UnsafeGetTotalCount should not be used
 // Internal usage only
 func (r *ListPlacementGroupsResponse) UnsafeGetTotalCount() uint64 {
@@ -3001,6 +3019,12 @@ type ListPrivateNetworkInterfacesResponse struct {
 
 	// TotalCount: total number of items.
 	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeNextPageToken should not be used
+// Internal usage only
+func (r *ListPrivateNetworkInterfacesResponse) UnsafeNextPageToken() *string {
+	return r.NextPageToken
 }
 
 // UnsafeGetTotalCount should not be used
@@ -3062,6 +3086,12 @@ type ListSecurityGroupsResponse struct {
 	TotalCount uint64 `json:"total_count"`
 }
 
+// UnsafeNextPageToken should not be used
+// Internal usage only
+func (r *ListSecurityGroupsResponse) UnsafeNextPageToken() *string {
+	return r.NextPageToken
+}
+
 // UnsafeGetTotalCount should not be used
 // Internal usage only
 func (r *ListSecurityGroupsResponse) UnsafeGetTotalCount() uint64 {
@@ -3100,6 +3130,12 @@ type ListServerCompatibleTypesResponse struct {
 	NextPageToken *string `json:"next_page_token"`
 
 	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeNextPageToken should not be used
+// Internal usage only
+func (r *ListServerCompatibleTypesResponse) UnsafeNextPageToken() *string {
+	return r.NextPageToken
 }
 
 // UnsafeGetTotalCount should not be used
@@ -3143,6 +3179,12 @@ type ListServerTypesResponse struct {
 
 	// TotalCount: total number of server types.
 	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeNextPageToken should not be used
+// Internal usage only
+func (r *ListServerTypesResponse) UnsafeNextPageToken() *string {
+	return r.NextPageToken
 }
 
 // UnsafeGetTotalCount should not be used
@@ -3222,6 +3264,12 @@ type ListServersResponse struct {
 	TotalCount uint64 `json:"total_count"`
 }
 
+// UnsafeNextPageToken should not be used
+// Internal usage only
+func (r *ListServersResponse) UnsafeNextPageToken() *string {
+	return r.NextPageToken
+}
+
 // UnsafeGetTotalCount should not be used
 // Internal usage only
 func (r *ListServersResponse) UnsafeGetTotalCount() uint64 {
@@ -3251,6 +3299,12 @@ type ListSnapshotsResponse struct {
 
 	// TotalCount: total number of items.
 	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeNextPageToken should not be used
+// Internal usage only
+func (r *ListSnapshotsResponse) UnsafeNextPageToken() *string {
+	return r.NextPageToken
 }
 
 // UnsafeGetTotalCount should not be used
@@ -3297,6 +3351,12 @@ type ListTemplateUserDataKeysResponse struct {
 
 	// TotalCount: total number of items.
 	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeNextPageToken should not be used
+// Internal usage only
+func (r *ListTemplateUserDataKeysResponse) UnsafeNextPageToken() *string {
+	return r.NextPageToken
 }
 
 // UnsafeGetTotalCount should not be used
@@ -3367,6 +3427,12 @@ type ListTemplatesResponse struct {
 	TotalCount uint64 `json:"total_count"`
 }
 
+// UnsafeNextPageToken should not be used
+// Internal usage only
+func (r *ListTemplatesResponse) UnsafeNextPageToken() *string {
+	return r.NextPageToken
+}
+
 // UnsafeGetTotalCount should not be used
 // Internal usage only
 func (r *ListTemplatesResponse) UnsafeGetTotalCount() uint64 {
@@ -3413,6 +3479,12 @@ type ListUserDataKeysResponse struct {
 	TotalCount uint64 `json:"total_count"`
 }
 
+// UnsafeNextPageToken should not be used
+// Internal usage only
+func (r *ListUserDataKeysResponse) UnsafeNextPageToken() *string {
+	return r.NextPageToken
+}
+
 // UnsafeGetTotalCount should not be used
 // Internal usage only
 func (r *ListUserDataKeysResponse) UnsafeGetTotalCount() uint64 {
@@ -3444,6 +3516,12 @@ type ListVolumeTypesResponse struct {
 	TotalCount uint64 `json:"total_count"`
 }
 
+// UnsafeNextPageToken should not be used
+// Internal usage only
+func (r *ListVolumeTypesResponse) UnsafeNextPageToken() *string {
+	return r.NextPageToken
+}
+
 // UnsafeGetTotalCount should not be used
 // Internal usage only
 func (r *ListVolumeTypesResponse) UnsafeGetTotalCount() uint64 {
@@ -3473,6 +3551,12 @@ type ListVolumesResponse struct {
 
 	// TotalCount: total number of items.
 	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeNextPageToken should not be used
+// Internal usage only
+func (r *ListVolumesResponse) UnsafeNextPageToken() *string {
+	return r.NextPageToken
 }
 
 // UnsafeGetTotalCount should not be used
@@ -4373,7 +4457,7 @@ func NewAPI(client *scw.Client) *API {
 }
 
 func (s *API) Zones() []scw.Zone {
-	return []scw.Zone{scw.ZoneFrPar1, scw.ZoneFrPar2, scw.ZoneFrPar3, scw.ZoneNlAms1, scw.ZoneNlAms2, scw.ZoneNlAms3, scw.ZonePlWaw1, scw.ZonePlWaw2, scw.ZonePlWaw3, scw.ZoneItMil1}
+	return []scw.Zone{scw.ZoneFrPar1, scw.ZoneFrPar2, scw.ZoneFrPar3, scw.ZoneNlAms1, scw.ZoneNlAms2, scw.ZoneNlAms3, scw.ZonePlWaw1, scw.ZonePlWaw2, scw.ZonePlWaw3, scw.ZoneItMil1, scw.ZoneItMil2, scw.ZoneItMil3}
 }
 
 // GetResourceCounts: Get counts of various resources (e.g. servers, volumes).

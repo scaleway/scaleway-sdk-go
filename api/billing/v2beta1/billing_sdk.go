@@ -847,6 +847,12 @@ type ListChargesResponse struct {
 	NextPageToken *string `json:"next_page_token"`
 }
 
+// UnsafeNextPageToken should not be used
+// Internal usage only
+func (r *ListChargesResponse) UnsafeNextPageToken() *string {
+	return r.NextPageToken
+}
+
 // ListConsumptionsRequest: list consumptions request.
 type ListConsumptionsRequest struct {
 	// OrderBy: order consumptions list in the response by their update date.
