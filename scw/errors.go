@@ -122,6 +122,13 @@ func hasResponseError(res *http.Response) error {
 		return err
 	}
 
+	if newErr.Type == "" {
+		err = convertNonTypedError(newErr)
+		if err != nil {
+			return err
+		}
+	}
+
 	return newErr
 }
 
@@ -197,6 +204,14 @@ func unmarshalNonStandardError(errorType string, body []byte) error {
 	default:
 		return nil
 	}
+}
+
+func convertNonTypedError(err *ResponseError) error {
+	if err.StatusCode == http.StatusNotImplemented && err.Message == "unknown service" {
+		return &UnknownServiceError{RawBody: err.RawBody}
+	}
+
+	return nil
 }
 
 type InvalidArgumentsErrorDetail struct {
@@ -565,3 +580,16 @@ func (r PreconditionFailedError) Error() string {
 }
 
 func (r PreconditionFailedError) IsScwSdkError() {}
+
+// UnknownServiceError implements the SdkError interface
+type UnknownServiceError struct {
+	RawBody json.RawMessage `json:"-"`
+}
+
+func (e *UnknownServiceError) IsScwSdkError() {}
+func (e *UnknownServiceError) Error() string {
+	return "scaleway-sdk-go: service is unknown in used locality"
+}
+func (e *UnknownServiceError) GetRawBody() json.RawMessage {
+	return e.RawBody
+}
