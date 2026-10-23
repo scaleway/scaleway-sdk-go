@@ -306,7 +306,8 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 		expectedDefaultProjectID      *string
 		expectedDefaultRegion         *string
 		expectedDefaultZone           *string
-		expectedOutput                string
+		expectedStdout                string
+		expectedStderr                string
 	}{
 		// no env variables
 		{
@@ -477,7 +478,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
-			expectedOutput: "WARNING: Scaleway configuration file permissions are too " +
+			expectedStderr: "WARNING: Scaleway configuration file permissions are too " +
 				"permissive. That is insecure.\nYou can fix it with the command 'chmod 0600 " +
 				"{HOME}/.config/scw/config.yml'",
 		},
@@ -496,7 +497,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
-			expectedOutput: "WARNING: Scaleway configuration file permissions are too " +
+			expectedStderr: "WARNING: Scaleway configuration file permissions are too " +
 				"permissive. That is insecure.\nYou can fix it with the command 'chmod 0600 " +
 				"{HOME}/.config/scw/config.yml'",
 		},
@@ -515,7 +516,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
-			expectedOutput: "WARNING: Scaleway configuration file permissions are too " +
+			expectedStderr: "WARNING: Scaleway configuration file permissions are too " +
 				"permissive. That is insecure.\nYou can fix it with the command 'chmod 0600 " +
 				"{HOME}/.config/scw/config.yml'",
 		},
@@ -534,7 +535,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
 			expectedDefaultProjectID:      s(v2ValidDefaultProjectID),
 			expectedDefaultRegion:         s(v2ValidDefaultRegion),
-			expectedOutput: "WARNING: Scaleway configuration file permissions are too " +
+			expectedStderr: "WARNING: Scaleway configuration file permissions are too " +
 				"permissive. That is insecure.\nYou can fix it with the command 'chmod 0600 " +
 				"{HOME}/.config/scw/config.yml'",
 		},
@@ -557,7 +558,7 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			env:                           map[string]string{"HOME": "{HOME}"},
 			files:                         map[string]string{".config/scw/config.yml": v2SimpleValidConfigFile},
 			perms:                         0o600,
-			expectedOutput:                "",
+			expectedStdout:                "",
 			expectedAccessKey:             s(v2ValidAccessKey),
 			expectedSecretKey:             s(v2ValidSecretKey),
 			expectedDefaultOrganizationID: s(v2ValidDefaultOrganizationID),
@@ -577,29 +578,40 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 			// set up env and config file(s)
 			setEnvWithPerms(t, test.env, test.files, test.perms, dir)
 			test.expectedError = strings.ReplaceAll(test.expectedError, "{HOME}", dir)
-			test.expectedOutput = strings.ReplaceAll(test.expectedOutput, "{HOME}", dir)
+			test.expectedStdout = strings.ReplaceAll(test.expectedStdout, "{HOME}", dir)
+			test.expectedStderr = strings.ReplaceAll(test.expectedStderr, "{HOME}", dir)
 
 			// remove config file(s)
 			defer cleanEnv(t, test.files, dir)
 
 			// Temporarily capturing stdout
 			originalStdout := os.Stdout
-			r, w, _ := os.Pipe()
-			os.Stdout = w
+			stdoutR, stdoutW, _ := os.Pipe()
+			os.Stdout = stdoutW
 
-			// err is not checked here but later
-			config, err := LoadConfig()
+			originalStderr := os.Stderr
+			stderrR, stderrW, _ := os.Pipe()
+			os.Stderr = stderrW
 
-			// Giving back stdout
-			err2 := w.Close()
-			if err2 != nil {
-				t.Fatal(err2)
+			// err is checked later so we put it in a separate variable to avoid
+			// shadowing it unintentionally.
+			config, configErr := LoadConfig()
+
+			// Giving back stdout & stderr.
+			err := stdoutW.Close()
+			if err != nil {
+				t.Fatal(err)
 			}
-
 			os.Stdout = originalStdout
 
+			err = stderrW.Close()
+			if err != nil {
+				t.Fatal(err)
+			}
+			os.Stderr = originalStderr
+
 			if test.expectedError == "" {
-				testhelpers.AssertNoError(t, err)
+				testhelpers.AssertNoError(t, configErr)
 				p, err := config.GetActiveProfile()
 				testhelpers.AssertNoError(t, err)
 
@@ -616,18 +628,20 @@ func TestLoadProfileAndActiveProfile(t *testing.T) {
 				testhelpers.Equals(t, test.expectedInsecure, p.Insecure)
 				testhelpers.Equals(t, test.expectedSendTelemetry, config.SendTelemetry)
 			} else {
-				testhelpers.Equals(t, test.expectedError, err.Error())
+				testhelpers.Equals(t, test.expectedError, configErr.Error())
 			}
 
 			// In both cases, read captured stdout
-			var buf bytes.Buffer
-			_, err = io.Copy(&buf, r)
+			var stdoutBuf bytes.Buffer
+			_, err = io.Copy(&stdoutBuf, stdoutR)
 			testhelpers.AssertNoError(t, err)
-			testhelpers.Assert(
-				t,
-				strings.Contains(buf.String(), test.expectedOutput),
-				fmt.Sprintf("expected\n%s\nto contain\n%s", buf.String(), test.expectedOutput),
-			)
+
+			var stderrBuf bytes.Buffer
+			_, err = io.Copy(&stderrBuf, stderrR)
+			testhelpers.AssertNoError(t, err)
+
+			testhelpers.Assert(t, strings.Contains(stdoutBuf.String(), test.expectedStdout), fmt.Sprintf("expected stdout\n%s\nto contain\n%s", stdoutBuf.String(), test.expectedStdout))
+			testhelpers.Assert(t, strings.Contains(stderrBuf.String(), test.expectedStderr), fmt.Sprintf("expected stderr\n%s\nto contain\n%s", stderrBuf.String(), test.expectedStderr))
 		})
 	}
 }
