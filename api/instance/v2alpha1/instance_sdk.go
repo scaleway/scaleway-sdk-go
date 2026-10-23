@@ -1549,6 +1549,9 @@ type ServerIP struct {
 type CreateTemplateRequestPrivateNetworkTemplate struct {
 	// PrivateNetworkID: ID of the private network.
 	PrivateNetworkID string `json:"private_network_id"`
+
+	// SecurityGroupID: ID of the security group for the private network.
+	SecurityGroupID *string `json:"security_group_id"`
 }
 
 // CreateTemplateRequestVolumeTemplate: create template request volume template.
@@ -1829,6 +1832,9 @@ type PrivateNetworkInterfaceSummary struct {
 
 	// ServerID: ID of the Instance this interface is attached to.
 	ServerID string `json:"server_id"`
+
+	// SecurityGroupID: ID of the security group associated with this interface.
+	SecurityGroupID string `json:"security_group_id"`
 
 	// MacAddress: mAC address of the private network interface.
 	MacAddress string `json:"mac_address"`
@@ -2363,6 +2369,9 @@ type CreatePrivateNetworkInterfaceRequest struct {
 
 	// ServerID: ID of the Instance to attach the interface to.
 	ServerID *string `json:"server_id,omitempty"`
+
+	// SecurityGroupID: ID of the security group to associate with the interface.
+	SecurityGroupID *string `json:"security_group_id,omitempty"`
 
 	// IPIDs: list of IP IDs to attach to the interface.
 	IPIDs []string `json:"ip_ids"`
@@ -3002,6 +3011,9 @@ type ListPrivateNetworkInterfacesRequest struct {
 	// ServerIDs: filter by server IDs.
 	ServerIDs []string `json:"-"`
 
+	// SecurityGroupIDs: filter by security group IDs.
+	SecurityGroupIDs []string `json:"-"`
+
 	// PrivateNetworkIDs: filter by Private Network IDs.
 	PrivateNetworkIDs []string `json:"-"`
 
@@ -3604,6 +3616,9 @@ type PrivateNetworkInterface struct {
 	// ServerID: ID of the Instance this interface is attached to.
 	ServerID string `json:"server_id"`
 
+	// SecurityGroupID: ID of the security group associated with this interface.
+	SecurityGroupID string `json:"security_group_id"`
+
 	// MacAddress: mAC address of the private network interface.
 	MacAddress string `json:"mac_address"`
 
@@ -4039,6 +4054,9 @@ type UpdatePrivateNetworkInterfaceRequest struct {
 
 	// PrivateNetworkInterfaceID: ID of the private network interface to update.
 	PrivateNetworkInterfaceID string `json:"-"`
+
+	// SecurityGroupID: new security group ID to associate with the interface.
+	SecurityGroupID *string `json:"security_group_id,omitempty"`
 
 	// Tags: new tags to assign to the private network interface.
 	Tags *[]string `json:"tags,omitempty"`
@@ -5463,6 +5481,7 @@ func (s *API) ListPrivateNetworkInterfaces(req *ListPrivateNetworkInterfacesRequ
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "server_ids", req.ServerIDs)
+	parameter.AddToQuery(query, "security_group_ids", req.SecurityGroupIDs)
 	parameter.AddToQuery(query, "private_network_ids", req.PrivateNetworkIDs)
 	parameter.AddToQuery(query, "tags", req.Tags)
 
