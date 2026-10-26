@@ -374,11 +374,11 @@ type tokenLister interface {
 
 func isLister(i any) bool {
 	switch i.(type) {
+	case tokenLister:
+		return true
 	case lister:
 		return true
 	case lister32:
-		return true
-	case tokenLister:
 		return true
 	default:
 		return false
