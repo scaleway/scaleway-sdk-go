@@ -1,7 +1,7 @@
 package vcr
 
 import (
-	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
@@ -57,19 +57,26 @@ func unescapeDockerURL(i *cassette.Interaction) error {
 }
 
 func customS3BodyMatcher(r *http.Request, i cassette.Request) bool {
-	var buffer bytes.Buffer
-	if _, err := buffer.ReadFrom(r.Body); err != nil {
-		panic(fmt.Errorf("failed to read %s %s body: %w", r.Method, r.URL.String(), err))
+	reqBody, err := r.GetBody()
+	if err != nil {
+		panic(fmt.Errorf("cassette body matcher: failed to copy request body: %w", err))
 	}
-	r.Body = io.NopCloser(bytes.NewBuffer(buffer.Bytes()))
 
+	requestBody, err := io.ReadAll(reqBody)
+	if err != nil {
+		panic(fmt.Errorf("cassette body matcher: failed to read actualRequest body: %w", err))
+	}
+
+	// Handle binary content
 	if r.Header.Get("Content-Type") == "application/octet-stream" {
-		return buffer.String() == i.Body
+		requestEncodedBody := base64.StdEncoding.EncodeToString(requestBody)
+		return requestEncodedBody == i.Body
 	}
 
 	// Handle XML
-	err := xml.Unmarshal(buffer.Bytes(), new(any))
+	err = xml.Unmarshal(requestBody, new(any))
 	if err == nil {
+		// We would need a specific struct for each type of xml to unmarshal so instead we just consider that it's a match
 		return true
 	}
 
@@ -79,13 +86,13 @@ func customS3BodyMatcher(r *http.Request, i cassette.Request) bool {
 		return false
 	}
 	bucketNameRegex := fmt.Sprintf("%s-[0-9]+", requestBucket)
-	requestBodyGeneric := regexp.MustCompile(bucketNameRegex).ReplaceAllString(buffer.String(), requestBucket)
+	requestBodyGeneric := regexp.MustCompile(bucketNameRegex).ReplaceAllString(string(requestBody), requestBucket)
 	cassetteBodyGeneric := regexp.MustCompile(bucketNameRegex).ReplaceAllString(i.Body, requestBucket)
 	if requestBodyGeneric == cassetteBodyGeneric {
 		return true
 	}
 
-	requestValues, err := url.ParseQuery(buffer.String())
+	requestValues, err := url.ParseQuery(string(requestBody))
 	if err != nil {
 		panic(fmt.Errorf("cassette body matcher: failed to parse body as url values: %w", err)) // lintignore: R009
 	}
