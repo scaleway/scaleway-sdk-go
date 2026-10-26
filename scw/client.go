@@ -366,8 +366,16 @@ func listerAppend(recv any, elems any) (uint64, error) {
 	panic(fmt.Errorf("%T does not support pagination but checks failed, should not happen", recv))
 }
 
+type tokenLister interface {
+	UnsafeNextPageToken() *string
+	UnsafeGetTotalCount() uint64
+	UnsafeAppend(any) (uint64, error)
+}
+
 func isLister(i any) bool {
 	switch i.(type) {
+	case tokenLister:
+		return true
 	case lister:
 		return true
 	case lister32:
@@ -381,6 +389,34 @@ const maxPageCount uint64 = math.MaxUint32
 
 // doListAll collects all pages of a List request and aggregate all results on a single response.
 func (c *Client) doListAll(req *ScalewayRequest, res any) (err error) {
+	if _, ok := res.(tokenLister); ok {
+		var nextPageToken *string
+		for {
+			if nextPageToken != nil {
+				req.Query.Set("page_token", *nextPageToken)
+			}
+
+			// request the next page
+			nextPage := newVariableFromType(res)
+			err := c.do(req, nextPage)
+			if err != nil {
+				return err
+			}
+
+			// append results
+			_, err = listerAppend(res, nextPage)
+			if err != nil {
+				return err
+			}
+
+			nextPageToken = nextPage.(tokenLister).UnsafeNextPageToken()
+			if nextPageToken == nil || *nextPageToken == "" {
+				break
+			}
+		}
+		return nil
+	}
+
 	// check for lister interface
 	if isLister(res) {
 		pageCount := maxPageCount
