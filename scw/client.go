@@ -367,7 +367,7 @@ func listerAppend(recv any, elems any) (uint64, error) {
 }
 
 type tokenLister interface {
-	NextPageToken() string
+	UnsafeNextPageToken() *string
 	UnsafeGetTotalCount() uint64
 	UnsafeAppend(any) (uint64, error)
 }
@@ -390,10 +390,10 @@ const maxPageCount uint64 = math.MaxUint32
 // doListAll collects all pages of a List request and aggregate all results on a single response.
 func (c *Client) doListAll(req *ScalewayRequest, res any) (err error) {
 	if _, ok := res.(tokenLister); ok {
-		nextPageToken := ""
+		var nextPageToken *string
 		for {
-			if nextPageToken != "" {
-				req.Query.Set("page_token", nextPageToken)
+			if nextPageToken != nil {
+				req.Query.Set("page_token", *nextPageToken)
 			}
 
 			// request the next page
@@ -409,8 +409,8 @@ func (c *Client) doListAll(req *ScalewayRequest, res any) (err error) {
 				return err
 			}
 
-			nextPageToken = nextPage.(tokenLister).NextPageToken()
-			if nextPageToken == "" {
+			nextPageToken = nextPage.(tokenLister).UnsafeNextPageToken()
+			if nextPageToken == nil {
 				break
 			}
 		}
