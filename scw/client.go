@@ -410,7 +410,7 @@ func (c *Client) doListAll(req *ScalewayRequest, res any) (err error) {
 			}
 
 			nextPageToken = nextPage.(tokenLister).UnsafeNextPageToken()
-			if nextPageToken == nil {
+			if nextPageToken == nil || *nextPageToken == "" {
 				break
 			}
 		}
