@@ -1201,6 +1201,25 @@ type IP struct {
 
 	// Zone: the zone the IP address is in.
 	Zone scw.Zone `json:"zone"`
+
+	// Srn: the SRN of the IP address.
+	Srn string `json:"srn"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *IP) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://lb.%s/zones/%s/ips/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // Instance: instance.
@@ -1243,6 +1262,28 @@ type Subscriber struct {
 	// WebhookConfig: webhook URI of subscriber.
 	// Precisely one of EmailConfig, WebhookConfig must be set.
 	WebhookConfig *SubscriberWebhookConfig `json:"webhook_config,omitempty"`
+
+	// Zone: the zone the subscriber is in.
+	Zone scw.Zone `json:"zone"`
+
+	// Srn: the SRN of the subscriber.
+	Srn string `json:"srn"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *Subscriber) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://lb.%s/zones/%s/subscribers/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // HealthCheck: health check.
@@ -1389,6 +1430,25 @@ type LB struct {
 
 	// Zone: the zone the Load Balancer is in.
 	Zone scw.Zone `json:"zone"`
+
+	// Srn: the SRN of the Load Balancer.
+	Srn string `json:"srn"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *LB) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://lb.%s/zones/%s/lbs/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // ACLActionRedirect: acl action redirect.
@@ -1488,6 +1548,12 @@ type Backend struct {
 
 	// Host: when connecting to backend servers, use this value as the HTTP Host header or TLS SNI. This allows routing to specific services on the backend server that are configured to respond to particular hostnames.
 	Host *string `json:"host"`
+
+	// Zone: the zone the backend is in.
+	Zone scw.Zone `json:"zone"`
+
+	// Srn: the SRN of the backend.
+	Srn string `json:"srn"`
 }
 
 func (m *Backend) UnmarshalJSON(b []byte) error {
@@ -1524,6 +1590,22 @@ func (m Backend) MarshalJSON() ([]byte, error) {
 		TmpTimeoutTunnel:  marshaler.NewDuration(m.TimeoutTunnel),
 	}
 	return json.Marshal(tmp)
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *Backend) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://lb.%s/zones/%s/backends/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // Certificate: certificate.
@@ -1568,6 +1650,28 @@ type Certificate struct {
 
 	// StatusDetails: additional information about the certificate status (useful in case of certificate generation failure, for example).
 	StatusDetails *string `json:"status_details"`
+
+	// Zone: the zone the certificate is in.
+	Zone scw.Zone `json:"zone"`
+
+	// Srn: the SRN of the certificate.
+	Srn string `json:"srn"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *Certificate) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://lb.%s/zones/%s/certificates/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // ACLAction: acl action.
@@ -1642,6 +1746,12 @@ type Frontend struct {
 
 	// EnableAccessLogs: defines whether to enable access logs on the frontend.
 	EnableAccessLogs bool `json:"enable_access_logs"`
+
+	// Zone: the zone the frontend is in.
+	Zone scw.Zone `json:"zone"`
+
+	// Srn: the SRN of the frontend.
+	Srn string `json:"srn"`
 }
 
 func (m *Frontend) UnmarshalJSON(b []byte) error {
@@ -1670,6 +1780,22 @@ func (m Frontend) MarshalJSON() ([]byte, error) {
 		TmpTimeoutClient: marshaler.NewDuration(m.TimeoutClient),
 	}
 	return json.Marshal(tmp)
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *Frontend) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://lb.%s/zones/%s/frontends/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // PrivateNetworkDHCPConfig: private network dhcp config.
@@ -1771,6 +1897,28 @@ type ACL struct {
 
 	// Description: ACL description.
 	Description string `json:"description"`
+
+	// Zone: the zone the ACL is in.
+	Zone scw.Zone `json:"zone"`
+
+	// Srn: the SRN of the ACL.
+	Srn string `json:"srn"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *ACL) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://lb.%s/zones/%s/acls/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // PrivateNetwork: private network.
@@ -1830,6 +1978,25 @@ type LBType struct {
 
 	// Zone: the zone the Load Balancer stock is in.
 	Zone scw.Zone `json:"zone"`
+
+	// Srn: the SRN of the Load Balancer offer type.
+	Srn string `json:"srn"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *LBType) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.Name) != "" {
+		m.Srn = fmt.Sprintf("srn://lb.%s/zones/%s/lb-types/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.Name))
+		return
+	}
 }
 
 // Route: route.
@@ -1851,6 +2018,28 @@ type Route struct {
 
 	// UpdatedAt: date on which the route was last updated.
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	// Zone: the zone the route is in.
+	Zone scw.Zone `json:"zone"`
+
+	// Srn: the SRN of the route.
+	Srn string `json:"srn"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *Route) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://lb.%s/zones/%s/routes/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // ACLSpec: acl spec.
@@ -4697,6 +4886,12 @@ func (s *ZonedAPI) ListLBs(req *ZonedAPIListLBsRequest, opts ...scw.RequestOptio
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.LBs {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -4743,6 +4938,10 @@ func (s *ZonedAPI) CreateLB(req *ZonedAPICreateLBRequest, opts ...scw.RequestOpt
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -4773,6 +4972,10 @@ func (s *ZonedAPI) GetLB(req *ZonedAPIGetLBRequest, opts ...scw.RequestOption) (
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -4862,6 +5065,10 @@ func (s *ZonedAPI) UpdateLB(req *ZonedAPIUpdateLBRequest, opts ...scw.RequestOpt
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -4931,6 +5138,10 @@ func (s *ZonedAPI) MigrateLB(req *ZonedAPIMigrateLBRequest, opts ...scw.RequestO
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -4972,6 +5183,12 @@ func (s *ZonedAPI) ListIPs(req *ZonedAPIListIPsRequest, opts ...scw.RequestOptio
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.IPs {
+			el.setSRN(apiMetadata.Domain)
+		}
 	}
 	return &resp, nil
 }
@@ -5015,6 +5232,10 @@ func (s *ZonedAPI) CreateIP(req *ZonedAPICreateIPRequest, opts ...scw.RequestOpt
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -5045,6 +5266,10 @@ func (s *ZonedAPI) GetIP(req *ZonedAPIGetIPRequest, opts ...scw.RequestOption) (
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -5111,6 +5336,10 @@ func (s *ZonedAPI) UpdateIP(req *ZonedAPIUpdateIPRequest, opts ...scw.RequestOpt
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -5154,6 +5383,12 @@ func (s *ZonedAPI) ListBackends(req *ZonedAPIListBackendsRequest, opts ...scw.Re
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Backends {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -5194,6 +5429,10 @@ func (s *ZonedAPI) CreateBackend(req *ZonedAPICreateBackendRequest, opts ...scw.
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -5224,6 +5463,10 @@ func (s *ZonedAPI) GetBackend(req *ZonedAPIGetBackendRequest, opts ...scw.Reques
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -5260,6 +5503,10 @@ func (s *ZonedAPI) UpdateBackend(req *ZonedAPIUpdateBackendRequest, opts ...scw.
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -5326,6 +5573,10 @@ func (s *ZonedAPI) AddBackendServers(req *ZonedAPIAddBackendServersRequest, opts
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -5362,6 +5613,10 @@ func (s *ZonedAPI) RemoveBackendServers(req *ZonedAPIRemoveBackendServersRequest
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -5397,6 +5652,10 @@ func (s *ZonedAPI) SetBackendServers(req *ZonedAPISetBackendServersRequest, opts
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -5477,6 +5736,12 @@ func (s *ZonedAPI) ListFrontends(req *ZonedAPIListFrontendsRequest, opts ...scw.
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Frontends {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -5517,6 +5782,10 @@ func (s *ZonedAPI) CreateFrontend(req *ZonedAPICreateFrontendRequest, opts ...sc
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -5547,6 +5816,10 @@ func (s *ZonedAPI) GetFrontend(req *ZonedAPIGetFrontendRequest, opts ...scw.Requ
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -5583,6 +5856,10 @@ func (s *ZonedAPI) UpdateFrontend(req *ZonedAPIUpdateFrontendRequest, opts ...sc
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -5652,6 +5929,12 @@ func (s *ZonedAPI) ListRoutes(req *ZonedAPIListRoutesRequest, opts ...scw.Reques
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Routes {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -5684,6 +5967,10 @@ func (s *ZonedAPI) CreateRoute(req *ZonedAPICreateRouteRequest, opts ...scw.Requ
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -5714,6 +6001,10 @@ func (s *ZonedAPI) GetRoute(req *ZonedAPIGetRouteRequest, opts ...scw.RequestOpt
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -5750,6 +6041,10 @@ func (s *ZonedAPI) UpdateRoute(req *ZonedAPIUpdateRouteRequest, opts ...scw.Requ
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -5900,6 +6195,12 @@ func (s *ZonedAPI) ListACLs(req *ZonedAPIListACLsRequest, opts ...scw.RequestOpt
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.ACLs {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -5940,6 +6241,10 @@ func (s *ZonedAPI) CreateACL(req *ZonedAPICreateACLRequest, opts ...scw.RequestO
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -5970,6 +6275,10 @@ func (s *ZonedAPI) GetACL(req *ZonedAPIGetACLRequest, opts ...scw.RequestOption)
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -6006,6 +6315,10 @@ func (s *ZonedAPI) UpdateACL(req *ZonedAPIUpdateACLRequest, opts ...scw.RequestO
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -6072,6 +6385,12 @@ func (s *ZonedAPI) SetACLs(req *ZonedAPISetACLsRequest, opts ...scw.RequestOptio
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.ACLs {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -6111,6 +6430,10 @@ func (s *ZonedAPI) CreateCertificate(req *ZonedAPICreateCertificateRequest, opts
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -6155,6 +6478,12 @@ func (s *ZonedAPI) ListCertificates(req *ZonedAPIListCertificatesRequest, opts .
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Certificates {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -6185,6 +6514,10 @@ func (s *ZonedAPI) GetCertificate(req *ZonedAPIGetCertificateRequest, opts ...sc
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -6269,6 +6602,10 @@ func (s *ZonedAPI) UpdateCertificate(req *ZonedAPIUpdateCertificateRequest, opts
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -6335,6 +6672,12 @@ func (s *ZonedAPI) ListLBTypes(req *ZonedAPIListLBTypesRequest, opts ...scw.Requ
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.LBTypes {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -6377,6 +6720,10 @@ func (s *ZonedAPI) CreateSubscriber(req *ZonedAPICreateSubscriberRequest, opts .
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -6407,6 +6754,10 @@ func (s *ZonedAPI) GetSubscriber(req *ZonedAPIGetSubscriberRequest, opts ...scw.
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -6449,6 +6800,12 @@ func (s *ZonedAPI) ListSubscriber(req *ZonedAPIListSubscriberRequest, opts ...sc
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Subscribers {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -6484,6 +6841,10 @@ func (s *ZonedAPI) UpdateSubscriber(req *ZonedAPIUpdateSubscriberRequest, opts .
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -6550,6 +6911,10 @@ func (s *ZonedAPI) SubscribeToLB(req *ZonedAPISubscribeToLBRequest, opts ...scw.
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -6580,6 +6945,10 @@ func (s *ZonedAPI) UnsubscribeFromLB(req *ZonedAPIUnsubscribeFromLBRequest, opts
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -6752,6 +7121,12 @@ func (s *API) ListLBs(req *ListLBsRequest, opts ...scw.RequestOption) (*ListLBsR
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.LBs {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -6798,6 +7173,10 @@ func (s *API) CreateLB(req *CreateLBRequest, opts ...scw.RequestOption) (*LB, er
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -6828,6 +7207,10 @@ func (s *API) GetLB(req *GetLBRequest, opts ...scw.RequestOption) (*LB, error) {
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -6864,6 +7247,10 @@ func (s *API) UpdateLB(req *UpdateLBRequest, opts ...scw.RequestOption) (*LB, er
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -6934,6 +7321,10 @@ func (s *API) MigrateLB(req *MigrateLBRequest, opts ...scw.RequestOption) (*LB, 
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -6975,6 +7366,12 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsR
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.IPs {
+			el.setSRN(apiMetadata.Domain)
+		}
 	}
 	return &resp, nil
 }
@@ -7018,6 +7415,10 @@ func (s *API) CreateIP(req *CreateIPRequest, opts ...scw.RequestOption) (*IP, er
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -7048,6 +7449,10 @@ func (s *API) GetIP(req *GetIPRequest, opts ...scw.RequestOption) (*IP, error) {
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -7114,6 +7519,10 @@ func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*IP, er
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -7157,6 +7566,12 @@ func (s *API) ListBackends(req *ListBackendsRequest, opts ...scw.RequestOption) 
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Backends {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -7197,6 +7612,10 @@ func (s *API) CreateBackend(req *CreateBackendRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -7227,6 +7646,10 @@ func (s *API) GetBackend(req *GetBackendRequest, opts ...scw.RequestOption) (*Ba
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -7263,6 +7686,10 @@ func (s *API) UpdateBackend(req *UpdateBackendRequest, opts ...scw.RequestOption
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -7329,6 +7756,10 @@ func (s *API) AddBackendServers(req *AddBackendServersRequest, opts ...scw.Reque
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -7365,6 +7796,10 @@ func (s *API) RemoveBackendServers(req *RemoveBackendServersRequest, opts ...scw
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -7400,6 +7835,10 @@ func (s *API) SetBackendServers(req *SetBackendServersRequest, opts ...scw.Reque
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -7480,6 +7919,12 @@ func (s *API) ListFrontends(req *ListFrontendsRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Frontends {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -7520,6 +7965,10 @@ func (s *API) CreateFrontend(req *CreateFrontendRequest, opts ...scw.RequestOpti
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -7550,6 +7999,10 @@ func (s *API) GetFrontend(req *GetFrontendRequest, opts ...scw.RequestOption) (*
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -7586,6 +8039,10 @@ func (s *API) UpdateFrontend(req *UpdateFrontendRequest, opts ...scw.RequestOpti
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -7655,6 +8112,12 @@ func (s *API) ListRoutes(req *ListRoutesRequest, opts ...scw.RequestOption) (*Li
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Routes {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -7687,6 +8150,10 @@ func (s *API) CreateRoute(req *CreateRouteRequest, opts ...scw.RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -7717,6 +8184,10 @@ func (s *API) GetRoute(req *GetRouteRequest, opts ...scw.RequestOption) (*Route,
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -7753,6 +8224,10 @@ func (s *API) UpdateRoute(req *UpdateRouteRequest, opts ...scw.RequestOption) (*
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -7903,6 +8378,12 @@ func (s *API) ListACLs(req *ListACLsRequest, opts ...scw.RequestOption) (*ListAC
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.ACLs {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -7943,6 +8424,10 @@ func (s *API) CreateACL(req *CreateACLRequest, opts ...scw.RequestOption) (*ACL,
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -7973,6 +8458,10 @@ func (s *API) GetACL(req *GetACLRequest, opts ...scw.RequestOption) (*ACL, error
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -8009,6 +8498,10 @@ func (s *API) UpdateACL(req *UpdateACLRequest, opts ...scw.RequestOption) (*ACL,
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -8079,6 +8572,10 @@ func (s *API) CreateCertificate(req *CreateCertificateRequest, opts ...scw.Reque
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -8122,6 +8619,12 @@ func (s *API) ListCertificates(req *ListCertificatesRequest, opts ...scw.Request
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Certificates {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -8152,6 +8655,10 @@ func (s *API) GetCertificate(req *GetCertificateRequest, opts ...scw.RequestOpti
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -8188,6 +8695,10 @@ func (s *API) UpdateCertificate(req *UpdateCertificateRequest, opts ...scw.Reque
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -8255,6 +8766,12 @@ func (s *API) ListLBTypes(req *ListLBTypesRequest, opts ...scw.RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.LBTypes {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -8297,6 +8814,10 @@ func (s *API) CreateSubscriber(req *CreateSubscriberRequest, opts ...scw.Request
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -8327,6 +8848,10 @@ func (s *API) GetSubscriber(req *GetSubscriberRequest, opts ...scw.RequestOption
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -8369,6 +8894,12 @@ func (s *API) ListSubscriber(req *ListSubscriberRequest, opts ...scw.RequestOpti
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Subscribers {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -8404,6 +8935,10 @@ func (s *API) UpdateSubscriber(req *UpdateSubscriberRequest, opts ...scw.Request
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -8470,6 +9005,10 @@ func (s *API) SubscribeToLB(req *SubscribeToLBRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -8500,6 +9039,10 @@ func (s *API) UnsubscribeFromLB(req *UnsubscribeFromLBRequest, opts ...scw.Reque
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
