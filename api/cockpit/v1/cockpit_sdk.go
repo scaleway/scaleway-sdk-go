@@ -2340,7 +2340,7 @@ func NewRegionalAPI(client *scw.Client) *RegionalAPI {
 }
 
 func (s *RegionalAPI) Regions() []scw.Region {
-	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
+	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw, scw.RegionItMil}
 }
 
 // GetConfig: Get the Cockpit configuration.
