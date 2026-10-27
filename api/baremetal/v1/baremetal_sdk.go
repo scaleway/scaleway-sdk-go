@@ -45,6 +45,51 @@ var (
 	_ = namegenerator.GetRandomName
 )
 
+type CommitmentPeriod string
+
+const (
+	CommitmentPeriodUnknownPeriod = CommitmentPeriod("unknown_period")
+	CommitmentPeriodOneMonth      = CommitmentPeriod("one_month")
+	CommitmentPeriodSixMonths     = CommitmentPeriod("six_months")
+	CommitmentPeriodOneYear       = CommitmentPeriod("one_year")
+	CommitmentPeriodTwoYears      = CommitmentPeriod("two_years")
+	CommitmentPeriodThreeYears    = CommitmentPeriod("three_years")
+)
+
+func (enum CommitmentPeriod) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(CommitmentPeriodUnknownPeriod)
+	}
+	return string(enum)
+}
+
+func (enum CommitmentPeriod) Values() []CommitmentPeriod {
+	return []CommitmentPeriod{
+		"unknown_period",
+		"one_month",
+		"six_months",
+		"one_year",
+		"two_years",
+		"three_years",
+	}
+}
+
+func (enum CommitmentPeriod) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *CommitmentPeriod) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = CommitmentPeriod(CommitmentPeriod(tmp).String())
+	return nil
+}
+
 type IPReverseStatus string
 
 const (
@@ -1031,6 +1076,28 @@ type IP struct {
 	ReverseStatusMessage string `json:"reverse_status_message"`
 }
 
+// ServerCommitment: server commitment.
+type ServerCommitment struct {
+	// Period: commitment period subscribed.
+	// Default value: unknown_period
+	Period CommitmentPeriod `json:"period"`
+
+	// StartedAt: start of commitment subscribed.
+	StartedAt *time.Time `json:"started_at"`
+
+	// RenewAt: next renew of commitment subscribed.
+	RenewAt *time.Time `json:"renew_at"`
+
+	// EndAt: end of commitment subscribed.
+	EndAt *time.Time `json:"end_at"`
+
+	// DiscountRatePercent: discount rate for the commitment period.
+	DiscountRatePercent uint32 `json:"discount_rate_percent"`
+
+	// AutoRenewal: flag for automatic renewal commitment.
+	AutoRenewal bool `json:"auto_renewal"`
+}
+
 // ServerInstall: server install.
 type ServerInstall struct {
 	// OsID: ID of the OS.
@@ -1177,6 +1244,19 @@ type Memory struct {
 	EccType MemoryEccType `json:"ecc_type"`
 }
 
+// OfferCommitment: offer commitment.
+type OfferCommitment struct {
+	// Period: commitment period.
+	// Default value: unknown_period
+	Period CommitmentPeriod `json:"period"`
+
+	// DiscountRatePercent: discount rate for the commitment period.
+	DiscountRatePercent uint32 `json:"discount_rate_percent"`
+
+	// NoFee: fee not mandatory.
+	NoFee bool `json:"no_fee"`
+}
+
 // OfferOptionOffer: offer option offer.
 type OfferOptionOffer struct {
 	// ID: ID of the option.
@@ -1287,6 +1367,10 @@ type CreateServerRequest struct {
 
 	// UserData: configuration data to pass to cloud-init such as a YAML cloud config data or a user-data script.
 	UserData *[]byte `json:"user_data,omitempty"`
+
+	// CommitmentPeriod: commitment period to subscribe.
+	// Default value: unknown_period
+	CommitmentPeriod CommitmentPeriod `json:"commitment_period"`
 }
 
 // Server: server.
@@ -1356,6 +1440,15 @@ type Server struct {
 
 	// UserData: optional configuration data passed to cloud-init.
 	UserData *[]byte `json:"user_data"`
+
+	// Commitment: commitment subscribed for the server.
+	Commitment *ServerCommitment `json:"commitment"`
+
+	// ScheduledDeletionAt: date on which the server will be deleted.
+	ScheduledDeletionAt *time.Time `json:"scheduled_deletion_at"`
+
+	// ScheduledDeletion: true if a deletion is scheduled.
+	ScheduledDeletion bool `json:"scheduled_deletion"`
 }
 
 // OS: os.
@@ -1493,6 +1586,9 @@ type Offer struct {
 
 	// MonthlyOfferID: exist only for hourly offers, to migrate to the monthly offer.
 	MonthlyOfferID *string `json:"monthly_offer_id"`
+
+	// CommitmentsAvailable: list all available commitments on the offer.
+	CommitmentsAvailable []*OfferCommitment `json:"commitments_available"`
 
 	// Zone: zone in which is the offer is available.
 	Zone scw.Zone `json:"zone"`
@@ -2247,6 +2343,16 @@ type UpdateIPRequest struct {
 	Reverse *string `json:"reverse,omitempty"`
 }
 
+// UpdateServerCommitmentRequest: update server commitment request.
+type UpdateServerCommitmentRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	ServerID string `json:"-"`
+
+	AutoRenewal bool `json:"auto_renewal"`
+}
+
 // UpdateServerRequest: update server request.
 type UpdateServerRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
@@ -2269,6 +2375,9 @@ type UpdateServerRequest struct {
 
 	// UserData: configuration data to pass to cloud-init such as a YAML cloud config data or a user-data script.
 	UserData *[]byte `json:"user_data,omitempty"`
+
+	// ScheduledDeletion: set false to cancel the scheduled deletion of the server.
+	ScheduledDeletion *bool `json:"scheduled_deletion,omitempty"`
 }
 
 // UpdateSettingRequest: update setting request.
@@ -2281,6 +2390,17 @@ type UpdateSettingRequest struct {
 
 	// Enabled: defines whether the setting is enabled.
 	Enabled *bool `json:"enabled,omitempty"`
+}
+
+// UpgradeServerCommitmentRequest: upgrade server commitment request.
+type UpgradeServerCommitmentRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	ServerID string `json:"-"`
+
+	// Period: default value: unknown_period
+	Period CommitmentPeriod `json:"period"`
 }
 
 // ValidatePartitioningSchemaRequest: validate partitioning schema request.
@@ -2860,6 +2980,78 @@ func (s *API) ValidatePartitioningSchema(req *ValidatePartitioningSchemaRequest,
 		return err
 	}
 	return nil
+}
+
+// UpgradeServerCommitment: Start a commitment or upgrade an existing commitment on a server.
+func (s *API) UpgradeServerCommitment(req *UpgradeServerCommitmentRequest, opts ...scw.RequestOption) (*Server, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ServerID) == "" {
+		return nil, errors.New("field ServerID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/baremetal/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerID) + "/upgrade-commitment",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Server
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UpdateServerCommitment: Update an existing commitment on a server to enable/disable auto-renewal.
+func (s *API) UpdateServerCommitment(req *UpdateServerCommitmentRequest, opts ...scw.RequestOption) (*Server, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.ServerID) == "" {
+		return nil, errors.New("field ServerID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/baremetal/v1/zones/" + fmt.Sprint(req.Zone) + "/servers/" + fmt.Sprint(req.ServerID) + "/update-commitment",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Server
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 // StartBMCAccess: Start BMC (Baseboard Management Controller) access associated with the ID.
