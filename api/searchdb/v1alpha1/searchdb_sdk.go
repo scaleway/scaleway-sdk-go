@@ -415,9 +415,6 @@ type Volume struct {
 
 	// SizeBytes: define the size of the Volume.
 	SizeBytes scw.Size `json:"size_bytes"`
-
-	// DeploymentID: ID of the Deployment.
-	DeploymentID string `json:"deployment_id"`
 }
 
 // NodeTypeVolumeType: node type volume type.
