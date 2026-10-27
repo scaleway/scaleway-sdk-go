@@ -417,7 +417,7 @@ type Snapshot struct {
 	ParentFilesystem *SnapshotParentFilesystem `json:"parent_filesystem"`
 
 	// Size: snapshot size in bytes.
-	Size scw.Size `json:"size"`
+	Size *scw.Size `json:"size"`
 
 	// Status: current status of the snapshot (e.g. creating, available, ...).
 	// Default value: unknown_status
