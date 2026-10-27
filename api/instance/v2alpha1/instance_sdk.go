@@ -1704,6 +1704,12 @@ type CreateServerRequestServerVolume struct {
 	NewVolume *CreateServerRequestCreateVolume `json:"new_volume,omitempty"`
 }
 
+// DedicatedPoolPhysicalHost: dedicated pool physical host.
+type DedicatedPoolPhysicalHost struct {
+	// ID: the unique identifier of this physical host.
+	ID string `json:"id"`
+}
+
 // DedicatedPoolServerType: dedicated pool server type.
 type DedicatedPoolServerType struct {
 	// Name: name of the server type.
@@ -2218,6 +2224,9 @@ type ServerRDPPassword struct {
 type ServerRuntimeInfo struct {
 	// Spot: true if the Instance is running as Spot.
 	Spot bool `json:"spot"`
+
+	// PhysicalHostID: the unique identifier of the physical server hosting this Instance.
+	PhysicalHostID string `json:"physical_host_id"`
 }
 
 // ServerVolume: server volume.
@@ -2521,6 +2530,9 @@ type DedicatedPool struct {
 
 	// Tags: tags associated with the Dedicated Pool.
 	Tags []string `json:"tags"`
+
+	// PhysicalHosts: physical hosts associated with the Dedicated Pool.
+	PhysicalHosts []*DedicatedPoolPhysicalHost `json:"physical_hosts"`
 
 	// CreatedAt: creation timestamp of the Dedicated Pool.
 	CreatedAt *time.Time `json:"created_at"`
