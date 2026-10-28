@@ -1549,6 +1549,9 @@ type ServerIP struct {
 type CreateTemplateRequestPrivateNetworkTemplate struct {
 	// PrivateNetworkID: ID of the private network.
 	PrivateNetworkID string `json:"private_network_id"`
+
+	// SecurityGroupID: ID of the security group for the private network.
+	SecurityGroupID *string `json:"security_group_id"`
 }
 
 // CreateTemplateRequestVolumeTemplate: create template request volume template.
@@ -1701,6 +1704,12 @@ type CreateServerRequestServerVolume struct {
 	NewVolume *CreateServerRequestCreateVolume `json:"new_volume,omitempty"`
 }
 
+// DedicatedPoolPhysicalHost: dedicated pool physical host.
+type DedicatedPoolPhysicalHost struct {
+	// ID: the unique identifier of this physical host.
+	ID string `json:"id"`
+}
+
 // DedicatedPoolServerType: dedicated pool server type.
 type DedicatedPoolServerType struct {
 	// Name: name of the server type.
@@ -1829,6 +1838,9 @@ type PrivateNetworkInterfaceSummary struct {
 
 	// ServerID: ID of the Instance this interface is attached to.
 	ServerID string `json:"server_id"`
+
+	// SecurityGroupID: ID of the security group associated with this interface.
+	SecurityGroupID string `json:"security_group_id"`
 
 	// MacAddress: mAC address of the private network interface.
 	MacAddress string `json:"mac_address"`
@@ -2212,6 +2224,9 @@ type ServerRDPPassword struct {
 type ServerRuntimeInfo struct {
 	// Spot: true if the Instance is running as Spot.
 	Spot bool `json:"spot"`
+
+	// PhysicalHostID: the unique identifier of the physical server hosting this Instance.
+	PhysicalHostID string `json:"physical_host_id"`
 }
 
 // ServerVolume: server volume.
@@ -2364,6 +2379,9 @@ type CreatePrivateNetworkInterfaceRequest struct {
 	// ServerID: ID of the Instance to attach the interface to.
 	ServerID *string `json:"server_id,omitempty"`
 
+	// SecurityGroupID: ID of the security group to associate with the interface.
+	SecurityGroupID *string `json:"security_group_id,omitempty"`
+
 	// IPIDs: list of IP IDs to attach to the interface.
 	IPIDs []string `json:"ip_ids"`
 
@@ -2512,6 +2530,9 @@ type DedicatedPool struct {
 
 	// Tags: tags associated with the Dedicated Pool.
 	Tags []string `json:"tags"`
+
+	// PhysicalHosts: physical hosts associated with the Dedicated Pool.
+	PhysicalHosts []*DedicatedPoolPhysicalHost `json:"physical_hosts"`
 
 	// CreatedAt: creation timestamp of the Dedicated Pool.
 	CreatedAt *time.Time `json:"created_at"`
@@ -2835,6 +2856,12 @@ type ListDedicatedPoolServerTypesResponse struct {
 	TotalCount uint64 `json:"total_count"`
 }
 
+// UnsafeNextPageToken should not be used
+// Internal usage only
+func (r *ListDedicatedPoolServerTypesResponse) UnsafeNextPageToken() *string {
+	return r.NextPageToken
+}
+
 // UnsafeGetTotalCount should not be used
 // Internal usage only
 func (r *ListDedicatedPoolServerTypesResponse) UnsafeGetTotalCount() uint64 {
@@ -2883,6 +2910,12 @@ type ListDedicatedPoolsResponse struct {
 
 	// TotalCount: total number of Dedicated Pools.
 	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeNextPageToken should not be used
+// Internal usage only
+func (r *ListDedicatedPoolsResponse) UnsafeNextPageToken() *string {
+	return r.NextPageToken
 }
 
 // UnsafeGetTotalCount should not be used
@@ -2944,6 +2977,12 @@ type ListPlacementGroupsResponse struct {
 	TotalCount uint64 `json:"total_count"`
 }
 
+// UnsafeNextPageToken should not be used
+// Internal usage only
+func (r *ListPlacementGroupsResponse) UnsafeNextPageToken() *string {
+	return r.NextPageToken
+}
+
 // UnsafeGetTotalCount should not be used
 // Internal usage only
 func (r *ListPlacementGroupsResponse) UnsafeGetTotalCount() uint64 {
@@ -2984,6 +3023,9 @@ type ListPrivateNetworkInterfacesRequest struct {
 	// ServerIDs: filter by server IDs.
 	ServerIDs []string `json:"-"`
 
+	// SecurityGroupIDs: filter by security group IDs.
+	SecurityGroupIDs []string `json:"-"`
+
 	// PrivateNetworkIDs: filter by Private Network IDs.
 	PrivateNetworkIDs []string `json:"-"`
 
@@ -3001,6 +3043,12 @@ type ListPrivateNetworkInterfacesResponse struct {
 
 	// TotalCount: total number of items.
 	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeNextPageToken should not be used
+// Internal usage only
+func (r *ListPrivateNetworkInterfacesResponse) UnsafeNextPageToken() *string {
+	return r.NextPageToken
 }
 
 // UnsafeGetTotalCount should not be used
@@ -3062,6 +3110,12 @@ type ListSecurityGroupsResponse struct {
 	TotalCount uint64 `json:"total_count"`
 }
 
+// UnsafeNextPageToken should not be used
+// Internal usage only
+func (r *ListSecurityGroupsResponse) UnsafeNextPageToken() *string {
+	return r.NextPageToken
+}
+
 // UnsafeGetTotalCount should not be used
 // Internal usage only
 func (r *ListSecurityGroupsResponse) UnsafeGetTotalCount() uint64 {
@@ -3100,6 +3154,12 @@ type ListServerCompatibleTypesResponse struct {
 	NextPageToken *string `json:"next_page_token"`
 
 	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeNextPageToken should not be used
+// Internal usage only
+func (r *ListServerCompatibleTypesResponse) UnsafeNextPageToken() *string {
+	return r.NextPageToken
 }
 
 // UnsafeGetTotalCount should not be used
@@ -3143,6 +3203,12 @@ type ListServerTypesResponse struct {
 
 	// TotalCount: total number of server types.
 	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeNextPageToken should not be used
+// Internal usage only
+func (r *ListServerTypesResponse) UnsafeNextPageToken() *string {
+	return r.NextPageToken
 }
 
 // UnsafeGetTotalCount should not be used
@@ -3222,6 +3288,12 @@ type ListServersResponse struct {
 	TotalCount uint64 `json:"total_count"`
 }
 
+// UnsafeNextPageToken should not be used
+// Internal usage only
+func (r *ListServersResponse) UnsafeNextPageToken() *string {
+	return r.NextPageToken
+}
+
 // UnsafeGetTotalCount should not be used
 // Internal usage only
 func (r *ListServersResponse) UnsafeGetTotalCount() uint64 {
@@ -3251,6 +3323,12 @@ type ListSnapshotsResponse struct {
 
 	// TotalCount: total number of items.
 	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeNextPageToken should not be used
+// Internal usage only
+func (r *ListSnapshotsResponse) UnsafeNextPageToken() *string {
+	return r.NextPageToken
 }
 
 // UnsafeGetTotalCount should not be used
@@ -3297,6 +3375,12 @@ type ListTemplateUserDataKeysResponse struct {
 
 	// TotalCount: total number of items.
 	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeNextPageToken should not be used
+// Internal usage only
+func (r *ListTemplateUserDataKeysResponse) UnsafeNextPageToken() *string {
+	return r.NextPageToken
 }
 
 // UnsafeGetTotalCount should not be used
@@ -3367,6 +3451,12 @@ type ListTemplatesResponse struct {
 	TotalCount uint64 `json:"total_count"`
 }
 
+// UnsafeNextPageToken should not be used
+// Internal usage only
+func (r *ListTemplatesResponse) UnsafeNextPageToken() *string {
+	return r.NextPageToken
+}
+
 // UnsafeGetTotalCount should not be used
 // Internal usage only
 func (r *ListTemplatesResponse) UnsafeGetTotalCount() uint64 {
@@ -3413,6 +3503,12 @@ type ListUserDataKeysResponse struct {
 	TotalCount uint64 `json:"total_count"`
 }
 
+// UnsafeNextPageToken should not be used
+// Internal usage only
+func (r *ListUserDataKeysResponse) UnsafeNextPageToken() *string {
+	return r.NextPageToken
+}
+
 // UnsafeGetTotalCount should not be used
 // Internal usage only
 func (r *ListUserDataKeysResponse) UnsafeGetTotalCount() uint64 {
@@ -3444,6 +3540,12 @@ type ListVolumeTypesResponse struct {
 	TotalCount uint64 `json:"total_count"`
 }
 
+// UnsafeNextPageToken should not be used
+// Internal usage only
+func (r *ListVolumeTypesResponse) UnsafeNextPageToken() *string {
+	return r.NextPageToken
+}
+
 // UnsafeGetTotalCount should not be used
 // Internal usage only
 func (r *ListVolumeTypesResponse) UnsafeGetTotalCount() uint64 {
@@ -3473,6 +3575,12 @@ type ListVolumesResponse struct {
 
 	// TotalCount: total number of items.
 	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeNextPageToken should not be used
+// Internal usage only
+func (r *ListVolumesResponse) UnsafeNextPageToken() *string {
+	return r.NextPageToken
 }
 
 // UnsafeGetTotalCount should not be used
@@ -3519,6 +3627,9 @@ type PrivateNetworkInterface struct {
 
 	// ServerID: ID of the Instance this interface is attached to.
 	ServerID string `json:"server_id"`
+
+	// SecurityGroupID: ID of the security group associated with this interface.
+	SecurityGroupID string `json:"security_group_id"`
 
 	// MacAddress: mAC address of the private network interface.
 	MacAddress string `json:"mac_address"`
@@ -3956,6 +4067,9 @@ type UpdatePrivateNetworkInterfaceRequest struct {
 	// PrivateNetworkInterfaceID: ID of the private network interface to update.
 	PrivateNetworkInterfaceID string `json:"-"`
 
+	// SecurityGroupID: new security group ID to associate with the interface.
+	SecurityGroupID *string `json:"security_group_id,omitempty"`
+
 	// Tags: new tags to assign to the private network interface.
 	Tags *[]string `json:"tags,omitempty"`
 }
@@ -4373,7 +4487,7 @@ func NewAPI(client *scw.Client) *API {
 }
 
 func (s *API) Zones() []scw.Zone {
-	return []scw.Zone{scw.ZoneFrPar1, scw.ZoneFrPar2, scw.ZoneFrPar3, scw.ZoneNlAms1, scw.ZoneNlAms2, scw.ZoneNlAms3, scw.ZonePlWaw1, scw.ZonePlWaw2, scw.ZonePlWaw3, scw.ZoneItMil1}
+	return []scw.Zone{scw.ZoneFrPar1, scw.ZoneFrPar2, scw.ZoneFrPar3, scw.ZoneNlAms1, scw.ZoneNlAms2, scw.ZoneNlAms3, scw.ZonePlWaw1, scw.ZonePlWaw2, scw.ZonePlWaw3, scw.ZoneItMil1, scw.ZoneItMil2, scw.ZoneItMil3}
 }
 
 // GetResourceCounts: Get counts of various resources (e.g. servers, volumes).
@@ -5379,6 +5493,7 @@ func (s *API) ListPrivateNetworkInterfaces(req *ListPrivateNetworkInterfacesRequ
 	parameter.AddToQuery(query, "order_by", req.OrderBy)
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "server_ids", req.ServerIDs)
+	parameter.AddToQuery(query, "security_group_ids", req.SecurityGroupIDs)
 	parameter.AddToQuery(query, "private_network_ids", req.PrivateNetworkIDs)
 	parameter.AddToQuery(query, "tags", req.Tags)
 

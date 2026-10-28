@@ -245,7 +245,7 @@ func LoadConfigFromPath(path string) (*Config, error) {
 	// so the Unix permission check is meaningless there.
 	// See https://gitlab.com/gitlab-org/cli/-/merge_requests/1569
 	if runtime.GOOS != "windows" && fileInfo.Mode().Perm() != defaultConfigPermission {
-		fmt.Printf("WARNING: Scaleway configuration file permissions are too "+
+		fmt.Fprintf(os.Stderr, "WARNING: Scaleway configuration file permissions are too "+
 			"permissive. That is insecure.\nYou can fix it with the command "+
 			"'chmod 0600 %s'\n", path)
 	}
