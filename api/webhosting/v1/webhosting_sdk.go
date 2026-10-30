@@ -2066,10 +2066,10 @@ type DatabaseAPICreateDatabaseRequest struct {
 	// HostingID: UUID of the hosting plan where the database will be created.
 	HostingID string `json:"-"`
 
-	// DatabaseName: name of the database to be created.
+	// DatabaseName: name of the database to be created. If it is not already prefixed with the hosting's cPanel username followed by an underscore (e.g. `cpe1234_`), this prefix is automatically added. The resulting name must not exceed 64 characters.
 	DatabaseName string `json:"database_name"`
 
-	// NewUser: (Optional) Username and password to create a user and link to the database.
+	// NewUser: (Optional) Username and password to create a user and link to the database. The username is prefixed the same way as `database_name`.
 	// Precisely one of NewUser, ExistingUsername must be set.
 	NewUser *CreateDatabaseRequestUser `json:"new_user,omitempty"`
 
@@ -2086,7 +2086,7 @@ type DatabaseAPICreateDatabaseUserRequest struct {
 	// HostingID: UUID of the hosting plan.
 	HostingID string `json:"-"`
 
-	// Username: name of the user to create.
+	// Username: name of the user to create. If it is not already prefixed with the hosting's cPanel username followed by an underscore (e.g. `cpe1234_`), this prefix is automatically added. The resulting name must not exceed 32 characters.
 	Username string `json:"username"`
 
 	// Password: password of the user to create.
