@@ -7,12 +7,12 @@ import (
 	"fmt"
 	"io"
 	"math"
+	"net"
 	"net/http"
 	"reflect"
 	"strconv"
 	"strings"
 	"sync"
-	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
@@ -78,6 +78,19 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 	// dial the API
 	if s.httpClient == nil {
 		s.httpClient = newHTTPClient()
+	}
+
+	// apply user-provided rate-limit retry override
+	if s.maxRetries != nil {
+		rlTransport, ok := s.httpClient.(*http.Client).Transport.(*RateLimitTransport)
+		if ok {
+			rlTransport.MaxRetries = *s.maxRetries
+		} else {
+			logger.Warningf(
+				"client: cannot apply WithMaxRetries with Transport client of type %T",
+				s.httpClient.(*http.Client).Transport,
+			)
+		}
 	}
 
 	// insecure mode
@@ -644,9 +657,28 @@ func newVariableFromType(t any) any {
 }
 
 func newHTTPClient() *http.Client {
+	base := http.DefaultTransport.(*http.Transport).Clone()
+	// Per-attempt phase timeouts. Bound the connection phases (dial, TLS,
+	// time-to-first-header) so a stuck server can't hang an attempt forever,
+	// without wrapping the request in a context whose cancellation would
+	// tear down resp.Body before the caller reads it.
+	base.DialContext = (&net.Dialer{Timeout: dialTimeout}).DialContext
+	base.TLSHandshakeTimeout = tlsHandshakeTimeout
+	base.ResponseHeaderTimeout = responseHeaderTimeout
+	base.ExpectContinueTimeout = expectContinueTimeout
+
+	rlTransport := &RateLimitTransport{
+		Base:       base,
+		State:      &RateLimitState{remaining: 1},
+		MaxRetries: defaultMaxRetries,
+	}
+
 	return &http.Client{
-		Timeout:   30 * time.Second,
-		Transport: http.DefaultTransport.(*http.Transport).Clone(),
+		// No whole-call Timeout: a single deadline would cover retry sleeps
+		// and every attempt, killing legitimate Retry-After waits. Per-attempt
+		// phase timeouts live on the base transport; callers set an overall
+		// bound per call via scw.WithContext(context.WithTimeout(...)).
+		Transport: rlTransport,
 	}
 }
 
@@ -657,23 +689,31 @@ func setInsecureMode(c httpClient) {
 		return
 	}
 
-	altTransport, ok := standardHTTPClient.Transport.(interface {
-		SetInsecureTransport()
-	})
-	if ok {
-		altTransport.SetInsecureTransport()
+	if rlTransport, ok := standardHTTPClient.Transport.(*RateLimitTransport); ok {
+		rlTransport.SetInsecureTransport()
 		return
 	}
 
 	transportClient, ok := standardHTTPClient.Transport.(*http.Transport)
 	if !ok {
-		logger.Warningf("client: cannot use insecure mode with Transport client of type %T", standardHTTPClient.Transport)
+		logger.Warningf(
+			"client: cannot use insecure mode with Transport client of type %T",
+			standardHTTPClient.Transport,
+		)
 		return
 	}
-	if transportClient.TLSClientConfig == nil {
-		transportClient.TLSClientConfig = &tls.Config{}
+
+	setInsecureSkipVerify(transportClient)
+}
+
+// setInsecureSkipVerify enables InsecureSkipVerify on t, allocating a
+// tls.Config if none is set.
+func setInsecureSkipVerify(t *http.Transport) {
+	if t.TLSClientConfig == nil {
+		t.TLSClientConfig = &tls.Config{}
 	}
-	transportClient.TLSClientConfig.InsecureSkipVerify = true
+
+	t.TLSClientConfig.InsecureSkipVerify = true
 }
 
 func setRequestLogging(c httpClient) {
