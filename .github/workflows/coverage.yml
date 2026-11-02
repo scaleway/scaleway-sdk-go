@@ -46,7 +46,7 @@ jobs:
       code-quality: write
     steps:
       - name: Download coverage artifact
-        uses: actions/download-artifact@v8.0.1
+        uses: actions/download-artifact@v8.0.2
         with:
           name: coverage-report-go
       - uses: actions/upload-code-coverage@v1
