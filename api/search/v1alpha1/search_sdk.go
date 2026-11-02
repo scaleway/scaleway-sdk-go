@@ -217,6 +217,8 @@ const (
 	ResourceTypeAutoscalingGroup    = ResourceType("autoscaling_group")
 	ResourceTypeWoflDefinition      = ResourceType("wofl_definition")
 	ResourceTypeWoflRun             = ResourceType("wofl_run")
+	ResourceTypeKvdbInstance        = ResourceType("kvdb_instance")
+	ResourceTypeKvdbSnapshot        = ResourceType("kvdb_snapshot")
 )
 
 func (enum ResourceType) String() string {
@@ -287,6 +289,8 @@ func (enum ResourceType) Values() []ResourceType {
 		"autoscaling_group",
 		"wofl_definition",
 		"wofl_run",
+		"kvdb_instance",
+		"kvdb_snapshot",
 	}
 }
 
