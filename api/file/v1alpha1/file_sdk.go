@@ -293,6 +293,23 @@ type SnapshotParentFilesystem struct {
 	Name string `json:"name"`
 }
 
+// CreateFileSystemRequestFromEmpty: create file system request from empty.
+type CreateFileSystemRequestFromEmpty struct {
+	// Size: must be compliant with the minimum (25 GB) and maximum (50 TB) allowed size.
+	Size scw.Size `json:"size"`
+}
+
+// CreateFileSystemRequestFromSnapshot: create file system request from snapshot.
+type CreateFileSystemRequestFromSnapshot struct {
+	// Size: must be compliant with the minimum (25 GB) and maximum (50 TB) allowed size.
+	// Size is optional. When not set, the current size of the parent filesystem is used.
+	// When set, it must be greater than or equal to the snapshot size.
+	Size *scw.Size `json:"size"`
+
+	// SnapshotID: source snapshot from which the filesystem will be created.
+	SnapshotID string `json:"snapshot_id"`
+}
+
 // Attachment: Represents an attachment between a filesystem and a resource.
 type Attachment struct {
 	// ID: UUID of the attachment.
@@ -472,8 +489,18 @@ type CreateFileSystemRequest struct {
 	// ProjectID: UUID of the project the filesystem belongs to.
 	ProjectID string `json:"project_id"`
 
-	// Size: must be compliant with the minimum (25 GB) and maximum (50 TB) allowed size.
+	// Deprecated: Size: filesystem size in bytes, with a granularity in GB (10^9 bytes).
+	// Must be compliant with the minimum (25 GB) and maximum (50 TB) allowed size.
+	// Must not be set along with `from_empty` or `from_snapshot`.
 	Size uint64 `json:"size"`
+
+	// FromEmpty: specify the size of the new filesystem if creating a new one from scratch.
+	// Precisely one of FromEmpty, FromSnapshot must be set.
+	FromEmpty *CreateFileSystemRequestFromEmpty `json:"from_empty,omitempty"`
+
+	// FromSnapshot: specify the snapshot ID of the original snapshot to create the filesystem from.
+	// Precisely one of FromEmpty, FromSnapshot must be set.
+	FromSnapshot *CreateFileSystemRequestFromSnapshot `json:"from_snapshot,omitempty"`
 
 	// Type: type of the filesystem.
 	Type *string `json:"type,omitempty"`
@@ -1029,7 +1056,7 @@ func (s *API) ListAttachments(req *ListAttachmentsRequest, opts ...scw.RequestOp
 	return &resp, nil
 }
 
-// CreateFileSystem: To create a new filesystem, you must specify a name, a size, and a project ID.
+// CreateFileSystem: To create a new filesystem, you must specify a name, a project ID, and either a size (`from_empty`) or a source snapshot (`from_snapshot`).
 func (s *API) CreateFileSystem(req *CreateFileSystemRequest, opts ...scw.RequestOption) (*FileSystem, error) {
 	var err error
 
