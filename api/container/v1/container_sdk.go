@@ -969,7 +969,7 @@ type Container struct {
 	// Default value: unknown_privacy
 	Privacy ContainerPrivacy `json:"privacy"`
 
-	// Image: image reference (e.g. with sample image: "rg.fr-par.scw.cloud/serverless-catalog/sample-website:latest").
+	// Image: image reference (e.g. "rg.fr-par.scw.cloud/my-registry-namespace/image:tag").
 	Image string `json:"image"`
 
 	// Protocol: protocol the container uses.
@@ -1339,7 +1339,7 @@ type CreateContainerRequest struct {
 	// Description: container description.
 	Description *string `json:"description,omitempty"`
 
-	// Image: image reference (e.g. with sample image: "rg.fr-par.scw.cloud/serverless-catalog/sample-website:latest").
+	// Image: image reference (e.g. "rg.fr-par.scw.cloud/my-registry-namespace/image:tag").
 	Image string `json:"image"`
 
 	// Protocol: protocol the container uses.
@@ -1781,7 +1781,7 @@ type UpdateContainerRequest struct {
 	// Description: container description.
 	Description *string `json:"description,omitempty"`
 
-	// Image: image reference (e.g. with sample image: "rg.fr-par.scw.cloud/serverless-catalog/sample-website:latest").
+	// Image: image reference (e.g. "rg.fr-par.scw.cloud/my-registry-namespace/image:tag").
 	Image *string `json:"image,omitempty"`
 
 	// Protocol: protocol the container uses.

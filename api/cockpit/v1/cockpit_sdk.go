@@ -727,27 +727,6 @@ type ContactPointEmail struct {
 	To string `json:"to"`
 }
 
-// DataSourceLogsLimits: Limits of a logs data source.
-type DataSourceLogsLimits struct {
-	// IngestionRateLimitBytesPerSecond: maximum number of bytes ingested per second.
-	IngestionRateLimitBytesPerSecond *uint64 `json:"ingestion_rate_limit_bytes_per_second"`
-}
-
-// DataSourceMetricsLimits: Limits of a metrics data source.
-type DataSourceMetricsLimits struct {
-	// IngestionRateLimitSamplesPerSecond: maximum number of samples ingested per second.
-	IngestionRateLimitSamplesPerSecond *uint64 `json:"ingestion_rate_limit_samples_per_second"`
-
-	// MaxSeries: maximum number of active series.
-	MaxSeries *uint32 `json:"max_series"`
-}
-
-// DataSourceTracesLimits: Limits of a traces data source.
-type DataSourceTracesLimits struct {
-	// IngestionRateLimitBytesPerSecond: maximum number of bytes ingested per second.
-	IngestionRateLimitBytesPerSecond *uint64 `json:"ingestion_rate_limit_bytes_per_second"`
-}
-
 // ExporterDatadogDestination: exporter datadog destination.
 type ExporterDatadogDestination struct {
 	APIKey *string `json:"api_key"`
@@ -760,18 +739,6 @@ type ExporterOTLPDestination struct {
 	Endpoint string `json:"endpoint"`
 
 	Headers map[string]string `json:"headers"`
-}
-
-// GetConfigResponseBounds: Allowed range and default value of a data source limit.
-type GetConfigResponseBounds struct {
-	// MinValue: minimum allowed value.
-	MinValue uint64 `json:"min_value"`
-
-	// MaxValue: maximum allowed value.
-	MaxValue uint64 `json:"max_value"`
-
-	// DefaultValue: value applied to a data source that does not set the limit.
-	DefaultValue uint64 `json:"default_value"`
 }
 
 // GetConfigResponseRetention: get config response retention.
@@ -885,18 +852,6 @@ type DataSource struct {
 
 	// Srn: the SRN of the data-source.
 	Srn string `json:"srn"`
-
-	// MetricsLimits: limits applied to the metrics data source, including the default values of the limits not set.
-	// Precisely one of MetricsLimits, LogsLimits, TracesLimits must be set.
-	MetricsLimits *DataSourceMetricsLimits `json:"metrics_limits,omitempty"`
-
-	// LogsLimits: limits applied to the logs data source, including the default values of the limits not set.
-	// Precisely one of MetricsLimits, LogsLimits, TracesLimits must be set.
-	LogsLimits *DataSourceLogsLimits `json:"logs_limits,omitempty"`
-
-	// TracesLimits: limits applied to the traces data source, including the default values of the limits not set.
-	// Precisely one of MetricsLimits, LogsLimits, TracesLimits must be set.
-	TracesLimits *DataSourceTracesLimits `json:"traces_limits,omitempty"`
 }
 
 //nolint:unused,nolintlint // generated, no check on whether it's used or not
@@ -1168,18 +1123,6 @@ type GetConfigResponse struct {
 
 	// ProductLogsRetention: scaleway logs retention configuration.
 	ProductLogsRetention *GetConfigResponseRetention `json:"product_logs_retention"`
-
-	// CustomMetricsIngestionRateLimitSamplesPerSecond: bounds of the custom metrics ingestion rate limit, in samples per second.
-	CustomMetricsIngestionRateLimitSamplesPerSecond *GetConfigResponseBounds `json:"custom_metrics_ingestion_rate_limit_samples_per_second"`
-
-	// CustomMetricsMaxSeries: bounds of the custom metrics maximum number of active series.
-	CustomMetricsMaxSeries *GetConfigResponseBounds `json:"custom_metrics_max_series"`
-
-	// CustomLogsIngestionRateLimitBytesPerSecond: bounds of the custom logs ingestion rate limit, in bytes per second.
-	CustomLogsIngestionRateLimitBytesPerSecond *GetConfigResponseBounds `json:"custom_logs_ingestion_rate_limit_bytes_per_second"`
-
-	// CustomTracesIngestionRateLimitBytesPerSecond: bounds of the custom traces ingestion rate limit, in bytes per second.
-	CustomTracesIngestionRateLimitBytesPerSecond *GetConfigResponseBounds `json:"custom_traces_ingestion_rate_limit_bytes_per_second"`
 }
 
 // GetRulesCountResponse: get rules count response.
@@ -1622,18 +1565,6 @@ type RegionalAPICreateDataSourceRequest struct {
 
 	// RetentionDays: default values are 31 days for metrics, 7 days for logs and traces.
 	RetentionDays *uint32 `json:"retention_days,omitempty"`
-
-	// MetricsLimits: limits of the data source. Only allowed for a metrics data source. A limit not set gets its default value (see GetConfig).
-	// Precisely one of MetricsLimits, LogsLimits, TracesLimits must be set.
-	MetricsLimits *DataSourceMetricsLimits `json:"metrics_limits,omitempty"`
-
-	// LogsLimits: limits of the data source. Only allowed for a logs data source. A limit not set gets its default value (see GetConfig).
-	// Precisely one of MetricsLimits, LogsLimits, TracesLimits must be set.
-	LogsLimits *DataSourceLogsLimits `json:"logs_limits,omitempty"`
-
-	// TracesLimits: limits of the data source. Only allowed for a traces data source. A limit not set gets its default value (see GetConfig).
-	// Precisely one of MetricsLimits, LogsLimits, TracesLimits must be set.
-	TracesLimits *DataSourceTracesLimits `json:"traces_limits,omitempty"`
 }
 
 // RegionalAPICreateExporterRequest: Create a data export.
@@ -2001,18 +1932,6 @@ type RegionalAPIUpdateDataSourceRequest struct {
 
 	// RetentionDays: duration for which the data will be retained in the data source.
 	RetentionDays *uint32 `json:"retention_days,omitempty"`
-
-	// MetricsLimits: updated limits of the data source. Only allowed on a metrics data source. A limit not set keeps its current value.
-	// Precisely one of MetricsLimits, LogsLimits, TracesLimits must be set.
-	MetricsLimits *DataSourceMetricsLimits `json:"metrics_limits,omitempty"`
-
-	// LogsLimits: updated limits of the data source. Only allowed on a logs data source. A limit not set keeps its current value.
-	// Precisely one of MetricsLimits, LogsLimits, TracesLimits must be set.
-	LogsLimits *DataSourceLogsLimits `json:"logs_limits,omitempty"`
-
-	// TracesLimits: updated limits of the data source. Only allowed on a traces data source. A limit not set keeps its current value.
-	// Precisely one of MetricsLimits, LogsLimits, TracesLimits must be set.
-	TracesLimits *DataSourceTracesLimits `json:"traces_limits,omitempty"`
 }
 
 // RegionalAPIUpdateExporterRequest: Update an existing data export.
@@ -2852,7 +2771,7 @@ func (s *RegionalAPI) ListDataSources(req *RegionalAPIListDataSourcesRequest, op
 	return &resp, nil
 }
 
-// UpdateDataSource: Update a given data source attributes (name, retention_days and/or limits).
+// UpdateDataSource: Update a given data source attributes (name and/or retention_days).
 func (s *RegionalAPI) UpdateDataSource(req *RegionalAPIUpdateDataSourceRequest, opts ...scw.RequestOption) (*DataSource, error) {
 	var err error
 
