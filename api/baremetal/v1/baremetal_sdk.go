@@ -1449,6 +1449,25 @@ type Server struct {
 
 	// ScheduledDeletion: true if a deletion is scheduled.
 	ScheduledDeletion bool `json:"scheduled_deletion"`
+
+	// Srn: the SRN of the server.
+	Srn string `json:"srn"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *Server) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://elastic-metal.%s/zones/%s/servers/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // OS: os.
@@ -1506,6 +1525,25 @@ type OS struct {
 
 	// Zone: zone in which is the OS is available.
 	Zone scw.Zone `json:"zone"`
+
+	// Srn: the SRN of the OS.
+	Srn string `json:"srn"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *OS) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://elastic-metal.%s/zones/%s/os/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // Offer: offer.
@@ -1595,6 +1633,25 @@ type Offer struct {
 
 	// DualAttach: describe the network topology of the offer.
 	DualAttach *bool `json:"dual_attach"`
+
+	// Srn: the SRN of the offer.
+	Srn string `json:"srn"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *Offer) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://elastic-metal.%s/zones/%s/offers/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // Option: option.
@@ -1627,6 +1684,28 @@ type Option struct {
 	// Certification: certification option.
 	// Precisely one of License, PublicBandwidth, PrivateNetwork, RemoteAccess, Certification must be set.
 	Certification *CertificationOption `json:"certification,omitempty"`
+
+	// Zone: zone in which is the option is available.
+	Zone scw.Zone `json:"zone"`
+
+	// Srn: the SRN of the option.
+	Srn string `json:"srn"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *Option) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://elastic-metal.%s/zones/%s/options/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // ServerEvent: server event.
@@ -1686,6 +1765,28 @@ type Setting struct {
 
 	// Enabled: defines whether the setting is enabled.
 	Enabled bool `json:"enabled"`
+
+	// Zone: zone in which is the setting is located.
+	Zone scw.Zone `json:"zone"`
+
+	// Srn: the SRN of the setting.
+	Srn string `json:"srn"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *Setting) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://elastic-metal.%s/zones/%s/settings/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // AddOptionServerRequest: add option server request.
@@ -1716,6 +1817,31 @@ type BMCAccess struct {
 
 	// ExpiresAt: the date after which the BMC (Baseboard Management Controller) access will be closed.
 	ExpiresAt *time.Time `json:"expires_at"`
+
+	// ServerID: ID of the server.
+	ServerID string `json:"server_id"`
+
+	// Zone: zone in which the server is located.
+	Zone scw.Zone `json:"zone"`
+
+	// Srn: the SRN of the BMC access.
+	Srn string `json:"srn"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *BMCAccess) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ServerID) != "" {
+		m.Srn = fmt.Sprintf("srn://elastic-metal.%s/zones/%s/servers/%s/bmc-access", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ServerID))
+		return
+	}
 }
 
 // BatchCreateServersRequest: batch create servers request.
@@ -2475,6 +2601,12 @@ func (s *API) ListServers(req *ListServersRequest, opts ...scw.RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Servers {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -2505,6 +2637,10 @@ func (s *API) GetServer(req *GetServerRequest, opts ...scw.RequestOption) (*Serv
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2601,6 +2737,10 @@ func (s *API) CreateServer(req *CreateServerRequest, opts ...scw.RequestOption) 
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -2669,6 +2809,10 @@ func (s *API) UpdateServer(req *UpdateServerRequest, opts ...scw.RequestOption) 
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -2704,6 +2848,10 @@ func (s *API) InstallServer(req *InstallServerRequest, opts ...scw.RequestOption
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2767,6 +2915,10 @@ func (s *API) DeleteServer(req *DeleteServerRequest, opts ...scw.RequestOption) 
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -2802,6 +2954,10 @@ func (s *API) RebootServer(req *RebootServerRequest, opts ...scw.RequestOption) 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2839,6 +2995,10 @@ func (s *API) StartServer(req *StartServerRequest, opts ...scw.RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -2874,6 +3034,10 @@ func (s *API) StopServer(req *StopServerRequest, opts ...scw.RequestOption) (*Se
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -3015,6 +3179,10 @@ func (s *API) UpgradeServerCommitment(req *UpgradeServerCommitmentRequest, opts 
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -3050,6 +3218,10 @@ func (s *API) UpdateServerCommitment(req *UpdateServerCommitmentRequest, opts ..
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -3090,6 +3262,10 @@ func (s *API) StartBMCAccess(req *StartBMCAccessRequest, opts ...scw.RequestOpti
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -3120,6 +3296,10 @@ func (s *API) GetBMCAccess(req *GetBMCAccessRequest, opts ...scw.RequestOption) 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -3230,6 +3410,10 @@ func (s *API) AddOptionServer(req *AddOptionServerRequest, opts ...scw.RequestOp
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -3265,6 +3449,10 @@ func (s *API) DeleteOptionServer(req *DeleteOptionServerRequest, opts ...scw.Req
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -3295,6 +3483,10 @@ func (s *API) MigrateServerToMonthlyOffer(req *MigrateServerToMonthlyOfferReques
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -3335,6 +3527,12 @@ func (s *API) ListOffers(req *ListOffersRequest, opts ...scw.RequestOption) (*Li
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Offers {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -3366,6 +3564,10 @@ func (s *API) GetOffer(req *GetOfferRequest, opts ...scw.RequestOption) (*Offer,
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -3396,6 +3598,10 @@ func (s *API) GetOption(req *GetOptionRequest, opts ...scw.RequestOption) (*Opti
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -3436,6 +3642,12 @@ func (s *API) ListOptions(req *ListOptionsRequest, opts ...scw.RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Options {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -3475,6 +3687,12 @@ func (s *API) ListSettings(req *ListSettingsRequest, opts ...scw.RequestOption) 
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Settings {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -3510,6 +3728,10 @@ func (s *API) UpdateSetting(req *UpdateSettingRequest, opts ...scw.RequestOption
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -3549,6 +3771,12 @@ func (s *API) ListOS(req *ListOSRequest, opts ...scw.RequestOption) (*ListOSResp
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Os {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -3579,6 +3807,10 @@ func (s *API) GetOS(req *GetOSRequest, opts ...scw.RequestOption) (*OS, error) {
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
