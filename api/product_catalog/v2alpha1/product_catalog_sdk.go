@@ -92,6 +92,8 @@ const (
 	ListPublicCatalogProductsRequestProductTypeFileStorage = ListPublicCatalogProductsRequestProductType("file_storage")
 	// Include the Serverless SQL Database information in the response.
 	ListPublicCatalogProductsRequestProductTypeServerlessSQLDatabase = ListPublicCatalogProductsRequestProductType("serverless_sql_database")
+	// The properties of Cockpit products.
+	ListPublicCatalogProductsRequestProductTypeCockpit = ListPublicCatalogProductsRequestProductType("cockpit")
 )
 
 func (enum ListPublicCatalogProductsRequestProductType) String() string {
@@ -129,6 +131,7 @@ func (enum ListPublicCatalogProductsRequestProductType) Values() []ListPublicCat
 		"instance_local_ssd_storage",
 		"file_storage",
 		"serverless_sql_database",
+		"cockpit",
 	}
 }
 
@@ -1263,6 +1266,9 @@ type PublicCatalogProductPropertiesBlockStorage struct {
 	Volume *PublicCatalogProductPropertiesBlockStorageVolumeType `json:"volume,omitempty"`
 }
 
+// PublicCatalogProductPropertiesCockpit: public catalog product properties cockpit.
+type PublicCatalogProductPropertiesCockpit struct{}
+
 // PublicCatalogProductPropertiesDedibox: public catalog product properties dedibox.
 type PublicCatalogProductPropertiesDedibox struct {
 	// Range: the range of the Dedibox server.
@@ -1537,97 +1543,101 @@ type PublicCatalogProductProperties struct {
 	Hardware *PublicCatalogProductPropertiesHardware `json:"hardware"`
 
 	// Dedibox: the properties of Dedibox products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage, Cockpit must be set.
 	Dedibox *PublicCatalogProductPropertiesDedibox `json:"dedibox,omitempty"`
 
 	// ElasticMetal: the properties of Elastic Metal products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage, Cockpit must be set.
 	ElasticMetal *PublicCatalogProductPropertiesElasticMetal `json:"elastic_metal,omitempty"`
 
 	// AppleSilicon: the properties of Apple Silicon products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage, Cockpit must be set.
 	AppleSilicon *PublicCatalogProductPropertiesAppleSilicon `json:"apple_silicon,omitempty"`
 
 	// Instance: the properties of Instance products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage, Cockpit must be set.
 	Instance *PublicCatalogProductPropertiesInstance `json:"instance,omitempty"`
 
 	// BlockStorage: the properties of Block Storage products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage, Cockpit must be set.
 	BlockStorage *PublicCatalogProductPropertiesBlockStorage `json:"block_storage,omitempty"`
 
 	// ObjectStorage: the properties of Object Storage products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage, Cockpit must be set.
 	ObjectStorage *PublicCatalogProductPropertiesObjectStorage `json:"object_storage,omitempty"`
 
 	// ManagedInference: the properties of Managed Inference products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage, Cockpit must be set.
 	ManagedInference *PublicCatalogProductPropertiesManagedInference `json:"managed_inference,omitempty"`
 
 	// GenerativeAPIs: the properties of Generative APIs products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage, Cockpit must be set.
 	GenerativeAPIs *PublicCatalogProductPropertiesGenerativeAPIs `json:"generative_apis,omitempty"`
 
 	// LoadBalancer: the properties of Load Balancer products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage, Cockpit must be set.
 	LoadBalancer *PublicCatalogProductPropertiesLoadBalancer `json:"load_balancer,omitempty"`
 
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage, Cockpit must be set.
 	SecretManager *PublicCatalogProductPropertiesSecretManager `json:"secret_manager,omitempty"`
 
 	// ManagedRedisDatabase: the properties of Managed Redis Database products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage, Cockpit must be set.
 	ManagedRedisDatabase *PublicCatalogProductPropertiesManagedRedisDatabase `json:"managed_redis_database,omitempty"`
 
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage, Cockpit must be set.
 	KeyManager *PublicCatalogProductPropertiesKeyManager `json:"key_manager,omitempty"`
 
 	// Kubernetes: the properties of Kubernetes products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage, Cockpit must be set.
 	Kubernetes *PublicCatalogProductPropertiesKubernetes `json:"kubernetes,omitempty"`
 
 	// ManagedRelationalDatabase: the properties of Managed Relational Database products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage, Cockpit must be set.
 	ManagedRelationalDatabase *PublicCatalogProductPropertiesManagedRelationalDatabase `json:"managed_relational_database,omitempty"`
 
 	// ServerlessFunctions: the properties of Serverless Functions products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage, Cockpit must be set.
 	ServerlessFunctions *PublicCatalogProductPropertiesServerlessFunctions `json:"serverless_functions,omitempty"`
 
 	// ServerlessContainers: the properties of Serverless Containers products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage, Cockpit must be set.
 	ServerlessContainers *PublicCatalogProductPropertiesServerlessContainers `json:"serverless_containers,omitempty"`
 
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage, Cockpit must be set.
 	ManagedMongodb *PublicCatalogProductPropertiesManagedMongoDB `json:"managed_mongodb,omitempty"`
 
 	// ServerlessJobs: the properties of Serverless Jobs products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage, Cockpit must be set.
 	ServerlessJobs *PublicCatalogProductPropertiesServerlessJobs `json:"serverless_jobs,omitempty"`
 
 	// ServerlessSQLDatabase: the properties of Serverless SQL Database products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage, Cockpit must be set.
 	ServerlessSQLDatabase *PublicCatalogProductPropertiesServerlessSQLDatabase `json:"serverless_sql_database,omitempty"`
 
 	// ApacheKafka: the properties of Apache Kafka products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage, Cockpit must be set.
 	ApacheKafka *PublicCatalogProductPropertiesApacheKafka `json:"apache_kafka,omitempty"`
 
 	// OpenSearch: the properties of OpenSearch DB products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage, Cockpit must be set.
 	OpenSearch *PublicCatalogProductPropertiesOpenSearch `json:"open_search,omitempty"`
 
 	// InstanceLocalSSDSnapshot: the properties of Instance Local SSD Snapshot products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage, Cockpit must be set.
 	InstanceLocalSSDSnapshot *PublicCatalogProductPropertiesInstanceLocalSSDSnapshot `json:"instance_local_ssd_snapshot,omitempty"`
 
 	// InstanceLocalSSDStorage: the properties of Instance Local SSD Storage products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage, Cockpit must be set.
 	InstanceLocalSSDStorage *PublicCatalogProductPropertiesInstanceLocalSSDStorage `json:"instance_local_ssd_storage,omitempty"`
 
 	// FileStorage: the properties of File Storage products.
-	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage must be set.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage, Cockpit must be set.
 	FileStorage *PublicCatalogProductPropertiesFileStorage `json:"file_storage,omitempty"`
+
+	// Cockpit: the properties of Cockpit products.
+	// Precisely one of Dedibox, ElasticMetal, AppleSilicon, Instance, BlockStorage, ObjectStorage, ManagedInference, GenerativeAPIs, LoadBalancer, SecretManager, ManagedRedisDatabase, KeyManager, Kubernetes, ManagedRelationalDatabase, ServerlessFunctions, ServerlessContainers, ManagedMongodb, ServerlessJobs, ServerlessSQLDatabase, ApacheKafka, OpenSearch, InstanceLocalSSDSnapshot, InstanceLocalSSDStorage, FileStorage, Cockpit must be set.
+	Cockpit *PublicCatalogProductPropertiesCockpit `json:"cockpit,omitempty"`
 }
 
 // PublicCatalogProductUnitOfMeasure: public catalog product unit of measure.
