@@ -412,6 +412,16 @@ type VpcPrivateNetworkInfo struct {
 	VpcID string `json:"vpc_id"`
 }
 
+// WoflDefinitionInfo: wofl definition info.
+type WoflDefinitionInfo struct {
+	WorkflowID string `json:"workflow_id"`
+}
+
+// WoflRunInfo: wofl run info.
+type WoflRunInfo struct {
+	WorkflowID string `json:"workflow_id"`
+}
+
 // Resource: resource.
 type Resource struct {
 	// ID: ID of the resource.
@@ -443,31 +453,31 @@ type Resource struct {
 	Region *scw.Region `json:"region,omitempty"`
 
 	// VpcPrivateNetworkInfo: additional information for a VPC Private Network.
-	// Precisely one of VpcPrivateNetworkInfo, ServerlessFunctionsFunctionInfo, ServerlessContainersContainerInfo, ServerlessSqldbBackupInfo, BaremetalServerInfo, ObsDatasourceInfo, ObsExporterInfo must be set.
+	// Precisely one of VpcPrivateNetworkInfo, ServerlessFunctionsFunctionInfo, ServerlessContainersContainerInfo, ServerlessSqldbBackupInfo, BaremetalServerInfo, ObsDatasourceInfo, ObsExporterInfo, WoflDefinitionInfo, WoflRunInfo must be set.
 	VpcPrivateNetworkInfo *VpcPrivateNetworkInfo `json:"vpc_private_network_info,omitempty"`
 
 	// ServerlessFunctionsFunctionInfo: additional information for a Serverless Function.
-	// Precisely one of VpcPrivateNetworkInfo, ServerlessFunctionsFunctionInfo, ServerlessContainersContainerInfo, ServerlessSqldbBackupInfo, BaremetalServerInfo, ObsDatasourceInfo, ObsExporterInfo must be set.
+	// Precisely one of VpcPrivateNetworkInfo, ServerlessFunctionsFunctionInfo, ServerlessContainersContainerInfo, ServerlessSqldbBackupInfo, BaremetalServerInfo, ObsDatasourceInfo, ObsExporterInfo, WoflDefinitionInfo, WoflRunInfo must be set.
 	ServerlessFunctionsFunctionInfo *ServerlessFunctionsFunctionInfo `json:"serverless_functions_function_info,omitempty"`
 
 	// ServerlessContainersContainerInfo: additional information for a Serverless Container.
-	// Precisely one of VpcPrivateNetworkInfo, ServerlessFunctionsFunctionInfo, ServerlessContainersContainerInfo, ServerlessSqldbBackupInfo, BaremetalServerInfo, ObsDatasourceInfo, ObsExporterInfo must be set.
+	// Precisely one of VpcPrivateNetworkInfo, ServerlessFunctionsFunctionInfo, ServerlessContainersContainerInfo, ServerlessSqldbBackupInfo, BaremetalServerInfo, ObsDatasourceInfo, ObsExporterInfo, WoflDefinitionInfo, WoflRunInfo must be set.
 	ServerlessContainersContainerInfo *ServerlessContainersContainerInfo `json:"serverless_containers_container_info,omitempty"`
 
 	// ServerlessSqldbBackupInfo: additional information for a Serverless SQL database backup.
-	// Precisely one of VpcPrivateNetworkInfo, ServerlessFunctionsFunctionInfo, ServerlessContainersContainerInfo, ServerlessSqldbBackupInfo, BaremetalServerInfo, ObsDatasourceInfo, ObsExporterInfo must be set.
+	// Precisely one of VpcPrivateNetworkInfo, ServerlessFunctionsFunctionInfo, ServerlessContainersContainerInfo, ServerlessSqldbBackupInfo, BaremetalServerInfo, ObsDatasourceInfo, ObsExporterInfo, WoflDefinitionInfo, WoflRunInfo must be set.
 	ServerlessSqldbBackupInfo *ServerlessSqldbBackupInfo `json:"serverless_sqldb_backup_info,omitempty"`
 
 	// BaremetalServerInfo: additional information for a Baremetal server.
-	// Precisely one of VpcPrivateNetworkInfo, ServerlessFunctionsFunctionInfo, ServerlessContainersContainerInfo, ServerlessSqldbBackupInfo, BaremetalServerInfo, ObsDatasourceInfo, ObsExporterInfo must be set.
+	// Precisely one of VpcPrivateNetworkInfo, ServerlessFunctionsFunctionInfo, ServerlessContainersContainerInfo, ServerlessSqldbBackupInfo, BaremetalServerInfo, ObsDatasourceInfo, ObsExporterInfo, WoflDefinitionInfo, WoflRunInfo must be set.
 	BaremetalServerInfo *BrmServerInfo `json:"baremetal_server_info,omitempty"`
 
 	// ObsDatasourceInfo: additional information for an OBS datasource.
-	// Precisely one of VpcPrivateNetworkInfo, ServerlessFunctionsFunctionInfo, ServerlessContainersContainerInfo, ServerlessSqldbBackupInfo, BaremetalServerInfo, ObsDatasourceInfo, ObsExporterInfo must be set.
+	// Precisely one of VpcPrivateNetworkInfo, ServerlessFunctionsFunctionInfo, ServerlessContainersContainerInfo, ServerlessSqldbBackupInfo, BaremetalServerInfo, ObsDatasourceInfo, ObsExporterInfo, WoflDefinitionInfo, WoflRunInfo must be set.
 	ObsDatasourceInfo *ObsDatasourceInfo `json:"obs_datasource_info,omitempty"`
 
 	// ObsExporterInfo: additional information for an OBS exporter.
-	// Precisely one of VpcPrivateNetworkInfo, ServerlessFunctionsFunctionInfo, ServerlessContainersContainerInfo, ServerlessSqldbBackupInfo, BaremetalServerInfo, ObsDatasourceInfo, ObsExporterInfo must be set.
+	// Precisely one of VpcPrivateNetworkInfo, ServerlessFunctionsFunctionInfo, ServerlessContainersContainerInfo, ServerlessSqldbBackupInfo, BaremetalServerInfo, ObsDatasourceInfo, ObsExporterInfo, WoflDefinitionInfo, WoflRunInfo must be set.
 	ObsExporterInfo *ObsExporterInfo `json:"obs_exporter_info,omitempty"`
 
 	// CreatedAt: creation date.
@@ -475,6 +485,12 @@ type Resource struct {
 
 	// UpdatedAt: last update date.
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	// Precisely one of VpcPrivateNetworkInfo, ServerlessFunctionsFunctionInfo, ServerlessContainersContainerInfo, ServerlessSqldbBackupInfo, BaremetalServerInfo, ObsDatasourceInfo, ObsExporterInfo, WoflDefinitionInfo, WoflRunInfo must be set.
+	WoflDefinitionInfo *WoflDefinitionInfo `json:"wofl_definition_info,omitempty"`
+
+	// Precisely one of VpcPrivateNetworkInfo, ServerlessFunctionsFunctionInfo, ServerlessContainersContainerInfo, ServerlessSqldbBackupInfo, BaremetalServerInfo, ObsDatasourceInfo, ObsExporterInfo, WoflDefinitionInfo, WoflRunInfo must be set.
+	WoflRunInfo *WoflRunInfo `json:"wofl_run_info,omitempty"`
 }
 
 // SearchResourcesRequest: search resources request.
