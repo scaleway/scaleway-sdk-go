@@ -667,9 +667,9 @@ secret_key: 7363616c-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 send_telemetry: true
 active_profile: flantier
 profiles:
-  flantier:
-    access_key: SCW234567890ABCDEFGH
-    secret_key: 6f6e6574-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+    flantier:
+        access_key: SCW234567890ABCDEFGH
+        secret_key: 6f6e6574-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 `, c.String())
 	testhelpers.Equals(t, v2ValidSecretKey, *c.SecretKey)
 
@@ -1126,9 +1126,9 @@ profiles:
 	testhelpers.AssertNoError(t, err)
 	testhelpers.Equals(t, 2, len(config.Profiles))
 	testhelpers.Equals(t, `profiles:
-  profile1:
-    access_key: SCW234567890ABCDEFGH
-    secret_key: 6f6e6574-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-  profile2: null
+    profile1:
+        access_key: SCW234567890ABCDEFGH
+        secret_key: 6f6e6574-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+    profile2: null
 `, config.String())
 }
