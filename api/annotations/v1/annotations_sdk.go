@@ -209,10 +209,10 @@ type CreateKeyRequest struct {
 	// OrganizationID: ID of the organization.
 	OrganizationID string `json:"organization_id"`
 
-	// Name: name of the annotation key.
+	// Name: name of the annotation key. Never use a secret as a name, as it is shown in the audit trail.
 	Name string `json:"name"`
 
-	// Description: description of the annotation key.
+	// Description: description of the annotation key. Never put a secret in the description, as it is shown in the audit trail.
 	Description string `json:"description"`
 }
 
@@ -221,10 +221,10 @@ type CreateValueRequest struct {
 	// KeyID: ID of the key the value will be bound to.
 	KeyID string `json:"key_id"`
 
-	// Name: name of the value.
+	// Name: name of the value. Never use a secret as a name, as it is shown in the audit trail.
 	Name string `json:"name"`
 
-	// Description: description of the value.
+	// Description: description of the value. Never put a secret in the description, as it is shown in the audit trail.
 	Description string `json:"description"`
 }
 
@@ -443,10 +443,10 @@ type UpdateKeyRequest struct {
 	// KeyID: ID of the key to update.
 	KeyID string `json:"-"`
 
-	// Name: new name of the key.
+	// Name: new name of the key. Never use a secret as a name, as it is shown in the audit trail.
 	Name *string `json:"name,omitempty"`
 
-	// Description: new description of the key.
+	// Description: new description of the key. Never put a secret in the description, as it is shown in the audit trail.
 	Description *string `json:"description,omitempty"`
 }
 
@@ -455,10 +455,10 @@ type UpdateValueRequest struct {
 	// ValueID: ID of the value to update.
 	ValueID string `json:"-"`
 
-	// Name: new name of the value.
+	// Name: new name of the value. Never use a secret as a name, as it is shown in the audit trail.
 	Name *string `json:"name,omitempty"`
 
-	// Description: new description of the value.
+	// Description: new description of the value. Never put a secret in the description, as it is shown in the audit trail.
 	Description *string `json:"description,omitempty"`
 }
 
