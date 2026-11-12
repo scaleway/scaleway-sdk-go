@@ -1247,6 +1247,8 @@ type BackupSchedule struct {
 // EncryptionAtRest: encryption at rest.
 type EncryptionAtRest struct {
 	Enabled bool `json:"enabled"`
+
+	KmsKeyID *string `json:"kms_key_id"`
 }
 
 // InstanceSetting: instance setting.
