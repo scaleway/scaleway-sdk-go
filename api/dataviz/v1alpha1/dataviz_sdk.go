@@ -623,6 +623,52 @@ func (m *Version) setSRN(platform string) {
 	}
 }
 
+// Certificate: certificate.
+type Certificate struct {
+	ID string `json:"id"`
+
+	Name string `json:"name"`
+
+	DeploymentID string `json:"deployment_id"`
+
+	Content string `json:"content"`
+
+	CreatedAt *time.Time `json:"created_at"`
+
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"region"`
+
+	Srn string `json:"srn"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *Certificate) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.DeploymentID) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://dataviz.%s/regions/%s/deployments/%s/certificates/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.DeploymentID), fmt.Sprint(m.ID))
+		return
+	}
+}
+
+// CreateCertificateRequest: create certificate request.
+type CreateCertificateRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	DeploymentID string `json:"-"`
+
+	Name string `json:"name"`
+
+	Content string `json:"content"`
+}
+
 // CreateDeploymentRequest: Request to create a new deployment.
 type CreateDeploymentRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1624,6 +1670,46 @@ func (s *API) DownloadDeploymentCertificateAuthority(req *DownloadDeploymentCert
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	return &resp, nil
+}
+
+// CreateCertificate:
+func (s *API) CreateCertificate(req *CreateCertificateRequest, opts ...scw.RequestOption) (*Certificate, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.DeploymentID) == "" {
+		return nil, errors.New("field DeploymentID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/dataviz/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/deployments/" + fmt.Sprint(req.DeploymentID) + "/certificates",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Certificate
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
