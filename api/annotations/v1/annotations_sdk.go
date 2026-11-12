@@ -767,7 +767,7 @@ func (s *API) DeleteValue(req *DeleteValueRequest, opts ...scw.RequestOption) er
 	return nil
 }
 
-// DeleteAllValuesMatchingKey: Delete ALL values associated with a key. Fails if any of these values are currently bound to any resource.
+// Deprecated: DeleteAllValuesMatchingKey: Delete ALL values associated with a key. Fails if any of these values are currently bound to any resource.
 func (s *API) DeleteAllValuesMatchingKey(req *DeleteAllValuesMatchingKeyRequest, opts ...scw.RequestOption) (*DeleteAllValuesMatchingKeyResponse, error) {
 	var err error
 
@@ -905,7 +905,7 @@ func (s *API) DeleteBinding(req *DeleteBindingRequest, opts ...scw.RequestOption
 	return nil
 }
 
-// DeleteAllBindingsMatchingValue: Delete ALL bindings associated with a value.
+// Deprecated: DeleteAllBindingsMatchingValue: Delete ALL bindings associated with a value.
 func (s *API) DeleteAllBindingsMatchingValue(req *DeleteAllBindingsMatchingValueRequest, opts ...scw.RequestOption) (*DeleteAllBindingsMatchingValueResponse, error) {
 	var err error
 
@@ -927,7 +927,7 @@ func (s *API) DeleteAllBindingsMatchingValue(req *DeleteAllBindingsMatchingValue
 	return &resp, nil
 }
 
-// DeleteAllBindingsMatchingSRN: Delete ALL bindings associated with a Scaleway Resource Name.
+// Deprecated: DeleteAllBindingsMatchingSRN: Delete ALL bindings associated with a Scaleway Resource Name.
 func (s *API) DeleteAllBindingsMatchingSRN(req *DeleteAllBindingsMatchingSRNRequest, opts ...scw.RequestOption) (*DeleteAllBindingsMatchingSRNResponse, error) {
 	var err error
 
