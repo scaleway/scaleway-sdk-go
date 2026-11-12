@@ -138,6 +138,60 @@ func (enum *DiscountFilterType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type DiscountLineOrigin string
+
+const (
+	// Unknown discount line origin.
+	DiscountLineOriginUnknownOrigin = DiscountLineOrigin("unknown_origin")
+	// Discount applied to the invoice line.
+	DiscountLineOriginDiscount = DiscountLineOrigin("discount")
+	// Discount related to a contractual commitment range.
+	DiscountLineOriginContractualCommitmentRange = DiscountLineOrigin("contractual_commitment_range")
+	// Discount related to a Savings Plan activation.
+	DiscountLineOriginSavingsPlanActivation = DiscountLineOrigin("savings_plan_activation")
+	// Rebate from a credit note.
+	DiscountLineOriginCreditNoteRebate = DiscountLineOrigin("credit_note_rebate")
+	// Discount related to a reserved resource activation.
+	DiscountLineOriginReservedResourceActivation = DiscountLineOrigin("reserved_resource_activation")
+	// Resource included in an offer.
+	DiscountLineOriginOfferIncluded = DiscountLineOrigin("offer_included")
+)
+
+func (enum DiscountLineOrigin) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(DiscountLineOriginUnknownOrigin)
+	}
+	return string(enum)
+}
+
+func (enum DiscountLineOrigin) Values() []DiscountLineOrigin {
+	return []DiscountLineOrigin{
+		"unknown_origin",
+		"discount",
+		"contractual_commitment_range",
+		"savings_plan_activation",
+		"credit_note_rebate",
+		"reserved_resource_activation",
+		"offer_included",
+	}
+}
+
+func (enum DiscountLineOrigin) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *DiscountLineOrigin) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = DiscountLineOrigin(DiscountLineOrigin(tmp).String())
+	return nil
+}
+
 type DownloadInvoiceRequestFileType string
 
 const (
@@ -645,6 +699,22 @@ type ListConsumptionsResponseConsumption struct {
 	OrganizationName string `json:"organization_name"`
 }
 
+// DiscountLine: discount line.
+type DiscountLine struct {
+	// ID: discount line ID.
+	ID string `json:"id"`
+
+	// InvoiceLineID: ID of the invoice line the discount applies to.
+	InvoiceLineID string `json:"invoice_line_id"`
+
+	// Origin: the origin of the discount line.
+	// Default value: unknown_origin
+	Origin DiscountLineOrigin `json:"origin"`
+
+	// Value: the value of the discount.
+	Value *scw.Money `json:"value"`
+}
+
 // Discount: discount.
 type Discount struct {
 	// ID: the ID of the discount.
@@ -683,6 +753,63 @@ type Discount struct {
 
 	// Filters: list of the discount scopes.
 	Filters []*DiscountFilter `json:"filters"`
+}
+
+// InvoiceLine: invoice line.
+type InvoiceLine struct {
+	// ID: invoice line ID.
+	ID string `json:"id"`
+
+	// InvoiceID: ID of the invoice the line belongs to.
+	InvoiceID string `json:"invoice_id"`
+
+	// OrganizationID: organization ID of the consumer for this line.
+	OrganizationID string `json:"organization_id"`
+
+	// OrganizationName: organization name of the consumer for this line.
+	OrganizationName string `json:"organization_name"`
+
+	// ProjectID: project ID of the line.
+	ProjectID string `json:"project_id"`
+
+	// ProjectName: project name of the line.
+	ProjectName string `json:"project_name"`
+
+	// Sku: unique identifier of the product.
+	Sku string `json:"sku"`
+
+	// CategoryName: name of consumption category.
+	CategoryName string `json:"category_name"`
+
+	// ProductName: the product name.
+	ProductName string `json:"product_name"`
+
+	// ResourceName: identifies the reference based on the category.
+	ResourceName string `json:"resource_name"`
+
+	// StartDate: start date of the line.
+	StartDate *time.Time `json:"start_date"`
+
+	// StopDate: stop date of the line.
+	StopDate *time.Time `json:"stop_date"`
+
+	// UnitPrice: unit price of the reference.
+	UnitPrice *scw.Money `json:"unit_price"`
+
+	// UntaxedValue: untaxed value of the line.
+	UntaxedValue *scw.Money `json:"untaxed_value"`
+
+	// Unit: unit of consumed quantity.
+	Unit string `json:"unit"`
+
+	// UnitQuantity: quantity per unit.
+	UnitQuantity string `json:"unit_quantity"`
+
+	// BilledQuantity: billed quantity.
+	BilledQuantity string `json:"billed_quantity"`
+
+	// ResourceCount: number of unique resources billed on this line.
+	ResourceCount uint32 `json:"resource_count"`
 }
 
 // Invoice: invoice.
@@ -914,6 +1041,46 @@ func (r *ListConsumptionsResponse) UnsafeAppend(res any) (uint64, error) {
 	return uint64(len(results.Consumptions)), nil
 }
 
+// ListDiscountLinesRequest: list discount lines request.
+type ListDiscountLinesRequest struct {
+	// InvoiceID: invoice ID.
+	InvoiceID string `json:"-"`
+
+	// Page: positive integer to choose the page to return.
+	Page *int32 `json:"-"`
+
+	// PageSize: positive integer lower or equal to 1000 to select the number of items to return.
+	PageSize *uint32 `json:"-"`
+}
+
+// ListDiscountLinesResponse: list discount lines response.
+type ListDiscountLinesResponse struct {
+	// TotalCount: total number of discount lines.
+	TotalCount uint64 `json:"total_count"`
+
+	// DiscountLines: paginated returned discount lines.
+	DiscountLines []*DiscountLine `json:"discount_lines"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListDiscountLinesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListDiscountLinesResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListDiscountLinesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.DiscountLines = append(r.DiscountLines, results.DiscountLines...)
+	r.TotalCount += uint64(len(results.DiscountLines))
+	return uint64(len(results.DiscountLines)), nil
+}
+
 // ListDiscountsRequest: list discounts request.
 type ListDiscountsRequest struct {
 	// OrderBy: order discounts in the response by their description.
@@ -956,6 +1123,46 @@ func (r *ListDiscountsResponse) UnsafeAppend(res any) (uint64, error) {
 	r.Discounts = append(r.Discounts, results.Discounts...)
 	r.TotalCount += uint64(len(results.Discounts))
 	return uint64(len(results.Discounts)), nil
+}
+
+// ListInvoiceLinesRequest: list invoice lines request.
+type ListInvoiceLinesRequest struct {
+	// InvoiceID: invoice ID.
+	InvoiceID string `json:"-"`
+
+	// Page: positive integer to choose the page to return.
+	Page *int32 `json:"-"`
+
+	// PageSize: positive integer lower or equal to 1000 to select the number of items to return.
+	PageSize *uint32 `json:"-"`
+}
+
+// ListInvoiceLinesResponse: list invoice lines response.
+type ListInvoiceLinesResponse struct {
+	// TotalCount: total number of invoice lines.
+	TotalCount uint64 `json:"total_count"`
+
+	// InvoiceLines: paginated returned invoice lines.
+	InvoiceLines []*InvoiceLine `json:"invoice_lines"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListInvoiceLinesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListInvoiceLinesResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListInvoiceLinesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.InvoiceLines = append(r.InvoiceLines, results.InvoiceLines...)
+	r.TotalCount += uint64(len(results.InvoiceLines))
+	return uint64(len(results.InvoiceLines)), nil
 }
 
 // ListInvoicesRequest: list invoices request.
@@ -1330,6 +1537,70 @@ func (s *API) RedeemCoupon(req *RedeemCouponRequest, opts ...scw.RequestOption) 
 	}
 
 	var resp Discount
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListInvoiceLines: List all lines of a given invoice, specified by its ID.
+func (s *API) ListInvoiceLines(req *ListInvoiceLinesRequest, opts ...scw.RequestOption) (*ListInvoiceLinesResponse, error) {
+	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.InvoiceID) == "" {
+		return nil, errors.New("field InvoiceID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/billing/v2beta1/invoices/" + fmt.Sprint(req.InvoiceID) + "/lines",
+		Query:  query,
+	}
+
+	var resp ListInvoiceLinesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// ListDiscountLines: List all discount lines of a given invoice, specified by its ID.
+func (s *API) ListDiscountLines(req *ListDiscountLinesRequest, opts ...scw.RequestOption) (*ListDiscountLinesResponse, error) {
+	var err error
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+
+	if fmt.Sprint(req.InvoiceID) == "" {
+		return nil, errors.New("field InvoiceID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/billing/v2beta1/invoices/" + fmt.Sprint(req.InvoiceID) + "/discount-lines",
+		Query:  query,
+	}
+
+	var resp ListDiscountLinesResponse
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
