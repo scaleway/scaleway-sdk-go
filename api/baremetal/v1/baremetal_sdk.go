@@ -439,6 +439,51 @@ func (enum *OfferSubscriptionPeriod) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type OptionType string
+
+const (
+	OptionTypeOptionTypeUnknown = OptionType("option_type_unknown")
+	OptionTypePrivateNetwork    = OptionType("private_network")
+	OptionTypeLicense           = OptionType("license")
+	OptionTypeRemoteAccess      = OptionType("remote_access")
+	OptionTypePublicBandwidth   = OptionType("public_bandwidth")
+	OptionTypeCertification     = OptionType("certification")
+)
+
+func (enum OptionType) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(OptionTypeOptionTypeUnknown)
+	}
+	return string(enum)
+}
+
+func (enum OptionType) Values() []OptionType {
+	return []OptionType{
+		"option_type_unknown",
+		"private_network",
+		"license",
+		"remote_access",
+		"public_bandwidth",
+		"certification",
+	}
+}
+
+func (enum OptionType) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *OptionType) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = OptionType(OptionType(tmp).String())
+	return nil
+}
+
 type SchemaFilesystemFormat string
 
 const (
@@ -1169,6 +1214,10 @@ type ServerOption struct {
 	// Certification: certification option.
 	// Precisely one of License, PublicBandwidth, PrivateNetwork, RemoteAccess, Certification must be set.
 	Certification *CertificationOption `json:"certification,omitempty"`
+
+	// Type: type of the option on this server.
+	// Default value: option_type_unknown
+	Type OptionType `json:"type"`
 }
 
 // ServerRescueServer: server rescue server.
@@ -1301,6 +1350,10 @@ type OfferOptionOffer struct {
 	// Certification: certification option.
 	// Precisely one of License, PublicBandwidth, PrivateNetwork, RemoteAccess, Certification must be set.
 	Certification *CertificationOption `json:"certification,omitempty"`
+
+	// Type: type of the option offered.
+	// Default value: option_type_unknown
+	Type OptionType `json:"type"`
 }
 
 // PersistentMemory: persistent memory.
@@ -1664,6 +1717,10 @@ type Option struct {
 
 	// Manageable: defines whether the option is manageable (could be added or removed).
 	Manageable bool `json:"manageable"`
+
+	// Type: type of the option.
+	// Default value: option_type_unknown
+	Type OptionType `json:"type"`
 
 	// License: license option, contains the ID of the OS linked to the option.
 	// Precisely one of License, PublicBandwidth, PrivateNetwork, RemoteAccess, Certification must be set.
