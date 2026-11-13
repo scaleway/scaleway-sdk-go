@@ -112,6 +112,12 @@ type Binding struct {
 
 	// Value: value associated to the binding.
 	Value *BindingValue `json:"value"`
+
+	// CreatedAt: timestamp of creation of the binding.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: timestamp of the last update of the binding.
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 //nolint:unused,nolintlint // generated, no check on whether it's used or not
@@ -143,6 +149,12 @@ type Key struct {
 
 	// Description: description of the annotation key.
 	Description string `json:"description"`
+
+	// CreatedAt: timestamp of creation of the annotation key.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: timestamp of the last update of the annotation key.
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 //nolint:unused,nolintlint // generated, no check on whether it's used or not
@@ -177,6 +189,12 @@ type Value struct {
 
 	// Description: description of the value.
 	Description string `json:"description"`
+
+	// CreatedAt: timestamp of creation of the value.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: timestamp of the last update of the value.
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 //nolint:unused,nolintlint // generated, no check on whether it's used or not
