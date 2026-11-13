@@ -5,7 +5,7 @@ import (
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
 	"github.com/scaleway/scaleway-sdk-go/scw"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 // Kubeconfig represents a kubernetes kubeconfig file

@@ -101,6 +101,7 @@ const (
 	ResourceTypeInstanceIP             = ResourceType("instance_ip")
 	ResourceTypeInstancePrivateNic     = ResourceType("instance_private_nic")
 	ResourceTypeLBServer               = ResourceType("lb_server")
+	ResourceTypeLBIP                   = ResourceType("lb_ip")
 	ResourceTypeFipIP                  = ResourceType("fip_ip")
 	ResourceTypeVpcGateway             = ResourceType("vpc_gateway")
 	ResourceTypeVpcGatewayNetwork      = ResourceType("vpc_gateway_network")
@@ -116,6 +117,7 @@ const (
 	ResourceTypeAppleSiliconPrivateNic = ResourceType("apple_silicon_private_nic")
 	ResourceTypeServerlessContainer    = ResourceType("serverless_container")
 	ResourceTypeServerlessFunction     = ResourceType("serverless_function")
+	ResourceTypeServerlessJob          = ResourceType("serverless_job")
 	ResourceTypeVpnGateway             = ResourceType("vpn_gateway")
 	ResourceTypeDdlDatalab             = ResourceType("ddl_datalab")
 	ResourceTypeKafkaCluster           = ResourceType("kafka_cluster")
@@ -145,6 +147,7 @@ func (enum ResourceType) Values() []ResourceType {
 		"instance_ip",
 		"instance_private_nic",
 		"lb_server",
+		"lb_ip",
 		"fip_ip",
 		"vpc_gateway",
 		"vpc_gateway_network",
@@ -160,6 +163,7 @@ func (enum ResourceType) Values() []ResourceType {
 		"apple_silicon_private_nic",
 		"serverless_container",
 		"serverless_function",
+		"serverless_job",
 		"vpn_gateway",
 		"ddl_datalab",
 		"kafka_cluster",

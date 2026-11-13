@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	containerSweeper "github.com/scaleway/scaleway-sdk-go/api/container/v1beta1/sweepers"
+	containerSweeper "github.com/scaleway/scaleway-sdk-go/api/container/v1/sweepers"
 	instanceSweeper "github.com/scaleway/scaleway-sdk-go/api/instance/v1/sweepers"
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )

@@ -727,6 +727,27 @@ type ContactPointEmail struct {
 	To string `json:"to"`
 }
 
+// DataSourceLogsLimits: Limits of a logs data source.
+type DataSourceLogsLimits struct {
+	// IngestionRateLimitBytesPerSecond: maximum number of bytes ingested per second.
+	IngestionRateLimitBytesPerSecond *uint64 `json:"ingestion_rate_limit_bytes_per_second"`
+}
+
+// DataSourceMetricsLimits: Limits of a metrics data source.
+type DataSourceMetricsLimits struct {
+	// IngestionRateLimitSamplesPerSecond: maximum number of samples ingested per second.
+	IngestionRateLimitSamplesPerSecond *uint64 `json:"ingestion_rate_limit_samples_per_second"`
+
+	// MaxSeries: maximum number of active series.
+	MaxSeries *uint32 `json:"max_series"`
+}
+
+// DataSourceTracesLimits: Limits of a traces data source.
+type DataSourceTracesLimits struct {
+	// IngestionRateLimitBytesPerSecond: maximum number of bytes ingested per second.
+	IngestionRateLimitBytesPerSecond *uint64 `json:"ingestion_rate_limit_bytes_per_second"`
+}
+
 // ExporterDatadogDestination: exporter datadog destination.
 type ExporterDatadogDestination struct {
 	APIKey *string `json:"api_key"`
@@ -739,6 +760,18 @@ type ExporterOTLPDestination struct {
 	Endpoint string `json:"endpoint"`
 
 	Headers map[string]string `json:"headers"`
+}
+
+// GetConfigResponseBounds: Allowed range and default value of a data source limit.
+type GetConfigResponseBounds struct {
+	// MinValue: minimum allowed value.
+	MinValue uint64 `json:"min_value"`
+
+	// MaxValue: maximum allowed value.
+	MaxValue uint64 `json:"max_value"`
+
+	// DefaultValue: value applied to a data source that does not set the limit.
+	DefaultValue uint64 `json:"default_value"`
 }
 
 // GetConfigResponseRetention: get config response retention.
@@ -849,6 +882,37 @@ type DataSource struct {
 
 	// CurrentMonthUsage: usage of the month in bytes.
 	CurrentMonthUsage *scw.Size `json:"current_month_usage"`
+
+	// Srn: the SRN of the data-source.
+	Srn string `json:"srn"`
+
+	// MetricsLimits: limits applied to the metrics data source, including the default values of the limits not set.
+	// Precisely one of MetricsLimits, LogsLimits, TracesLimits must be set.
+	MetricsLimits *DataSourceMetricsLimits `json:"metrics_limits,omitempty"`
+
+	// LogsLimits: limits applied to the logs data source, including the default values of the limits not set.
+	// Precisely one of MetricsLimits, LogsLimits, TracesLimits must be set.
+	LogsLimits *DataSourceLogsLimits `json:"logs_limits,omitempty"`
+
+	// TracesLimits: limits applied to the traces data source, including the default values of the limits not set.
+	// Precisely one of MetricsLimits, LogsLimits, TracesLimits must be set.
+	TracesLimits *DataSourceTracesLimits `json:"traces_limits,omitempty"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *DataSource) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://cockpit.%s/regions/%s/data-sources/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // Exporter: Data exporter.
@@ -888,6 +952,25 @@ type Exporter struct {
 
 	// Region: the region in which the export is located.
 	Region scw.Region `json:"region"`
+
+	// Srn: the SRN of the exporter.
+	Srn string `json:"srn"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *Exporter) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://cockpit.%s/regions/%s/exporters/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // GrafanaProductDashboard: Grafana dashboard.
@@ -1022,6 +1105,9 @@ type Usage struct {
 
 // AlertManager: Alert manager information.
 type AlertManager struct {
+	// ProjectID: ID of the project.
+	ProjectID string `json:"project_id"`
+
 	// AlertManagerURL: alert manager URL.
 	AlertManagerURL *string `json:"alert_manager_url"`
 
@@ -1033,6 +1119,25 @@ type AlertManager struct {
 
 	// Region: regions where the Alert manager is enabled.
 	Region scw.Region `json:"region"`
+
+	// Srn: the SRN of the alert-manager.
+	Srn string `json:"srn"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *AlertManager) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ProjectID) != "" {
+		m.Srn = fmt.Sprintf("srn://cockpit.%s/regions/%s/projects/%s/alert-manager", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ProjectID))
+		return
+	}
 }
 
 // DisableAlertRulesResponse: Output returned when alert rules are disabled.
@@ -1063,6 +1168,18 @@ type GetConfigResponse struct {
 
 	// ProductLogsRetention: scaleway logs retention configuration.
 	ProductLogsRetention *GetConfigResponseRetention `json:"product_logs_retention"`
+
+	// CustomMetricsIngestionRateLimitSamplesPerSecond: bounds of the custom metrics ingestion rate limit, in samples per second.
+	CustomMetricsIngestionRateLimitSamplesPerSecond *GetConfigResponseBounds `json:"custom_metrics_ingestion_rate_limit_samples_per_second"`
+
+	// CustomMetricsMaxSeries: bounds of the custom metrics maximum number of active series.
+	CustomMetricsMaxSeries *GetConfigResponseBounds `json:"custom_metrics_max_series"`
+
+	// CustomLogsIngestionRateLimitBytesPerSecond: bounds of the custom logs ingestion rate limit, in bytes per second.
+	CustomLogsIngestionRateLimitBytesPerSecond *GetConfigResponseBounds `json:"custom_logs_ingestion_rate_limit_bytes_per_second"`
+
+	// CustomTracesIngestionRateLimitBytesPerSecond: bounds of the custom traces ingestion rate limit, in bytes per second.
+	CustomTracesIngestionRateLimitBytesPerSecond *GetConfigResponseBounds `json:"custom_traces_ingestion_rate_limit_bytes_per_second"`
 }
 
 // GetRulesCountResponse: get rules count response.
@@ -1192,6 +1309,28 @@ type GlobalAPISyncGrafanaDataSourcesRequest struct {
 type Grafana struct {
 	// GrafanaURL: URL to access your Cockpit's Grafana.
 	GrafanaURL string `json:"grafana_url"`
+
+	// ProjectID: ID of the project.
+	ProjectID string `json:"project_id"`
+
+	// Srn: the SRN of the grafana.
+	Srn string `json:"srn"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *Grafana) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.ProjectID) != "" {
+		m.Srn = fmt.Sprintf("srn://cockpit.%s/projects/%s/grafana", platform, fmt.Sprint(m.ProjectID))
+		return
+	}
 }
 
 // ListAlertsResponse: Retrieve a list of alerts matching the request.
@@ -1483,6 +1622,18 @@ type RegionalAPICreateDataSourceRequest struct {
 
 	// RetentionDays: default values are 31 days for metrics, 7 days for logs and traces.
 	RetentionDays *uint32 `json:"retention_days,omitempty"`
+
+	// MetricsLimits: limits of the data source. Only allowed for a metrics data source. A limit not set gets its default value (see GetConfig).
+	// Precisely one of MetricsLimits, LogsLimits, TracesLimits must be set.
+	MetricsLimits *DataSourceMetricsLimits `json:"metrics_limits,omitempty"`
+
+	// LogsLimits: limits of the data source. Only allowed for a logs data source. A limit not set gets its default value (see GetConfig).
+	// Precisely one of MetricsLimits, LogsLimits, TracesLimits must be set.
+	LogsLimits *DataSourceLogsLimits `json:"logs_limits,omitempty"`
+
+	// TracesLimits: limits of the data source. Only allowed for a traces data source. A limit not set gets its default value (see GetConfig).
+	// Precisely one of MetricsLimits, LogsLimits, TracesLimits must be set.
+	TracesLimits *DataSourceTracesLimits `json:"traces_limits,omitempty"`
 }
 
 // RegionalAPICreateExporterRequest: Create a data export.
@@ -1850,6 +2001,18 @@ type RegionalAPIUpdateDataSourceRequest struct {
 
 	// RetentionDays: duration for which the data will be retained in the data source.
 	RetentionDays *uint32 `json:"retention_days,omitempty"`
+
+	// MetricsLimits: updated limits of the data source. Only allowed on a metrics data source. A limit not set keeps its current value.
+	// Precisely one of MetricsLimits, LogsLimits, TracesLimits must be set.
+	MetricsLimits *DataSourceMetricsLimits `json:"metrics_limits,omitempty"`
+
+	// LogsLimits: updated limits of the data source. Only allowed on a logs data source. A limit not set keeps its current value.
+	// Precisely one of MetricsLimits, LogsLimits, TracesLimits must be set.
+	LogsLimits *DataSourceLogsLimits `json:"logs_limits,omitempty"`
+
+	// TracesLimits: updated limits of the data source. Only allowed on a traces data source. A limit not set keeps its current value.
+	// Precisely one of MetricsLimits, LogsLimits, TracesLimits must be set.
+	TracesLimits *DataSourceTracesLimits `json:"traces_limits,omitempty"`
 }
 
 // RegionalAPIUpdateExporterRequest: Update an existing data export.
@@ -1928,6 +2091,10 @@ func (s *GlobalAPI) GetGrafana(req *GlobalAPIGetGrafanaRequest, opts ...scw.Requ
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2254,7 +2421,7 @@ func NewRegionalAPI(client *scw.Client) *RegionalAPI {
 }
 
 func (s *RegionalAPI) Regions() []scw.Region {
-	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
+	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw, scw.RegionItMil}
 }
 
 // GetConfig: Get the Cockpit configuration.
@@ -2315,6 +2482,10 @@ func (s *RegionalAPI) CreateExporter(req *RegionalAPICreateExporterRequest, opts
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -2361,6 +2532,12 @@ func (s *RegionalAPI) ListExporters(req *RegionalAPIListExportersRequest, opts .
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Exporters {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -2391,6 +2568,10 @@ func (s *RegionalAPI) GetExporter(req *RegionalAPIGetExporterRequest, opts ...sc
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2506,6 +2687,10 @@ func (s *RegionalAPI) UpdateExporter(req *RegionalAPIUpdateExporterRequest, opts
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -2544,6 +2729,10 @@ func (s *RegionalAPI) CreateDataSource(req *RegionalAPICreateDataSourceRequest, 
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -2574,6 +2763,10 @@ func (s *RegionalAPI) GetDataSource(req *RegionalAPIGetDataSourceRequest, opts .
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2650,10 +2843,16 @@ func (s *RegionalAPI) ListDataSources(req *RegionalAPIListDataSourcesRequest, op
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.DataSources {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
-// UpdateDataSource: Update a given data source attributes (name and/or retention_days).
+// UpdateDataSource: Update a given data source attributes (name, retention_days and/or limits).
 func (s *RegionalAPI) UpdateDataSource(req *RegionalAPIUpdateDataSourceRequest, opts ...scw.RequestOption) (*DataSource, error) {
 	var err error
 
@@ -2685,6 +2884,10 @@ func (s *RegionalAPI) UpdateDataSource(req *RegionalAPIUpdateDataSourceRequest, 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2944,6 +3147,10 @@ func (s *RegionalAPI) GetAlertManager(req *RegionalAPIGetAlertManagerRequest, op
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -2981,6 +3188,10 @@ func (s *RegionalAPI) EnableAlertManager(req *RegionalAPIEnableAlertManagerReque
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -3017,6 +3228,10 @@ func (s *RegionalAPI) DisableAlertManager(req *RegionalAPIDisableAlertManagerReq
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -3285,6 +3500,10 @@ func (s *RegionalAPI) EnableManagedAlerts(req *RegionalAPIEnableManagedAlertsReq
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -3321,6 +3540,10 @@ func (s *RegionalAPI) DisableManagedAlerts(req *RegionalAPIDisableManagedAlertsR
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }

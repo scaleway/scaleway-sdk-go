@@ -6,13 +6,14 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"text/template"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
 	"github.com/scaleway/scaleway-sdk-go/logger"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 const (
@@ -128,23 +129,23 @@ profiles:
 
 type Config struct {
 	Profile       `yaml:",inline"`
-	ActiveProfile *string             `yaml:"active_profile,omitempty" json:"active_profile,omitempty"`
-	Profiles      map[string]*Profile `yaml:"profiles,omitempty" json:"profiles,omitempty"`
+	ActiveProfile *string             `yaml:"active_profile,omitempty" json:"active_profile,omitempty" jsonschema:"description=Name of the active profile"`
+	Profiles      map[string]*Profile `yaml:"profiles,omitempty" json:"profiles,omitempty" jsonschema:"description=Named profiles"`
 }
 
 type Profile struct {
-	AccessKey             *string `yaml:"access_key,omitempty" json:"access_key,omitempty"`
-	SecretKey             *string `yaml:"secret_key,omitempty" json:"secret_key,omitempty"`
-	APIURL                *string `yaml:"api_url,omitempty" json:"api_url,omitempty"`
-	S3Endpoint            *string `yaml:"s3_endpoint,omitempty" json:"s3_endpoint,omitempty"`
-	S3UsePathStyle        *bool   `yaml:"s3_use_path_style,omitempty" json:"s3_use_path_style,omitempty"`
-	Insecure              *bool   `yaml:"insecure,omitempty" json:"insecure,omitempty"`
-	DefaultOrganizationID *string `yaml:"default_organization_id,omitempty" json:"default_organization_id,omitempty"`
-	DefaultProjectID      *string `yaml:"default_project_id,omitempty" json:"default_project_id,omitempty"`
-	DefaultRegion         *string `yaml:"default_region,omitempty" json:"default_region,omitempty"`
-	DefaultZone           *string `yaml:"default_zone,omitempty" json:"default_zone,omitempty"`
-	SendTelemetry         *bool   `yaml:"send_telemetry,omitempty" json:"send_telemetry,omitempty"`
-	UserAgent             *string `yaml:"user_agent,omitempty" json:"user_agent,omitempty"`
+	AccessKey             *string `yaml:"access_key,omitempty" json:"access_key,omitempty" jsonschema:"description=A Scaleway access key"`
+	SecretKey             *string `yaml:"secret_key,omitempty" json:"secret_key,omitempty" jsonschema:"description=A Scaleway secret key"`
+	APIURL                *string `yaml:"api_url,omitempty" json:"api_url,omitempty" jsonschema:"description=Scaleway API URL"`
+	S3Endpoint            *string `yaml:"s3_endpoint,omitempty" json:"s3_endpoint,omitempty" jsonschema:"description=S3 API endpoint URL"`
+	S3UsePathStyle        *bool   `yaml:"s3_use_path_style,omitempty" json:"s3_use_path_style,omitempty" jsonschema:"description=Whether to use path-style S3 URLs"`
+	Insecure              *bool   `yaml:"insecure,omitempty" json:"insecure,omitempty" jsonschema:"description=Whether to allow insecure HTTPS connections"`
+	DefaultOrganizationID *string `yaml:"default_organization_id,omitempty" json:"default_organization_id,omitempty" jsonschema:"description=A default Scaleway organization ID"`
+	DefaultProjectID      *string `yaml:"default_project_id,omitempty" json:"default_project_id,omitempty" jsonschema:"description=A default Scaleway project ID"`
+	DefaultRegion         *string `yaml:"default_region,omitempty" json:"default_region,omitempty" jsonschema:"description=A default Scaleway region"`
+	DefaultZone           *string `yaml:"default_zone,omitempty" json:"default_zone,omitempty" jsonschema:"description=A default Scaleway zone"`
+	SendTelemetry         *bool   `yaml:"send_telemetry,omitempty" json:"send_telemetry,omitempty" jsonschema:"description=Whether to send telemetry"`
+	UserAgent             *string `yaml:"user_agent,omitempty" json:"user_agent,omitempty" jsonschema:"description=User agent appended to API requests"`
 }
 
 func (p *Profile) String() string {
@@ -240,8 +241,11 @@ func LoadConfigFromPath(path string) (*Config, error) {
 		return nil, err
 	}
 
-	if fileInfo.Mode().Perm() != defaultConfigPermission {
-		fmt.Printf("WARNING: Scaleway configuration file permissions are too "+
+	// On Windows, os.Stat reports 0666 for every file regardless of NTFS ACLs,
+	// so the Unix permission check is meaningless there.
+	// See https://gitlab.com/gitlab-org/cli/-/merge_requests/1569
+	if runtime.GOOS != "windows" && fileInfo.Mode().Perm() != defaultConfigPermission {
+		fmt.Fprintf(os.Stderr, "WARNING: Scaleway configuration file permissions are too "+
 			"permissive. That is insecure.\nYou can fix it with the command "+
 			"'chmod 0600 %s'\n", path)
 	}

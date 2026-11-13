@@ -969,7 +969,7 @@ type Container struct {
 	// Default value: unknown_privacy
 	Privacy ContainerPrivacy `json:"privacy"`
 
-	// Image: image reference (e.g. "rg.fr-par.scw.cloud/my-registry-namespace/image:tag").
+	// Image: image reference (e.g. with sample image: "rg.fr-par.scw.cloud/serverless-catalog/sample-website:latest").
 	Image string `json:"image"`
 
 	// Protocol: protocol the container uses.
@@ -989,7 +989,7 @@ type Container struct {
 	// ScalingOption: parameter used to decide when to scale up or down.
 	ScalingOption *ContainerScalingOption `json:"scaling_option"`
 
-	// LivenessProbe: if the liveness probe fails, the container will be restarted.
+	// LivenessProbe: if the liveness probe fails, the container will be marked as unhealthy, and won't receive traffic anymore.
 	// It is performed periodically during the container's lifetime. The liveness probe is not executed until the startup probe (if defined) is successful.
 	//
 	// Possible check types:
@@ -1339,7 +1339,7 @@ type CreateContainerRequest struct {
 	// Description: container description.
 	Description *string `json:"description,omitempty"`
 
-	// Image: image reference (e.g. "rg.fr-par.scw.cloud/my-registry-namespace/image:tag").
+	// Image: image reference (e.g. with sample image: "rg.fr-par.scw.cloud/serverless-catalog/sample-website:latest").
 	Image string `json:"image"`
 
 	// Protocol: protocol the container uses.
@@ -1362,7 +1362,7 @@ type CreateContainerRequest struct {
 	// ScalingOption: parameter used to decide when to scale up or down.
 	ScalingOption *ContainerScalingOption `json:"scaling_option,omitempty"`
 
-	// LivenessProbe: if the liveness probe fails, the container will be restarted.
+	// LivenessProbe: if the liveness probe fails, the container will be marked as unhealthy, and won't receive traffic anymore.
 	// It is performed periodically during the container's lifetime. The liveness probe is not executed until the startup probe (if defined) is successful.
 	//
 	// Possible check types:
@@ -1781,7 +1781,7 @@ type UpdateContainerRequest struct {
 	// Description: container description.
 	Description *string `json:"description,omitempty"`
 
-	// Image: image reference (e.g. "rg.fr-par.scw.cloud/my-registry-namespace/image:tag").
+	// Image: image reference (e.g. with sample image: "rg.fr-par.scw.cloud/serverless-catalog/sample-website:latest").
 	Image *string `json:"image,omitempty"`
 
 	// Protocol: protocol the container uses.
@@ -1804,7 +1804,7 @@ type UpdateContainerRequest struct {
 	// ScalingOption: parameter used to decide when to scale up or down.
 	ScalingOption *ContainerScalingOption `json:"scaling_option,omitempty"`
 
-	// LivenessProbe: if the liveness probe fails, the container will be restarted.
+	// LivenessProbe: if the liveness probe fails, the container will be marked as unhealthy, and won't receive traffic anymore.
 	// It is performed periodically during the container's lifetime. The liveness probe is not executed until the startup probe (if defined) is successful.
 	//
 	// Possible check types:

@@ -1196,11 +1196,33 @@ type IP struct {
 	// Tags: IP tags.
 	Tags []string `json:"tags"`
 
+	// IpamIPID: ID of the IPAM IP address associated with the flexible IP.
+	IpamIPID *string `json:"ipam_ip_id"`
+
 	// Deprecated: Region: the region the IP address is in.
 	Region *scw.Region `json:"region,omitempty"`
 
 	// Zone: the zone the IP address is in.
 	Zone scw.Zone `json:"zone"`
+
+	// Srn: the SRN of the IP address.
+	Srn string `json:"srn"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *IP) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://lb.%s/zones/%s/ips/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // Instance: instance.
@@ -1228,6 +1250,15 @@ type Instance struct {
 	Zone scw.Zone `json:"zone"`
 }
 
+// IpamIP: ipam ip.
+type IpamIP struct {
+	// ID: iPAM IP ID.
+	ID string `json:"id"`
+
+	// IPAddress: actual IP address.
+	IPAddress string `json:"ip_address"`
+}
+
 // Subscriber: Subscriber.
 type Subscriber struct {
 	// ID: subscriber ID.
@@ -1243,6 +1274,28 @@ type Subscriber struct {
 	// WebhookConfig: webhook URI of subscriber.
 	// Precisely one of EmailConfig, WebhookConfig must be set.
 	WebhookConfig *SubscriberWebhookConfig `json:"webhook_config,omitempty"`
+
+	// Zone: the zone the subscriber is in.
+	Zone scw.Zone `json:"zone"`
+
+	// Srn: the SRN of the subscriber.
+	Srn string `json:"srn"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *Subscriber) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://lb.%s/zones/%s/subscribers/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // HealthCheck: health check.
@@ -1353,6 +1406,9 @@ type LB struct {
 	// IP: list of IP addresses attached to the Load Balancer.
 	IP []*IP `json:"ip"`
 
+	// IpamIPs: list of public IPAM IP addresses attached to the Load Balancer.
+	IpamIPs []*IpamIP `json:"ipam_ips"`
+
 	// Tags: load Balancer tags.
 	Tags []string `json:"tags"`
 
@@ -1389,6 +1445,25 @@ type LB struct {
 
 	// Zone: the zone the Load Balancer is in.
 	Zone scw.Zone `json:"zone"`
+
+	// Srn: the SRN of the Load Balancer.
+	Srn string `json:"srn"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *LB) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://lb.%s/zones/%s/lbs/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // ACLActionRedirect: acl action redirect.
@@ -1488,6 +1563,12 @@ type Backend struct {
 
 	// Host: when connecting to backend servers, use this value as the HTTP Host header or TLS SNI. This allows routing to specific services on the backend server that are configured to respond to particular hostnames.
 	Host *string `json:"host"`
+
+	// Zone: the zone the backend is in.
+	Zone scw.Zone `json:"zone"`
+
+	// Srn: the SRN of the backend.
+	Srn string `json:"srn"`
 }
 
 func (m *Backend) UnmarshalJSON(b []byte) error {
@@ -1524,6 +1605,22 @@ func (m Backend) MarshalJSON() ([]byte, error) {
 		TmpTimeoutTunnel:  marshaler.NewDuration(m.TimeoutTunnel),
 	}
 	return json.Marshal(tmp)
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *Backend) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://lb.%s/zones/%s/backends/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // Certificate: certificate.
@@ -1568,6 +1665,28 @@ type Certificate struct {
 
 	// StatusDetails: additional information about the certificate status (useful in case of certificate generation failure, for example).
 	StatusDetails *string `json:"status_details"`
+
+	// Zone: the zone the certificate is in.
+	Zone scw.Zone `json:"zone"`
+
+	// Srn: the SRN of the certificate.
+	Srn string `json:"srn"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *Certificate) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://lb.%s/zones/%s/certificates/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // ACLAction: acl action.
@@ -1642,6 +1761,12 @@ type Frontend struct {
 
 	// EnableAccessLogs: defines whether to enable access logs on the frontend.
 	EnableAccessLogs bool `json:"enable_access_logs"`
+
+	// Zone: the zone the frontend is in.
+	Zone scw.Zone `json:"zone"`
+
+	// Srn: the SRN of the frontend.
+	Srn string `json:"srn"`
 }
 
 func (m *Frontend) UnmarshalJSON(b []byte) error {
@@ -1670,6 +1795,22 @@ func (m Frontend) MarshalJSON() ([]byte, error) {
 		TmpTimeoutClient: marshaler.NewDuration(m.TimeoutClient),
 	}
 	return json.Marshal(tmp)
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *Frontend) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://lb.%s/zones/%s/frontends/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // PrivateNetworkDHCPConfig: private network dhcp config.
@@ -1771,6 +1912,28 @@ type ACL struct {
 
 	// Description: ACL description.
 	Description string `json:"description"`
+
+	// Zone: the zone the ACL is in.
+	Zone scw.Zone `json:"zone"`
+
+	// Srn: the SRN of the ACL.
+	Srn string `json:"srn"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *ACL) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://lb.%s/zones/%s/acls/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // PrivateNetwork: private network.
@@ -1830,6 +1993,25 @@ type LBType struct {
 
 	// Zone: the zone the Load Balancer stock is in.
 	Zone scw.Zone `json:"zone"`
+
+	// Srn: the SRN of the Load Balancer offer type.
+	Srn string `json:"srn"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *LBType) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.Name) != "" {
+		m.Srn = fmt.Sprintf("srn://lb.%s/zones/%s/lb-types/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.Name))
+		return
+	}
 }
 
 // Route: route.
@@ -1851,6 +2033,28 @@ type Route struct {
 
 	// UpdatedAt: date on which the route was last updated.
 	UpdatedAt *time.Time `json:"updated_at"`
+
+	// Zone: the zone the route is in.
+	Zone scw.Zone `json:"zone"`
+
+	// Srn: the SRN of the route.
+	Srn string `json:"srn"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *Route) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://lb.%s/zones/%s/routes/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // ACLSpec: acl spec.
@@ -2188,6 +2392,9 @@ type CreateLBRequest struct {
 	// IPIDs: list of IP IDs to attach to the Load Balancer.
 	IPIDs []string `json:"ip_ids"`
 
+	// IpamIPIDs: list of IPAM IP IDs to attach to the Load Balancer.
+	IpamIPIDs []string `json:"ipam_ip_ids"`
+
 	// Tags: list of tags for the Load Balancer.
 	Tags []string `json:"tags"`
 
@@ -2284,7 +2491,10 @@ type DeleteLBRequest struct {
 	LBID string `json:"-"`
 
 	// ReleaseIP: defines whether the Load Balancer's flexible IP should be deleted. Set to true to release the flexible IP, or false to keep it available in your account for future Load Balancers.
-	ReleaseIP bool `json:"release_ip"`
+	ReleaseIP bool `json:"-"`
+
+	// MigrateFlexipToIpam: if true and one or several ips of the LB are legacy flexible IP, they will be migrated to IPAM, free to use in other Scaleway products.
+	MigrateFlexipToIpam *bool `json:"-"`
 }
 
 // DeleteRouteRequest: delete route request.
@@ -2679,6 +2889,9 @@ type ListIPsRequest struct {
 
 	// Tags: tag to filter for, only IPs with one or more matching tags will be returned.
 	Tags []string `json:"-"`
+
+	// Attached: defines whether to filter only for Flexible IPs which are attached to a Load Balancer.
+	Attached *bool `json:"-"`
 }
 
 // ListIPsResponse: list i ps response.
@@ -3433,6 +3646,18 @@ type ZonedAPIAddBackendServersRequest struct {
 	ServerIP []string `json:"server_ip"`
 }
 
+// ZonedAPIAttachIpamIPRequest: zoned api attach ipam ip request.
+type ZonedAPIAttachIpamIPRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// LBID: load Balancer ID.
+	LBID string `json:"-"`
+
+	// IpamIPIDs: ID of an IPAM IP address to attach to the Load Balancer.
+	IpamIPIDs []string `json:"ipam_ip_ids"`
+}
+
 // ZonedAPIAttachPrivateNetworkRequest: zoned api attach private network request.
 type ZonedAPIAttachPrivateNetworkRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
@@ -3738,6 +3963,9 @@ type ZonedAPICreateLBRequest struct {
 	// IPIDs: list of IP IDs to attach to the Load Balancer.
 	IPIDs []string `json:"ip_ids"`
 
+	// IpamIPIDs: list of IPAM IP IDs to attach to the Load Balancer.
+	IpamIPIDs []string `json:"ipam_ip_ids"`
+
 	// Tags: list of tags for the Load Balancer.
 	Tags []string `json:"tags"`
 
@@ -3834,7 +4062,10 @@ type ZonedAPIDeleteLBRequest struct {
 	LBID string `json:"-"`
 
 	// ReleaseIP: defines whether the Load Balancer's flexible IP should be deleted. Set to true to release the flexible IP, or false to keep it available in your account for future Load Balancers.
-	ReleaseIP bool `json:"release_ip"`
+	ReleaseIP bool `json:"-"`
+
+	// MigrateFlexipToIpam: if true and one or several ips of the LB are legacy flexible IP, they will be migrated to IPAM, free to use in other Scaleway products.
+	MigrateFlexipToIpam *bool `json:"-"`
 }
 
 // ZonedAPIDeleteRouteRequest: zoned api delete route request.
@@ -4083,6 +4314,9 @@ type ZonedAPIListIPsRequest struct {
 
 	// Tags: tag to filter for, only IPs with one or more matching tags will be returned.
 	Tags []string `json:"-"`
+
+	// Attached: defines whether to filter only for Flexible IPs which are attached to a Load Balancer.
+	Attached *bool `json:"-"`
 }
 
 // ZonedAPIListLBPrivateNetworksRequest: zoned api list lb private networks request.
@@ -4258,6 +4492,15 @@ type ZonedAPISubscribeToLBRequest struct {
 
 	// SubscriberID: subscriber ID.
 	SubscriberID string `json:"subscriber_id"`
+}
+
+// ZonedAPITransferToIpamRequest: zoned api transfer to ipam request.
+type ZonedAPITransferToIpamRequest struct {
+	// Zone: zone to target. If none is passed will use default zone from the config.
+	Zone scw.Zone `json:"-"`
+
+	// IPID: ID of the LB Flexible IP to transfer to IPAM.
+	IPID string `json:"-"`
 }
 
 // ZonedAPIUnsubscribeFromLBRequest: zoned api unsubscribe from lb request.
@@ -4697,6 +4940,12 @@ func (s *ZonedAPI) ListLBs(req *ZonedAPIListLBsRequest, opts ...scw.RequestOptio
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.LBs {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -4743,6 +4992,10 @@ func (s *ZonedAPI) CreateLB(req *ZonedAPICreateLBRequest, opts ...scw.RequestOpt
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -4773,6 +5026,10 @@ func (s *ZonedAPI) GetLB(req *ZonedAPIGetLBRequest, opts ...scw.RequestOption) (
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -4862,6 +5119,10 @@ func (s *ZonedAPI) UpdateLB(req *ZonedAPIUpdateLBRequest, opts ...scw.RequestOpt
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -4876,6 +5137,7 @@ func (s *ZonedAPI) DeleteLB(req *ZonedAPIDeleteLBRequest, opts ...scw.RequestOpt
 
 	query := url.Values{}
 	parameter.AddToQuery(query, "release_ip", req.ReleaseIP)
+	parameter.AddToQuery(query, "migrate_flexip_to_ipam", req.MigrateFlexipToIpam)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return errors.New("field Zone cannot be empty in request")
@@ -4931,6 +5193,50 @@ func (s *ZonedAPI) MigrateLB(req *ZonedAPIMigrateLBRequest, opts ...scw.RequestO
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
+	return &resp, nil
+}
+
+// AttachIpamIP: Attach one or several public IPAM IP addresses to a given Load Balancer, specified by its Load Balancer ID. The attached IPAM IP addresses are used for the public traffic of the Load Balancer.
+func (s *ZonedAPI) AttachIpamIP(req *ZonedAPIAttachIpamIPRequest, opts ...scw.RequestOption) (*LB, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.LBID) == "" {
+		return nil, errors.New("field LBID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/lb/v1/zones/" + fmt.Sprint(req.Zone) + "/lbs/" + fmt.Sprint(req.LBID) + "/attach-ipam-ip",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp LB
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -4956,6 +5262,7 @@ func (s *ZonedAPI) ListIPs(req *ZonedAPIListIPsRequest, opts ...scw.RequestOptio
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "ip_type", req.IPType)
 	parameter.AddToQuery(query, "tags", req.Tags)
+	parameter.AddToQuery(query, "attached", req.Attached)
 
 	if fmt.Sprint(req.Zone) == "" {
 		return nil, errors.New("field Zone cannot be empty in request")
@@ -4972,6 +5279,12 @@ func (s *ZonedAPI) ListIPs(req *ZonedAPIListIPsRequest, opts ...scw.RequestOptio
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.IPs {
+			el.setSRN(apiMetadata.Domain)
+		}
 	}
 	return &resp, nil
 }
@@ -5015,6 +5328,10 @@ func (s *ZonedAPI) CreateIP(req *ZonedAPICreateIPRequest, opts ...scw.RequestOpt
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -5045,6 +5362,10 @@ func (s *ZonedAPI) GetIP(req *ZonedAPIGetIPRequest, opts ...scw.RequestOption) (
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -5111,6 +5432,46 @@ func (s *ZonedAPI) UpdateIP(req *ZonedAPIUpdateIPRequest, opts ...scw.RequestOpt
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
+	return &resp, nil
+}
+
+// TransferToIpam: Transfer a legacy Load Balancer flexible IP address to an IPAM-managed IP address, so it can be used in other Scaleway products. Returns the resulting IPAM IP. This action cannot be undone.
+func (s *ZonedAPI) TransferToIpam(req *ZonedAPITransferToIpamRequest, opts ...scw.RequestOption) (*IpamIP, error) {
+	var err error
+
+	if req.Zone == "" {
+		defaultZone, _ := s.client.GetDefaultZone()
+		req.Zone = defaultZone
+	}
+
+	if fmt.Sprint(req.Zone) == "" {
+		return nil, errors.New("field Zone cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.IPID) == "" {
+		return nil, errors.New("field IPID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/lb/v1/zones/" + fmt.Sprint(req.Zone) + "/ips/" + fmt.Sprint(req.IPID) + "/transfer-to-ipam",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp IpamIP
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
 	return &resp, nil
 }
 
@@ -5154,6 +5515,12 @@ func (s *ZonedAPI) ListBackends(req *ZonedAPIListBackendsRequest, opts ...scw.Re
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Backends {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -5194,6 +5561,10 @@ func (s *ZonedAPI) CreateBackend(req *ZonedAPICreateBackendRequest, opts ...scw.
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -5224,6 +5595,10 @@ func (s *ZonedAPI) GetBackend(req *ZonedAPIGetBackendRequest, opts ...scw.Reques
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -5260,6 +5635,10 @@ func (s *ZonedAPI) UpdateBackend(req *ZonedAPIUpdateBackendRequest, opts ...scw.
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -5326,6 +5705,10 @@ func (s *ZonedAPI) AddBackendServers(req *ZonedAPIAddBackendServersRequest, opts
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -5362,6 +5745,10 @@ func (s *ZonedAPI) RemoveBackendServers(req *ZonedAPIRemoveBackendServersRequest
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -5397,6 +5784,10 @@ func (s *ZonedAPI) SetBackendServers(req *ZonedAPISetBackendServersRequest, opts
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -5477,6 +5868,12 @@ func (s *ZonedAPI) ListFrontends(req *ZonedAPIListFrontendsRequest, opts ...scw.
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Frontends {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -5517,6 +5914,10 @@ func (s *ZonedAPI) CreateFrontend(req *ZonedAPICreateFrontendRequest, opts ...sc
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -5547,6 +5948,10 @@ func (s *ZonedAPI) GetFrontend(req *ZonedAPIGetFrontendRequest, opts ...scw.Requ
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -5583,6 +5988,10 @@ func (s *ZonedAPI) UpdateFrontend(req *ZonedAPIUpdateFrontendRequest, opts ...sc
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -5652,6 +6061,12 @@ func (s *ZonedAPI) ListRoutes(req *ZonedAPIListRoutesRequest, opts ...scw.Reques
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Routes {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -5684,6 +6099,10 @@ func (s *ZonedAPI) CreateRoute(req *ZonedAPICreateRouteRequest, opts ...scw.Requ
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -5714,6 +6133,10 @@ func (s *ZonedAPI) GetRoute(req *ZonedAPIGetRouteRequest, opts ...scw.RequestOpt
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -5750,6 +6173,10 @@ func (s *ZonedAPI) UpdateRoute(req *ZonedAPIUpdateRouteRequest, opts ...scw.Requ
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -5900,6 +6327,12 @@ func (s *ZonedAPI) ListACLs(req *ZonedAPIListACLsRequest, opts ...scw.RequestOpt
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.ACLs {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -5940,6 +6373,10 @@ func (s *ZonedAPI) CreateACL(req *ZonedAPICreateACLRequest, opts ...scw.RequestO
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -5970,6 +6407,10 @@ func (s *ZonedAPI) GetACL(req *ZonedAPIGetACLRequest, opts ...scw.RequestOption)
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -6006,6 +6447,10 @@ func (s *ZonedAPI) UpdateACL(req *ZonedAPIUpdateACLRequest, opts ...scw.RequestO
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -6072,6 +6517,12 @@ func (s *ZonedAPI) SetACLs(req *ZonedAPISetACLsRequest, opts ...scw.RequestOptio
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.ACLs {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -6111,6 +6562,10 @@ func (s *ZonedAPI) CreateCertificate(req *ZonedAPICreateCertificateRequest, opts
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -6155,6 +6610,12 @@ func (s *ZonedAPI) ListCertificates(req *ZonedAPIListCertificatesRequest, opts .
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Certificates {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -6185,6 +6646,10 @@ func (s *ZonedAPI) GetCertificate(req *ZonedAPIGetCertificateRequest, opts ...sc
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -6269,6 +6734,10 @@ func (s *ZonedAPI) UpdateCertificate(req *ZonedAPIUpdateCertificateRequest, opts
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -6335,6 +6804,12 @@ func (s *ZonedAPI) ListLBTypes(req *ZonedAPIListLBTypesRequest, opts ...scw.Requ
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.LBTypes {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -6377,6 +6852,10 @@ func (s *ZonedAPI) CreateSubscriber(req *ZonedAPICreateSubscriberRequest, opts .
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -6407,6 +6886,10 @@ func (s *ZonedAPI) GetSubscriber(req *ZonedAPIGetSubscriberRequest, opts ...scw.
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -6449,6 +6932,12 @@ func (s *ZonedAPI) ListSubscriber(req *ZonedAPIListSubscriberRequest, opts ...sc
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Subscribers {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -6484,6 +6973,10 @@ func (s *ZonedAPI) UpdateSubscriber(req *ZonedAPIUpdateSubscriberRequest, opts .
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -6550,6 +7043,10 @@ func (s *ZonedAPI) SubscribeToLB(req *ZonedAPISubscribeToLBRequest, opts ...scw.
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -6580,6 +7077,10 @@ func (s *ZonedAPI) UnsubscribeFromLB(req *ZonedAPIUnsubscribeFromLBRequest, opts
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -6752,6 +7253,12 @@ func (s *API) ListLBs(req *ListLBsRequest, opts ...scw.RequestOption) (*ListLBsR
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.LBs {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -6798,6 +7305,10 @@ func (s *API) CreateLB(req *CreateLBRequest, opts ...scw.RequestOption) (*LB, er
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -6828,6 +7339,10 @@ func (s *API) GetLB(req *GetLBRequest, opts ...scw.RequestOption) (*LB, error) {
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -6865,6 +7380,10 @@ func (s *API) UpdateLB(req *UpdateLBRequest, opts ...scw.RequestOption) (*LB, er
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -6879,6 +7398,7 @@ func (s *API) DeleteLB(req *DeleteLBRequest, opts ...scw.RequestOption) error {
 
 	query := url.Values{}
 	parameter.AddToQuery(query, "release_ip", req.ReleaseIP)
+	parameter.AddToQuery(query, "migrate_flexip_to_ipam", req.MigrateFlexipToIpam)
 
 	if fmt.Sprint(req.Region) == "" {
 		return errors.New("field Region cannot be empty in request")
@@ -6934,6 +7454,10 @@ func (s *API) MigrateLB(req *MigrateLBRequest, opts ...scw.RequestOption) (*LB, 
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -6959,6 +7483,7 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsR
 	parameter.AddToQuery(query, "project_id", req.ProjectID)
 	parameter.AddToQuery(query, "ip_type", req.IPType)
 	parameter.AddToQuery(query, "tags", req.Tags)
+	parameter.AddToQuery(query, "attached", req.Attached)
 
 	if fmt.Sprint(req.Region) == "" {
 		return nil, errors.New("field Region cannot be empty in request")
@@ -6975,6 +7500,12 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsR
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.IPs {
+			el.setSRN(apiMetadata.Domain)
+		}
 	}
 	return &resp, nil
 }
@@ -7018,6 +7549,10 @@ func (s *API) CreateIP(req *CreateIPRequest, opts ...scw.RequestOption) (*IP, er
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -7048,6 +7583,10 @@ func (s *API) GetIP(req *GetIPRequest, opts ...scw.RequestOption) (*IP, error) {
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -7114,6 +7653,10 @@ func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*IP, er
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -7157,6 +7700,12 @@ func (s *API) ListBackends(req *ListBackendsRequest, opts ...scw.RequestOption) 
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Backends {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -7197,6 +7746,10 @@ func (s *API) CreateBackend(req *CreateBackendRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -7227,6 +7780,10 @@ func (s *API) GetBackend(req *GetBackendRequest, opts ...scw.RequestOption) (*Ba
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -7263,6 +7820,10 @@ func (s *API) UpdateBackend(req *UpdateBackendRequest, opts ...scw.RequestOption
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -7329,6 +7890,10 @@ func (s *API) AddBackendServers(req *AddBackendServersRequest, opts ...scw.Reque
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -7365,6 +7930,10 @@ func (s *API) RemoveBackendServers(req *RemoveBackendServersRequest, opts ...scw
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -7400,6 +7969,10 @@ func (s *API) SetBackendServers(req *SetBackendServersRequest, opts ...scw.Reque
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -7480,6 +8053,12 @@ func (s *API) ListFrontends(req *ListFrontendsRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Frontends {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -7520,6 +8099,10 @@ func (s *API) CreateFrontend(req *CreateFrontendRequest, opts ...scw.RequestOpti
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -7550,6 +8133,10 @@ func (s *API) GetFrontend(req *GetFrontendRequest, opts ...scw.RequestOption) (*
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -7586,6 +8173,10 @@ func (s *API) UpdateFrontend(req *UpdateFrontendRequest, opts ...scw.RequestOpti
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -7655,6 +8246,12 @@ func (s *API) ListRoutes(req *ListRoutesRequest, opts ...scw.RequestOption) (*Li
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Routes {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -7687,6 +8284,10 @@ func (s *API) CreateRoute(req *CreateRouteRequest, opts ...scw.RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -7717,6 +8318,10 @@ func (s *API) GetRoute(req *GetRouteRequest, opts ...scw.RequestOption) (*Route,
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -7753,6 +8358,10 @@ func (s *API) UpdateRoute(req *UpdateRouteRequest, opts ...scw.RequestOption) (*
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -7903,6 +8512,12 @@ func (s *API) ListACLs(req *ListACLsRequest, opts ...scw.RequestOption) (*ListAC
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.ACLs {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -7943,6 +8558,10 @@ func (s *API) CreateACL(req *CreateACLRequest, opts ...scw.RequestOption) (*ACL,
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -7973,6 +8592,10 @@ func (s *API) GetACL(req *GetACLRequest, opts ...scw.RequestOption) (*ACL, error
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -8009,6 +8632,10 @@ func (s *API) UpdateACL(req *UpdateACLRequest, opts ...scw.RequestOption) (*ACL,
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -8079,6 +8706,10 @@ func (s *API) CreateCertificate(req *CreateCertificateRequest, opts ...scw.Reque
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -8122,6 +8753,12 @@ func (s *API) ListCertificates(req *ListCertificatesRequest, opts ...scw.Request
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Certificates {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -8152,6 +8789,10 @@ func (s *API) GetCertificate(req *GetCertificateRequest, opts ...scw.RequestOpti
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -8188,6 +8829,10 @@ func (s *API) UpdateCertificate(req *UpdateCertificateRequest, opts ...scw.Reque
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -8255,6 +8900,12 @@ func (s *API) ListLBTypes(req *ListLBTypesRequest, opts ...scw.RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.LBTypes {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -8297,6 +8948,10 @@ func (s *API) CreateSubscriber(req *CreateSubscriberRequest, opts ...scw.Request
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -8327,6 +8982,10 @@ func (s *API) GetSubscriber(req *GetSubscriberRequest, opts ...scw.RequestOption
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -8369,6 +9028,12 @@ func (s *API) ListSubscriber(req *ListSubscriberRequest, opts ...scw.RequestOpti
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Subscribers {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -8404,6 +9069,10 @@ func (s *API) UpdateSubscriber(req *UpdateSubscriberRequest, opts ...scw.Request
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -8470,6 +9139,10 @@ func (s *API) SubscribeToLB(req *SubscribeToLBRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -8500,6 +9173,10 @@ func (s *API) UnsubscribeFromLB(req *UnsubscribeFromLBRequest, opts ...scw.Reque
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }

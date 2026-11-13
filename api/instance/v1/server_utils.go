@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"slices"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/api/marketplace/v2"
@@ -91,8 +92,22 @@ type WaitForServerRequest struct {
 	RetryInterval *time.Duration
 }
 
-// WaitForServer wait for the server to be in a "terminal state" before returning.
-// This function can be used to wait for a server to be started for example.
+var terminalServerStates = map[ServerState]struct{}{
+	ServerStateStopped:        {},
+	ServerStateStoppedInPlace: {},
+	ServerStateLocked:         {},
+	ServerStateRunning:        {},
+}
+
+var terminalIPStates = map[ServerIPState]struct{}{
+	ServerIPStateAttached: {},
+	ServerIPStateDetached: {},
+	ServerIPStateError:    {},
+}
+
+// WaitForServer wait for the server and its publicIPs to be in a "terminal
+// state" before returning. This function can be used to wait for a server to be
+// started for example.
 func (s *API) WaitForServer(req *WaitForServerRequest, opts ...scw.RequestOption) (*Server, error) {
 	timeout := defaultTimeout
 	if req.Timeout != nil {
@@ -101,13 +116,6 @@ func (s *API) WaitForServer(req *WaitForServerRequest, opts ...scw.RequestOption
 	retryInterval := defaultRetryInterval
 	if req.RetryInterval != nil {
 		retryInterval = *req.RetryInterval
-	}
-
-	terminalStatus := map[ServerState]struct{}{
-		ServerStateStopped:        {},
-		ServerStateStoppedInPlace: {},
-		ServerStateLocked:         {},
-		ServerStateRunning:        {},
 	}
 
 	server, err := async.WaitSync(&async.WaitSyncConfig{
@@ -119,9 +127,23 @@ func (s *API) WaitForServer(req *WaitForServerRequest, opts ...scw.RequestOption
 			if err != nil {
 				return nil, false, err
 			}
-			_, isTerminal := terminalStatus[res.Server.State]
 
-			return res.Server, isTerminal, err
+			_, isServerStateTerminal := terminalServerStates[res.Server.State]
+
+			// The IPs are handled distinctly from the server state, so we wait here
+			// for the IPs to be in a terminal state to return, ensuring the server
+			// is in a stable usable state. This is especially useful for dynamically
+			// assigned IPs, which are provisionned at poweron and thus may take
+			// a few seconds to be available.
+			// NOTE the special "unknown" state isn't considered terminal, which
+			// would lead to retrying until timeout then failing, and lead to a probable
+			// bug report so we can't silently ignore a failed assumption.
+			hasIPStateTransient := slices.ContainsFunc(res.Server.PublicIPs, func(ip *ServerIP) bool {
+				_, ok := terminalIPStates[ip.State]
+				return !ok
+			})
+
+			return res.Server, isServerStateTerminal && !hasIPStateTransient, err
 		},
 		Timeout:          timeout,
 		IntervalStrategy: async.LinearIntervalStrategy(retryInterval),

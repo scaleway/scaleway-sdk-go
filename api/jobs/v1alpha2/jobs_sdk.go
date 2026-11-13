@@ -329,6 +329,9 @@ type Secret struct {
 	// SecretID: UUID of the secret reference within the job.
 	SecretID string `json:"secret_id"`
 
+	// Srn: sRN of the secret reference.
+	Srn string `json:"srn"`
+
 	// SecretManagerID: UUID of the secret in Secret Manager.
 	SecretManagerID string `json:"secret_manager_id"`
 
@@ -345,6 +348,25 @@ type Secret struct {
 	// EnvVar: environment variable used to expose the secret.
 	// Precisely one of File, EnvVar must be set.
 	EnvVar *SecretEnvVar `json:"env_var,omitempty"`
+
+	// Region: region in which the secret reference exists.
+	Region scw.Region `json:"region"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *Secret) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.SecretID) != "" {
+		m.Srn = fmt.Sprintf("srn://jobs.%s/regions/%s/secrets/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.SecretID))
+		return
+	}
 }
 
 // CreateTriggerRequestCronConfig: create trigger request cron config.
@@ -366,6 +388,9 @@ type CreateTriggerRequestCronConfig struct {
 type JobDefinition struct {
 	// ID: UUID of the job definition.
 	ID string `json:"id"`
+
+	// Srn: sRN of the job definition.
+	Srn string `json:"srn"`
 
 	// Name: name of the job definition.
 	Name string `json:"name"`
@@ -415,8 +440,24 @@ type JobDefinition struct {
 	// RetryPolicy: retry behaviour in case of job failure.
 	RetryPolicy *RetryPolicy `json:"retry_policy"`
 
-	// Region: region to target. If none is passed will use default region from the config.
+	// Region: region in which the job definition exists.
 	Region scw.Region `json:"region"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *JobDefinition) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://jobs.%s/regions/%s/job-definitions/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // Resource: resource.
@@ -430,6 +471,9 @@ type Resource struct {
 type JobRun struct {
 	// ID: UUID of the job run.
 	ID string `json:"id"`
+
+	// Srn: sRN of the job run.
+	Srn string `json:"srn"`
 
 	// JobDefinitionID: UUID of the job definition.
 	JobDefinitionID string `json:"job_definition_id"`
@@ -487,14 +531,33 @@ type JobRun struct {
 	// Attempts: number of run attempts.
 	Attempts *uint32 `json:"attempts"`
 
-	// Region: region to target. If none is passed will use default region from the config.
+	// Region: region in which the job run exists.
 	Region scw.Region `json:"region"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *JobRun) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://jobs.%s/regions/%s/job-runs/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // Trigger: trigger.
 type Trigger struct {
 	// ID: UUID of the trigger.
 	ID string `json:"id"`
+
+	// Srn: sRN of the trigger.
+	Srn string `json:"srn"`
 
 	// JobDefinitionID: UUID of the job definition.
 	JobDefinitionID string `json:"job_definition_id"`
@@ -511,6 +574,25 @@ type Trigger struct {
 	// CronConfig: configuration of the CRON trigger.
 	// Precisely one of CronConfig must be set.
 	CronConfig *TriggerCronConfig `json:"cron_config,omitempty"`
+
+	// Region: region in which the trigger exists.
+	Region scw.Region `json:"region"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *Trigger) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://jobs.%s/regions/%s/triggers/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // UpdateJobDefinitionRequestCronScheduleConfig: update job definition request cron schedule config.
@@ -1072,6 +1154,10 @@ func (s *API) CreateJobDefinition(req *CreateJobDefinitionRequest, opts ...scw.R
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1102,6 +1188,10 @@ func (s *API) GetJobDefinition(req *GetJobDefinitionRequest, opts ...scw.Request
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1143,6 +1233,12 @@ func (s *API) ListJobDefinitions(req *ListJobDefinitionsRequest, opts ...scw.Req
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.JobDefinitions {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -1178,6 +1274,10 @@ func (s *API) UpdateJobDefinition(req *UpdateJobDefinitionRequest, opts ...scw.R
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1275,6 +1375,10 @@ func (s *API) GetJobRun(req *GetJobRunRequest, opts ...scw.RequestOption) (*JobR
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1319,6 +1423,12 @@ func (s *API) ListJobRuns(req *ListJobRunsRequest, opts ...scw.RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.JobRuns {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -1354,6 +1464,10 @@ func (s *API) StopJobRun(req *StopJobRunRequest, opts ...scw.RequestOption) (*Jo
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1418,6 +1532,10 @@ func (s *API) GetSecret(req *GetSecretRequest, opts ...scw.RequestOption) (*Secr
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1448,6 +1566,12 @@ func (s *API) ListSecrets(req *ListSecretsRequest, opts ...scw.RequestOption) (*
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Secrets {
+			el.setSRN(apiMetadata.Domain)
+		}
 	}
 	return &resp, nil
 }
@@ -1484,6 +1608,10 @@ func (s *API) UpdateSecret(req *UpdateSecretRequest, opts ...scw.RequestOption) 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1546,6 +1674,10 @@ func (s *API) CreateTrigger(req *CreateTriggerRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1576,6 +1708,10 @@ func (s *API) GetTrigger(req *GetTriggerRequest, opts ...scw.RequestOption) (*Tr
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1616,6 +1752,12 @@ func (s *API) ListTriggers(req *ListTriggersRequest, opts ...scw.RequestOption) 
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Triggers {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -1651,6 +1793,10 @@ func (s *API) UpdateTrigger(req *UpdateTriggerRequest, opts ...scw.RequestOption
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
