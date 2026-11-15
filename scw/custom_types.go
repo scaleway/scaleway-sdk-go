@@ -141,10 +141,18 @@ func (m Money) String() string {
 		currencySign = m.CurrencyCode
 	}
 
-	cents := fmt.Sprintf("%09d", m.Nanos)
+	nanos := m.Nanos
+	if nanos < 0 {
+		nanos = -nanos
+	}
+	cents := fmt.Sprintf("%09d", nanos)
 	cents = cents[:2] + strings.TrimRight(cents[2:], "0")
 
-	return fmt.Sprintf("%s %d.%s", currencySign, m.Units, cents)
+	units := strconv.FormatInt(m.Units, 10)
+	if m.Units == 0 && m.Nanos < 0 {
+		units = "-0"
+	}
+	return fmt.Sprintf("%s %s.%s", currencySign, units, cents)
 }
 
 // ToFloat converts a Money object to a float.
@@ -376,7 +384,7 @@ func splitFloatString(input string) (units int64, nanos int32, err error) {
 		nanos = int32(n)
 	}
 
-	if units < 0 {
+	if strings.HasPrefix(parts[0], "-") {
 		nanos = -nanos
 	}
 

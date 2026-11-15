@@ -108,6 +108,29 @@ func TestMoney_NewMoneyFromFloat(t *testing.T) {
 	}
 }
 
+func TestMoney_NegativeAmounts(t *testing.T) {
+	for _, c := range []struct {
+		value float64
+		nanos int64
+		want  string
+	}{
+		{-0.75, -750000000, "€ -0.75"},
+		{-1.75, -1750000000, "€ -1.75"},
+		{-0.000000001, -1, "€ -0.000000001"},
+		{-1, -1000000000, "€ -1.00"},
+		{0, 0, "€ 0.00"},
+		{0.75, 750000000, "€ 0.75"},
+	} {
+		t.Run(c.want, func(t *testing.T) {
+			money := NewMoneyFromFloat(c.value, "EUR", 9)
+			want := &Money{CurrencyCode: "EUR", Units: c.nanos / 1e9, Nanos: int32(c.nanos % 1e9)}
+			testhelpers.Equals(t, want, money)
+			testhelpers.Equals(t, c.value, money.ToFloat())
+			testhelpers.Equals(t, c.want, want.String())
+		})
+	}
+}
+
 func TestMoney_String(t *testing.T) {
 	cases := []struct {
 		money *Money
@@ -543,6 +566,11 @@ func TestDuration_UnmarshalJSON(t *testing.T) {
 		want *Duration
 		err  string
 	}{
+		{
+			name: "negative fractional duration",
+			json: `{"duration":"-0.75s"}`,
+			want: &Duration{Seconds: 0, Nanos: -750000000},
+		},
 		{
 			name: "error negative nanos",
 			json: `{"duration":"a.12s"}`,
