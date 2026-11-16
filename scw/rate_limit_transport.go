@@ -26,6 +26,12 @@ const (
 	tlsHandshakeTimeout   = 10 * time.Second
 	responseHeaderTimeout = 30 * time.Second
 	expectContinueTimeout = 1 * time.Second
+
+	// defaultClientTimeout bounds the whole Do call: attempts, retry sleeps
+	// and the response body read. It must comfortably exceed the worst
+	// legitimate rate-limit sequence (5 retries x 30s backoff plus attempt
+	// time, about 3 minutes).
+	defaultClientTimeout = 5 * time.Minute
 )
 
 // RateLimitTransport implements http.RoundTripper

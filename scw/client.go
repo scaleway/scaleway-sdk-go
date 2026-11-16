@@ -679,10 +679,9 @@ func newHTTPClient() *http.Client {
 	}
 
 	return &http.Client{
-		// No whole-call Timeout: a single deadline would cover retry sleeps
-		// and every attempt, killing legitimate Retry-After waits. Per-attempt
-		// phase timeouts live on the base transport; callers set an overall
-		// bound per call via scw.WithContext(context.WithTimeout(...)).
+		// Whole-call timeout to bound the response body read, which can hang.
+		// A caller-supplied context deadline combines with it (the shorter wins).
+		Timeout:   defaultClientTimeout,
 		Transport: rlTransport,
 	}
 }

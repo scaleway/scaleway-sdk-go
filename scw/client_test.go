@@ -10,6 +10,7 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
@@ -601,6 +602,39 @@ func TestClampRetryAfterSeconds(t *testing.T) {
 			testhelpers.Equals(t, c.expected, clampRetryAfterSeconds(c.retryAfterSec, c.retry))
 		})
 	}
+}
+
+// TestRateLimitContextCancelsRetryWait verifies that a context deadline
+// aborts a 429 retry wait instead of sleeping the full backoff. This is the
+// mechanism http.Client.Timeout (defaultClientTimeout) relies on to bound
+// the whole call, including retry sleeps and the response body read.
+func TestRateLimitContextCancelsRetryWait(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Retry-After", "30")
+		w.WriteHeader(http.StatusTooManyRequests)
+	}))
+	defer server.Close()
+
+	client := newHTTPClient()
+	testhelpers.Equals(t, defaultClientTimeout, client.Timeout)
+	tp := client.Transport.(*RateLimitTransport)
+	tp.MaxRetries = 5
+
+	ctx, cancel := context.WithTimeout(context.Background(), 200*time.Millisecond)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, server.URL, nil)
+	testhelpers.AssertNoError(t, err)
+
+	start := time.Now()
+	_, err = client.Do(req)
+	elapsed := time.Since(start)
+
+	testhelpers.Assert(t, err != nil, "expected the context deadline to abort the request")
+	testhelpers.Assert(
+		t, elapsed < 30*time.Second,
+		"the 30s Retry-After backoff must be cut short by the deadline, took %s", elapsed,
+	)
 }
 
 // TestRateLimitNonReplayableBody verifies that a 429 retry does NOT re-send a
