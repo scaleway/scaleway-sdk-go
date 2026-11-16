@@ -710,7 +710,11 @@ func TestRateLimitContextCancelsRetryWait(t *testing.T) {
 	testhelpers.AssertNoError(t, err)
 
 	start := time.Now()
-	_, err = client.Do(req)
+	resp, err := client.Do(req)
+	if resp != nil {
+		_ = resp.Body.Close()
+	}
+
 	elapsed := time.Since(start)
 
 	testhelpers.Assert(t, err != nil, "expected the context deadline to abort the request")
