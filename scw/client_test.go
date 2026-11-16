@@ -604,6 +604,89 @@ func TestClampRetryAfterSeconds(t *testing.T) {
 	}
 }
 
+// TestParseRateLimitValue verifies parsing of Scaleway's X-Ratelimit-*
+// values, including the IETF draft list format ("0, 49;w=60", one entry per
+// limit bucket) and malformed input.
+func TestParseRateLimitValue(t *testing.T) {
+	cases := []struct {
+		name     string
+		value    string
+		expected int
+		ok       bool
+	}{
+		{name: "single value", value: "49", expected: 49, ok: true},
+		{name: "single value with parameters", value: "2;w=1", expected: 2, ok: true},
+		{name: "list takes the most restrictive bucket", value: "0, 49", expected: 0, ok: true},
+		{name: "list with parameters", value: "49, 3;w=60", expected: 3, ok: true},
+		{name: "garbage mixed with a value", value: "abc, 7", expected: 7, ok: true},
+		{name: "empty", value: "", expected: 0, ok: false},
+		{name: "garbage", value: "not-a-number", expected: 0, ok: false},
+		{name: "negative rejected", value: "-5", expected: 0, ok: false},
+	}
+
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			got, ok := parseRateLimitValue(c.value)
+			testhelpers.Equals(t, c.ok, ok)
+			if ok {
+				testhelpers.Equals(t, c.expected, got)
+			}
+		})
+	}
+}
+
+// TestRateLimitMultiBucketStateUpdate verifies that list-format
+// X-Ratelimit headers update the shared state with the most restrictive
+// bucket, and that malformed values leave the state untouched instead of
+// zero-filling it with garbage.
+func TestRateLimitMultiBucketStateUpdate(t *testing.T) {
+	t.Run("list values take the most restrictive bucket", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("X-Ratelimit-Remaining", "0, 49")
+			w.Header().Set("X-Ratelimit-Reset", "2, 3600")
+			w.WriteHeader(http.StatusOK)
+		}))
+		defer server.Close()
+
+		client := newHTTPClient()
+		tp := client.Transport.(*RateLimitTransport)
+
+		req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL, nil)
+		testhelpers.AssertNoError(t, err)
+		resp, err := client.Do(req)
+		testhelpers.AssertNoError(t, err)
+		_ = resp.Body.Close()
+
+		testhelpers.Equals(t, 0, tp.State.remaining)
+		wait := tp.State.GetWaitDuration()
+		testhelpers.Assert(t, wait > 0 && wait <= 2*time.Second,
+			"expected to wait until the soonest bucket reset (~2s), got %s", wait)
+	})
+
+	t.Run("malformed values are skipped, not zero-filled", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("X-Ratelimit-Remaining", "abc")
+			w.Header().Set("X-Ratelimit-Reset", "60")
+			w.WriteHeader(http.StatusOK)
+		}))
+		defer server.Close()
+
+		client := newHTTPClient()
+		tp := client.Transport.(*RateLimitTransport)
+
+		req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL, nil)
+		testhelpers.AssertNoError(t, err)
+		resp, err := client.Do(req)
+		testhelpers.AssertNoError(t, err)
+		_ = resp.Body.Close()
+
+		// State must be untouched: remaining stays at its initial value and
+		// no wait is imposed.
+		testhelpers.Equals(t, 1, tp.State.remaining)
+		testhelpers.Equals(t, time.Duration(0), tp.State.GetWaitDuration())
+	})
+}
+
 // TestRateLimitContextCancelsRetryWait verifies that a context deadline
 // aborts a 429 retry wait instead of sleeping the full backoff. This is the
 // mechanism http.Client.Timeout (defaultClientTimeout) relies on to bound

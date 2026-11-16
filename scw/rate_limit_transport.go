@@ -2,8 +2,10 @@ package scw
 
 import (
 	"context"
+	"math"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/logger"
@@ -74,13 +76,11 @@ func (t *RateLimitTransport) RoundTrip(req *http.Request) (*http.Response, error
 			return resp, err
 		}
 
-		// State update
-		remainingStr := resp.Header.Get("X-Ratelimit-Remaining")
-		resetStr := resp.Header.Get("X-Ratelimit-Reset")
-
-		if remainingStr != "" && resetStr != "" {
-			remaining, _ := strconv.Atoi(remainingStr)
-			resetSec, _ := strconv.Atoi(resetStr)
+		// State update. Malformed values are skipped, never zero-filled — a garbage
+		// header must not stall the client.
+		remaining, remainingOK := parseRateLimitValue(resp.Header.Get("X-Ratelimit-Remaining"))
+		resetSec, resetOK := parseRateLimitValue(resp.Header.Get("X-Ratelimit-Reset"))
+		if remainingOK && resetOK {
 			t.State.Update(remaining, resetSec)
 		}
 
@@ -165,4 +165,26 @@ func clampRetryAfterSeconds(retryAfterSec, retry int) int {
 	}
 
 	return min(retryAfterSec, maxBackoffSeconds)
+}
+
+// parseRateLimitValue parses an X-Ratelimit-Remaining or X-Ratelimit-Reset
+// header value. We return the most restrictive (minimum) entry.
+func parseRateLimitValue(value string) (int, bool) {
+	minValue := math.MaxInt
+	found := false
+	for _, entry := range strings.Split(value, ",") {
+		if i := strings.IndexByte(entry, ';'); i >= 0 {
+			entry = entry[:i] // strip draft parameters, e.g. "50;w=1"
+		}
+
+		n, err := strconv.Atoi(strings.TrimSpace(entry))
+		if err != nil || n < 0 {
+			continue
+		}
+
+		minValue = min(minValue, n)
+		found = true
+	}
+
+	return minValue, found
 }
