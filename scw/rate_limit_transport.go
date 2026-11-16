@@ -97,20 +97,17 @@ func (t *RateLimitTransport) RoundTrip(req *http.Request) (*http.Response, error
 			// only specified integers.
 			retryAfterStr := resp.Header.Get("Retry-After")
 			if retryAfterSec, err := strconv.Atoi(retryAfterStr); err == nil {
-				logger.Debugf(
-					"client: got 429 Too Many Requests, retrying (attempt %d/%d) in %ds\n",
-					retry+1, maxRetries, retryAfterSec,
-				)
-
 				err = resp.Body.Close()
 				if err != nil {
 					return nil, err
 				}
 
-				// In case Retry-After: 0, we still want to backoff the next try a bit
-				if floor := minRetryBackoffSeconds(retry); retryAfterSec < floor {
-					retryAfterSec = floor
-				}
+				retryAfterSec = clampRetryAfterSeconds(retryAfterSec, retry)
+
+				logger.Debugf(
+					"client: got 429 Too Many Requests, retrying (attempt %d/%d) in %ds\n",
+					retry+1, maxRetries, retryAfterSec,
+				)
 
 				// Update state to proactively wait in the next loop iteration
 				t.State.Update(0, retryAfterSec)
@@ -150,9 +147,16 @@ func sleepWithContext(ctx context.Context, d time.Duration) error {
 	}
 }
 
-// minRetryBackoffSeconds returns the minimum backoff in seconds for a given
-// retry attempt. Grows exponentially (1, 2, 4, 8, 16, capped at 30) so repeated
-// 429s with Retry-After: 0 don't hammer the endpoint.
-func minRetryBackoffSeconds(retry int) int {
-	return min(minBackoffSeconds<<retry, maxBackoffSeconds)
+// clampRetryAfterSeconds returns the number of seconds to actually wait before
+// a 429 retry.
+// - retryAfterSec: the time to wait the server asked for
+// - retry: the current attempt number
+// It guarantees the wait is never too small (hammering) and never too large (a
+// bogus Retry-After: 86400 stalling the whole client).
+func clampRetryAfterSeconds(retryAfterSec, retry int) int {
+	if floor := minBackoffSeconds << min(retry, 5); retryAfterSec < floor {
+		retryAfterSec = floor
+	}
+
+	return min(retryAfterSec, maxBackoffSeconds)
 }

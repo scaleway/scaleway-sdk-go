@@ -577,6 +577,32 @@ func TestRateLimit(t *testing.T) {
 	}
 }
 
+// TestClampRetryAfterSeconds verifies that the retry wait is floored by the
+// exponential backoff and capped by maxBackoffSeconds, whatever the server
+// sends in Retry-After.
+func TestClampRetryAfterSeconds(t *testing.T) {
+	cases := []struct {
+		name          string
+		retryAfterSec int
+		retry         int
+		expected      int
+	}{
+		{name: "zero raised to first-retry floor", retryAfterSec: 0, retry: 0, expected: 1},
+		{name: "zero raised to exponential floor", retryAfterSec: 0, retry: 3, expected: 8},
+		{name: "floor capped at max", retryAfterSec: 0, retry: 5, expected: 30},
+		{name: "floor capped at max on later retries", retryAfterSec: 0, retry: 63, expected: 30},
+		{name: "huge Retry-After capped", retryAfterSec: 86400, retry: 2, expected: 30},
+		{name: "in-range value unchanged", retryAfterSec: 10, retry: 1, expected: 10},
+		{name: "negative raised to floor", retryAfterSec: -5, retry: 0, expected: 1},
+	}
+
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			testhelpers.Equals(t, c.expected, clampRetryAfterSeconds(c.retryAfterSec, c.retry))
+		})
+	}
+}
+
 // TestRateLimitNonReplayableBody verifies that a 429 retry does NOT re-send a
 // request whose body cannot be safely replayed.
 func TestRateLimitNonReplayableBody(t *testing.T) {
