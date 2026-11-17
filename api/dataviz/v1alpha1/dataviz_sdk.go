@@ -98,6 +98,47 @@ func (enum *DeploymentStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ListCertificatesRequestOrderBy string
+
+const (
+	ListCertificatesRequestOrderByNameAsc       = ListCertificatesRequestOrderBy("name_asc")
+	ListCertificatesRequestOrderByNameDesc      = ListCertificatesRequestOrderBy("name_desc")
+	ListCertificatesRequestOrderByCreatedAtAsc  = ListCertificatesRequestOrderBy("created_at_asc")
+	ListCertificatesRequestOrderByCreatedAtDesc = ListCertificatesRequestOrderBy("created_at_desc")
+)
+
+func (enum ListCertificatesRequestOrderBy) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ListCertificatesRequestOrderByNameAsc)
+	}
+	return string(enum)
+}
+
+func (enum ListCertificatesRequestOrderBy) Values() []ListCertificatesRequestOrderBy {
+	return []ListCertificatesRequestOrderBy{
+		"name_asc",
+		"name_desc",
+		"created_at_asc",
+		"created_at_desc",
+	}
+}
+
+func (enum ListCertificatesRequestOrderBy) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ListCertificatesRequestOrderBy) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ListCertificatesRequestOrderBy(ListCertificatesRequestOrderBy(tmp).String())
+	return nil
+}
+
 type ListDeploymentsRequestOrderBy string
 
 const (
@@ -437,6 +478,40 @@ type EndpointSpec struct {
 	PrivateNetwork *EndpointSpecPrivateNetworkDetails `json:"private_network,omitempty"`
 }
 
+// Certificate: certificate.
+type Certificate struct {
+	ID string `json:"id"`
+
+	Name string `json:"name"`
+
+	DeploymentID string `json:"deployment_id"`
+
+	Content string `json:"content"`
+
+	CreatedAt *time.Time `json:"created_at"`
+
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"region"`
+
+	Srn string `json:"srn"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *Certificate) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.DeploymentID) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://dataviz.%s/regions/%s/deployments/%s/certificates/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.DeploymentID), fmt.Sprint(m.ID))
+		return
+	}
+}
+
 // Deployment: deployment.
 type Deployment struct {
 	// ID: unique identifier of the deployment.
@@ -623,40 +698,6 @@ func (m *Version) setSRN(platform string) {
 	}
 }
 
-// Certificate: certificate.
-type Certificate struct {
-	ID string `json:"id"`
-
-	Name string `json:"name"`
-
-	DeploymentID string `json:"deployment_id"`
-
-	Content string `json:"content"`
-
-	CreatedAt *time.Time `json:"created_at"`
-
-	// Region: region to target. If none is passed will use default region from the config.
-	Region scw.Region `json:"region"`
-
-	Srn string `json:"srn"`
-}
-
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *Certificate) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.DeploymentID) != "" && fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://dataviz.%s/regions/%s/deployments/%s/certificates/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.DeploymentID), fmt.Sprint(m.ID))
-		return
-	}
-}
-
 // CreateCertificateRequest: create certificate request.
 type CreateCertificateRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -777,6 +818,49 @@ type GetDeploymentRequest struct {
 
 	// DeploymentID: ID of the deployment.
 	DeploymentID string `json:"-"`
+}
+
+// ListCertificatesRequest: list certificates request.
+type ListCertificatesRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	DeploymentID string `json:"-"`
+
+	Page *int32 `json:"-"`
+
+	PageSize *uint32 `json:"-"`
+
+	// OrderBy: default value: name_asc
+	OrderBy ListCertificatesRequestOrderBy `json:"-"`
+
+	Name *string `json:"-"`
+}
+
+// ListCertificatesResponse: list certificates response.
+type ListCertificatesResponse struct {
+	Certificates []*Certificate `json:"certificates"`
+
+	TotalCount uint64 `json:"total_count"`
+}
+
+// UnsafeGetTotalCount should not be used
+// Internal usage only
+func (r *ListCertificatesResponse) UnsafeGetTotalCount() uint64 {
+	return r.TotalCount
+}
+
+// UnsafeAppend should not be used
+// Internal usage only
+func (r *ListCertificatesResponse) UnsafeAppend(res any) (uint64, error) {
+	results, ok := res.(*ListCertificatesResponse)
+	if !ok {
+		return 0, errors.New("%T type cannot be appended to type %T", res, r)
+	}
+
+	r.Certificates = append(r.Certificates, results.Certificates...)
+	r.TotalCount += uint64(len(results.Certificates))
+	return uint64(len(results.Certificates)), nil
 }
 
 // ListDeploymentsRequest: Retrieve a list of deployments.
@@ -1710,6 +1794,55 @@ func (s *API) CreateCertificate(req *CreateCertificateRequest, opts ...scw.Reque
 	apiMetadata, err := s.client.GetAPIMetadata()
 	if err == nil {
 		resp.setSRN(apiMetadata.Domain)
+	}
+	return &resp, nil
+}
+
+// ListCertificates:
+func (s *API) ListCertificates(req *ListCertificatesRequest, opts ...scw.RequestOption) (*ListCertificatesResponse, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	defaultPageSize, exist := s.client.GetDefaultPageSize()
+	if (req.PageSize == nil || *req.PageSize == 0) && exist {
+		req.PageSize = &defaultPageSize
+	}
+
+	query := url.Values{}
+	parameter.AddToQuery(query, "page", req.Page)
+	parameter.AddToQuery(query, "page_size", req.PageSize)
+	parameter.AddToQuery(query, "order_by", req.OrderBy)
+	parameter.AddToQuery(query, "name", req.Name)
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.DeploymentID) == "" {
+		return nil, errors.New("field DeploymentID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/dataviz/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/deployments/" + fmt.Sprint(req.DeploymentID) + "/certificates",
+		Query:  query,
+	}
+
+	var resp ListCertificatesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Certificates {
+			el.setSRN(apiMetadata.Domain)
+		}
 	}
 	return &resp, nil
 }
