@@ -99,27 +99,29 @@ func (t *RateLimitTransport) RoundTrip(req *http.Request) (*http.Response, error
 				}
 			}
 
-			// Per RFC 9110, Retry-After may also be an HTTP-date, but Scaleway's API
-			// only specified integers.
-			retryAfterStr := resp.Header.Get("Retry-After")
-			if retryAfterSec, err := strconv.Atoi(retryAfterStr); err == nil {
-				err = resp.Body.Close()
-				if err != nil {
-					return nil, err
-				}
-
-				retryAfterSec = clampRetryAfterSeconds(retryAfterSec, retry)
-
-				logger.Debugf(
-					"client: got 429 Too Many Requests, retrying (attempt %d/%d) in %ds\n",
-					retry+1, maxRetries, retryAfterSec,
-				)
-
-				// Update state to proactively wait in the next loop iteration
-				t.State.Update(0, retryAfterSec)
-
-				continue
+			// Parse Retry-After: should be an integer according to Scaleway's API.
+			// Defaults to 0 in case of parsing error.
+			// Note: Per RFC 9110, Retry-After may also be an HTTP-date, but we don't
+			// handle that case.
+			retryAfterSec := 0
+			if v, err := strconv.Atoi(resp.Header.Get("Retry-After")); err == nil {
+				retryAfterSec = v
 			}
+			retryAfterSec = clampRetryAfterSeconds(retryAfterSec, retry)
+
+			err = resp.Body.Close()
+			if err != nil {
+				return nil, err
+			}
+
+			logger.Debugf(
+				"client: got 429 Too Many Requests, retrying (attempt %d/%d) in %ds\n",
+				retry+1, maxRetries, retryAfterSec,
+			)
+
+			t.State.Update(0, retryAfterSec)
+
+			continue
 		}
 
 		// Success, or 404, 500... or exceeded t.MaxRetries of 429s

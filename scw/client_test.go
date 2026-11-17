@@ -489,30 +489,38 @@ func TestRateLimit(t *testing.T) {
 			expectedHitCount: 2,
 		},
 		{
-			name: "429 with no Retry-After does not retry",
+			name: "429 with no Retry-After falls back to backoff retry",
 			responses: []rateLimitResponse{
 				{
 					code:    http.StatusTooManyRequests,
 					headers: http.Header{"X-Ratelimit-Remaining": {"0"}, "X-Ratelimit-Reset": {"2"}},
 				},
+				{
+					code:    http.StatusOK,
+					headers: http.Header{"X-Ratelimit-Remaining": {"49"}, "X-Ratelimit-Reset": {"2"}},
+				},
 			},
-			maxRetries:       5,
-			expectedStatus:   "429 Too Many Requests",
-			expectedHeader:   http.Header{"X-Ratelimit-Remaining": {"0"}, "X-Ratelimit-Reset": {"2"}},
-			expectedHitCount: 1,
+			maxRetries:       1,
+			expectedStatus:   "200 OK",
+			expectedHeader:   http.Header{"X-Ratelimit-Remaining": {"49"}, "X-Ratelimit-Reset": {"2"}},
+			expectedHitCount: 2,
 		},
 		{
-			name: "429 with malformed Retry-After does not retry",
+			name: "429 with malformed Retry-After falls back to backoff retry",
 			responses: []rateLimitResponse{
 				{
 					code:    http.StatusTooManyRequests,
 					headers: http.Header{"X-Ratelimit-Remaining": {"0"}, "X-Ratelimit-Reset": {"0"}, "Retry-After": {"not-a-number"}},
 				},
+				{
+					code:    http.StatusOK,
+					headers: http.Header{"X-Ratelimit-Remaining": {"49"}, "X-Ratelimit-Reset": {"2"}},
+				},
 			},
-			maxRetries:       5,
-			expectedStatus:   "429 Too Many Requests",
-			expectedHeader:   http.Header{"X-Ratelimit-Remaining": {"0"}, "X-Ratelimit-Reset": {"0"}, "Retry-After": {"not-a-number"}},
-			expectedHitCount: 1,
+			maxRetries:       1,
+			expectedStatus:   "200 OK",
+			expectedHeader:   http.Header{"X-Ratelimit-Remaining": {"49"}, "X-Ratelimit-Reset": {"2"}},
+			expectedHitCount: 2,
 		},
 		{
 			name: "429 retry exhaustion returns last 429",
