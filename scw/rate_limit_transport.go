@@ -87,8 +87,6 @@ type RateLimitTransport struct {
 
 // RoundTrip intercepts each SDK request
 func (t *RateLimitTransport) RoundTrip(req *http.Request) (*http.Response, error) {
-	maxRetries := t.MaxRetries
-
 	// Use the caller's context to respect its cancellation
 	parentCtx := req.Context()
 
@@ -114,7 +112,7 @@ func (t *RateLimitTransport) RoundTrip(req *http.Request) (*http.Response, error
 		}
 
 		// Reactive strategy: 429 handling
-		if resp.StatusCode == http.StatusTooManyRequests && retry < maxRetries {
+		if resp.StatusCode == http.StatusTooManyRequests && retry < t.MaxRetries {
 			// Only retry when the body can be safely replayed
 			if req.GetBody == nil && req.Body != nil {
 				return resp, nil
@@ -145,7 +143,7 @@ func (t *RateLimitTransport) RoundTrip(req *http.Request) (*http.Response, error
 
 			logger.Debugf(
 				"client: got 429 Too Many Requests, retrying (attempt %d/%d) in %ds\n",
-				retry+1, maxRetries, retryAfterSec,
+				retry+1, t.MaxRetries, retryAfterSec,
 			)
 
 			t.State.update(0, retryAfterSec)
