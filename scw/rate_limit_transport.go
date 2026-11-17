@@ -76,11 +76,11 @@ func (t *RateLimitTransport) RoundTrip(req *http.Request) (*http.Response, error
 			return resp, err
 		}
 
-		// State update. Malformed values are skipped, never zero-filled — a garbage
-		// header must not stall the client.
-		remaining, remainingOK := parseRateLimitValue(resp.Header.Get("X-Ratelimit-Remaining"))
-		resetSec, resetOK := parseRateLimitValue(resp.Header.Get("X-Ratelimit-Reset"))
-		if remainingOK && resetOK {
+		remaining, resetSec, ok := parseRateLimitHeaders(
+			resp.Header.Get("X-Ratelimit-Remaining"),
+			resp.Header.Get("X-Ratelimit-Reset"),
+		)
+		if ok {
 			t.State.Update(remaining, resetSec)
 		}
 
@@ -169,24 +169,46 @@ func clampRetryAfterSeconds(retryAfterSec, retry int) int {
 	return min(retryAfterSec, maxBackoffSeconds)
 }
 
-// parseRateLimitValue parses an X-Ratelimit-Remaining or X-Ratelimit-Reset
-// header value. We return the most restrictive (minimum) entry.
-func parseRateLimitValue(value string) (int, bool) {
-	minValue := math.MaxInt
-	found := false
-	for _, entry := range strings.Split(value, ",") {
-		if i := strings.IndexByte(entry, ';'); i >= 0 {
-			entry = entry[:i] // strip draft parameters, e.g. "50;w=1"
+// parseRateLimitHeaders parses paired X-Ratelimit-Remaining and X-Ratelimit-Reset
+// header values.
+// It returns the most restrictive remaining count and the latest reset (in
+// seconds) among exhausted buckets, or ok=false if no pair parses.
+func parseRateLimitHeaders(remainingStr, resetStr string) (remaining, resetSec int, ok bool) {
+	remainingList := strings.Split(remainingStr, ",")
+	resetList := strings.Split(resetStr, ",")
+
+	remaining = math.MaxInt
+	for i, remEntry := range remainingList {
+		if i >= len(resetList) {
+			break
 		}
 
-		n, err := strconv.Atoi(strings.TrimSpace(entry))
-		if err != nil || n < 0 {
+		rem, remOK := parseRateLimitEntry(remEntry)
+		reset, resetOK := parseRateLimitEntry(resetList[i])
+		if !remOK || !resetOK {
 			continue
 		}
 
-		minValue = min(minValue, n)
-		found = true
+		remaining = min(remaining, rem)
+		if rem == 0 {
+			resetSec = max(resetSec, reset)
+		}
+		ok = true
 	}
 
-	return minValue, found
+	return remaining, resetSec, ok
+}
+
+// parseRateLimitEntry parses one comma-list entry of an X-Ratelimit-* header.
+func parseRateLimitEntry(entry string) (int, bool) {
+	if i := strings.IndexByte(entry, ';'); i >= 0 {
+		entry = entry[:i] // strip draft parameters, e.g. ";w=1"
+	}
+
+	n, err := strconv.Atoi(strings.TrimSpace(entry))
+	if err != nil || n < 0 {
+		return 0, false
+	}
+
+	return n, true
 }

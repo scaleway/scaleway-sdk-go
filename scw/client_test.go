@@ -630,32 +630,40 @@ func TestClampRetryAfterSeconds(t *testing.T) {
 	}
 }
 
-// TestParseRateLimitValue verifies parsing of Scaleway's X-Ratelimit-*
-// values, including the IETF draft list format ("0, 49;w=60", one entry per
-// limit bucket) and malformed input.
-func TestParseRateLimitValue(t *testing.T) {
+// TestParseRateLimitHeaders verifies paired parsing of Scaleway's X-Ratelimit-*
+// values, including the IETF draft list format (one entry per limit bucket in
+// each field) and malformed input. Buckets are paired positionally so an
+// exhausted bucket gets its own reset time, not another bucket's.
+func TestParseRateLimitHeaders(t *testing.T) {
 	cases := []struct {
-		name     string
-		value    string
-		expected int
-		ok       bool
+		name          string
+		remaining     string
+		reset         string
+		expectedRem   int
+		expectedReset int
+		ok            bool
 	}{
-		{name: "single value", value: "49", expected: 49, ok: true},
-		{name: "single value with parameters", value: "2;w=1", expected: 2, ok: true},
-		{name: "list takes the most restrictive bucket", value: "0, 49", expected: 0, ok: true},
-		{name: "list with parameters", value: "49, 3;w=60", expected: 3, ok: true},
-		{name: "garbage mixed with a value", value: "abc, 7", expected: 7, ok: true},
-		{name: "empty", value: "", expected: 0, ok: false},
-		{name: "garbage", value: "not-a-number", expected: 0, ok: false},
-		{name: "negative rejected", value: "-5", expected: 0, ok: false},
+		{name: "single pair", remaining: "49", reset: "2", expectedRem: 49, expectedReset: 0, ok: true},
+		{name: "single pair with parameters", remaining: "49;w=60", reset: "2;w=60", expectedRem: 49, expectedReset: 0, ok: true},
+		{name: "exhausted bucket paired with its own reset", remaining: "0, 49", reset: "3600, 2", expectedRem: 0, expectedReset: 3600, ok: true},
+		{name: "latest reset wins among exhausted buckets", remaining: "0, 0", reset: "2, 3600", expectedRem: 0, expectedReset: 3600, ok: true},
+		{name: "no exhausted bucket ignores resets", remaining: "49, 3", reset: "3600, 2", expectedRem: 3, expectedReset: 0, ok: true},
+		{name: "unequal lengths pair up to the shortest (1)", remaining: "0, 1", reset: "5", expectedRem: 0, expectedReset: 5, ok: true},
+		{name: "unequal lengths pair up to the shortest (2)", remaining: "1, 0", reset: "5", expectedRem: 1, expectedReset: 0, ok: true},
+		{name: "garbage mixed with a value", remaining: "abc, 7", reset: "5, 3", expectedRem: 7, expectedReset: 0, ok: true},
+		{name: "half-parsed pair is rejected", remaining: "0", reset: "abc", expectedRem: 0, expectedReset: 0, ok: false},
+		{name: "empty", remaining: "", reset: "", expectedRem: 0, expectedReset: 0, ok: false},
+		{name: "garbage", remaining: "not-a-number", reset: "60", expectedRem: 0, expectedReset: 0, ok: false},
+		{name: "negative rejected", remaining: "-5", reset: "60", expectedRem: 0, expectedReset: 0, ok: false},
 	}
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			got, ok := parseRateLimitValue(c.value)
+			rem, reset, ok := parseRateLimitHeaders(c.remaining, c.reset)
 			testhelpers.Equals(t, c.ok, ok)
 			if ok {
-				testhelpers.Equals(t, c.expected, got)
+				testhelpers.Equals(t, c.expectedRem, rem)
+				testhelpers.Equals(t, c.expectedReset, reset)
 			}
 		})
 	}
@@ -686,7 +694,30 @@ func TestRateLimitMultiBucketStateUpdate(t *testing.T) {
 		testhelpers.Equals(t, 0, tp.State.remaining)
 		wait := tp.State.GetWaitDuration()
 		testhelpers.Assert(t, wait > 0 && wait <= 2*time.Second,
-			"expected to wait until the soonest bucket reset (~2s), got %s", wait)
+			"expected to wait until the exhausted bucket's reset (~2s), got %s", wait)
+	})
+
+	t.Run("exhausted bucket waits on its own reset, not the global minimum", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("X-Ratelimit-Remaining", "0, 49")
+			w.Header().Set("X-Ratelimit-Reset", "3600, 2")
+			w.WriteHeader(http.StatusOK)
+		}))
+		defer server.Close()
+
+		client := newHTTPClient()
+		tp := client.Transport.(*RateLimitTransport)
+
+		req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL, nil)
+		testhelpers.AssertNoError(t, err)
+		resp, err := client.Do(req)
+		testhelpers.AssertNoError(t, err)
+		_ = resp.Body.Close()
+
+		testhelpers.Equals(t, 0, tp.State.remaining)
+		wait := tp.State.GetWaitDuration()
+		testhelpers.Assert(t, wait > 2*time.Second && wait <= maxBackoffSeconds*time.Second,
+			"expected to wait for the exhausted bucket's reset (~%ds), got %s", maxBackoffSeconds, wait)
 	})
 
 	t.Run("malformed values are skipped, not zero-filled", func(t *testing.T) {
