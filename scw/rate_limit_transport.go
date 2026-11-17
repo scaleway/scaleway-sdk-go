@@ -20,14 +20,8 @@ const (
 	// maxBackoffSeconds is the maximum time to wait after a 429
 	maxBackoffSeconds = 30
 
-	// Per-attempt phase timeouts, applied to the base *http.Transport.
-	// We bind these on the transport rather than via context.WithTimeout so
-	// that cancelling the attempt context does not tear down resp.Body before
-	// the caller reads it.
-	dialTimeout           = 30 * time.Second
-	tlsHandshakeTimeout   = 10 * time.Second
+	// responseHeaderTimeout is the per-attempt timeout for time-to-first-header
 	responseHeaderTimeout = 30 * time.Second
-	expectContinueTimeout = 1 * time.Second
 
 	// defaultClientTimeout bounds the whole Do call: attempts, retry sleeps
 	// and the response body read. It must comfortably exceed the worst
@@ -38,17 +32,14 @@ const (
 
 // RateLimitTransport implements http.RoundTripper
 type RateLimitTransport struct {
-	// Base contains a default RoundTripper that we use in our custom
-	// RoundTrip method
 	Base http.RoundTripper
 
 	// State stores the current limit state values
 	State *RateLimitState
 
 	// MaxRetries is the maximum number of 429 retries before returning
-	// the response to the caller. Set to 0 to disable retries entirely.
-	// The SDK default is 5 (set in newHTTPClient); callers can override it
-	// by accessing the transport via client.Transport.(*RateLimitTransport).
+	// the response to the caller. Defaults to 5. Can be overridden by accessing
+	// the transport via client.Transport.(*RateLimitTransport).
 	MaxRetries int
 }
 
@@ -56,15 +47,11 @@ type RateLimitTransport struct {
 func (t *RateLimitTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	maxRetries := t.MaxRetries
 
-	// The caller's context owns the total time cancellation and is not consumed
-	// by the sleeps. Per-attempt phase timeouts live on the base *http.Transport
-	// (dial, TLS, response-header), so we never wrap the request in a context
-	// whose cancellation would tear down resp.Body before the caller reads it.
+	// Use the caller's context to respect its cancellation
 	parentCtx := req.Context()
 
 	for retry := 0; ; retry++ {
-		// Proactive strategy: check if we should wait. Uses parentCtx so
-		// the wait respects caller cancellation.
+		// Proactive strategy: check if we should wait
 		if wait := t.State.GetWaitDuration(); wait > 0 {
 			if err := sleepWithContext(parentCtx, wait); err != nil {
 				return nil, err
@@ -130,10 +117,9 @@ func (t *RateLimitTransport) RoundTrip(req *http.Request) (*http.Response, error
 }
 
 func (t *RateLimitTransport) SetInsecureTransport() {
-	// Need to cast to *http.Transport to access TLSClientConfig.
-	// If the cast fails, probably doesn't have a TLSClientConfig anyway.
 	transport, ok := t.Base.(*http.Transport)
 	if !ok {
+		// Probably doesn't have a TLSClientConfig anyway
 		return
 	}
 

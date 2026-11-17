@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"math"
-	"net"
 	"net/http"
 	"reflect"
 	"strconv"
@@ -663,14 +662,7 @@ func newVariableFromType(t any) any {
 
 func newHTTPClient() *http.Client {
 	base := http.DefaultTransport.(*http.Transport).Clone()
-	// Per-attempt phase timeouts. Bound the connection phases (dial, TLS,
-	// time-to-first-header) so a stuck server can't hang an attempt forever,
-	// without wrapping the request in a context whose cancellation would
-	// tear down resp.Body before the caller reads it.
-	base.DialContext = (&net.Dialer{Timeout: dialTimeout}).DialContext
-	base.TLSHandshakeTimeout = tlsHandshakeTimeout
-	base.ResponseHeaderTimeout = responseHeaderTimeout
-	base.ExpectContinueTimeout = expectContinueTimeout
+	base.ResponseHeaderTimeout = responseHeaderTimeout // This one is not set by default
 
 	rlTransport := &RateLimitTransport{
 		Base:       base,
@@ -679,8 +671,7 @@ func newHTTPClient() *http.Client {
 	}
 
 	return &http.Client{
-		// Whole-call timeout to bound the response body read, which can hang.
-		// A caller-supplied context deadline combines with it (the shorter wins).
+		// Total timeout, including retries
 		Timeout:   defaultClientTimeout,
 		Transport: rlTransport,
 	}
