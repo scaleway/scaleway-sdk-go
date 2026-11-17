@@ -338,7 +338,7 @@ func TestSetInsecureMode(t *testing.T) {
 	logger.DefaultLogger.Init(&buf, logger.LogLevelWarning)
 
 	// custom Transport client
-	clientWithFakeTransport := newHTTPClient()
+	clientWithFakeTransport := newHTTPClient(nil)
 	clientWithFakeTransport.Transport = fakeTransport{}
 	setInsecureMode(clientWithFakeTransport)
 
@@ -401,7 +401,7 @@ func TestSetInsecureModeRateLimitTransport(t *testing.T) {
 	defer server.Close()
 
 	// Build the SDK HTTP client and enable insecure mode
-	httpClient := newHTTPClient()
+	httpClient := newHTTPClient(nil)
 	setInsecureMode(httpClient)
 
 	// A request must succeed despite the self-signed cert
@@ -576,7 +576,7 @@ func TestRateLimit(t *testing.T) {
 			}))
 			defer server.Close()
 
-			client := newHTTPClient()
+			client := newHTTPClient(nil)
 			tp := client.Transport.(*RateLimitTransport)
 			tp.MaxRetries = c.maxRetries
 
@@ -682,7 +682,7 @@ func TestRateLimitMultiBucketStateUpdate(t *testing.T) {
 		}))
 		defer server.Close()
 
-		client := newHTTPClient()
+		client := newHTTPClient(nil)
 		tp := client.Transport.(*RateLimitTransport)
 
 		req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL, nil)
@@ -705,7 +705,7 @@ func TestRateLimitMultiBucketStateUpdate(t *testing.T) {
 		}))
 		defer server.Close()
 
-		client := newHTTPClient()
+		client := newHTTPClient(nil)
 		tp := client.Transport.(*RateLimitTransport)
 
 		req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL, nil)
@@ -728,7 +728,7 @@ func TestRateLimitMultiBucketStateUpdate(t *testing.T) {
 		}))
 		defer server.Close()
 
-		client := newHTTPClient()
+		client := newHTTPClient(nil)
 		tp := client.Transport.(*RateLimitTransport)
 
 		req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL, nil)
@@ -755,7 +755,7 @@ func TestRateLimitContextCancelsRetryWait(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := newHTTPClient()
+	client := newHTTPClient(nil)
 	testhelpers.Equals(t, defaultClientTimeout, client.Timeout)
 	tp := client.Transport.(*RateLimitTransport)
 	tp.MaxRetries = 5
@@ -806,7 +806,7 @@ func TestRateLimitNonReplayableBody(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := newHTTPClient()
+	client := newHTTPClient(nil)
 	tp := client.Transport.(*RateLimitTransport)
 	tp.MaxRetries = 1
 

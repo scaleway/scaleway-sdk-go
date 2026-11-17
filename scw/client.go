@@ -76,25 +76,12 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 
 	// dial the API
 	if s.httpClient == nil {
-		s.httpClient = newHTTPClient()
-	}
-
-	// apply user-provided rate-limit retry override
-	if s.maxRetries != nil {
-		standardHTTPClient, ok := s.httpClient.(*http.Client)
-		if !ok {
-			logger.Warningf(
-				"client: cannot apply WithMaxRetries with HTTP client of type %T",
-				s.httpClient,
-			)
-		} else if rlTransport, isRL := standardHTTPClient.Transport.(*RateLimitTransport); isRL {
-			rlTransport.MaxRetries = *s.maxRetries
-		} else {
-			logger.Warningf(
-				"client: cannot apply WithMaxRetries with Transport client of type %T",
-				standardHTTPClient.Transport,
-			)
-		}
+		s.httpClient = newHTTPClient(s.maxRetries)
+	} else if s.maxRetries != nil {
+		logger.Warningf(
+			"client: cannot apply WithMaxRetries with HTTP client of type %T",
+			s.httpClient,
+		)
 	}
 
 	// insecure mode
@@ -660,7 +647,7 @@ func newVariableFromType(t any) any {
 	return reflect.New(reflect.Indirect(reflect.ValueOf(t)).Type()).Interface()
 }
 
-func newHTTPClient() *http.Client {
+func newHTTPClient(maxRetries *int) *http.Client {
 	base := http.DefaultTransport.(*http.Transport).Clone()
 	base.ResponseHeaderTimeout = responseHeaderTimeout // This one is not set by default
 
@@ -668,6 +655,9 @@ func newHTTPClient() *http.Client {
 		Base:       base,
 		State:      &RateLimitState{remaining: 1},
 		MaxRetries: defaultMaxRetries,
+	}
+	if maxRetries != nil {
+		rlTransport.MaxRetries = *maxRetries
 	}
 
 	return &http.Client{
