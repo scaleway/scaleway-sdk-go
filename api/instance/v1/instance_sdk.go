@@ -2166,8 +2166,8 @@ type ServerType struct {
 	// Deprecated: MonthlyPrice: estimated monthly price, for a 30 days month, in Euro.
 	MonthlyPrice *float32 `json:"monthly_price"`
 
-	// HourlyPrice: hourly price in Euro.
-	HourlyPrice float32 `json:"hourly_price"`
+	// Deprecated: HourlyPrice: hourly price in Euro.
+	HourlyPrice *float32 `json:"hourly_price"`
 
 	// AltNames: alternative Instance name, if any.
 	AltNames []string `json:"alt_names"`

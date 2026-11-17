@@ -1215,7 +1215,7 @@ type UpdateWorkflowVersionRequest struct {
 	WorkflowDsl *string `json:"workflow_dsl,omitempty"`
 }
 
-// This API is a boilerplate for products.
+// This API allows you to manage your Data Orchestrator.
 type API struct {
 	client *scw.Client
 }
