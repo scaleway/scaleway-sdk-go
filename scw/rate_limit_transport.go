@@ -111,7 +111,7 @@ func (t *RateLimitTransport) RoundTrip(req *http.Request) (*http.Response, error
 
 			err = resp.Body.Close()
 			if err != nil {
-				return nil, err
+				return resp, err
 			}
 
 			logger.Debugf(

@@ -23,7 +23,7 @@ func (s *RateLimitState) Update(remaining int, resetInSeconds int) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	// Cap resetInSeconds to gard against a reset value in an unexpected format
+	// Cap resetInSeconds to guard against a reset value in an unexpected format
 	resetInSeconds = min(resetInSeconds, maxBackoffSeconds)
 	s.remaining = remaining
 	s.resetAt = time.Now().Add(time.Duration(resetInSeconds) * time.Second)
