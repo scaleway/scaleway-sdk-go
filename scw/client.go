@@ -693,8 +693,11 @@ func setInsecureMode(c httpClient) {
 		return
 	}
 
-	if rlTransport, ok := standardHTTPClient.Transport.(*RateLimitTransport); ok {
-		rlTransport.SetInsecureTransport()
+	altTransport, ok := standardHTTPClient.Transport.(interface {
+		SetInsecureTransport()
+	})
+	if ok {
+		altTransport.SetInsecureTransport()
 		return
 	}
 
