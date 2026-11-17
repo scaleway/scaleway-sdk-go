@@ -653,7 +653,7 @@ func newHTTPClient(maxRetries *int) *http.Client {
 
 	rlTransport := &RateLimitTransport{
 		Base:       base,
-		State:      &RateLimitState{remaining: 1},
+		State:      &rateLimitState{remaining: 1},
 		MaxRetries: defaultMaxRetries,
 	}
 	if maxRetries != nil {

@@ -692,7 +692,7 @@ func TestRateLimitMultiBucketStateUpdate(t *testing.T) {
 		_ = resp.Body.Close()
 
 		testhelpers.Equals(t, 0, tp.State.remaining)
-		wait := tp.State.GetWaitDuration()
+		wait := tp.State.getWaitDuration()
 		testhelpers.Assert(t, wait > 0 && wait <= 2*time.Second,
 			"expected to wait until the exhausted bucket's reset (~2s), got %s", wait)
 	})
@@ -715,7 +715,7 @@ func TestRateLimitMultiBucketStateUpdate(t *testing.T) {
 		_ = resp.Body.Close()
 
 		testhelpers.Equals(t, 0, tp.State.remaining)
-		wait := tp.State.GetWaitDuration()
+		wait := tp.State.getWaitDuration()
 		testhelpers.Assert(t, wait > 2*time.Second && wait <= maxBackoffSeconds*time.Second,
 			"expected to wait for the exhausted bucket's reset (~%ds), got %s", maxBackoffSeconds, wait)
 	})
@@ -740,7 +740,7 @@ func TestRateLimitMultiBucketStateUpdate(t *testing.T) {
 		// State must be untouched: remaining stays at its initial value and
 		// no wait is imposed.
 		testhelpers.Equals(t, 1, tp.State.remaining)
-		testhelpers.Equals(t, time.Duration(0), tp.State.GetWaitDuration())
+		testhelpers.Equals(t, time.Duration(0), tp.State.getWaitDuration())
 	})
 }
 

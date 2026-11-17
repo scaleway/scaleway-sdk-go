@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/logger"
@@ -30,12 +31,53 @@ const (
 	defaultClientTimeout = 5 * time.Minute
 )
 
+// rateLimitState stores the current limit state
+type rateLimitState struct {
+	// mu protects rateLimitState from concurrent edits by different
+	// goroutines
+	mu sync.Mutex
+
+	// remaining is the number of requests still available for this time window
+	remaining int
+
+	// resetTime is the time of window change
+	resetTime time.Time
+}
+
+// update updates the limit state with the headers values
+func (s *rateLimitState) update(remaining int, resetInSeconds int) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	// Cap resetInSeconds to guard against a reset value in an unexpected format
+	resetInSeconds = min(resetInSeconds, maxBackoffSeconds)
+	s.remaining = remaining
+	s.resetTime = time.Now().Add(time.Duration(resetInSeconds) * time.Second)
+}
+
+// getWaitDuration computes the time to wait before the next request
+func (s *rateLimitState) getWaitDuration() time.Duration {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	if s.remaining > 0 {
+		return 0
+	}
+
+	now := time.Now()
+	if s.resetTime.After(now) {
+		return s.resetTime.Sub(now)
+	}
+
+	return 0
+}
+
 // RateLimitTransport implements http.RoundTripper
 type RateLimitTransport struct {
 	Base http.RoundTripper
 
 	// State stores the current limit state values
-	State *RateLimitState
+	State *rateLimitState
 
 	// MaxRetries is the maximum number of 429 retries before returning
 	// the response to the caller. Defaults to 5. Can be overridden by accessing
@@ -52,7 +94,7 @@ func (t *RateLimitTransport) RoundTrip(req *http.Request) (*http.Response, error
 
 	for retry := 0; ; retry++ {
 		// Proactive strategy: check if we should wait
-		if wait := t.State.GetWaitDuration(); wait > 0 {
+		if wait := t.State.getWaitDuration(); wait > 0 {
 			if err := sleepWithContext(parentCtx, wait); err != nil {
 				return nil, err
 			}
@@ -68,7 +110,7 @@ func (t *RateLimitTransport) RoundTrip(req *http.Request) (*http.Response, error
 			resp.Header.Get("X-Ratelimit-Reset"),
 		)
 		if ok {
-			t.State.Update(remaining, resetSec)
+			t.State.update(remaining, resetSec)
 		}
 
 		// Reactive strategy: 429 handling
@@ -106,7 +148,7 @@ func (t *RateLimitTransport) RoundTrip(req *http.Request) (*http.Response, error
 				retry+1, maxRetries, retryAfterSec,
 			)
 
-			t.State.Update(0, retryAfterSec)
+			t.State.update(0, retryAfterSec)
 
 			continue
 		}
