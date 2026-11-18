@@ -2120,10 +2120,12 @@ type Dashboard struct {
 
 	ServersCount uint32 `json:"servers_count"`
 
+	// Deprecated
 	IPsCount uint32 `json:"ips_count"`
 
 	SecurityGroupsCount uint32 `json:"security_groups_count"`
 
+	// Deprecated
 	IPsUnused uint32 `json:"ips_unused"`
 
 	VolumesLSSDCount uint32 `json:"volumes_l_ssd_count"`
