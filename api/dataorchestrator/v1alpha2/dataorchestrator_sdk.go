@@ -182,6 +182,49 @@ func (enum *ListWorkflowRunsRequestOrderBy) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ObjectStorageTaskReason string
+
+const (
+	ObjectStorageTaskReasonUnknownDefaultRunReason = ObjectStorageTaskReason("unknown_default_run_reason")
+	ObjectStorageTaskReasonTimeout                 = ObjectStorageTaskReason("timeout")
+	ObjectStorageTaskReasonCancellation            = ObjectStorageTaskReason("cancellation")
+	ObjectStorageTaskReasonTechnicalError          = ObjectStorageTaskReason("technical_error")
+	ObjectStorageTaskReasonFunctionalError         = ObjectStorageTaskReason("functional_error")
+)
+
+func (enum ObjectStorageTaskReason) String() string {
+	if enum == "" {
+		// return default value if empty
+		return string(ObjectStorageTaskReasonUnknownDefaultRunReason)
+	}
+	return string(enum)
+}
+
+func (enum ObjectStorageTaskReason) Values() []ObjectStorageTaskReason {
+	return []ObjectStorageTaskReason{
+		"unknown_default_run_reason",
+		"timeout",
+		"cancellation",
+		"technical_error",
+		"functional_error",
+	}
+}
+
+func (enum ObjectStorageTaskReason) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
+}
+
+func (enum *ObjectStorageTaskReason) UnmarshalJSON(data []byte) error {
+	tmp := ""
+
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	*enum = ObjectStorageTaskReason(ObjectStorageTaskReason(tmp).String())
+	return nil
+}
+
 type RunServerlessContainersTaskAction string
 
 const (
@@ -371,49 +414,6 @@ func (enum *RunStatus) UnmarshalJSON(data []byte) error {
 	}
 
 	*enum = RunStatus(RunStatus(tmp).String())
-	return nil
-}
-
-type S3TaskReason string
-
-const (
-	S3TaskReasonUnknownDefaultRunReason = S3TaskReason("unknown_default_run_reason")
-	S3TaskReasonTimeout                 = S3TaskReason("timeout")
-	S3TaskReasonCancellation            = S3TaskReason("cancellation")
-	S3TaskReasonTechnicalError          = S3TaskReason("technical_error")
-	S3TaskReasonFunctionalError         = S3TaskReason("functional_error")
-)
-
-func (enum S3TaskReason) String() string {
-	if enum == "" {
-		// return default value if empty
-		return string(S3TaskReasonUnknownDefaultRunReason)
-	}
-	return string(enum)
-}
-
-func (enum S3TaskReason) Values() []S3TaskReason {
-	return []S3TaskReason{
-		"unknown_default_run_reason",
-		"timeout",
-		"cancellation",
-		"technical_error",
-		"functional_error",
-	}
-}
-
-func (enum S3TaskReason) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf(`"%s"`, enum)), nil
-}
-
-func (enum *S3TaskReason) UnmarshalJSON(data []byte) error {
-	tmp := ""
-
-	if err := json.Unmarshal(data, &tmp); err != nil {
-		return err
-	}
-
-	*enum = S3TaskReason(S3TaskReason(tmp).String())
 	return nil
 }
 
@@ -613,6 +613,16 @@ type DefaultTask struct {
 	ErrorMessage *string `json:"error_message"`
 }
 
+// ObjectStorageTask: object storage task.
+type ObjectStorageTask struct {
+	Action string `json:"action"`
+
+	// Reason: default value: unknown_default_run_reason
+	Reason *ObjectStorageTaskReason `json:"reason"`
+
+	ErrorMessage *string `json:"error_message"`
+}
+
 // RunServerlessContainersTask: run serverless containers task.
 type RunServerlessContainersTask struct {
 	// ContainerID: unique identifier of the serverless-container deployment.
@@ -634,16 +644,6 @@ type RunServerlessContainersTask struct {
 	Reason *RunServerlessContainersTaskReason `json:"reason"`
 
 	// ErrorMessage: error message of the task run.
-	ErrorMessage *string `json:"error_message"`
-}
-
-// S3Task: s3 task.
-type S3Task struct {
-	Action string `json:"action"`
-
-	// Reason: default value: unknown_default_run_reason
-	Reason *S3TaskReason `json:"reason"`
-
 	ErrorMessage *string `json:"error_message"`
 }
 
@@ -748,43 +748,43 @@ type TaskRun struct {
 	Output *string `json:"output"`
 
 	// ServerlessJobTaskRunDetails: task run details for a serverless-job task.
-	// Precisely one of ServerlessJobTaskRunDetails, RaiseTaskRunDetails, SetTaskRunDetails, CallHTTPTaskRunDetails, WaitTaskRunDetails, ServerlessFunctionTaskRunDetails, RunServerlessContainerTaskRunDetails, CallServerlessContainerTaskRunDetails, S3TaskRunDetails, GenerativeAPITaskRunDetails must be set.
+	// Precisely one of ServerlessJobTaskRunDetails, RaiseTaskRunDetails, SetTaskRunDetails, CallHTTPTaskRunDetails, WaitTaskRunDetails, ServerlessFunctionTaskRunDetails, RunServerlessContainerTaskRunDetails, CallServerlessContainerTaskRunDetails, ObjectStorageTaskRunDetails, GenerativeAPITaskRunDetails must be set.
 	ServerlessJobTaskRunDetails *ServerlessJobsTask `json:"serverless_job_task_run_details,omitempty"`
 
 	// RaiseTaskRunDetails: task run details for a raise task.
-	// Precisely one of ServerlessJobTaskRunDetails, RaiseTaskRunDetails, SetTaskRunDetails, CallHTTPTaskRunDetails, WaitTaskRunDetails, ServerlessFunctionTaskRunDetails, RunServerlessContainerTaskRunDetails, CallServerlessContainerTaskRunDetails, S3TaskRunDetails, GenerativeAPITaskRunDetails must be set.
+	// Precisely one of ServerlessJobTaskRunDetails, RaiseTaskRunDetails, SetTaskRunDetails, CallHTTPTaskRunDetails, WaitTaskRunDetails, ServerlessFunctionTaskRunDetails, RunServerlessContainerTaskRunDetails, CallServerlessContainerTaskRunDetails, ObjectStorageTaskRunDetails, GenerativeAPITaskRunDetails must be set.
 	RaiseTaskRunDetails *DefaultTask `json:"raise_task_run_details,omitempty"`
 
 	// SetTaskRunDetails: task run details for a set task.
-	// Precisely one of ServerlessJobTaskRunDetails, RaiseTaskRunDetails, SetTaskRunDetails, CallHTTPTaskRunDetails, WaitTaskRunDetails, ServerlessFunctionTaskRunDetails, RunServerlessContainerTaskRunDetails, CallServerlessContainerTaskRunDetails, S3TaskRunDetails, GenerativeAPITaskRunDetails must be set.
+	// Precisely one of ServerlessJobTaskRunDetails, RaiseTaskRunDetails, SetTaskRunDetails, CallHTTPTaskRunDetails, WaitTaskRunDetails, ServerlessFunctionTaskRunDetails, RunServerlessContainerTaskRunDetails, CallServerlessContainerTaskRunDetails, ObjectStorageTaskRunDetails, GenerativeAPITaskRunDetails must be set.
 	SetTaskRunDetails *DefaultTask `json:"set_task_run_details,omitempty"`
 
 	// CallHTTPTaskRunDetails: task run details for a call http task.
-	// Precisely one of ServerlessJobTaskRunDetails, RaiseTaskRunDetails, SetTaskRunDetails, CallHTTPTaskRunDetails, WaitTaskRunDetails, ServerlessFunctionTaskRunDetails, RunServerlessContainerTaskRunDetails, CallServerlessContainerTaskRunDetails, S3TaskRunDetails, GenerativeAPITaskRunDetails must be set.
+	// Precisely one of ServerlessJobTaskRunDetails, RaiseTaskRunDetails, SetTaskRunDetails, CallHTTPTaskRunDetails, WaitTaskRunDetails, ServerlessFunctionTaskRunDetails, RunServerlessContainerTaskRunDetails, CallServerlessContainerTaskRunDetails, ObjectStorageTaskRunDetails, GenerativeAPITaskRunDetails must be set.
 	CallHTTPTaskRunDetails *DefaultTask `json:"call_http_task_run_details,omitempty"`
 
 	// WaitTaskRunDetails: task run details for a wait task.
-	// Precisely one of ServerlessJobTaskRunDetails, RaiseTaskRunDetails, SetTaskRunDetails, CallHTTPTaskRunDetails, WaitTaskRunDetails, ServerlessFunctionTaskRunDetails, RunServerlessContainerTaskRunDetails, CallServerlessContainerTaskRunDetails, S3TaskRunDetails, GenerativeAPITaskRunDetails must be set.
+	// Precisely one of ServerlessJobTaskRunDetails, RaiseTaskRunDetails, SetTaskRunDetails, CallHTTPTaskRunDetails, WaitTaskRunDetails, ServerlessFunctionTaskRunDetails, RunServerlessContainerTaskRunDetails, CallServerlessContainerTaskRunDetails, ObjectStorageTaskRunDetails, GenerativeAPITaskRunDetails must be set.
 	WaitTaskRunDetails *DefaultTask `json:"wait_task_run_details,omitempty"`
 
 	// ServerlessFunctionTaskRunDetails: task run details for a serverless-function task.
-	// Precisely one of ServerlessJobTaskRunDetails, RaiseTaskRunDetails, SetTaskRunDetails, CallHTTPTaskRunDetails, WaitTaskRunDetails, ServerlessFunctionTaskRunDetails, RunServerlessContainerTaskRunDetails, CallServerlessContainerTaskRunDetails, S3TaskRunDetails, GenerativeAPITaskRunDetails must be set.
+	// Precisely one of ServerlessJobTaskRunDetails, RaiseTaskRunDetails, SetTaskRunDetails, CallHTTPTaskRunDetails, WaitTaskRunDetails, ServerlessFunctionTaskRunDetails, RunServerlessContainerTaskRunDetails, CallServerlessContainerTaskRunDetails, ObjectStorageTaskRunDetails, GenerativeAPITaskRunDetails must be set.
 	ServerlessFunctionTaskRunDetails *DefaultTask `json:"serverless_function_task_run_details,omitempty"`
 
 	// RunServerlessContainerTaskRunDetails: task run details for a run-serverless-container task.
-	// Precisely one of ServerlessJobTaskRunDetails, RaiseTaskRunDetails, SetTaskRunDetails, CallHTTPTaskRunDetails, WaitTaskRunDetails, ServerlessFunctionTaskRunDetails, RunServerlessContainerTaskRunDetails, CallServerlessContainerTaskRunDetails, S3TaskRunDetails, GenerativeAPITaskRunDetails must be set.
+	// Precisely one of ServerlessJobTaskRunDetails, RaiseTaskRunDetails, SetTaskRunDetails, CallHTTPTaskRunDetails, WaitTaskRunDetails, ServerlessFunctionTaskRunDetails, RunServerlessContainerTaskRunDetails, CallServerlessContainerTaskRunDetails, ObjectStorageTaskRunDetails, GenerativeAPITaskRunDetails must be set.
 	RunServerlessContainerTaskRunDetails *RunServerlessContainersTask `json:"run_serverless_container_task_run_details,omitempty"`
 
 	// CallServerlessContainerTaskRunDetails: task run details for a call-serverless-container task.
-	// Precisely one of ServerlessJobTaskRunDetails, RaiseTaskRunDetails, SetTaskRunDetails, CallHTTPTaskRunDetails, WaitTaskRunDetails, ServerlessFunctionTaskRunDetails, RunServerlessContainerTaskRunDetails, CallServerlessContainerTaskRunDetails, S3TaskRunDetails, GenerativeAPITaskRunDetails must be set.
+	// Precisely one of ServerlessJobTaskRunDetails, RaiseTaskRunDetails, SetTaskRunDetails, CallHTTPTaskRunDetails, WaitTaskRunDetails, ServerlessFunctionTaskRunDetails, RunServerlessContainerTaskRunDetails, CallServerlessContainerTaskRunDetails, ObjectStorageTaskRunDetails, GenerativeAPITaskRunDetails must be set.
 	CallServerlessContainerTaskRunDetails *DefaultTask `json:"call_serverless_container_task_run_details,omitempty"`
 
-	// S3TaskRunDetails: task run details for a S3 task.
-	// Precisely one of ServerlessJobTaskRunDetails, RaiseTaskRunDetails, SetTaskRunDetails, CallHTTPTaskRunDetails, WaitTaskRunDetails, ServerlessFunctionTaskRunDetails, RunServerlessContainerTaskRunDetails, CallServerlessContainerTaskRunDetails, S3TaskRunDetails, GenerativeAPITaskRunDetails must be set.
-	S3TaskRunDetails *S3Task `json:"s3_task_run_details,omitempty"`
+	// ObjectStorageTaskRunDetails: task run details for a Object Storage task.
+	// Precisely one of ServerlessJobTaskRunDetails, RaiseTaskRunDetails, SetTaskRunDetails, CallHTTPTaskRunDetails, WaitTaskRunDetails, ServerlessFunctionTaskRunDetails, RunServerlessContainerTaskRunDetails, CallServerlessContainerTaskRunDetails, ObjectStorageTaskRunDetails, GenerativeAPITaskRunDetails must be set.
+	ObjectStorageTaskRunDetails *ObjectStorageTask `json:"object_storage_task_run_details,omitempty"`
 
 	// GenerativeAPITaskRunDetails: task run details for a generative-api task.
-	// Precisely one of ServerlessJobTaskRunDetails, RaiseTaskRunDetails, SetTaskRunDetails, CallHTTPTaskRunDetails, WaitTaskRunDetails, ServerlessFunctionTaskRunDetails, RunServerlessContainerTaskRunDetails, CallServerlessContainerTaskRunDetails, S3TaskRunDetails, GenerativeAPITaskRunDetails must be set.
+	// Precisely one of ServerlessJobTaskRunDetails, RaiseTaskRunDetails, SetTaskRunDetails, CallHTTPTaskRunDetails, WaitTaskRunDetails, ServerlessFunctionTaskRunDetails, RunServerlessContainerTaskRunDetails, CallServerlessContainerTaskRunDetails, ObjectStorageTaskRunDetails, GenerativeAPITaskRunDetails must be set.
 	GenerativeAPITaskRunDetails *DefaultTask `json:"generative_api_task_run_details,omitempty"`
 
 	// RunIteration: run iteration of the task (in loop or retry).
