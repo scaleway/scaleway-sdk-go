@@ -99,6 +99,46 @@ func TestMoney_NewMoneyFromFloat(t *testing.T) {
 				Nanos:        999999999,
 			},
 		},
+		{
+			value:     -0.75,
+			currency:  "EUR",
+			precision: 9,
+			want: &Money{
+				CurrencyCode: "EUR",
+				Units:        0,
+				Nanos:        -750000000,
+			},
+		},
+		{
+			value:     -1.75,
+			currency:  "EUR",
+			precision: 9,
+			want: &Money{
+				CurrencyCode: "EUR",
+				Units:        -1,
+				Nanos:        -750000000,
+			},
+		},
+		{
+			value:     -0.000000001,
+			currency:  "EUR",
+			precision: 9,
+			want: &Money{
+				CurrencyCode: "EUR",
+				Units:        0,
+				Nanos:        -1,
+			},
+		},
+		{
+			value:     -1,
+			currency:  "EUR",
+			precision: 9,
+			want: &Money{
+				CurrencyCode: "EUR",
+				Units:        -1,
+				Nanos:        0,
+			},
+		},
 	}
 
 	for _, c := range cases {
@@ -161,6 +201,38 @@ func TestMoney_String(t *testing.T) {
 				CurrencyCode: "?",
 			},
 			want: "? 0.00",
+		},
+		{
+			money: &Money{
+				CurrencyCode: "EUR",
+				Units:        0,
+				Nanos:        -750000000,
+			},
+			want: "€ -0.75",
+		},
+		{
+			money: &Money{
+				CurrencyCode: "EUR",
+				Units:        -1,
+				Nanos:        -750000000,
+			},
+			want: "€ -1.75",
+		},
+		{
+			money: &Money{
+				CurrencyCode: "EUR",
+				Units:        0,
+				Nanos:        -1,
+			},
+			want: "€ -0.000000001",
+		},
+		{
+			money: &Money{
+				CurrencyCode: "EUR",
+				Units:        -1,
+				Nanos:        0,
+			},
+			want: "€ -1.00",
 		},
 	}
 
@@ -543,6 +615,11 @@ func TestDuration_UnmarshalJSON(t *testing.T) {
 		want *Duration
 		err  string
 	}{
+		{
+			name: "negative fractional duration",
+			json: `{"duration":"-0.75s"}`,
+			want: &Duration{Seconds: 0, Nanos: -750000000},
+		},
 		{
 			name: "error negative nanos",
 			json: `{"duration":"a.12s"}`,
