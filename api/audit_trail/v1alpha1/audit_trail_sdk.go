@@ -156,6 +156,8 @@ const (
 	AuthenticationEventFailureReasonAuthenticationCodeRequired = AuthenticationEventFailureReason("authentication_code_required")
 	// Password was correct but a second factor (OTP or WebAuthn) is required.
 	AuthenticationEventFailureReasonMfaRequired = AuthenticationEventFailureReason("mfa_required")
+	// Invalid, expired or already used magic link.
+	AuthenticationEventFailureReasonInvalidMagicLink = AuthenticationEventFailureReason("invalid_magic_link")
 )
 
 func (enum AuthenticationEventFailureReason) String() string {
@@ -179,6 +181,7 @@ func (enum AuthenticationEventFailureReason) Values() []AuthenticationEventFailu
 		"expired_session",
 		"authentication_code_required",
 		"mfa_required",
+		"invalid_magic_link",
 	}
 }
 
@@ -256,6 +259,8 @@ const (
 	AuthenticationEventMethodSaml = AuthenticationEventMethod("saml")
 	// WebAuthn passkey authentication.
 	AuthenticationEventMethodPasskey = AuthenticationEventMethod("passkey")
+	// Passwordless magic link sent by email.
+	AuthenticationEventMethodMagicLink = AuthenticationEventMethod("magic_link")
 )
 
 func (enum AuthenticationEventMethod) String() string {
@@ -274,6 +279,7 @@ func (enum AuthenticationEventMethod) Values() []AuthenticationEventMethod {
 		"oauth2",
 		"saml",
 		"passkey",
+		"magic_link",
 	}
 }
 
