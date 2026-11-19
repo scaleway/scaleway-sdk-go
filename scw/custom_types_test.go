@@ -99,34 +99,51 @@ func TestMoney_NewMoneyFromFloat(t *testing.T) {
 				Nanos:        999999999,
 			},
 		},
+		{
+			value:     -0.75,
+			currency:  "EUR",
+			precision: 9,
+			want: &Money{
+				CurrencyCode: "EUR",
+				Units:        0,
+				Nanos:        -750000000,
+			},
+		},
+		{
+			value:     -1.75,
+			currency:  "EUR",
+			precision: 9,
+			want: &Money{
+				CurrencyCode: "EUR",
+				Units:        -1,
+				Nanos:        -750000000,
+			},
+		},
+		{
+			value:     -0.000000001,
+			currency:  "EUR",
+			precision: 9,
+			want: &Money{
+				CurrencyCode: "EUR",
+				Units:        0,
+				Nanos:        -1,
+			},
+		},
+		{
+			value:     -1,
+			currency:  "EUR",
+			precision: 9,
+			want: &Money{
+				CurrencyCode: "EUR",
+				Units:        -1,
+				Nanos:        0,
+			},
+		},
 	}
 
 	for _, c := range cases {
 		t.Run(c.want.String(), func(t *testing.T) {
 			testhelpers.Equals(t, c.want, NewMoneyFromFloat(c.value, c.currency, c.precision))
-		})
-	}
-}
-
-func TestMoney_NegativeAmounts(t *testing.T) {
-	for _, c := range []struct {
-		value float64
-		nanos int64
-		want  string
-	}{
-		{-0.75, -750000000, "€ -0.75"},
-		{-1.75, -1750000000, "€ -1.75"},
-		{-0.000000001, -1, "€ -0.000000001"},
-		{-1, -1000000000, "€ -1.00"},
-		{0, 0, "€ 0.00"},
-		{0.75, 750000000, "€ 0.75"},
-	} {
-		t.Run(c.want, func(t *testing.T) {
-			money := NewMoneyFromFloat(c.value, "EUR", 9)
-			want := &Money{CurrencyCode: "EUR", Units: c.nanos / 1e9, Nanos: int32(c.nanos % 1e9)}
-			testhelpers.Equals(t, want, money)
-			testhelpers.Equals(t, c.value, money.ToFloat())
-			testhelpers.Equals(t, c.want, want.String())
 		})
 	}
 }
@@ -184,6 +201,38 @@ func TestMoney_String(t *testing.T) {
 				CurrencyCode: "?",
 			},
 			want: "? 0.00",
+		},
+		{
+			money: &Money{
+				CurrencyCode: "EUR",
+				Units:        0,
+				Nanos:        -750000000,
+			},
+			want: "€ -0.75",
+		},
+		{
+			money: &Money{
+				CurrencyCode: "EUR",
+				Units:        -1,
+				Nanos:        -750000000,
+			},
+			want: "€ -1.75",
+		},
+		{
+			money: &Money{
+				CurrencyCode: "EUR",
+				Units:        0,
+				Nanos:        -1,
+			},
+			want: "€ -0.000000001",
+		},
+		{
+			money: &Money{
+				CurrencyCode: "EUR",
+				Units:        -1,
+				Nanos:        0,
+			},
+			want: "€ -1.00",
 		},
 	}
 
