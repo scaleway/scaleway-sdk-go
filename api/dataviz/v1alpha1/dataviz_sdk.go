@@ -811,6 +811,16 @@ type DownloadDeploymentCertificateAuthorityRequest struct {
 	DeploymentID string `json:"-"`
 }
 
+// GetCertificateRequest: get certificate request.
+type GetCertificateRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	DeploymentID string `json:"-"`
+
+	CertificateID string `json:"-"`
+}
+
 // GetDeploymentRequest: Retrieve a deployment specified by the ID.
 type GetDeploymentRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1843,6 +1853,45 @@ func (s *API) ListCertificates(req *ListCertificatesRequest, opts ...scw.Request
 		for _, el := range resp.Certificates {
 			el.setSRN(apiMetadata.Domain)
 		}
+	}
+	return &resp, nil
+}
+
+// GetCertificate:
+func (s *API) GetCertificate(req *GetCertificateRequest, opts ...scw.RequestOption) (*Certificate, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.DeploymentID) == "" {
+		return nil, errors.New("field DeploymentID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.CertificateID) == "" {
+		return nil, errors.New("field CertificateID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/dataviz/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/deployments/" + fmt.Sprint(req.DeploymentID) + "/certificates/" + fmt.Sprint(req.CertificateID) + "",
+	}
+
+	var resp Certificate
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
