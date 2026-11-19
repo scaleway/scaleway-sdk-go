@@ -400,9 +400,6 @@ type Deployment struct {
 
 	// Srn: sRN of the deployment.
 	Srn string `json:"srn"`
-
-	// Zone: zone of the deployment.
-	Zone scw.Zone `json:"zone"`
 }
 
 //nolint:unused,nolintlint // generated, no check on whether it's used or not
@@ -415,8 +412,8 @@ func (m *Deployment) setSRN(platform string) {
 	// We do not check that *m.XYZ != "", as there are currently no use cases for an
 	// optional value in an SRN where the value set to the empty string makes sense.
 
-	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://inference.%s/zones/%s/deployment/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://inference.%s/regions/%s/deployments/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
 		return
 	}
 }
@@ -468,9 +465,6 @@ type Model struct {
 
 	// Srn: sRN of the model.
 	Srn string `json:"srn"`
-
-	// Zone: zone of the model.
-	Zone scw.Zone `json:"zone"`
 }
 
 //nolint:unused,nolintlint // generated, no check on whether it's used or not
@@ -483,8 +477,8 @@ func (m *Model) setSRN(platform string) {
 	// We do not check that *m.XYZ != "", as there are currently no use cases for an
 	// optional value in an SRN where the value set to the empty string makes sense.
 
-	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://inference.%s/zones/%s/model/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://inference.%s/regions/%s/models/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
 		return
 	}
 }
