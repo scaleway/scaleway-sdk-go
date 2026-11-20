@@ -2,10 +2,15 @@ package scw
 
 import (
 	"bytes"
+	"context"
+	"crypto/tls"
+	"io"
 	"net/http"
+	"net/http/httptest"
 	"os"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
@@ -249,13 +254,23 @@ func TestNewClientWithOptions(t *testing.T) {
 		testhelpers.Equals(t, auth.NewToken(testAccessKey, testSecretKey), client.auth)
 		testhelpers.Equals(t, testAPIURL, client.apiURL)
 
-		clientTransport, ok := client.httpClient.(*http.Client).Transport.(*http.Transport)
-		if loggerTransport, isLogger := client.httpClient.(*http.Client).Transport.(*requestLoggerTransport); !ok && isLogger {
-			clientTransport, ok = loggerTransport.rt.(*http.Transport)
+		var tlsConfig *tls.Config
+		switch t := client.httpClient.(*http.Client).Transport.(type) {
+		case *http.Transport:
+			tlsConfig = t.TLSClientConfig
+		case *RateLimitTransport:
+			tlsConfig = t.Base.(*http.Transport).TLSClientConfig
+		case *requestLoggerTransport:
+			switch rt := t.rt.(type) {
+			case *http.Transport:
+				tlsConfig = rt.TLSClientConfig
+			case *RateLimitTransport:
+				tlsConfig = rt.Base.(*http.Transport).TLSClientConfig
+			}
 		}
-		testhelpers.Assert(t, ok, "clientTransport must be not nil")
-		testhelpers.Assert(t, clientTransport.TLSClientConfig != nil, "TLSClientConfig must be not nil")
-		testhelpers.Equals(t, testInsecure, clientTransport.TLSClientConfig.InsecureSkipVerify)
+
+		testhelpers.Assert(t, tlsConfig != nil, "TLSClientConfig must be not nil")
+		testhelpers.Equals(t, testInsecure, tlsConfig.InsecureSkipVerify)
 
 		s3Endpoint, exist := client.GetS3Endpoint()
 		testhelpers.Equals(t, testS3Endpoint, s3Endpoint)
@@ -323,7 +338,7 @@ func TestSetInsecureMode(t *testing.T) {
 	logger.DefaultLogger.Init(&buf, logger.LogLevelWarning)
 
 	// custom Transport client
-	clientWithFakeTransport := newHTTPClient()
+	clientWithFakeTransport := newHTTPClient(nil)
 	clientWithFakeTransport.Transport = fakeTransport{}
 	setInsecureMode(clientWithFakeTransport)
 
@@ -345,6 +360,58 @@ func TestSetInsecureMode(t *testing.T) {
 	testhelpers.Equals(t, "client: cannot use insecure mode with HTTP client of type scw.fakeHTTPClient", getLogMessage(lines[1]))
 
 	logger.DefaultLogger.Init(os.Stderr, logger.LogLevelWarning)
+}
+
+func TestNewClientWithMaxRetries(t *testing.T) {
+	t.Run("default", func(t *testing.T) {
+		client, err := NewClient(WithoutAuth(), WithAPIURL(testAPIURL))
+		testhelpers.AssertNoError(t, err)
+
+		rlTransport, ok := client.httpClient.(*http.Client).Transport.(*RateLimitTransport)
+		testhelpers.Assert(t, ok, "transport must be *RateLimitTransport")
+		testhelpers.Equals(t, defaultMaxRetries, rlTransport.MaxRetries)
+	})
+
+	t.Run("custom", func(t *testing.T) {
+		client, err := NewClient(WithoutAuth(), WithAPIURL(testAPIURL), WithMaxRetries(0))
+		testhelpers.AssertNoError(t, err)
+
+		rlTransport, ok := client.httpClient.(*http.Client).Transport.(*RateLimitTransport)
+		testhelpers.Assert(t, ok, "transport must be *RateLimitTransport")
+		testhelpers.Equals(t, 0, rlTransport.MaxRetries)
+	})
+
+	t.Run("custom non-zero", func(t *testing.T) {
+		client, err := NewClient(WithoutAuth(), WithAPIURL(testAPIURL), WithMaxRetries(3))
+		testhelpers.AssertNoError(t, err)
+
+		rlTransport, ok := client.httpClient.(*http.Client).Transport.(*RateLimitTransport)
+		testhelpers.Assert(t, ok, "transport must be *RateLimitTransport")
+		testhelpers.Equals(t, 3, rlTransport.MaxRetries)
+	})
+}
+
+// TestSetInsecureModeRateLimitTransport verifies that insecure mode actually
+// disables certificate verification on the transport used by RoundTrip.
+func TestSetInsecureModeRateLimitTransport(t *testing.T) {
+	// Use a self-signed certificate
+	server := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer server.Close()
+
+	// Build the SDK HTTP client and enable insecure mode
+	httpClient := newHTTPClient(nil)
+	setInsecureMode(httpClient)
+
+	// A request must succeed despite the self-signed cert
+	req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL, nil)
+	testhelpers.AssertNoError(t, err)
+
+	resp, err := httpClient.Do(req)
+	testhelpers.AssertNoError(t, err)
+	testhelpers.Equals(t, http.StatusOK, resp.StatusCode)
+	_ = resp.Body.Close()
 }
 
 func TestNewVariableFromType(t *testing.T) {
@@ -375,4 +442,393 @@ func TestClientGetAPIMetadata(t *testing.T) {
 		testhelpers.Equals(t, "scw", metadata.Partition)
 		testhelpers.Equals(t, "external", metadata.Platform)
 	})
+}
+
+type rateLimitResponse struct {
+	code    int
+	headers http.Header
+}
+
+func TestRateLimit(t *testing.T) {
+	cases := []struct {
+		name             string
+		responses        []rateLimitResponse
+		maxRetries       int
+		expectedStatus   string
+		expectedHeader   http.Header
+		expectedHitCount int32
+	}{
+		{
+			name: "basic 200 with rate-limit headers",
+			responses: []rateLimitResponse{
+				{
+					code:    http.StatusOK,
+					headers: http.Header{"X-Ratelimit-Limit": {"50, 50;w=1"}, "X-Ratelimit-Remaining": {"49"}, "X-Ratelimit-Reset": {"2"}},
+				},
+			},
+			maxRetries:       1,
+			expectedStatus:   "200 OK",
+			expectedHeader:   http.Header{"X-Ratelimit-Limit": {"50, 50;w=1"}, "X-Ratelimit-Remaining": {"49"}, "X-Ratelimit-Reset": {"2"}},
+			expectedHitCount: 1,
+		},
+		{
+			name: "429 then success on retry",
+			responses: []rateLimitResponse{
+				{
+					code:    http.StatusTooManyRequests,
+					headers: http.Header{"X-Ratelimit-Remaining": {"0"}, "X-Ratelimit-Reset": {"0"}, "Retry-After": {"0"}},
+				},
+				{
+					code:    http.StatusOK,
+					headers: http.Header{"X-Ratelimit-Remaining": {"49"}, "X-Ratelimit-Reset": {"2"}},
+				},
+			},
+			maxRetries:       1,
+			expectedStatus:   "200 OK",
+			expectedHeader:   http.Header{"X-Ratelimit-Remaining": {"49"}, "X-Ratelimit-Reset": {"2"}},
+			expectedHitCount: 2,
+		},
+		{
+			name: "429 with no Retry-After falls back to backoff retry",
+			responses: []rateLimitResponse{
+				{
+					code:    http.StatusTooManyRequests,
+					headers: http.Header{"X-Ratelimit-Remaining": {"0"}, "X-Ratelimit-Reset": {"2"}},
+				},
+				{
+					code:    http.StatusOK,
+					headers: http.Header{"X-Ratelimit-Remaining": {"49"}, "X-Ratelimit-Reset": {"2"}},
+				},
+			},
+			maxRetries:       1,
+			expectedStatus:   "200 OK",
+			expectedHeader:   http.Header{"X-Ratelimit-Remaining": {"49"}, "X-Ratelimit-Reset": {"2"}},
+			expectedHitCount: 2,
+		},
+		{
+			name: "429 with malformed Retry-After falls back to backoff retry",
+			responses: []rateLimitResponse{
+				{
+					code:    http.StatusTooManyRequests,
+					headers: http.Header{"X-Ratelimit-Remaining": {"0"}, "X-Ratelimit-Reset": {"0"}, "Retry-After": {"not-a-number"}},
+				},
+				{
+					code:    http.StatusOK,
+					headers: http.Header{"X-Ratelimit-Remaining": {"49"}, "X-Ratelimit-Reset": {"2"}},
+				},
+			},
+			maxRetries:       1,
+			expectedStatus:   "200 OK",
+			expectedHeader:   http.Header{"X-Ratelimit-Remaining": {"49"}, "X-Ratelimit-Reset": {"2"}},
+			expectedHitCount: 2,
+		},
+		{
+			name: "429 retry exhaustion returns last 429",
+			responses: []rateLimitResponse{
+				{
+					code:    http.StatusTooManyRequests,
+					headers: http.Header{"X-Ratelimit-Remaining": {"0"}, "X-Ratelimit-Reset": {"0"}, "Retry-After": {"0"}},
+				},
+				{
+					code:    http.StatusTooManyRequests,
+					headers: http.Header{"X-Ratelimit-Remaining": {"0"}, "X-Ratelimit-Reset": {"0"}, "Retry-After": {"0"}},
+				},
+			},
+			maxRetries:       1,
+			expectedStatus:   "429 Too Many Requests",
+			expectedHeader:   http.Header{"X-Ratelimit-Remaining": {"0"}, "X-Ratelimit-Reset": {"0"}, "Retry-After": {"0"}},
+			expectedHitCount: 2,
+		},
+		{
+			name: "malformed rate-limit headers do not crash",
+			responses: []rateLimitResponse{
+				{
+					code:    http.StatusOK,
+					headers: http.Header{"X-Ratelimit-Limit": {"not-a-number"}, "X-Ratelimit-Remaining": {"abc"}, "X-Ratelimit-Reset": {"xyz"}},
+				},
+			},
+			maxRetries:       1,
+			expectedStatus:   "200 OK",
+			expectedHeader:   http.Header{"X-Ratelimit-Limit": {"not-a-number"}, "X-Ratelimit-Remaining": {"abc"}, "X-Ratelimit-Reset": {"xyz"}},
+			expectedHitCount: 1,
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			var hitCount int32
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				hitCount++
+				idx := hitCount - 1
+				if int(idx) >= len(c.responses) {
+					idx = int32(len(c.responses)) - 1
+				}
+
+				resp := c.responses[idx]
+
+				for k, v := range resp.headers {
+					for _, val := range v {
+						w.Header().Set(k, val)
+					}
+				}
+
+				w.WriteHeader(resp.code)
+			}))
+			defer server.Close()
+
+			client := newHTTPClient(nil)
+			tp := client.Transport.(*RateLimitTransport)
+			tp.MaxRetries = c.maxRetries
+
+			req, err := http.NewRequestWithContext(
+				context.Background(), http.MethodPost, server.URL, bytes.NewBufferString("{}"),
+			)
+			testhelpers.AssertNoError(t, err)
+
+			req.Header.Set("Content-Type", "application/json; charset=UTF-8")
+
+			resp, err := client.Do(req)
+			testhelpers.AssertNoError(t, err)
+
+			defer func() {
+				err := resp.Body.Close()
+				if err != nil {
+					t.Fatalf("could not close http response: %v\n", err)
+				}
+			}()
+
+			testhelpers.Equals(t, c.expectedStatus, resp.Status)
+			testhelpers.HeaderContains(t, c.expectedHeader, resp.Header)
+			testhelpers.Equals(t, c.expectedHitCount, hitCount)
+		})
+	}
+}
+
+// TestClampRetryAfterSeconds verifies that the retry wait is floored by the
+// exponential backoff and capped by maxBackoffSeconds, whatever the server
+// sends in Retry-After.
+func TestClampRetryAfterSeconds(t *testing.T) {
+	cases := []struct {
+		name          string
+		retryAfterSec int
+		retry         int
+		expected      int
+	}{
+		{name: "zero raised to first-retry floor", retryAfterSec: 0, retry: 0, expected: 1},
+		{name: "zero raised to exponential floor", retryAfterSec: 0, retry: 3, expected: 8},
+		{name: "floor capped at max", retryAfterSec: 0, retry: 5, expected: 30},
+		{name: "floor capped at max on later retries", retryAfterSec: 0, retry: 63, expected: 30},
+		{name: "huge Retry-After capped", retryAfterSec: 86400, retry: 2, expected: 30},
+		{name: "in-range value unchanged", retryAfterSec: 10, retry: 1, expected: 10},
+		{name: "negative raised to floor", retryAfterSec: -5, retry: 0, expected: 1},
+	}
+
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			testhelpers.Equals(t, c.expected, clampRetryAfterSeconds(c.retryAfterSec, c.retry))
+		})
+	}
+}
+
+// TestParseRateLimitHeaders verifies paired parsing of Scaleway's X-Ratelimit-*
+// values, including the IETF draft list format (one entry per limit bucket in
+// each field) and malformed input. Buckets are paired positionally so an
+// exhausted bucket gets its own reset time, not another bucket's.
+func TestParseRateLimitHeaders(t *testing.T) {
+	cases := []struct {
+		name          string
+		remaining     string
+		reset         string
+		expectedRem   int
+		expectedReset int
+		ok            bool
+	}{
+		{name: "single pair", remaining: "49", reset: "2", expectedRem: 49, expectedReset: 0, ok: true},
+		{name: "single pair with parameters", remaining: "49;w=60", reset: "2;w=60", expectedRem: 49, expectedReset: 0, ok: true},
+		{name: "exhausted bucket paired with its own reset", remaining: "0, 49", reset: "3600, 2", expectedRem: 0, expectedReset: 3600, ok: true},
+		{name: "latest reset wins among exhausted buckets", remaining: "0, 0", reset: "2, 3600", expectedRem: 0, expectedReset: 3600, ok: true},
+		{name: "no exhausted bucket ignores resets", remaining: "49, 3", reset: "3600, 2", expectedRem: 3, expectedReset: 0, ok: true},
+		{name: "unequal lengths pair up to the shortest (1)", remaining: "0, 1", reset: "5", expectedRem: 0, expectedReset: 5, ok: true},
+		{name: "unequal lengths pair up to the shortest (2)", remaining: "1, 0", reset: "5", expectedRem: 1, expectedReset: 0, ok: true},
+		{name: "garbage mixed with a value", remaining: "abc, 7", reset: "5, 3", expectedRem: 7, expectedReset: 0, ok: true},
+		{name: "half-parsed pair is rejected", remaining: "0", reset: "abc", expectedRem: 0, expectedReset: 0, ok: false},
+		{name: "empty", remaining: "", reset: "", expectedRem: 0, expectedReset: 0, ok: false},
+		{name: "garbage", remaining: "not-a-number", reset: "60", expectedRem: 0, expectedReset: 0, ok: false},
+		{name: "negative rejected", remaining: "-5", reset: "60", expectedRem: 0, expectedReset: 0, ok: false},
+	}
+
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			rem, reset, ok := parseRateLimitHeaders(c.remaining, c.reset)
+			testhelpers.Equals(t, c.ok, ok)
+			if ok {
+				testhelpers.Equals(t, c.expectedRem, rem)
+				testhelpers.Equals(t, c.expectedReset, reset)
+			}
+		})
+	}
+}
+
+// TestRateLimitMultiBucketStateUpdate verifies that list-format
+// X-Ratelimit headers update the shared state with the most restrictive
+// bucket, and that malformed values leave the state untouched instead of
+// zero-filling it with garbage.
+func TestRateLimitMultiBucketStateUpdate(t *testing.T) {
+	t.Run("list values take the most restrictive bucket", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("X-Ratelimit-Remaining", "0, 49")
+			w.Header().Set("X-Ratelimit-Reset", "2, 3600")
+			w.WriteHeader(http.StatusOK)
+		}))
+		defer server.Close()
+
+		client := newHTTPClient(nil)
+		tp := client.Transport.(*RateLimitTransport)
+
+		req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL, nil)
+		testhelpers.AssertNoError(t, err)
+		resp, err := client.Do(req)
+		testhelpers.AssertNoError(t, err)
+		_ = resp.Body.Close()
+
+		testhelpers.Equals(t, 0, tp.State.remaining)
+		wait := tp.State.getWaitDuration()
+		testhelpers.Assert(t, wait > 0 && wait <= 2*time.Second,
+			"expected to wait until the exhausted bucket's reset (~2s), got %s", wait)
+	})
+
+	t.Run("exhausted bucket waits on its own reset, not the global minimum", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("X-Ratelimit-Remaining", "0, 49")
+			w.Header().Set("X-Ratelimit-Reset", "3600, 2")
+			w.WriteHeader(http.StatusOK)
+		}))
+		defer server.Close()
+
+		client := newHTTPClient(nil)
+		tp := client.Transport.(*RateLimitTransport)
+
+		req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL, nil)
+		testhelpers.AssertNoError(t, err)
+		resp, err := client.Do(req)
+		testhelpers.AssertNoError(t, err)
+		_ = resp.Body.Close()
+
+		testhelpers.Equals(t, 0, tp.State.remaining)
+		wait := tp.State.getWaitDuration()
+		testhelpers.Assert(t, wait > 2*time.Second && wait <= maxBackoffSeconds*time.Second,
+			"expected to wait for the exhausted bucket's reset (~%ds), got %s", maxBackoffSeconds, wait)
+	})
+
+	t.Run("malformed values are skipped, not zero-filled", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("X-Ratelimit-Remaining", "abc")
+			w.Header().Set("X-Ratelimit-Reset", "60")
+			w.WriteHeader(http.StatusOK)
+		}))
+		defer server.Close()
+
+		client := newHTTPClient(nil)
+		tp := client.Transport.(*RateLimitTransport)
+
+		req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL, nil)
+		testhelpers.AssertNoError(t, err)
+		resp, err := client.Do(req)
+		testhelpers.AssertNoError(t, err)
+		_ = resp.Body.Close()
+
+		// State must be untouched: remaining stays at its initial value and
+		// no wait is imposed.
+		testhelpers.Equals(t, 1, tp.State.remaining)
+		testhelpers.Equals(t, time.Duration(0), tp.State.getWaitDuration())
+	})
+}
+
+// TestRateLimitContextCancelsRetryWait verifies that a context deadline
+// aborts a 429 retry wait instead of sleeping the full backoff. This is the
+// mechanism http.Client.Timeout (defaultClientTimeout) relies on to bound
+// the whole call, including retry sleeps and the response body read.
+func TestRateLimitContextCancelsRetryWait(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Retry-After", "30")
+		w.WriteHeader(http.StatusTooManyRequests)
+	}))
+	defer server.Close()
+
+	client := newHTTPClient(nil)
+	testhelpers.Equals(t, defaultClientTimeout, client.Timeout)
+	tp := client.Transport.(*RateLimitTransport)
+	tp.MaxRetries = 5
+
+	ctx, cancel := context.WithTimeout(context.Background(), 200*time.Millisecond)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, server.URL, nil)
+	testhelpers.AssertNoError(t, err)
+
+	start := time.Now()
+	resp, err := client.Do(req)
+	if resp != nil {
+		_ = resp.Body.Close()
+	}
+
+	elapsed := time.Since(start)
+
+	testhelpers.Assert(t, err != nil, "expected the context deadline to abort the request")
+	testhelpers.Assert(
+		t, elapsed < 30*time.Second,
+		"the 30s Retry-After backoff must be cut short by the deadline, took %s", elapsed,
+	)
+}
+
+// TestRateLimitNonReplayableBody verifies that a 429 retry does NOT re-send a
+// request whose body cannot be safely replayed.
+func TestRateLimitNonReplayableBody(t *testing.T) {
+	const payload = `{"name":"non-replayable-upload"}`
+
+	var bodies []string
+	var hitCount int32
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		hitCount++
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			t.Errorf("read body: %v", err)
+			return
+		}
+		bodies = append(bodies, string(body))
+
+		if hitCount == 1 {
+			w.Header().Set("Retry-After", "0")
+			w.WriteHeader(http.StatusTooManyRequests)
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer server.Close()
+
+	client := newHTTPClient(nil)
+	tp := client.Transport.(*RateLimitTransport)
+	tp.MaxRetries = 1
+
+	// io.NopCloser wraps a *bytes.Reader so that http.NewRequestWithContext
+	// cannot detect it as one of the known replayable types and therefore
+	// leaves req.GetBody == nil. This mimics the io.Reader / *File upload path
+	// from ScalewayRequest.SetBody.
+	req, err := http.NewRequestWithContext(
+		context.Background(), http.MethodPost, server.URL,
+		io.NopCloser(bytes.NewReader([]byte(payload))),
+	)
+	testhelpers.AssertNoError(t, err)
+	req.Header.Set("Content-Type", "application/json; charset=UTF-8")
+
+	resp, err := client.Do(req)
+	testhelpers.AssertNoError(t, err)
+
+	// The body is not safely replayable (GetBody == nil), so the transport must
+	// NOT retry: the caller receives the 429 and the server is hit exactly once
+	// with the full, intact payload.
+	testhelpers.Equals(t, 1, len(bodies))
+	testhelpers.Equals(t, payload, bodies[0])
+	testhelpers.Equals(t, "429 Too Many Requests", resp.Status)
+	_ = resp.Body.Close()
 }
