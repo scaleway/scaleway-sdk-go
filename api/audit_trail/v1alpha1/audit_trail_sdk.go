@@ -2266,6 +2266,12 @@ type CustomAlertRuleField struct {
 	IntOperators *CustomAlertRuleFieldIntOperators `json:"int_operators,omitempty"`
 }
 
+// TrailCockpit: trail cockpit.
+type TrailCockpit struct {
+	// TargetProjectID: ID of the Project under which the Organization's Audit Trail events are pushed to Cockpit.
+	TargetProjectID string `json:"target_project_id"`
+}
+
 // CreateCustomAlertRuleRequest: create custom alert rule request.
 type CreateCustomAlertRuleRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -2425,6 +2431,15 @@ type GetLastEventsOverviewRequest struct {
 	OrganizationID string `json:"-"`
 
 	ProjectID *string `json:"-"`
+}
+
+// GetTrailRequest: get trail request.
+type GetTrailRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// OrganizationID: ID of the Organization whose trail is to be retrieved.
+	OrganizationID string `json:"-"`
 }
 
 // ListAlertRulesRequest: list alert rules request.
@@ -2872,6 +2887,15 @@ type TestCustomAlertRuleResponse struct {
 	Firing bool `json:"firing"`
 }
 
+// Trail: trail.
+type Trail struct {
+	// OrganizationID: ID of the Organization the trail belongs to.
+	OrganizationID string `json:"organization_id"`
+
+	// Cockpit: the Cockpit destination of the trail. When set, Audit Trail events are pushed to the targeted Cockpit project. When null, forwarding is disabled.
+	Cockpit *TrailCockpit `json:"cockpit"`
+}
+
 // UpdateCustomAlertRuleRequest: update custom alert rule request.
 type UpdateCustomAlertRuleRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -2885,6 +2909,18 @@ type UpdateCustomAlertRuleRequest struct {
 
 	// Description: (Optional) New description for the custom alert rule.
 	Description *string `json:"description,omitempty"`
+}
+
+// UpdateTrailRequest: update trail request.
+type UpdateTrailRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	// OrganizationID: ID of the Organization whose trail is to be updated.
+	OrganizationID string `json:"-"`
+
+	// Cockpit: an omitted or `null` `cockpit` clears the destination and disables forwarding.
+	Cockpit *TrailCockpit `json:"cockpit,omitempty"`
 }
 
 // This API allows you to ensure accountability and security by recording events and changes performed within your Scaleway Organization.
@@ -3873,6 +3909,83 @@ func (s *API) RetrieveAvailableFieldsForCustomAlertRules(req *RetrieveAvailableF
 	}
 
 	var resp RetrieveAvailableFieldsForCustomAlertRulesResponse
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// GetTrail: Retrieve the trail of a specified Organization, including Cockpit's target Project ID to which Audit Trail events are pushed. You must specify the `organization_id`.
+func (s *API) GetTrail(req *GetTrailRequest, opts ...scw.RequestOption) (*Trail, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.OrganizationID) == "" {
+		return nil, errors.New("field OrganizationID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "GET",
+		Path:   "/audit-trail/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/trails/" + fmt.Sprint(req.OrganizationID) + "",
+	}
+
+	var resp Trail
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// UpdateTrail: Update the destination of the trail of a specified Organization. Set the `cockpit` destination to change the `target_project_id` to which Audit Trail events are pushed. An omitted or `null` `cockpit` clears the destination and disables forwarding.
+func (s *API) UpdateTrail(req *UpdateTrailRequest, opts ...scw.RequestOption) (*Trail, error) {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if req.OrganizationID == "" {
+		defaultOrganizationID, _ := s.client.GetDefaultOrganizationID()
+		req.OrganizationID = defaultOrganizationID
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return nil, errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.OrganizationID) == "" {
+		return nil, errors.New("field OrganizationID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "PATCH",
+		Path:   "/audit-trail/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/trails/" + fmt.Sprint(req.OrganizationID) + "",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Trail
 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
