@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	block "github.com/scaleway/scaleway-sdk-go/api/block/v1alpha1"
+	block "github.com/scaleway/scaleway-sdk-go/api/block/v1"
 	"github.com/scaleway/scaleway-sdk-go/api/marketplace/v2"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers/httprecorder"
@@ -422,7 +422,7 @@ func TestAPI_CreateServerImageLabelResolution(t *testing.T) {
 
 	t.Run("block-arm", func(t *testing.T) {
 		volumeType := VolumeVolumeTypeSbsVolume
-		commercialType = "COPARM1-2C-8G"
+		commercialType = "BASIC2-A2C-8G"
 		zone = scw.ZoneFrPar2
 		expectedImage.LocalImageType = marketplace.LocalImageTypeInstanceSbs
 		expectedImage.CommercialType = commercialType
