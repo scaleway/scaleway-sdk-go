@@ -1,8 +1,7 @@
 # Release Notes Guidelines
 
 Guidelines for writing and formatting release notes for this repository. Release
-notes are published as GitHub Releases (see note at the top of `CHANGELOG.md`),
-not as entries in the changelog file.
+notes are published as GitHub Releases, not as entries in a changelog file.
 
 ## Process
 
@@ -11,9 +10,23 @@ When a **specific version's** notes are asked for, draft that version only.
 1. Scope the release to its two nearest tags: `git log --oneline v<prev>..v<new>`, where `<prev>`
    is the previous released tag (not a wider range) and `<new>` the version being drafted. The
    note must cover every user-facing change in this range and nothing outside it.
-2. Bootstrap with the generator — it gives the skeleton (commit subjects grouped by namespace),
-   not the final text:
-   `python3 scripts/generate_release_notes.py <repo> <version> [--prev <prev-tag>] [--out <dir>]`.
+2. **Bootstrap** the skeleton from the commit list — it gives commit subjects grouped by type
+   and namespace, not the final text. One-off `git` one-liners are enough; there is no
+   dedicated generator script (use `..HEAD` while `v<new>` is not tagged yet):
+
+   - Commit list, one line per commit with its short and full SHA:
+     ```sh
+     git log --format="%s [%h](%H)" v<prev>..v<new> | sort
+     ```
+   - The `feat`/`fix` subjects that drive the sections, grouped by their `scope(...)` — the
+     namespace list comes from the actual range, never a maintained list:
+     ```sh
+     git log --format="%s" v<prev>..v<new> | grep -oE '^(feat|fix)\([^)]*' | sort | uniq -c
+     ```
+   - Author lines for the Contributors section, deduped and sorted:
+     ```sh
+     git log --format="%aN <%aE>" v<prev>..v<new> | sort -u
+     ```
 3. **Redact** the result by hand (see [Redaction style](#redaction-style)): drop chore/ci/build/`test`
    and dependency-bot items, rewrite the rest as prose with "why" and usage examples.
 4. Keep the **end-result** notes in `docs/release_notes/v<version>.md` — one file per
@@ -51,8 +64,8 @@ read in a changelog.
 
 ### Structure
 
-Sections appear in a **fixed order** so output is stable across releases and the
-generator can be trusted. Use a **two-level table of contents**: every `##`
+Sections appear in a **fixed order** so output is stable across releases. Use a
+**two-level table of contents**: every `##`
 section is listed, and each `###` subsection appears indented two spaces under
 its section, all matching their headings' GitHub slugs. Then:
 
@@ -66,8 +79,12 @@ its section, all matching their headings' GitHub slugs. Then:
    changes), **sorted alphabetically, case-insensitive, by heading** — e.g.
    `Audit trail`, `Autoscaling`, `k8s`, `Kafka`, `MongoDB`, `RDB`,
    `Secret Manager`. `Core` is not part of this run: it lives at step 3.
-   Every change in a namespace lives under its own `###` subsection — never a
-   bare bullet directly under a `##` namespace heading.
+   The section list is the set of scopes emitted by the step-2 one-liner, and each
+   scope key is resolved to the product's official display name from the source
+   (`internal/namespaces/<name>/` directory, `docs/commands/<name>.md`), in the same
+   style as past notes — no maintained namespace list. Every change in a namespace
+   lives under its own `###` subsection — never a bare bullet directly under a `##`
+   namespace heading.
 5. **Bug fixes** — general fixes; keep them here even when a fix targets a
    specific product.
 6. **Contributors**
@@ -113,7 +130,9 @@ order for the steps that remain.
 - List authors of non-bot commits in the release range, sorted alphabetically by login.
 - **Link every contributor to their GitHub profile**: `[@login](https://github.com/login)`.
   Resolve the login from the commit author (via the commits API, the PR author,
-  or a verified `api.github.com/users/<login>`) — never guess from emails.
+  or a verified `api.github.com/users/<login>`) — never guess from emails. When the
+  git author name isn't obviously the login, fetch it from the commit's GitHub author
+  with the gh CLI: `gh api repos/scaleway/scaleway-cli/commits/<sha> --jq '.author.login'`.
 - Tag first-time committers inline (e.g. a `(new)` marker beside the handle) with their first
   contribution and its PR and commit links.
 - Exclude bots and their automated commits.
@@ -132,7 +151,7 @@ order for the steps that remain.
 - **Range link:** the header links the tag range it covers:
   `[**v1.1.0 → v1.2.0**](https://github.com/scaleway/scaleway-cli/compare/v1.1.0...v1.2.0)`.
 - **No emoji:** avoid emojis entirely — in headings, bullets, examples and contributor markers.
-  The generator emits none, and hand-added decorations (e.g. `⚠️` in "Breaking changes and
+  Hand-added decorations (e.g. `⚠️` in "Breaking changes and
   migrations", `🎉` for first-time contributors) make output inconsistent; use plain text
   instead (e.g. a `(new)` marker for first-time contributors).
 - **Anchor-safe headings:** keep headings free of characters that make GitHub
