@@ -73,7 +73,7 @@ its section, all matching their headings' GitHub slugs. Then:
 2. **Breaking changes and migrations** — always near the top, even if empty.
    Call out renames, deprecated flags/endpoints, and API migrations users must
    act on.
-3. **Core** — cross-cutting behavior to tied to a specific product namespace.
+3. **Core** — cross-cutting behavior not tied to a specific product namespace.
    Only include it when there is material to report.
 4. **Product namespaces** — one section per namespace (the `scope(...)` of the
    changes), **sorted alphabetically, case-insensitive, by heading** — e.g.
