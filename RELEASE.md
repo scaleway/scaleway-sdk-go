@@ -7,25 +7,25 @@ notes are published as GitHub Releases, not as entries in a changelog file.
 
 When a **specific version's** notes are asked for, draft that version only.
 
-1. Scope the release to its two nearest tags: `git log --oneline v<prev>..v<new>`, where `<prev>`
-   is the previous released tag (not a wider range) and `<new>` the version being drafted. The
-   note must cover every user-facing change in this range and nothing outside it.
-2. **Bootstrap** the skeleton from the commit list — it gives commit subjects grouped by type
-   and namespace, not the final text. One-off `git` one-liners are enough; there is no
-   dedicated generator script (use `..HEAD` while `v<new>` is not tagged yet):
+1. Scope the release to its two nearest tags: `git log --oneline FROM..TO`,
+   where `FROM` is the previous released tag (eg: v1.2.3) and `TO` the
+   version being drafted (or HEAD if the tag doesn't exists yet). The note must
+   cover every user-facing change in this range and nothing outside it.
+2. **Bootstrap** the skeleton from the commit list — it gives commit subjects
+   grouped by type and namespace, not the final text:
 
    - Commit list, one line per commit with its short and full SHA:
      ```sh
-     git log --format="%s [%h](%H)" v<prev>..v<new> | sort
+     git log --format="%s [%h](%H)" FROM..TO | sort
      ```
    - The `feat`/`fix` subjects that drive the sections, grouped by their `scope(...)` — the
      namespace list comes from the actual range, never a maintained list:
      ```sh
-     git log --format="%s" v<prev>..v<new> | grep -oE '^(feat|fix)\([^)]*' | sort | uniq -c
+     git log --format="%s" FROM..TO | grep -oE '^(feat|fix)\([^)]*' | sort | uniq -c
      ```
    - Author lines for the Contributors section, deduped and sorted:
      ```sh
-     git log --format="%aN <%aE>" v<prev>..v<new> | sort -u
+     git log --format="%aN <%aE>" FROM..TO | sort -u
      ```
 3. **Redact** the result by hand (see [Redaction style](#redaction-style)): drop chore/ci/build/`test`
    and dependency-bot items, rewrite the rest as prose with "why" and usage examples.
@@ -45,10 +45,10 @@ When a **specific version's** notes are asked for, draft that version only.
 
 ### Include
 
-- `feat(scope)` — new or improved behavior                        
-- `fix(scope)` — bugs users can hit, with the symptom             
-- API/CLI migrations, renames, deprecations (as breaking changes) 
-- New namespaces/products activated in the CLI                    
+- `feat(scope)` — new or improved behavior
+- `fix(scope)` — bugs users can hit, with the symptom
+- migrations, renames, deprecations (as breaking changes)
+- New namespaces/products
 
 ### Exclude
 
@@ -73,8 +73,8 @@ its section, all matching their headings' GitHub slugs. Then:
 2. **Breaking changes and migrations** — always near the top, even if empty.
    Call out renames, deprecated flags/endpoints, and API migrations users must
    act on.
-3. **Core** — CLI engine / cross-cutting behavior (global flags, dispatch,
-   plugins, autocomplete). Only include it when there is material to report.
+3. **Core** — cross-cutting behavior to tied to a specific product namespace.
+   Only include it when there is material to report.
 4. **Product namespaces** — one section per namespace (the `scope(...)` of the
    changes), **sorted alphabetically, case-insensitive, by heading** — e.g.
    `Audit trail`, `Autoscaling`, `k8s`, `Kafka`, `MongoDB`, `RDB`,
@@ -132,7 +132,7 @@ order for the steps that remain.
   Resolve the login from the commit author (via the commits API, the PR author,
   or a verified `api.github.com/users/<login>`) — never guess from emails. When the
   git author name isn't obviously the login, fetch it from the commit's GitHub author
-  with the gh CLI: `gh api repos/scaleway/scaleway-cli/commits/<sha> --jq '.author.login'`.
+  with the gh CLI: `gh api repos/{owner}/{repo}/commits/<sha> --jq '.author.login'`.
 - Tag first-time committers inline (e.g. a `(new)` marker beside the handle) with their first
   contribution and its PR and commit links.
 - Exclude bots and their automated commits.
@@ -140,16 +140,16 @@ order for the steps that remain.
 
 ### Formatting rules
 
-- **PR links:** use `[#NNNN](https://github.com/scaleway/scaleway-cli/pull/NNNN)`.
+- **PR links:** use `[#NNNN](https://github.com/{owner}/{repo}/pull/NNNN)`.
 - **Commit links:** every referred change (highlight, feature, bug fix, breaking
   change, first contribution) also links the commit that introduced it:
-  `[commit 1a2b3c4](https://github.com/scaleway/scaleway-cli/commit/<full-sha>)`.
+  `[commit 1a2b3c4](https://github.com/{owner}/{repo}/commit/<full-sha>)`.
   GitHub resolves shortened SHAs, but use the full SHA in the URL.
 - **Contributor links:** every contributor is a GitHub-profile link,
   `[@login](https://github.com/login)`, listed in the Contributors section (see
   [Contributors](#contributors)).
 - **Range link:** the header links the tag range it covers:
-  `[**v1.1.0 → v1.2.0**](https://github.com/scaleway/scaleway-cli/compare/v1.1.0...v1.2.0)`.
+  `[**v1.1.0 → v1.2.0**](https://github.com/{owner}/{repo}/compare/v1.1.0...v1.2.0)`.
 - **No emoji:** avoid emojis entirely — in headings, bullets, examples and contributor markers.
   Hand-added decorations (e.g. `⚠️` in "Breaking changes and
   migrations", `🎉` for first-time contributors) make output inconsistent; use plain text
