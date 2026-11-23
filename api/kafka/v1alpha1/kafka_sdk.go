@@ -359,6 +359,28 @@ type Endpoint struct {
 	// PublicNetwork: public endpoint details.
 	// Precisely one of PrivateNetwork, PublicNetwork must be set.
 	PublicNetwork *EndpointPublicDetails `json:"public_network,omitempty"`
+
+	// Srn: sRN of the endpoint.
+	Srn string `json:"srn"`
+
+	// Region: region of the endpoint.
+	Region scw.Region `json:"region"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *Endpoint) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://kafka.%s/regions/%s/endpoints/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // Volume: volume.
@@ -492,6 +514,25 @@ type Cluster struct {
 	// MonoAz: monoAZ details.
 	// Precisely one of MultiAz, MonoAz must be set.
 	MonoAz *ClusterMonoAZDetails `json:"mono_az,omitempty"`
+
+	// Srn: sRN of the cluster.
+	Srn string `json:"srn"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *Cluster) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://kafka.%s/regions/%s/clusters/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
+		return
+	}
 }
 
 // NodeType: node type.
@@ -523,11 +564,59 @@ type NodeType struct {
 
 	// ClusterRange: cluster range associated with the node type offer.
 	ClusterRange string `json:"cluster_range"`
+
+	// Srn: sRN of the node type.
+	Srn string `json:"srn"`
+
+	// Region: region on which the node type is available.
+	Region scw.Region `json:"region"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *NodeType) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.Name) != "" {
+		m.Srn = fmt.Sprintf("srn://kafka.%s/regions/%s/node-types/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.Name))
+		return
+	}
 }
 
 // User: user.
 type User struct {
+	// Username: name of the user.
 	Username string `json:"username"`
+
+	// ClusterID: ID of the user's cluster.
+	ClusterID string `json:"cluster_id"`
+
+	// Region: region of the cluster associated with the user.
+	Region scw.Region `json:"region"`
+
+	// Srn: sRN of the user.
+	Srn string `json:"srn"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *User) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ClusterID) != "" && fmt.Sprint(m.Username) != "" {
+		m.Srn = fmt.Sprintf("srn://kafka.%s/regions/%s/clusters/%s/users/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ClusterID), fmt.Sprint(m.Username))
+		return
+	}
 }
 
 // Version: version.
@@ -540,6 +629,28 @@ type Version struct {
 
 	// AvailableSettings: cluster configuration settings you are able to change for clusters running this version. Each item in `available_settings` describes one configurable cluster setting.
 	AvailableSettings []*VersionAvailableSetting `json:"available_settings"`
+
+	// Srn: sRN of the version.
+	Srn string `json:"srn"`
+
+	// Region: region of the version.
+	Region scw.Region `json:"region"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *Version) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.Version) != "" {
+		m.Srn = fmt.Sprintf("srn://kafka.%s/regions/%s/versions/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.Version))
+		return
+	}
 }
 
 // CreateClusterRequest: create cluster request.
@@ -911,6 +1022,12 @@ func (s *API) ListNodeTypes(req *ListNodeTypesRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.NodeTypes {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -948,6 +1065,12 @@ func (s *API) ListVersions(req *ListVersionsRequest, opts ...scw.RequestOption) 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Versions {
+			el.setSRN(apiMetadata.Domain)
+		}
 	}
 	return &resp, nil
 }
@@ -991,6 +1114,12 @@ func (s *API) ListClusters(req *ListClustersRequest, opts ...scw.RequestOption) 
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Clusters {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -1021,6 +1150,10 @@ func (s *API) GetCluster(req *GetClusterRequest, opts ...scw.RequestOption) (*Cl
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1113,6 +1246,10 @@ func (s *API) CreateCluster(req *CreateClusterRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1149,6 +1286,10 @@ func (s *API) UpdateCluster(req *UpdateClusterRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1179,6 +1320,10 @@ func (s *API) DeleteCluster(req *DeleteClusterRequest, opts ...scw.RequestOption
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1306,6 +1451,10 @@ func (s *API) CreateEndpoint(req *CreateEndpointRequest, opts ...scw.RequestOpti
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1349,6 +1498,12 @@ func (s *API) ListUsers(req *ListUsersRequest, opts ...scw.RequestOption) (*List
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Users {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -1388,6 +1543,10 @@ func (s *API) UpdateUser(req *UpdateUserRequest, opts ...scw.RequestOption) (*Us
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
