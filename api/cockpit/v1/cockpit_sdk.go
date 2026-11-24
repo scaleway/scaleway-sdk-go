@@ -967,8 +967,8 @@ func (m *Exporter) setSRN(platform string) {
 	// We do not check that *m.XYZ != "", as there are currently no use cases for an
 	// optional value in an SRN where the value set to the empty string makes sense.
 
-	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://cockpit.%s/regions/%s/exporters/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.DatasourceID) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://cockpit.%s/regions/%s/data-sources/%s/exporters/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.DatasourceID), fmt.Sprint(m.ID))
 		return
 	}
 }
