@@ -3,7 +3,7 @@ package instance
 import (
 	"testing"
 
-	block "github.com/scaleway/scaleway-sdk-go/api/block/v1alpha1"
+	block "github.com/scaleway/scaleway-sdk-go/api/block/v1"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers/httprecorder"
 	"github.com/scaleway/scaleway-sdk-go/scw"
