@@ -773,6 +773,16 @@ type CreateUserRequest struct {
 	Password string `json:"password"`
 }
 
+// DeleteCertificateRequest: delete certificate request.
+type DeleteCertificateRequest struct {
+	// Region: region to target. If none is passed will use default region from the config.
+	Region scw.Region `json:"-"`
+
+	DeploymentID string `json:"-"`
+
+	CertificateID string `json:"-"`
+}
+
 // DeleteDeploymentRequest: Delete a deployment specified by the ID.
 type DeleteDeploymentRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1894,4 +1904,37 @@ func (s *API) GetCertificate(req *GetCertificateRequest, opts ...scw.RequestOpti
 		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
+}
+
+// DeleteCertificate:
+func (s *API) DeleteCertificate(req *DeleteCertificateRequest, opts ...scw.RequestOption) error {
+	var err error
+
+	if req.Region == "" {
+		defaultRegion, _ := s.client.GetDefaultRegion()
+		req.Region = defaultRegion
+	}
+
+	if fmt.Sprint(req.Region) == "" {
+		return errors.New("field Region cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.DeploymentID) == "" {
+		return errors.New("field DeploymentID cannot be empty in request")
+	}
+
+	if fmt.Sprint(req.CertificateID) == "" {
+		return errors.New("field CertificateID cannot be empty in request")
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "DELETE",
+		Path:   "/dataviz/v1alpha1/regions/" + fmt.Sprint(req.Region) + "/deployments/" + fmt.Sprint(req.DeploymentID) + "/certificates/" + fmt.Sprint(req.CertificateID) + "",
+	}
+
+	err = s.client.Do(scwReq, nil, opts...)
+	if err != nil {
+		return err
+	}
+	return nil
 }
