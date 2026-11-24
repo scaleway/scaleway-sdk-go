@@ -2302,7 +2302,7 @@ type AttachServerIPRequest struct {
 	// Default: whether the IP should be the default IP.
 	Default bool `json:"default"`
 
-	// MoveAllowed: whether moving the IP is allowed.
+	// MoveAllowed: when enabled, allows attaching the IP even if it is already attached to another server.
 	MoveAllowed bool `json:"move_allowed"`
 }
 
