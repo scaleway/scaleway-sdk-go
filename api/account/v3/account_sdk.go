@@ -714,22 +714,6 @@ type Contract struct {
 	Srn string `json:"srn"`
 }
 
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *Contract) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://account.%s/contracts/%s", platform, fmt.Sprint(m.ID))
-		return
-	}
-}
-
 // Qualification: qualification.
 type Qualification struct {
 	// ArchitectureType: architecture type of the qualification.
@@ -814,22 +798,6 @@ type Project struct {
 
 	// Srn: the SRN of the Project.
 	Srn string `json:"srn"`
-}
-
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *Project) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://account.%s/projects/%s", platform, fmt.Sprint(m.ID))
-		return
-	}
 }
 
 // CheckContractSignatureResponse: check contract signature response.
@@ -1240,10 +1208,6 @@ func (s *ProjectAPI) CreateProject(req *ProjectAPICreateProjectRequest, opts ...
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -1281,12 +1245,6 @@ func (s *ProjectAPI) ListProjects(req *ProjectAPIListProjectsRequest, opts ...sc
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.Projects {
-			el.setSRN(apiMetadata.Domain)
-		}
-	}
 	return &resp, nil
 }
 
@@ -1313,10 +1271,6 @@ func (s *ProjectAPI) GetProject(req *ProjectAPIGetProjectRequest, opts ...scw.Re
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1420,10 +1374,6 @@ func (s *ProjectAPI) DeleteProjectWithResources(req *ProjectAPIDeleteProjectWith
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -1455,10 +1405,6 @@ func (s *ProjectAPI) UpdateProject(req *ProjectAPIUpdateProjectRequest, opts ...
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }

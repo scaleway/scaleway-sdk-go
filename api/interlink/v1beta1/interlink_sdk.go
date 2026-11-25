@@ -535,22 +535,6 @@ type DedicatedConnection struct {
 	Region scw.Region `json:"region"`
 }
 
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *DedicatedConnection) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://interlink.%s/regions/%s/dedicated-connections/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
-		return
-	}
-}
-
 // Link: link.
 type Link struct {
 	// ID: unique identifier of the link.
@@ -631,22 +615,6 @@ type Link struct {
 	Region scw.Region `json:"region"`
 }
 
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *Link) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://interlink.%s/regions/%s/links/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
-		return
-	}
-}
-
 // Partner: partner.
 type Partner struct {
 	// ID: unique identifier of the partner.
@@ -680,22 +648,6 @@ type Partner struct {
 	Region scw.Region `json:"region"`
 }
 
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *Partner) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://interlink.%s/regions/%s/partners/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
-		return
-	}
-}
-
 // Pop: pop.
 type Pop struct {
 	// ID: unique identifier of the PoP.
@@ -727,22 +679,6 @@ type Pop struct {
 
 	// Region: region of the PoP.
 	Region scw.Region `json:"region"`
-}
-
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *Pop) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://interlink.%s/regions/%s/pops/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
-		return
-	}
 }
 
 // RoutingPolicy: routing policy.
@@ -782,22 +718,6 @@ type RoutingPolicy struct {
 
 	// Region: region of the routing policy.
 	Region scw.Region `json:"region"`
-}
-
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *RoutingPolicy) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://interlink.%s/regions/%s/routing-policies/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
-		return
-	}
 }
 
 // AttachRoutingPolicyRequest: attach routing policy request.
@@ -1428,12 +1348,6 @@ func (s *API) ListDedicatedConnections(req *ListDedicatedConnectionsRequest, opt
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.Connections {
-			el.setSRN(apiMetadata.Domain)
-		}
-	}
 	return &resp, nil
 }
 
@@ -1464,10 +1378,6 @@ func (s *API) GetDedicatedConnection(req *GetDedicatedConnectionRequest, opts ..
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1556,12 +1466,6 @@ func (s *API) ListPartners(req *ListPartnersRequest, opts ...scw.RequestOption) 
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.Partners {
-			el.setSRN(apiMetadata.Domain)
-		}
-	}
 	return &resp, nil
 }
 
@@ -1592,10 +1496,6 @@ func (s *API) GetPartner(req *GetPartnerRequest, opts ...scw.RequestOption) (*Pa
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1641,12 +1541,6 @@ func (s *API) ListPops(req *ListPopsRequest, opts ...scw.RequestOption) (*ListPo
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.Pops {
-			el.setSRN(apiMetadata.Domain)
-		}
-	}
 	return &resp, nil
 }
 
@@ -1677,10 +1571,6 @@ func (s *API) GetPop(req *GetPopRequest, opts ...scw.RequestOption) (*Pop, error
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1735,12 +1625,6 @@ func (s *API) ListLinks(req *ListLinksRequest, opts ...scw.RequestOption) (*List
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.Links {
-			el.setSRN(apiMetadata.Domain)
-		}
-	}
 	return &resp, nil
 }
 
@@ -1771,10 +1655,6 @@ func (s *API) GetLink(req *GetLinkRequest, opts ...scw.RequestOption) (*Link, er
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1860,10 +1740,6 @@ func (s *API) CreateLink(req *CreateLinkRequest, opts ...scw.RequestOption) (*Li
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -1900,10 +1776,6 @@ func (s *API) UpdateLink(req *UpdateLinkRequest, opts ...scw.RequestOption) (*Li
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -1934,10 +1806,6 @@ func (s *API) DeleteLink(req *DeleteLinkRequest, opts ...scw.RequestOption) (*Li
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1975,10 +1843,6 @@ func (s *API) AttachVpc(req *AttachVpcRequest, opts ...scw.RequestOption) (*Link
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -2014,10 +1878,6 @@ func (s *API) DetachVpc(req *DetachVpcRequest, opts ...scw.RequestOption) (*Link
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2055,10 +1915,6 @@ func (s *API) AttachRoutingPolicy(req *AttachRoutingPolicyRequest, opts ...scw.R
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -2094,10 +1950,6 @@ func (s *API) DetachRoutingPolicy(req *DetachRoutingPolicyRequest, opts ...scw.R
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2135,10 +1987,6 @@ func (s *API) SetRoutingPolicy(req *SetRoutingPolicyRequest, opts ...scw.Request
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -2175,10 +2023,6 @@ func (s *API) EnableRoutePropagation(req *EnableRoutePropagationRequest, opts ..
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -2214,10 +2058,6 @@ func (s *API) DisableRoutePropagation(req *DisableRoutePropagationRequest, opts 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2262,12 +2102,6 @@ func (s *API) ListRoutingPolicies(req *ListRoutingPoliciesRequest, opts ...scw.R
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.RoutingPolicies {
-			el.setSRN(apiMetadata.Domain)
-		}
-	}
 	return &resp, nil
 }
 
@@ -2298,10 +2132,6 @@ func (s *API) GetRoutingPolicy(req *GetRoutingPolicyRequest, opts ...scw.Request
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2340,10 +2170,6 @@ func (s *API) CreateRoutingPolicy(req *CreateRoutingPolicyRequest, opts ...scw.R
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -2379,10 +2205,6 @@ func (s *API) UpdateRoutingPolicy(req *UpdateRoutingPolicyRequest, opts ...scw.R
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
