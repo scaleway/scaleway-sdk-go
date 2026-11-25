@@ -646,22 +646,6 @@ type Group struct {
 	Zone scw.Zone `json:"zone"`
 }
 
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *Group) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://autoscaling.%s/zones/%s/groups/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
-		return
-	}
-}
-
 // ListAlertsRequest: list alerts request.
 type ListAlertsRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
@@ -1001,10 +985,6 @@ func (s *API) GetGroup(req *GetGroupRequest, opts ...scw.RequestOption) (*Group,
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -1095,10 +1075,6 @@ func (s *API) CreateGroup(req *CreateGroupRequest, opts ...scw.RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -1135,10 +1111,6 @@ func (s *API) RefreshGroup(req *RefreshGroupRequest, opts ...scw.RequestOption) 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1177,10 +1149,6 @@ func (s *API) UpdateGroup(req *UpdateGroupRequest, opts ...scw.RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -1212,10 +1180,6 @@ func (s *API) DeleteGroup(req *DeleteGroupRequest, opts ...scw.RequestOption) (*
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
