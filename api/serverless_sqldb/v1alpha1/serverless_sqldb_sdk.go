@@ -226,22 +226,6 @@ type Version struct {
 	Region scw.Region `json:"region"`
 }
 
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *Version) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.Name) != "" {
-		m.Srn = fmt.Sprintf("srn://serverless-db.%s/regions/%s/versions/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.Name))
-		return
-	}
-}
-
 // DatabaseBackup: database backup.
 type DatabaseBackup struct {
 	// ID: UUID that uniquely identifies a Serverless SQL Database backup.
@@ -283,22 +267,6 @@ type DatabaseBackup struct {
 
 	// Region: region of the database backup.
 	Region scw.Region `json:"region"`
-}
-
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *DatabaseBackup) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://serverless-db.%s/regions/%s/backups/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
-		return
-	}
 }
 
 // Database: database.
@@ -348,22 +316,6 @@ type Database struct {
 
 	// Version: the major version of the underlying database engine.
 	Version *Version `json:"version"`
-}
-
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *Database) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://serverless-db.%s/regions/%s/databases/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
-		return
-	}
 }
 
 // CreateDatabaseRequest: create database request.
@@ -649,10 +601,6 @@ func (s *API) CreateDatabase(req *CreateDatabaseRequest, opts ...scw.RequestOpti
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -683,10 +631,6 @@ func (s *API) GetDatabase(req *GetDatabaseRequest, opts ...scw.RequestOption) (*
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -768,10 +712,6 @@ func (s *API) DeleteDatabase(req *DeleteDatabaseRequest, opts ...scw.RequestOpti
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -818,12 +758,6 @@ func (s *API) ListDatabases(req *ListDatabasesRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.Databases {
-			el.setSRN(apiMetadata.Domain)
-		}
-	}
 	return &resp, nil
 }
 
@@ -859,10 +793,6 @@ func (s *API) UpdateDatabase(req *UpdateDatabaseRequest, opts ...scw.RequestOpti
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -900,10 +830,6 @@ func (s *API) RestoreDatabaseFromBackup(req *RestoreDatabaseFromBackupRequest, o
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -934,10 +860,6 @@ func (s *API) GetDatabaseBackup(req *GetDatabaseBackupRequest, opts ...scw.Reque
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -980,12 +902,6 @@ func (s *API) ListDatabaseBackups(req *ListDatabaseBackupsRequest, opts ...scw.R
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.Backups {
-			el.setSRN(apiMetadata.Domain)
-		}
-	}
 	return &resp, nil
 }
 
@@ -1021,10 +937,6 @@ func (s *API) ExportDatabaseBackup(req *ExportDatabaseBackupRequest, opts ...scw
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1063,12 +975,6 @@ func (s *API) ListVersions(req *ListVersionsRequest, opts ...scw.RequestOption) 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.Versions {
-			el.setSRN(apiMetadata.Domain)
-		}
 	}
 	return &resp, nil
 }

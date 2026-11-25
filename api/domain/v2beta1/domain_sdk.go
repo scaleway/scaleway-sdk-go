@@ -1970,22 +1970,6 @@ type Contact struct {
 	Srn string `json:"srn"`
 }
 
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *Contact) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://domain.%s/contacts/%s", platform, fmt.Sprint(m.ID))
-		return
-	}
-}
-
 // ContactRolesRoles: contact roles roles.
 type ContactRolesRoles struct {
 	// IsOwner: indicates whether the contact is the owner of the domain.
@@ -2042,22 +2026,6 @@ type Tld struct {
 
 	// Srn: the SRN of the TLD.
 	Srn string `json:"srn"`
-}
-
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *Tld) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.Name) != "" {
-		m.Srn = fmt.Sprintf("srn://domain.%s/tlds/%s", platform, fmt.Sprint(m.Name))
-		return
-	}
 }
 
 // NewContact: new contact.
@@ -2170,22 +2138,6 @@ type DNSZone struct {
 	Srn string `json:"srn"`
 
 	DNSZone string `json:"dns_zone"`
-}
-
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *DNSZone) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.DNSZone) != "" {
-		m.Srn = fmt.Sprintf("srn://domain.%s/dns-zones/%s", platform, fmt.Sprint(m.DNSZone))
-		return
-	}
 }
 
 // DomainDNSSEC: domain dnssec.
@@ -2410,22 +2362,6 @@ type SSLCertificate struct {
 	Srn string `json:"srn"`
 }
 
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *SSLCertificate) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.DNSZone) != "" {
-		m.Srn = fmt.Sprintf("srn://domain.%s/dns-zones/%s/ssl-certificate", platform, fmt.Sprint(m.DNSZone))
-		return
-	}
-}
-
 // Task: task.
 type Task struct {
 	// ID: the unique identifier of the task.
@@ -2462,22 +2398,6 @@ type Task struct {
 
 	// Srn: the SRN of the task.
 	Srn string `json:"srn"`
-}
-
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *Task) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://domain.%s/tasks/%s", platform, fmt.Sprint(m.ID))
-		return
-	}
 }
 
 // TransferInDomainRequestTransferRequest: transfer in domain request transfer request.
@@ -2660,22 +2580,6 @@ type Domain struct {
 
 	// Srn: the SRN of the domain.
 	Srn string `json:"srn"`
-}
-
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *Domain) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.Domain) != "" {
-		m.Srn = fmt.Sprintf("srn://domain.%s/domains/%s", platform, fmt.Sprint(m.Domain))
-		return
-	}
 }
 
 // ExportRawDNSZoneRequest: export raw dns zone request.
@@ -3338,6 +3242,83 @@ type RegistrarAPICheckContactsCompatibilityRequest struct {
 	TechnicalContact *NewContact `json:"technical_contact,omitempty"`
 }
 
+// RegistrarAPICreateContactRequest: registrar api create contact request.
+type RegistrarAPICreateContactRequest struct {
+	// ProjectID: project ID to create the contact in.
+	ProjectID string `json:"project_id"`
+
+	// LegalForm: legal form of the contact (individual, corporate, association, other).
+	// Default value: legal_form_unknown
+	LegalForm ContactLegalForm `json:"legal_form"`
+
+	// Firstname: first name of the contact.
+	Firstname string `json:"firstname"`
+
+	// Lastname: last name of the contact.
+	Lastname string `json:"lastname"`
+
+	// CompanyName: company name of the contact (required for corporate legal forms).
+	CompanyName *string `json:"company_name,omitempty"`
+
+	// Email: email address of the contact.
+	Email string `json:"email"`
+
+	// EmailAlt: alternative email address of the contact.
+	EmailAlt *string `json:"email_alt,omitempty"`
+
+	// PhoneNumber: phone number of the contact, normalized to +CC.NationalNumber format.
+	PhoneNumber string `json:"phone_number"`
+
+	// FaxNumber: fax number of the contact, normalized to +CC.NationalNumber format.
+	FaxNumber *string `json:"fax_number,omitempty"`
+
+	// AddressLine1: first line of the contact's address.
+	AddressLine1 string `json:"address_line_1"`
+
+	// AddressLine2: second line of the contact's address.
+	AddressLine2 *string `json:"address_line_2,omitempty"`
+
+	// Zip: postal code of the contact.
+	Zip string `json:"zip"`
+
+	// City: city of the contact.
+	City string `json:"city"`
+
+	// State: state or region of the contact.
+	State *string `json:"state,omitempty"`
+
+	// Country: country code of the contact (ISO 3166-1 alpha-2 format).
+	Country string `json:"country"`
+
+	// VatIDentificationCode: vAT identification code of the contact.
+	VatIDentificationCode *string `json:"vat_identification_code,omitempty"`
+
+	// CompanyIDentificationCode: company identification code of the contact (SIRET/SIREN for French contacts, any format for others).
+	CompanyIDentificationCode *string `json:"company_identification_code,omitempty"`
+
+	// Lang: preferred language of the contact.
+	// Default value: unknown_language_code
+	Lang std.LanguageCode `json:"lang"`
+
+	// Resale: indicates whether the contact's information can be resold.
+	Resale bool `json:"resale"`
+
+	// WhoisOptIn: indicates whether the contact's information is published in the WHOIS database.
+	WhoisOptIn bool `json:"whois_opt_in"`
+
+	// ExtensionFr: additional information required for AFNIC-managed TLDs (.fr, .re, .pm, .yt, .wf, .tf).
+	ExtensionFr *ContactExtensionFR `json:"extension_fr,omitempty"`
+
+	// ExtensionEu: additional information required for .eu domains. Conditionally required.
+	ExtensionEu *ContactExtensionEU `json:"extension_eu,omitempty"`
+
+	// ExtensionNl: additional information required for .nl domains. Auto-populated for individuals.
+	ExtensionNl *ContactExtensionNL `json:"extension_nl,omitempty"`
+
+	// ExtensionIt: additional information required for .it domains. Contains a PIN.
+	ExtensionIt *ContactExtensionIT `json:"extension_it,omitempty"`
+}
+
 // RegistrarAPICreateDomainHostRequest: registrar api create domain host request.
 type RegistrarAPICreateDomainHostRequest struct {
 	// Domain: the domain name to create the hostname for.
@@ -3932,12 +3913,6 @@ func (s *API) ListDNSZones(req *ListDNSZonesRequest, opts ...scw.RequestOption) 
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.DNSZones {
-			el.setSRN(apiMetadata.Domain)
-		}
-	}
 	return &resp, nil
 }
 
@@ -3965,10 +3940,6 @@ func (s *API) CreateDNSZone(req *CreateDNSZoneRequest, opts ...scw.RequestOption
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -4002,10 +3973,6 @@ func (s *API) UpdateDNSZone(req *UpdateDNSZoneRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -4032,10 +3999,6 @@ func (s *API) CloneDNSZone(req *CloneDNSZoneRequest, opts ...scw.RequestOption) 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -4466,10 +4429,6 @@ func (s *API) GetSSLCertificate(req *GetSSLCertificateRequest, opts ...scw.Reque
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -4538,10 +4497,6 @@ func (s *API) CreateSSLCertificate(req *CreateSSLCertificateRequest, opts ...scw
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -4571,12 +4526,6 @@ func (s *API) ListSSLCertificates(req *ListSSLCertificatesRequest, opts ...scw.R
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.Certificates {
-			el.setSRN(apiMetadata.Domain)
-		}
 	}
 	return &resp, nil
 }
@@ -4688,12 +4637,6 @@ func (s *RegistrarAPI) ListTasks(req *RegistrarAPIListTasksRequest, opts ...scw.
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.Tasks {
-			el.setSRN(apiMetadata.Domain)
-		}
 	}
 	return &resp, nil
 }
@@ -5010,10 +4953,6 @@ func (s *RegistrarAPI) GetContact(req *RegistrarAPIGetContactRequest, opts ...sc
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -5041,9 +4980,33 @@ func (s *RegistrarAPI) UpdateContact(req *RegistrarAPIUpdateContactRequest, opts
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
+	return &resp, nil
+}
+
+// CreateContact: Create a new contact with the provided information.
+func (s *RegistrarAPI) CreateContact(req *RegistrarAPICreateContactRequest, opts ...scw.RequestOption) (*Contact, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/domain/v2beta1/contacts",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Contact
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
 	}
 	return &resp, nil
 }
@@ -5133,10 +5096,6 @@ func (s *RegistrarAPI) GetDomain(req *RegistrarAPIGetDomainRequest, opts ...scw.
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -5216,10 +5175,6 @@ func (s *RegistrarAPI) UpdateDomain(req *RegistrarAPIUpdateDomainRequest, opts .
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -5246,10 +5201,6 @@ func (s *RegistrarAPI) LockDomainTransfer(req *RegistrarAPILockDomainTransferReq
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -5278,10 +5229,6 @@ func (s *RegistrarAPI) UnlockDomainTransfer(req *RegistrarAPIUnlockDomainTransfe
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -5309,10 +5256,6 @@ func (s *RegistrarAPI) EnableDomainAutoRenew(req *RegistrarAPIEnableDomainAutoRe
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -5339,10 +5282,6 @@ func (s *RegistrarAPI) DisableDomainAutoRenew(req *RegistrarAPIDisableDomainAuto
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -5394,10 +5333,6 @@ func (s *RegistrarAPI) EnableDomainDNSSEC(req *RegistrarAPIEnableDomainDNSSECReq
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -5424,10 +5359,6 @@ func (s *RegistrarAPI) DisableDomainDNSSEC(req *RegistrarAPIDisableDomainDNSSECR
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -5485,12 +5416,6 @@ func (s *RegistrarAPI) ListTlds(req *RegistrarAPIListTldsRequest, opts ...scw.Re
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.Tlds {
-			el.setSRN(apiMetadata.Domain)
-		}
 	}
 	return &resp, nil
 }
