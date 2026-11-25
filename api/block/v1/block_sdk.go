@@ -510,22 +510,6 @@ type Snapshot struct {
 	Srn string `json:"srn"`
 }
 
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *Snapshot) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://block.%s/zones/%s/snapshots/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
-		return
-	}
-}
-
 // VolumeType: volume type.
 type VolumeType struct {
 	// Type: volume type.
@@ -545,22 +529,6 @@ type VolumeType struct {
 
 	// Srn: the SRN of the volume type.
 	Srn string `json:"srn"`
-}
-
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *VolumeType) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.Type) != "" {
-		m.Srn = fmt.Sprintf("srn://block.%s/zones/%s/volume-types/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.Type))
-		return
-	}
 }
 
 // Volume: volume.
@@ -613,22 +581,6 @@ type Volume struct {
 
 	// Srn: the SRN of the volume.
 	Srn string `json:"srn"`
-}
-
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *Volume) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.Zone) != "" && fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://block.%s/zones/%s/volumes/%s", platform, fmt.Sprint(m.Zone), fmt.Sprint(m.ID))
-		return
-	}
 }
 
 // CreateSnapshotRequest: create snapshot request.
@@ -1016,12 +968,6 @@ func (s *API) ListVolumeTypes(req *ListVolumeTypesRequest, opts ...scw.RequestOp
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.VolumeTypes {
-			el.setSRN(apiMetadata.Domain)
-		}
-	}
 	return &resp, nil
 }
 
@@ -1068,12 +1014,6 @@ func (s *API) ListVolumes(req *ListVolumesRequest, opts ...scw.RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.Volumes {
-			el.setSRN(apiMetadata.Domain)
-		}
-	}
 	return &resp, nil
 }
 
@@ -1116,10 +1056,6 @@ func (s *API) CreateVolume(req *CreateVolumeRequest, opts ...scw.RequestOption) 
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -1150,10 +1086,6 @@ func (s *API) GetVolume(req *GetVolumeRequest, opts ...scw.RequestOption) (*Volu
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1221,10 +1153,6 @@ func (s *API) UpdateVolume(req *UpdateVolumeRequest, opts ...scw.RequestOption) 
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -1269,12 +1197,6 @@ func (s *API) ListSnapshots(req *ListSnapshotsRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.Snapshots {
-			el.setSRN(apiMetadata.Domain)
-		}
-	}
 	return &resp, nil
 }
 
@@ -1305,10 +1227,6 @@ func (s *API) GetSnapshot(req *GetSnapshotRequest, opts ...scw.RequestOption) (*
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1352,10 +1270,6 @@ func (s *API) CreateSnapshot(req *CreateSnapshotRequest, opts ...scw.RequestOpti
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -1394,10 +1308,6 @@ func (s *API) ImportSnapshotFromObjectStorage(req *ImportSnapshotFromObjectStora
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -1434,10 +1344,6 @@ func (s *API) ExportSnapshotToObjectStorage(req *ExportSnapshotToObjectStorageRe
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1503,10 +1409,6 @@ func (s *API) UpdateSnapshot(req *UpdateSnapshotRequest, opts ...scw.RequestOpti
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
