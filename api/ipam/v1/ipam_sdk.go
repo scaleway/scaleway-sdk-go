@@ -293,26 +293,6 @@ type IP struct {
 	Zone *scw.Zone `json:"zone"`
 }
 
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *IP) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if m.Zone != nil && fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://ipam.%s/zones/%s/ips/%s", platform, fmt.Sprint(*m.Zone), fmt.Sprint(m.ID))
-		return
-	}
-	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://ipam.%s/regions/%s/ips/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
-		return
-	}
-}
-
 // AttachIPRequest: attach ip request.
 type AttachIPRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -568,10 +548,6 @@ func (s *API) BookIP(req *BookIPRequest, opts ...scw.RequestOption) (*IP, error)
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -667,10 +643,6 @@ func (s *API) GetIP(req *GetIPRequest, opts ...scw.RequestOption) (*IP, error) {
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -706,10 +678,6 @@ func (s *API) UpdateIP(req *UpdateIPRequest, opts ...scw.RequestOption) (*IP, er
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -767,12 +735,6 @@ func (s *API) ListIPs(req *ListIPsRequest, opts ...scw.RequestOption) (*ListIPsR
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.IPs {
-			el.setSRN(apiMetadata.Domain)
-		}
-	}
 	return &resp, nil
 }
 
@@ -808,10 +770,6 @@ func (s *API) AttachIP(req *AttachIPRequest, opts ...scw.RequestOption) (*IP, er
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -849,10 +807,6 @@ func (s *API) DetachIP(req *DetachIPRequest, opts ...scw.RequestOption) (*IP, er
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -888,10 +842,6 @@ func (s *API) MoveIP(req *MoveIPRequest, opts ...scw.RequestOption) (*IP, error)
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }

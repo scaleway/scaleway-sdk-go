@@ -448,22 +448,6 @@ type SecretVersion struct {
 	Region scw.Region `json:"region"`
 }
 
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *SecretVersion) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.SecretID) != "" && fmt.Sprint(m.Revision) != "" {
-		m.Srn = fmt.Sprintf("srn://secret-manager.%s/regions/%s/secrets/%s/versions/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.SecretID), fmt.Sprint(m.Revision))
-		return
-	}
-}
-
 // Secret: secret.
 type Secret struct {
 	// ID: ID of the secret.
@@ -525,22 +509,6 @@ type Secret struct {
 
 	// Region: region of the secret.
 	Region scw.Region `json:"region"`
-}
-
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *Secret) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://secret-manager.%s/regions/%s/secrets/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
-		return
-	}
 }
 
 // AccessSecretVersionByPathRequest: access secret version by path request.
@@ -1164,10 +1132,6 @@ func (s *API) CreateSecret(req *CreateSecretRequest, opts ...scw.RequestOption) 
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -1198,10 +1162,6 @@ func (s *API) GetSecret(req *GetSecretRequest, opts ...scw.RequestOption) (*Secr
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1238,10 +1198,6 @@ func (s *API) UpdateSecret(req *UpdateSecretRequest, opts ...scw.RequestOption) 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1321,12 +1277,6 @@ func (s *API) ListSecrets(req *ListSecretsRequest, opts ...scw.RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.Secrets {
-			el.setSRN(apiMetadata.Domain)
-		}
-	}
 	return &resp, nil
 }
 
@@ -1405,10 +1355,6 @@ func (s *API) ProtectSecret(req *ProtectSecretRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -1444,10 +1390,6 @@ func (s *API) UnprotectSecret(req *UnprotectSecretRequest, opts ...scw.RequestOp
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1519,10 +1461,6 @@ func (s *API) CreateSecretVersion(req *CreateSecretVersionRequest, opts ...scw.R
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -1557,10 +1495,6 @@ func (s *API) GetSecretVersion(req *GetSecretVersionRequest, opts ...scw.Request
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1601,10 +1535,6 @@ func (s *API) UpdateSecretVersion(req *UpdateSecretVersionRequest, opts ...scw.R
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1680,12 +1610,6 @@ func (s *API) ListSecretVersions(req *ListSecretVersionsRequest, opts ...scw.Req
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.Versions {
-			el.setSRN(apiMetadata.Domain)
-		}
 	}
 	return &resp, nil
 }
@@ -1804,10 +1728,6 @@ func (s *API) EnableSecretVersion(req *EnableSecretVersionRequest, opts ...scw.R
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -1847,10 +1767,6 @@ func (s *API) DisableSecretVersion(req *DisableSecretVersionRequest, opts ...scw
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1978,10 +1894,6 @@ func (s *API) RestoreSecretVersion(req *RestoreSecretVersionRequest, opts ...scw
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -2017,10 +1929,6 @@ func (s *API) RestoreSecret(req *RestoreSecretRequest, opts ...scw.RequestOption
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
