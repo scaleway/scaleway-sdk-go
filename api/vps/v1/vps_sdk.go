@@ -181,22 +181,6 @@ type Location struct {
 	Srn string `json:"srn"`
 }
 
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *Location) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://vps.%s/locations/%s", platform, fmt.Sprint(m.ID))
-		return
-	}
-}
-
 // OS: os.
 type OS struct {
 	// ID: iD.
@@ -213,22 +197,6 @@ type OS struct {
 
 	// Srn: sRN of the OS.
 	Srn string `json:"srn"`
-}
-
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *OS) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://vps.%s/os/%s", platform, fmt.Sprint(m.ID))
-		return
-	}
 }
 
 // Offer: offer.
@@ -250,22 +218,6 @@ type Offer struct {
 
 	// Srn: sRN of the offer.
 	Srn string `json:"srn"`
-}
-
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *Offer) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://vps.%s/offers/%s", platform, fmt.Sprint(m.ID))
-		return
-	}
 }
 
 // Server: server.
@@ -300,22 +252,6 @@ type Server struct {
 
 	// Srn: sRN of the server.
 	Srn string `json:"srn"`
-}
-
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *Server) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://vps.%s/servers/%s", platform, fmt.Sprint(m.ID))
-		return
-	}
 }
 
 // ListLocationsResponse: list locations response.
@@ -602,12 +538,6 @@ func (s *VpsAPI) ListServers(req *VpsAPIListServersRequest, opts ...scw.RequestO
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.Servers {
-			el.setSRN(apiMetadata.Domain)
-		}
-	}
 	return &resp, nil
 }
 
@@ -629,10 +559,6 @@ func (s *VpsAPI) GetServer(req *VpsAPIGetServerRequest, opts ...scw.RequestOptio
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -708,10 +634,6 @@ func (s *VpsAPI) CreateServer(req *VpsAPICreateServerRequest, opts ...scw.Reques
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -733,10 +655,6 @@ func (s *VpsAPI) DeleteServer(req *VpsAPIDeleteServerRequest, opts ...scw.Reques
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -765,10 +683,6 @@ func (s *VpsAPI) ChangeServerHostname(req *VpsAPIChangeServerHostnameRequest, op
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -795,10 +709,6 @@ func (s *VpsAPI) ChangeServerPassword(req *VpsAPIChangeServerPasswordRequest, op
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -827,10 +737,6 @@ func (s *VpsAPI) ManageServerPower(req *VpsAPIManageServerPowerRequest, opts ...
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -857,10 +763,6 @@ func (s *VpsAPI) ReinstallServer(req *VpsAPIReinstallServerRequest, opts ...scw.
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -890,12 +792,6 @@ func (s *VpsAPI) ListOffers(req *VpsAPIListOffersRequest, opts ...scw.RequestOpt
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.Offers {
-			el.setSRN(apiMetadata.Domain)
-		}
-	}
 	return &resp, nil
 }
 
@@ -917,10 +813,6 @@ func (s *VpsAPI) GetOffer(req *VpsAPIGetOfferRequest, opts ...scw.RequestOption)
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -950,12 +842,6 @@ func (s *VpsAPI) ListOS(req *VpsAPIListOSRequest, opts ...scw.RequestOption) (*L
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.Os {
-			el.setSRN(apiMetadata.Domain)
-		}
-	}
 	return &resp, nil
 }
 
@@ -983,12 +869,6 @@ func (s *VpsAPI) ListLocations(req *VpsAPIListLocationsRequest, opts ...scw.Requ
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.Locations {
-			el.setSRN(apiMetadata.Domain)
-		}
 	}
 	return &resp, nil
 }
