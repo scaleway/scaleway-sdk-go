@@ -391,22 +391,6 @@ type Endpoint struct {
 	PrivateNetwork *EndpointPrivateNetworkDetails `json:"private_network,omitempty"`
 }
 
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *Endpoint) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://searchdb.%s/regions/%s/endpoints/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
-		return
-	}
-}
-
 // Volume: Volume.
 type Volume struct {
 	// Type: define the type of the Volume.
@@ -492,22 +476,6 @@ type Deployment struct {
 	Srn string `json:"srn"`
 }
 
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *Deployment) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://searchdb.%s/regions/%s/deployments/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
-		return
-	}
-}
-
 // NodeType: Node type.
 type NodeType struct {
 	// StockStatus: stock status of the node type.
@@ -545,22 +513,6 @@ type NodeType struct {
 	Srn string `json:"srn"`
 }
 
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *NodeType) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.Name) != "" {
-		m.Srn = fmt.Sprintf("srn://searchdb.%s/regions/%s/node-types/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.Name))
-		return
-	}
-}
-
 // User: User.
 type User struct {
 	// Username: username of the Deployment user.
@@ -574,22 +526,6 @@ type User struct {
 
 	// Srn: the SRN of the user.
 	Srn string `json:"srn"`
-}
-
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *User) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.DeploymentID) != "" && fmt.Sprint(m.Username) != "" {
-		m.Srn = fmt.Sprintf("srn://searchdb.%s/regions/%s/deployments/%s/users/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.DeploymentID), fmt.Sprint(m.Username))
-		return
-	}
 }
 
 // Version: Opensearch Version.
@@ -611,22 +547,6 @@ type Version struct {
 
 	// Srn: the SRN of the version.
 	Srn string `json:"srn"`
-}
-
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *Version) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.Version) != "" {
-		m.Srn = fmt.Sprintf("srn://searchdb.%s/regions/%s/versions/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.Version))
-		return
-	}
 }
 
 // CreateDeploymentRequest: Request to create a new deployment.
@@ -1033,10 +953,6 @@ func (s *API) CreateDeployment(req *CreateDeploymentRequest, opts ...scw.Request
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -1072,10 +988,6 @@ func (s *API) UpdateDeployment(req *UpdateDeploymentRequest, opts ...scw.Request
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1113,10 +1025,6 @@ func (s *API) UpgradeDeployment(req *UpgradeDeploymentRequest, opts ...scw.Reque
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -1147,10 +1055,6 @@ func (s *API) GetDeployment(req *GetDeploymentRequest, opts ...scw.RequestOption
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1235,10 +1139,6 @@ func (s *API) DeleteDeployment(req *DeleteDeploymentRequest, opts ...scw.Request
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -1281,12 +1181,6 @@ func (s *API) ListDeployments(req *ListDeploymentsRequest, opts ...scw.RequestOp
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.Deployments {
-			el.setSRN(apiMetadata.Domain)
-		}
-	}
 	return &resp, nil
 }
 
@@ -1326,12 +1220,6 @@ func (s *API) ListVersions(req *ListVersionsRequest, opts ...scw.RequestOption) 
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.Versions {
-			el.setSRN(apiMetadata.Domain)
-		}
-	}
 	return &resp, nil
 }
 
@@ -1370,12 +1258,6 @@ func (s *API) ListNodeTypes(req *ListNodeTypesRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.NodeTypes {
-			el.setSRN(apiMetadata.Domain)
-		}
-	}
 	return &resp, nil
 }
 
@@ -1407,10 +1289,6 @@ func (s *API) CreateEndpoint(req *CreateEndpointRequest, opts ...scw.RequestOpti
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1484,12 +1362,6 @@ func (s *API) ListUsers(req *ListUsersRequest, opts ...scw.RequestOption) (*List
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.Users {
-			el.setSRN(apiMetadata.Domain)
-		}
-	}
 	return &resp, nil
 }
 
@@ -1525,10 +1397,6 @@ func (s *API) CreateUser(req *CreateUserRequest, opts ...scw.RequestOption) (*Us
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1569,10 +1437,6 @@ func (s *API) UpdateUser(req *UpdateUserRequest, opts ...scw.RequestOption) (*Us
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }

@@ -699,22 +699,6 @@ type Device struct {
 	Region scw.Region `json:"region"`
 }
 
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *Device) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://iot-hub.%s/regions/%s/devices/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
-		return
-	}
-}
-
 // Network: network.
 type Network struct {
 	// ID: network ID.
@@ -744,22 +728,6 @@ type Network struct {
 
 	// Region: region of the network.
 	Region scw.Region `json:"region"`
-}
-
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *Network) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://iot-hub.%s/regions/%s/networks/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
-		return
-	}
 }
 
 // CreateRouteRequestDatabaseConfig: create route request database config.
@@ -863,22 +831,6 @@ type Hub struct {
 	// TwinsGraphiteConfig: bETA - not implemented yet.
 	// Precisely one of TwinsGraphiteConfig must be set.
 	TwinsGraphiteConfig *HubTwinsGraphiteConfig `json:"twins_graphite_config,omitempty"`
-}
-
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *Hub) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://iot-hub.%s/regions/%s/hubs/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
-		return
-	}
 }
 
 // RouteSummary: route summary.
@@ -1664,22 +1616,6 @@ type Route struct {
 	Region scw.Region `json:"region"`
 }
 
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *Route) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://iot-hub.%s/regions/%s/routes/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
-		return
-	}
-}
-
 // SetDeviceCertificateRequest: set device certificate request.
 type SetDeviceCertificateRequest struct {
 	// Region: region to target. If none is passed will use default region from the config.
@@ -1863,12 +1799,6 @@ func (s *API) ListHubs(req *ListHubsRequest, opts ...scw.RequestOption) (*ListHu
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.Hubs {
-			el.setSRN(apiMetadata.Domain)
-		}
-	}
 	return &resp, nil
 }
 
@@ -1910,10 +1840,6 @@ func (s *API) CreateHub(req *CreateHubRequest, opts ...scw.RequestOption) (*Hub,
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -1944,10 +1870,6 @@ func (s *API) GetHub(req *GetHubRequest, opts ...scw.RequestOption) (*Hub, error
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2033,10 +1955,6 @@ func (s *API) UpdateHub(req *UpdateHubRequest, opts ...scw.RequestOption) (*Hub,
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -2073,10 +1991,6 @@ func (s *API) EnableHub(req *EnableHubRequest, opts ...scw.RequestOption) (*Hub,
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -2112,10 +2026,6 @@ func (s *API) DisableHub(req *DisableHubRequest, opts ...scw.RequestOption) (*Hu
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2221,10 +2131,6 @@ func (s *API) SetHubCA(req *SetHubCARequest, opts ...scw.RequestOption) (*Hub, e
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -2298,12 +2204,6 @@ func (s *API) ListDevices(req *ListDevicesRequest, opts ...scw.RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.Devices {
-			el.setSRN(apiMetadata.Domain)
-		}
-	}
 	return &resp, nil
 }
 
@@ -2371,10 +2271,6 @@ func (s *API) GetDevice(req *GetDeviceRequest, opts ...scw.RequestOption) (*Devi
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -2410,10 +2306,6 @@ func (s *API) UpdateDevice(req *UpdateDeviceRequest, opts ...scw.RequestOption) 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2451,10 +2343,6 @@ func (s *API) EnableDevice(req *EnableDeviceRequest, opts ...scw.RequestOption) 
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -2490,10 +2378,6 @@ func (s *API) DisableDevice(req *DisableDeviceRequest, opts ...scw.RequestOption
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2747,10 +2631,6 @@ func (s *API) CreateRoute(req *CreateRouteRequest, opts ...scw.RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -2787,10 +2667,6 @@ func (s *API) UpdateRoute(req *UpdateRouteRequest, opts ...scw.RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -2821,10 +2697,6 @@ func (s *API) GetRoute(req *GetRouteRequest, opts ...scw.RequestOption) (*Route,
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -2896,12 +2768,6 @@ func (s *API) ListNetworks(req *ListNetworksRequest, opts ...scw.RequestOption) 
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.Networks {
-			el.setSRN(apiMetadata.Domain)
-		}
-	}
 	return &resp, nil
 }
 
@@ -2968,10 +2834,6 @@ func (s *API) GetNetwork(req *GetNetworkRequest, opts ...scw.RequestOption) (*Ne
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }

@@ -120,22 +120,6 @@ type Binding struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 }
 
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *Binding) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://annotations.%s/bindings/%s", platform, fmt.Sprint(m.ID))
-		return
-	}
-}
-
 // Key: key.
 type Key struct {
 	// ID: ID of the annotation key.
@@ -155,22 +139,6 @@ type Key struct {
 
 	// UpdatedAt: timestamp of the last update of the annotation key.
 	UpdatedAt *time.Time `json:"updated_at"`
-}
-
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *Key) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://annotations.%s/keys/%s", platform, fmt.Sprint(m.ID))
-		return
-	}
 }
 
 // Value: value.
@@ -195,22 +163,6 @@ type Value struct {
 
 	// UpdatedAt: timestamp of the last update of the value.
 	UpdatedAt *time.Time `json:"updated_at"`
-}
-
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *Value) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://annotations.%s/values/%s", platform, fmt.Sprint(m.ID))
-		return
-	}
 }
 
 // CreateBindingRequest: create binding request.
@@ -516,10 +468,6 @@ func (s *API) CreateKey(req *CreateKeyRequest, opts ...scw.RequestOption) (*Key,
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -554,12 +502,6 @@ func (s *API) ListKeys(req *ListKeysRequest, opts ...scw.RequestOption) (*ListKe
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.Keys {
-			el.setSRN(apiMetadata.Domain)
-		}
-	}
 	return &resp, nil
 }
 
@@ -581,10 +523,6 @@ func (s *API) GetKey(req *GetKeyRequest, opts ...scw.RequestOption) (*Key, error
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -612,10 +550,6 @@ func (s *API) UpdateKey(req *UpdateKeyRequest, opts ...scw.RequestOption) (*Key,
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -660,10 +594,6 @@ func (s *API) CreateValue(req *CreateValueRequest, opts ...scw.RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -699,12 +629,6 @@ func (s *API) ListValues(req *ListValuesRequest, opts ...scw.RequestOption) (*Li
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.Values {
-			el.setSRN(apiMetadata.Domain)
-		}
-	}
 	return &resp, nil
 }
 
@@ -726,10 +650,6 @@ func (s *API) GetValue(req *GetValueRequest, opts ...scw.RequestOption) (*Value,
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -757,10 +677,6 @@ func (s *API) UpdateValue(req *UpdateValueRequest, opts ...scw.RequestOption) (*
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -854,10 +770,6 @@ func (s *API) CreateBinding(req *CreateBindingRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -893,12 +805,6 @@ func (s *API) ListBindings(req *ListBindingsRequest, opts ...scw.RequestOption) 
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.Bindings {
-			el.setSRN(apiMetadata.Domain)
-		}
 	}
 	return &resp, nil
 }
