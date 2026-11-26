@@ -2120,10 +2120,12 @@ type Dashboard struct {
 
 	ServersCount uint32 `json:"servers_count"`
 
+	// Deprecated
 	IPsCount uint32 `json:"ips_count"`
 
 	SecurityGroupsCount uint32 `json:"security_groups_count"`
 
+	// Deprecated
 	IPsUnused uint32 `json:"ips_unused"`
 
 	VolumesLSSDCount uint32 `json:"volumes_l_ssd_count"`
@@ -2166,8 +2168,8 @@ type ServerType struct {
 	// Deprecated: MonthlyPrice: estimated monthly price, for a 30 days month, in Euro.
 	MonthlyPrice *float32 `json:"monthly_price"`
 
-	// HourlyPrice: hourly price in Euro.
-	HourlyPrice float32 `json:"hourly_price"`
+	// Deprecated: HourlyPrice: hourly price in Euro.
+	HourlyPrice *float32 `json:"hourly_price"`
 
 	// AltNames: alternative Instance name, if any.
 	AltNames []string `json:"alt_names"`

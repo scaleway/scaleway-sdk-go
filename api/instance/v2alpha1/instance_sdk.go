@@ -2302,7 +2302,7 @@ type AttachServerIPRequest struct {
 	// Default: whether the IP should be the default IP.
 	Default bool `json:"default"`
 
-	// MoveAllowed: whether moving the IP is allowed.
+	// MoveAllowed: when enabled, allows attaching the IP even if it is already attached to another server.
 	MoveAllowed bool `json:"move_allowed"`
 }
 
@@ -3717,11 +3717,11 @@ type ResourceCounts struct {
 	// Templates: number of templates.
 	Templates uint32 `json:"templates"`
 
-	// FlexibleIPs: number of flexible IPs.
-	FlexibleIPs uint32 `json:"flexible_ips"`
+	// Deprecated: FlexibleIPs: number of flexible IPs.
+	FlexibleIPs uint32 `json:"flexible_ips,omitempty"`
 
-	// UnusedFlexibleIPs: number of flexible IPs not attached to any server.
-	UnusedFlexibleIPs uint32 `json:"unused_flexible_ips"`
+	// Deprecated: UnusedFlexibleIPs: number of flexible IPs not attached to any server.
+	UnusedFlexibleIPs uint32 `json:"unused_flexible_ips,omitempty"`
 
 	// Images: number of images.
 	Images uint32 `json:"images"`

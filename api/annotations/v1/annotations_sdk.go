@@ -112,6 +112,12 @@ type Binding struct {
 
 	// Value: value associated to the binding.
 	Value *BindingValue `json:"value"`
+
+	// CreatedAt: timestamp of creation of the binding.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: timestamp of the last update of the binding.
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 //nolint:unused,nolintlint // generated, no check on whether it's used or not
@@ -143,6 +149,12 @@ type Key struct {
 
 	// Description: description of the annotation key.
 	Description string `json:"description"`
+
+	// CreatedAt: timestamp of creation of the annotation key.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: timestamp of the last update of the annotation key.
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 //nolint:unused,nolintlint // generated, no check on whether it's used or not
@@ -177,6 +189,12 @@ type Value struct {
 
 	// Description: description of the value.
 	Description string `json:"description"`
+
+	// CreatedAt: timestamp of creation of the value.
+	CreatedAt *time.Time `json:"created_at"`
+
+	// UpdatedAt: timestamp of the last update of the value.
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 //nolint:unused,nolintlint // generated, no check on whether it's used or not
@@ -767,7 +785,7 @@ func (s *API) DeleteValue(req *DeleteValueRequest, opts ...scw.RequestOption) er
 	return nil
 }
 
-// Deprecated: DeleteAllValuesMatchingKey: Delete ALL values associated with a key. Fails if any of these values are currently bound to any resource.
+// Deprecated: DeleteAllValuesMatchingKey: (Deprecated) Delete ALL values associated with a key. Fails if any of these values are currently bound to any resource.
 func (s *API) DeleteAllValuesMatchingKey(req *DeleteAllValuesMatchingKeyRequest, opts ...scw.RequestOption) (*DeleteAllValuesMatchingKeyResponse, error) {
 	var err error
 
@@ -905,7 +923,7 @@ func (s *API) DeleteBinding(req *DeleteBindingRequest, opts ...scw.RequestOption
 	return nil
 }
 
-// Deprecated: DeleteAllBindingsMatchingValue: Delete ALL bindings associated with a value.
+// Deprecated: DeleteAllBindingsMatchingValue: (Deprecated) Delete ALL bindings associated with a value.
 func (s *API) DeleteAllBindingsMatchingValue(req *DeleteAllBindingsMatchingValueRequest, opts ...scw.RequestOption) (*DeleteAllBindingsMatchingValueResponse, error) {
 	var err error
 
@@ -927,7 +945,7 @@ func (s *API) DeleteAllBindingsMatchingValue(req *DeleteAllBindingsMatchingValue
 	return &resp, nil
 }
 
-// Deprecated: DeleteAllBindingsMatchingSRN: Delete ALL bindings associated with a Scaleway Resource Name.
+// Deprecated: DeleteAllBindingsMatchingSRN: (Deprecated) Delete ALL bindings associated with a Scaleway Resource Name.
 func (s *API) DeleteAllBindingsMatchingSRN(req *DeleteAllBindingsMatchingSRNRequest, opts ...scw.RequestOption) (*DeleteAllBindingsMatchingSRNResponse, error) {
 	var err error
 
