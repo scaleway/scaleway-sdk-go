@@ -3,9 +3,13 @@ package scw
 import (
 	"bytes"
 	"net/http"
+	"net/http/httptest"
 	"os"
 	"strings"
+	"sync"
+	"sync/atomic"
 	"testing"
+	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
 	"github.com/scaleway/scaleway-sdk-go/internal/testhelpers"
@@ -375,4 +379,37 @@ func TestClientGetAPIMetadata(t *testing.T) {
 		testhelpers.Equals(t, "scw", metadata.Partition)
 		testhelpers.Equals(t, "external", metadata.Platform)
 	})
+}
+
+func TestClientGetAPIMetadataConcurrent(t *testing.T) {
+	var hits atomic.Int32
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		hits.Add(1)
+		time.Sleep(50 * time.Millisecond) // keep the first request in flight while the other goroutines start
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"platform":"external","partition":"scw","domain":"scw.eu"}`))
+	}))
+	defer server.Close()
+
+	client, err := NewClient(WithAPIURL(server.URL))
+	testhelpers.AssertNoError(t, err)
+
+	const n = 10
+	domains := make([]string, n)
+	errs := make([]error, n)
+
+	var wg sync.WaitGroup
+	for i := range n {
+		wg.Go(func() {
+			metadata, err := client.GetAPIMetadata()
+			domains[i], errs[i] = metadata.Domain, err
+		})
+	}
+	wg.Wait()
+
+	for i := range n {
+		testhelpers.AssertNoError(t, errs[i])
+		testhelpers.Equals(t, "scw.eu", domains[i])
+	}
+	testhelpers.Equals(t, int32(1), hits.Load())
 }
