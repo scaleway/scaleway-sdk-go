@@ -347,9 +347,6 @@ type Image struct {
 	// Srn: sRN of the image.
 	Srn string `json:"srn"`
 
-	// Region: region where the image is located.
-	Region scw.Region `json:"region"`
-
 	// ID: UUID of the image.
 	ID string `json:"id"`
 
@@ -436,9 +433,6 @@ type Namespace struct {
 type Tag struct {
 	// Srn: sRN of the tag.
 	Srn string `json:"srn"`
-
-	// Region: region where the tag is located.
-	Region scw.Region `json:"region"`
 
 	// ID: UUID of the tag.
 	ID string `json:"id"`
@@ -743,7 +737,7 @@ func NewAPI(client *scw.Client) *API {
 }
 
 func (s *API) Regions() []scw.Region {
-	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw, scw.RegionItMil}
+	return []scw.Region{scw.RegionFrPar, scw.RegionNlAms, scw.RegionPlWaw}
 }
 
 // ListNamespaces: List all namespaces in a specified region. By default, the namespaces listed are ordered by creation date in ascending order. This can be modified via the order_by field. You can also define additional parameters for your query, such as the `instance_id` and `project_id` parameters.
