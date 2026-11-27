@@ -4983,34 +4983,6 @@ func (s *RegistrarAPI) UpdateContact(req *RegistrarAPIUpdateContactRequest, opts
 	return &resp, nil
 }
 
-// CreateContact: Create a new contact with the provided information.
-func (s *RegistrarAPI) CreateContact(req *RegistrarAPICreateContactRequest, opts ...scw.RequestOption) (*Contact, error) {
-	var err error
-
-	if req.ProjectID == "" {
-		defaultProjectID, _ := s.client.GetDefaultProjectID()
-		req.ProjectID = defaultProjectID
-	}
-
-	scwReq := &scw.ScalewayRequest{
-		Method: "POST",
-		Path:   "/domain/v2beta1/contacts",
-	}
-
-	err = scwReq.SetBody(req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp Contact
-
-	err = s.client.Do(scwReq, &resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
 // ListDomains: Retrieve the list of domains you own.
 func (s *RegistrarAPI) ListDomains(req *RegistrarAPIListDomainsRequest, opts ...scw.RequestOption) (*ListDomainsResponse, error) {
 	var err error
