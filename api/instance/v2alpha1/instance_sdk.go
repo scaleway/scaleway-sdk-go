@@ -3075,10 +3075,13 @@ type ListServerCompatibleTypesRequest struct {
 	// Zone: zone to target. If none is passed will use default zone from the config.
 	Zone scw.Zone `json:"-"`
 
+	// ServerID: ID of the server.
 	ServerID string `json:"-"`
 
+	// PageToken: token for pagination.
 	PageToken *string `json:"-"`
 
+	// PageSize: number of server types to return per page.
 	PageSize *uint32 `json:"-"`
 }
 
