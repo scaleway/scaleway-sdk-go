@@ -347,6 +347,9 @@ type Image struct {
 	// Srn: sRN of the image.
 	Srn string `json:"srn"`
 
+	// Region: region where the image is located.
+	Region scw.Region `json:"region"`
+
 	// ID: UUID of the image.
 	ID string `json:"id"`
 
@@ -433,6 +436,9 @@ type Namespace struct {
 type Tag struct {
 	// Srn: sRN of the tag.
 	Srn string `json:"srn"`
+
+	// Region: region where the tag is located.
+	Region scw.Region `json:"region"`
 
 	// ID: UUID of the tag.
 	ID string `json:"id"`
