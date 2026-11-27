@@ -3242,6 +3242,83 @@ type RegistrarAPICheckContactsCompatibilityRequest struct {
 	TechnicalContact *NewContact `json:"technical_contact,omitempty"`
 }
 
+// RegistrarAPICreateContactRequest: registrar api create contact request.
+type RegistrarAPICreateContactRequest struct {
+	// ProjectID: project ID to create the contact in.
+	ProjectID string `json:"project_id"`
+
+	// LegalForm: legal form of the contact (individual, corporate, association, other).
+	// Default value: legal_form_unknown
+	LegalForm ContactLegalForm `json:"legal_form"`
+
+	// Firstname: first name of the contact.
+	Firstname string `json:"firstname"`
+
+	// Lastname: last name of the contact.
+	Lastname string `json:"lastname"`
+
+	// CompanyName: company name of the contact (required for corporate legal forms).
+	CompanyName *string `json:"company_name,omitempty"`
+
+	// Email: email address of the contact.
+	Email string `json:"email"`
+
+	// EmailAlt: alternative email address of the contact.
+	EmailAlt *string `json:"email_alt,omitempty"`
+
+	// PhoneNumber: phone number of the contact, normalized to +CC.NationalNumber format.
+	PhoneNumber string `json:"phone_number"`
+
+	// FaxNumber: fax number of the contact, normalized to +CC.NationalNumber format.
+	FaxNumber *string `json:"fax_number,omitempty"`
+
+	// AddressLine1: first line of the contact's address.
+	AddressLine1 string `json:"address_line_1"`
+
+	// AddressLine2: second line of the contact's address.
+	AddressLine2 *string `json:"address_line_2,omitempty"`
+
+	// Zip: postal code of the contact.
+	Zip string `json:"zip"`
+
+	// City: city of the contact.
+	City string `json:"city"`
+
+	// State: state or region of the contact.
+	State *string `json:"state,omitempty"`
+
+	// Country: country code of the contact (ISO 3166-1 alpha-2 format).
+	Country string `json:"country"`
+
+	// VatIDentificationCode: vAT identification code of the contact.
+	VatIDentificationCode *string `json:"vat_identification_code,omitempty"`
+
+	// CompanyIDentificationCode: company identification code of the contact (SIRET/SIREN for French contacts, any format for others).
+	CompanyIDentificationCode *string `json:"company_identification_code,omitempty"`
+
+	// Lang: preferred language of the contact.
+	// Default value: unknown_language_code
+	Lang std.LanguageCode `json:"lang"`
+
+	// Resale: indicates whether the contact's information can be resold.
+	Resale bool `json:"resale"`
+
+	// WhoisOptIn: indicates whether the contact's information is published in the WHOIS database.
+	WhoisOptIn bool `json:"whois_opt_in"`
+
+	// ExtensionFr: additional information required for AFNIC-managed TLDs (.fr, .re, .pm, .yt, .wf, .tf).
+	ExtensionFr *ContactExtensionFR `json:"extension_fr,omitempty"`
+
+	// ExtensionEu: additional information required for .eu domains. Conditionally required.
+	ExtensionEu *ContactExtensionEU `json:"extension_eu,omitempty"`
+
+	// ExtensionNl: additional information required for .nl domains. Auto-populated for individuals.
+	ExtensionNl *ContactExtensionNL `json:"extension_nl,omitempty"`
+
+	// ExtensionIt: additional information required for .it domains. Contains a PIN.
+	ExtensionIt *ContactExtensionIT `json:"extension_it,omitempty"`
+}
+
 // RegistrarAPICreateDomainHostRequest: registrar api create domain host request.
 type RegistrarAPICreateDomainHostRequest struct {
 	// Domain: the domain name to create the hostname for.
@@ -4890,6 +4967,34 @@ func (s *RegistrarAPI) UpdateContact(req *RegistrarAPIUpdateContactRequest, opts
 	scwReq := &scw.ScalewayRequest{
 		Method: "PATCH",
 		Path:   "/domain/v2beta1/contacts/" + fmt.Sprint(req.ContactID) + "",
+	}
+
+	err = scwReq.SetBody(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Contact
+
+	err = s.client.Do(scwReq, &resp, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+// CreateContact: Create a new contact with the provided information.
+func (s *RegistrarAPI) CreateContact(req *RegistrarAPICreateContactRequest, opts ...scw.RequestOption) (*Contact, error) {
+	var err error
+
+	if req.ProjectID == "" {
+		defaultProjectID, _ := s.client.GetDefaultProjectID()
+		req.ProjectID = defaultProjectID
+	}
+
+	scwReq := &scw.ScalewayRequest{
+		Method: "POST",
+		Path:   "/domain/v2beta1/contacts",
 	}
 
 	err = scwReq.SetBody(req)
