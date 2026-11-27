@@ -28,6 +28,7 @@ type Client struct {
 	auth                  auth.Auth
 	apiURL                string
 	apiMetadata           ApiMetadata
+	apiMetadataMu         sync.Mutex
 	s3Endpoint            string
 	s3UsePathStyle        bool
 	userAgent             string
@@ -117,6 +118,10 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 // the partition and the domain on which the Scaleway cloud is
 // running.
 func (c *Client) GetAPIMetadata() (ApiMetadata, error) {
+	// The lock is held during the request so concurrent callers share a single fetch.
+	c.apiMetadataMu.Lock()
+	defer c.apiMetadataMu.Unlock()
+
 	if c.apiMetadata != (ApiMetadata{}) {
 		return c.apiMetadata, nil
 	}

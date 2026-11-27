@@ -852,22 +852,6 @@ type WorkflowDefinition struct {
 	Srn string `json:"srn"`
 }
 
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *WorkflowDefinition) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://data-orchestrator.%s/regions/%s/workflow-definitions/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
-		return
-	}
-}
-
 // WorkflowRun: workflow run.
 type WorkflowRun struct {
 	// ID: unique identifier.
@@ -929,22 +913,6 @@ type WorkflowRun struct {
 
 	// Srn: the SRN of the workflow run.
 	Srn string `json:"srn"`
-}
-
-//nolint:unused,nolintlint // generated, no check on whether it's used or not
-func (m *WorkflowRun) setSRN(platform string) {
-	if m.Srn != "" {
-		// if the field is set server-side, trust the server
-		return
-	}
-
-	// We do not check that *m.XYZ != "", as there are currently no use cases for an
-	// optional value in an SRN where the value set to the empty string makes sense.
-
-	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
-		m.Srn = fmt.Sprintf("srn://data-orchestrator.%s/regions/%s/workflow-runs/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
-		return
-	}
 }
 
 // UpdateWorkflowDefinitionRequestCronScheduleConfig: update workflow definition request cron schedule config.
@@ -1269,10 +1237,6 @@ func (s *API) CreateWorkflowDefinition(req *CreateWorkflowDefinitionRequest, opt
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -1303,10 +1267,6 @@ func (s *API) GetWorkflowDefinition(req *GetWorkflowDefinitionRequest, opts ...s
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1363,12 +1323,6 @@ func (s *API) ListWorkflowDefinitions(req *ListWorkflowDefinitionsRequest, opts 
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.WorkflowDefinitions {
-			el.setSRN(apiMetadata.Domain)
-		}
-	}
 	return &resp, nil
 }
 
@@ -1404,10 +1358,6 @@ func (s *API) UpdateWorkflowDefinition(req *UpdateWorkflowDefinitionRequest, opt
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1510,10 +1460,6 @@ func (s *API) StartWorkflowDefinition(req *StartWorkflowDefinitionRequest, opts 
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -1544,10 +1490,6 @@ func (s *API) GetWorkflowRun(req *GetWorkflowRunRequest, opts ...scw.RequestOpti
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1657,12 +1599,6 @@ func (s *API) ListWorkflowRuns(req *ListWorkflowRunsRequest, opts ...scw.Request
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		for _, el := range resp.WorkflowRuns {
-			el.setSRN(apiMetadata.Domain)
-		}
-	}
 	return &resp, nil
 }
 
@@ -1698,10 +1634,6 @@ func (s *API) TerminateWorkflowRun(req *TerminateWorkflowRunRequest, opts ...scw
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1739,10 +1671,6 @@ func (s *API) PauseWorkflowRun(req *PauseWorkflowRunRequest, opts ...scw.Request
 	if err != nil {
 		return nil, err
 	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
-	}
 	return &resp, nil
 }
 
@@ -1778,10 +1706,6 @@ func (s *API) ResumeWorkflowRun(req *ResumeWorkflowRunRequest, opts ...scw.Reque
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
-	}
-	apiMetadata, err := s.client.GetAPIMetadata()
-	if err == nil {
-		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }

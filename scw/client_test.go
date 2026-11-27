@@ -9,6 +9,8 @@ import (
 	"net/http/httptest"
 	"os"
 	"strings"
+	"sync"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -831,4 +833,37 @@ func TestRateLimitNonReplayableBody(t *testing.T) {
 	testhelpers.Equals(t, payload, bodies[0])
 	testhelpers.Equals(t, "429 Too Many Requests", resp.Status)
 	_ = resp.Body.Close()
+}
+
+func TestClientGetAPIMetadataConcurrent(t *testing.T) {
+	var hits atomic.Int32
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		hits.Add(1)
+		time.Sleep(50 * time.Millisecond) // keep the first request in flight while the other goroutines start
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"platform":"external","partition":"scw","domain":"scw.eu"}`))
+	}))
+	defer server.Close()
+
+	client, err := NewClient(WithAPIURL(server.URL))
+	testhelpers.AssertNoError(t, err)
+
+	const n = 10
+	domains := make([]string, n)
+	errs := make([]error, n)
+
+	var wg sync.WaitGroup
+	for i := range n {
+		wg.Go(func() {
+			metadata, err := client.GetAPIMetadata()
+			domains[i], errs[i] = metadata.Domain, err
+		})
+	}
+	wg.Wait()
+
+	for i := range n {
+		testhelpers.AssertNoError(t, errs[i])
+		testhelpers.Equals(t, "scw.eu", domains[i])
+	}
+	testhelpers.Equals(t, int32(1), hits.Load())
 }
