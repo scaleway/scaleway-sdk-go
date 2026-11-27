@@ -509,10 +509,12 @@ type PlacementGroupPolicyType string
 const (
 	// Unknown policy type.
 	PlacementGroupPolicyTypeUnknownPolicyType = PlacementGroupPolicyType("unknown_policy_type")
-	// Ensures that all servers in the placement group are placed on the same physical host to minimize latency.
+	// Ensures that all servers in the placement group are located fairly closely to each other to minimize latency.
 	PlacementGroupPolicyTypeLowLatency = PlacementGroupPolicyType("low_latency")
-	// Distributes servers across multiple physical hosts to maximize availability.
+	// Distributes servers across multiple physical hosts to maximize availability. This policy may be ignored if the constraints cannot be met.
 	PlacementGroupPolicyTypeMaxAvailability = PlacementGroupPolicyType("max_availability")
+	// Distributes servers across multiple physical hosts to maximize availability. Servers will refuse to start if the constraints cannot be met.
+	PlacementGroupPolicyTypeMaxAvailabilityEnforced = PlacementGroupPolicyType("max_availability_enforced")
 )
 
 func (enum PlacementGroupPolicyType) String() string {
@@ -528,6 +530,7 @@ func (enum PlacementGroupPolicyType) Values() []PlacementGroupPolicyType {
 		"unknown_policy_type",
 		"low_latency",
 		"max_availability",
+		"max_availability_enforced",
 	}
 }
 
@@ -1773,9 +1776,21 @@ type PlacementGroup struct {
 	// Name: placement group name.
 	Name string `json:"name"`
 
-	// PolicyType: select the behavior of the placement group, either low_latency (group) or max_availability (spread).
+	// PolicyType: the type determines how servers within the Placement Group (members) will be allocated, by constraining their location.
+	//
+	// With `low_latency`, the members are allocated as close to each other as possible.
+	//
+	// With `max_availability` or `max_availability_enforced`, the members are spread across different physical hosts to maximize availability.
+	// The difference between `max_availability` and `max_availability_enforced` is the behavior when the policy cannot be satisfied:
+	//
+	// - with `max_availability`, the member is allowed to start on a physical node that already holds another member;
+	//
+	// - with `max_availability_enforced`, the member will fail to start after a short amount of time.
 	// Default value: unknown_policy_type
 	PolicyType PlacementGroupPolicyType `json:"policy_type"`
+
+	// PolicyRespected: indicates if the constraints of the Placement Group are respected by all its members.
+	PolicyRespected bool `json:"policy_respected"`
 
 	// Tags: placement group tags.
 	Tags []string `json:"tags"`
