@@ -12,7 +12,6 @@ import (
 	"strconv"
 	"strings"
 	"sync"
-	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/errors"
 	"github.com/scaleway/scaleway-sdk-go/internal/auth"
@@ -78,7 +77,12 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 
 	// dial the API
 	if s.httpClient == nil {
-		s.httpClient = newHTTPClient()
+		s.httpClient = newHTTPClient(s.maxRetries)
+	} else if s.maxRetries != nil {
+		logger.Warningf(
+			"client: cannot apply WithMaxRetries with HTTP client of type %T",
+			s.httpClient,
+		)
 	}
 
 	// insecure mode
@@ -648,10 +652,23 @@ func newVariableFromType(t any) any {
 	return reflect.New(reflect.Indirect(reflect.ValueOf(t)).Type()).Interface()
 }
 
-func newHTTPClient() *http.Client {
+func newHTTPClient(maxRetries *int) *http.Client {
+	base := http.DefaultTransport.(*http.Transport).Clone()
+	base.ResponseHeaderTimeout = responseHeaderTimeout // This one is not set by default
+
+	rlTransport := &RateLimitTransport{
+		Base:       base,
+		State:      &rateLimitState{remaining: 1},
+		MaxRetries: defaultMaxRetries,
+	}
+	if maxRetries != nil {
+		rlTransport.MaxRetries = *maxRetries
+	}
+
 	return &http.Client{
-		Timeout:   30 * time.Second,
-		Transport: http.DefaultTransport.(*http.Transport).Clone(),
+		// Total timeout, including retries
+		Timeout:   defaultClientTimeout,
+		Transport: rlTransport,
 	}
 }
 
@@ -672,13 +689,24 @@ func setInsecureMode(c httpClient) {
 
 	transportClient, ok := standardHTTPClient.Transport.(*http.Transport)
 	if !ok {
-		logger.Warningf("client: cannot use insecure mode with Transport client of type %T", standardHTTPClient.Transport)
+		logger.Warningf(
+			"client: cannot use insecure mode with Transport client of type %T",
+			standardHTTPClient.Transport,
+		)
 		return
 	}
-	if transportClient.TLSClientConfig == nil {
-		transportClient.TLSClientConfig = &tls.Config{}
+
+	setInsecureSkipVerify(transportClient)
+}
+
+// setInsecureSkipVerify enables InsecureSkipVerify on t, allocating a
+// tls.Config if none is set.
+func setInsecureSkipVerify(t *http.Transport) {
+	if t.TLSClientConfig == nil {
+		t.TLSClientConfig = &tls.Config{}
 	}
-	transportClient.TLSClientConfig.InsecureSkipVerify = true
+
+	t.TLSClientConfig.InsecureSkipVerify = true
 }
 
 func setRequestLogging(c httpClient) {
