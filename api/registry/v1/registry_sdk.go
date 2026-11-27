@@ -344,6 +344,9 @@ func (enum *TagStatus) UnmarshalJSON(data []byte) error {
 
 // Image: image.
 type Image struct {
+	// Srn: sRN of the image.
+	Srn string `json:"srn"`
+
 	// ID: UUID of the image.
 	ID string `json:"id"`
 
@@ -379,6 +382,9 @@ type Image struct {
 
 // Namespace: namespace.
 type Namespace struct {
+	// Srn: sRN of the namespace.
+	Srn string `json:"srn"`
+
 	// ID: UUID of the namespace.
 	ID string `json:"id"`
 
@@ -425,6 +431,9 @@ type Namespace struct {
 
 // Tag: tag.
 type Tag struct {
+	// Srn: sRN of the tag.
+	Srn string `json:"srn"`
+
 	// ID: UUID of the tag.
 	ID string `json:"id"`
 
