@@ -334,6 +334,22 @@ type Endpoint struct {
 	Srn string `json:"srn"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *Endpoint) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://datawarehouse.%s/regions/%s/endpoints/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
+		return
+	}
+}
+
 // EndpointSpec: endpoint spec.
 type EndpointSpec struct {
 	// Precisely one of Public, PrivateNetwork must be set.
@@ -359,6 +375,22 @@ type Database struct {
 
 	// Srn: the SRN of the database.
 	Srn string `json:"srn"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *Database) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.DeploymentID) != "" && fmt.Sprint(m.Name) != "" {
+		m.Srn = fmt.Sprintf("srn://datawarehouse.%s/regions/%s/deployments/%s/databases/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.DeploymentID), fmt.Sprint(m.Name))
+		return
+	}
 }
 
 // Deployment: deployment.
@@ -422,6 +454,22 @@ type Deployment struct {
 	Srn string `json:"srn"`
 }
 
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *Deployment) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.ID) != "" {
+		m.Srn = fmt.Sprintf("srn://datawarehouse.%s/regions/%s/deployments/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.ID))
+		return
+	}
+}
+
 // Preset: preset.
 type Preset struct {
 	// Name: name of the preset.
@@ -462,6 +510,22 @@ type User struct {
 
 	// Srn: the SRN of the user.
 	Srn string `json:"srn"`
+}
+
+//nolint:unused,nolintlint // generated, no check on whether it's used or not
+func (m *User) setSRN(platform string) {
+	if m.Srn != "" {
+		// if the field is set server-side, trust the server
+		return
+	}
+
+	// We do not check that *m.XYZ != "", as there are currently no use cases for an
+	// optional value in an SRN where the value set to the empty string makes sense.
+
+	if fmt.Sprint(m.Region) != "" && fmt.Sprint(m.DeploymentID) != "" && fmt.Sprint(m.Name) != "" {
+		m.Srn = fmt.Sprintf("srn://datawarehouse.%s/regions/%s/deployments/%s/users/%s", platform, fmt.Sprint(m.Region), fmt.Sprint(m.DeploymentID), fmt.Sprint(m.Name))
+		return
+	}
 }
 
 // Version: version.
@@ -1041,6 +1105,12 @@ func (s *API) ListDeployments(req *ListDeploymentsRequest, opts ...scw.RequestOp
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Deployments {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -1071,6 +1141,10 @@ func (s *API) GetDeployment(req *GetDeploymentRequest, opts ...scw.RequestOption
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1163,6 +1237,10 @@ func (s *API) CreateDeployment(req *CreateDeploymentRequest, opts ...scw.Request
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1199,6 +1277,10 @@ func (s *API) UpdateDeployment(req *UpdateDeploymentRequest, opts ...scw.Request
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1229,6 +1311,10 @@ func (s *API) DeleteDeployment(req *DeleteDeploymentRequest, opts ...scw.Request
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1297,6 +1383,10 @@ func (s *API) StartDeployment(req *StartDeploymentRequest, opts ...scw.RequestOp
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1332,6 +1422,10 @@ func (s *API) StopDeployment(req *StopDeploymentRequest, opts ...scw.RequestOpti
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1376,6 +1470,12 @@ func (s *API) ListUsers(req *ListUsersRequest, opts ...scw.RequestOption) (*List
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Users {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -1411,6 +1511,10 @@ func (s *API) CreateUser(req *CreateUserRequest, opts ...scw.RequestOption) (*Us
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1451,6 +1555,10 @@ func (s *API) UpdateUser(req *UpdateUserRequest, opts ...scw.RequestOption) (*Us
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
@@ -1551,6 +1659,10 @@ func (s *API) CreateEndpoint(req *CreateEndpointRequest, opts ...scw.RequestOpti
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
+	}
 	return &resp, nil
 }
 
@@ -1594,6 +1706,12 @@ func (s *API) ListDatabases(req *ListDatabasesRequest, opts ...scw.RequestOption
 	if err != nil {
 		return nil, err
 	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		for _, el := range resp.Databases {
+			el.setSRN(apiMetadata.Domain)
+		}
+	}
 	return &resp, nil
 }
 
@@ -1629,6 +1747,10 @@ func (s *API) CreateDatabase(req *CreateDatabaseRequest, opts ...scw.RequestOpti
 	err = s.client.Do(scwReq, &resp, opts...)
 	if err != nil {
 		return nil, err
+	}
+	apiMetadata, err := s.client.GetAPIMetadata()
+	if err == nil {
+		resp.setSRN(apiMetadata.Domain)
 	}
 	return &resp, nil
 }
